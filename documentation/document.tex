@@ -1,0 +1,141 @@
+%% Esempio per lo stile supsi
+\documentclass[twoside]{supsistudent} 
+
+% per settare noindent
+\setlength{\parindent}{0pt}
+
+
+% Crea un capitolo senza numerazione che pero` appare nell'indice %
+\newcommand{\problemchapter}[1]{%
+  \chapter*{#1}%
+  \addcontentsline{toc}{chapter}{#1}%
+\markboth{#1}{#1}
+}
+
+% Numerazione delle appendici secondo norma
+\addto\appendix{
+\renewcommand{\thesection}{\Alph{chapter}.\arabic{section}}
+\renewcommand{\thesubsection}{\thesection.\arabic{subsection}}}
+
+\setcounter{secnumdepth}{5} 	%per avere più livelli nei titoli
+\setcounter{tocdepth}{5}		%per avere più livelli nell'indice
+
+
+\titolo{Piattaforma Didattica Interattiva per l'Apprendimento}
+\studente{Luca Fantò \vspace{1em}\\ Antonio Marroffino }
+\relatore{Tommaso Agnola}
+\correlatore{Roberto Guidi}
+\committente{Tommaso Agnola}
+\corso{Bachelor in Ingegneria Informatica}
+\modulo{P-P6051 Progetto di Semestre}
+\anno{2025}
+
+
+
+\begin{document}
+
+\pagenumbering{alph}
+\maketitle
+\onehalfspacing
+\frontmatter
+
+
+\pagenumbering{roman}
+
+
+\newpage
+\mainmatter
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\chapter{Progetto assegnato}
+
+%\lipsum[2]
+\text{Introduzione al progetto}
+
+\section{Descrizione}
+
+%\lipsum[23]
+%Esempio di citazione \cite{4538384}, \cite{5357331,4523385}, \cite{1705631}.
+%\footnote{Questa \`e una nota a pi\'e di pagina.}
+%\footnote{Questa \`e un'altra nota a pi\'e di pagina.}
+%\lipsum[23]
+
+%\subsection{Sotto sezione}
+
+%\texttt{Questo testo ha una spaziatura fissa}
+
+%\textit{Questo testo \`e in italico}
+
+%\textbf{Questo testo \`e in grassetto}
+
+%\textsc{Questo testo \`e in maiuscoletto}
+
+%\underline{Questo testo \`e sottolineato} \\
+
+%Citazione:
+%\begin{quote}
+%\lipsum[23]
+%\end{quote}
+
+\section{Compiti}
+
+\section{Obiettivi}
+
+\section{Tecnologie}
+
+
+\chapter{Introduzione}
+
+\section{Motivazione}
+
+\begin{itemize}
+  \item Ricerca di mercato/Analisi competitiva
+  \item User Research (studenti e insegnanti)
+\end{itemize}
+
+%\begin{itemize}
+%  \item[-] Elemento A
+%  \item[-] Elemento B
+%  \item[-] Elemento C
+%\end{itemize}
+%
+%\begin{enumerate}
+%  \item Alpha
+%  \item Beta
+%  \item Gamma
+%\end{enumerate}
+
+%\section{Sezione}
+%
+%\lipsum[23]
+%
+%\subsection{Sotto sezione}
+%
+%Un po' di matematica: \newline
+%
+%\begin{math}
+%\frac{n!}{k!(n-k)!} = {n \choose k}
+%\end{math} \newline
+%
+%Un po' di matematica centrata:
+%
+%\begin{center}
+%\begin{math}
+%\frac{n!}{k!(n-k)!} = {n \choose k}
+%\end{math}
+%\end{center}
+%
+%Oppure con \$\$
+%
+%$$
+%\frac{n!}{k!(n-k)!} = {n \choose k}
+%$$
+%
+%Oppure anche direttamente nel testo ${1}\over{n}$ \\
+%
+%\lipsum[23]
+
+\bibliographystyle{unsrt}
+\bibliography{bibliografia}
+\end{document}
