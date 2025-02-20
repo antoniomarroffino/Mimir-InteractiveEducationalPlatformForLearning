@@ -1,6 +1,7 @@
 stages:
   - structure
-  - build
+  - build_backend
+  - build_frontend
   - test
   #- deploy
 
@@ -12,10 +13,9 @@ structure:
     - '[ -d nginx ] || exit 1'
   rules:
     - if: $CI_COMMIT_BRANCH == "dev"
-    - if: $CI_COMMIT_BRANCH == "configuration/initialization"
 
 build_backend:
-  stage: build
+  stage: build_backend
   image: maven:3.9.6-eclipse-temurin-21
   script:
     - cd backend
@@ -25,10 +25,9 @@ build_backend:
       - backend/target/*.jar
   rules:
     - if: $CI_COMMIT_BRANCH == "dev"
-    - if: $CI_COMMIT_BRANCH == "configuration/initialization"
 
 build_frontend:
-  stage: build
+  stage: build_frontend
   image: node:22.14-alpine
   script:
     - cd frontend
@@ -39,7 +38,6 @@ build_frontend:
       - frontend/dist/
   rules:
     - if: $CI_COMMIT_BRANCH == "dev"
-    - if: $CI_COMMIT_BRANCH == "configuration/initialization"
 
 #deploy:
 #  stage: deploy
