@@ -1,0 +1,47 @@
+stages:
+  - structure
+  - build_backend
+  - build_frontend
+  - test
+  #- deploy
+
+structure:
+  stage: structure
+  script:
+    - '[ -d backend ] || exit 1'
+    - '[ -d frontend ] || exit 1'
+    - '[ -d nginx ] || exit 1'
+  rules:
+    - if: $CI_COMMIT_BRANCH == "dev"
+
+build_backend:
+  stage: build_backend
+  image: maven:3.9.6-eclipse-temurin-21
+  script:
+    - cd backend
+    - mvn clean package
+  artifacts:
+    paths:
+      - backend/target/*.jar
+  rules:
+    - if: $CI_COMMIT_BRANCH == "dev"
+
+build_frontend:
+  stage: build_frontend
+  image: node:22.14-alpine
+  script:
+    - cd frontend
+    - npm install
+    - npm run build
+  artifacts:
+    paths:
+      - frontend/dist/
+  rules:
+    - if: $CI_COMMIT_BRANCH == "dev"
+
+#deploy:
+#  stage: deploy
+#  script:
+#    - docker-compose up -d
+#  only:
+#    - main
