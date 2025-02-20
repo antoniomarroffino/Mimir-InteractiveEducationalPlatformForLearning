@@ -1,0 +1,47 @@
+stages:
+  - structure
+  - build
+  - test
+  #- deploy
+
+structure:
+  stage: structure
+  script:
+    - '[ -d backend ] || exit 1'
+    - '[ -d frontend ] || exit 1'
+    - '[ -d nginx ] || exit 1'
+  rules:
+    - if: $CI_COMMIT_BRANCH == "dev"
+    - if: $CI_COMMIT_BRANCH == "configuration/initialization"
+
+build_backend:
+  stage: build
+  script:
+    - cd backend
+    - mvn clean package
+  artifacts:
+    paths:
+      - backend/target/*.jar
+  rules:
+    - if: $CI_COMMIT_BRANCH == "dev"
+    - if: $CI_COMMIT_BRANCH == "configuration/initialization"
+
+build_frontend:
+  stage: build
+  script:
+    - cd frontend
+    - npm install
+    - npm run build
+  artifacts:
+    paths:
+      - frontend/dist/
+  rules:
+    - if: $CI_COMMIT_BRANCH == "dev"
+    - if: $CI_COMMIT_BRANCH == "configuration/initialization"
+
+#deploy:
+#  stage: deploy
+#  script:
+#    - docker-compose up -d
+#  only:
+#    - main
