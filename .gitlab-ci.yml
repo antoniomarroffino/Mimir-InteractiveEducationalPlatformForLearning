@@ -16,8 +16,8 @@ structure:
 
 build_backend:
   stage: build
+  image: maven:3.9.6-eclipse-temurin-21
   script:
-    - apt-get update && apt-get install -y maven
     - cd backend
     - mvn clean package
   artifacts:
@@ -29,8 +29,8 @@ build_backend:
 
 build_frontend:
   stage: build
+  image: node:22.14-alpine
   script:
-    - apt-get update && apt-get install -y maven
     - cd frontend
     - npm install
     - npm run build
