@@ -1,0 +1,5 @@
+\select@language {italian}
+\contentsline {chapter}{\numberline {1}Titolazione}{1}
+\contentsline {section}{\numberline {1.1}Sezione}{1}
+\contentsline {subsection}{\numberline {1.1.1}Sotto sezione}{1}
+\contentsline {chapter}{\numberline {2}Titolazione}{3}

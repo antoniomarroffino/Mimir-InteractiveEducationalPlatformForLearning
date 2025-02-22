@@ -1,0 +1,137 @@
+%% Esempio per lo stile supsi
+\documentclass[twoside]{supsistudent} 
+
+% per settare noindent
+\setlength{\parindent}{0pt}
+
+
+% Crea un capitolo senza numerazione che pero` appare nell'indice %
+\newcommand{\problemchapter}[1]{%
+  \chapter*{#1}%
+  \addcontentsline{toc}{chapter}{#1}%
+\markboth{#1}{#1}
+}
+
+% Numerazione delle appendici secondo norma
+\addto\appendix{
+\renewcommand{\thesection}{\Alph{chapter}.\arabic{section}}
+\renewcommand{\thesubsection}{\thesection.\arabic{subsection}}}
+
+\setcounter{secnumdepth}{5} 	%per avere più livelli nei titoli
+\setcounter{tocdepth}{5}		%per avere più livelli nell'indice
+
+
+\titolo{Non c'\`e due senza quattro}
+\studente{Bastiano Coimbra de La Coronilla y Azevedo \vspace{1em}\\ Antonio Coimbra de La Coronilla y Azevedo }
+\relatore{Donna Olimpia Chavez di Altamirano}
+\correlatore{Nadinho}
+\committente{Tango}
+\corso{C1122 Sosia e Affini}
+\modulo{M1424 Similarit\`a}
+\anno{2012}
+
+
+
+\begin{document}
+
+\pagenumbering{alph}
+\maketitle
+\onehalfspacing
+\frontmatter
+
+
+\pagenumbering{roman}
+\tableofcontents
+\listoffigures					% Opzionale
+\listoftables					% Opzionale
+
+\newpage
+\mainmatter
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\chapter{Titolazione}
+
+\lipsum[13]
+
+\section{Sezione}
+
+\lipsum[23]
+Esempio di citazione \cite{4538384}, \cite{5357331,4523385}, \cite{1705631}.
+\footnote{Questa \`e una nota a pi\'e di pagina.}
+\footnote{Questa \`e un'altra nota a pi\'e di pagina.}
+\lipsum[23]
+
+\subsection{Sotto sezione}
+
+\texttt{Questo testo ha una spaziatura fissa}
+
+\textit{Questo testo \`e in italico}
+
+\textbf{Questo testo \`e in grassetto}
+
+\textsc{Questo testo \`e in maiuscoletto}
+
+\underline{Questo testo \`e sottolineato} \\
+
+Citazione:
+\begin{quote}
+\lipsum[23]
+\end{quote}
+
+\chapter{Titolazione}
+
+\lipsum[13]
+
+\begin{itemize}
+  \item Elemento A
+  \item Elemento B
+  \item Elemento C
+\end{itemize}
+
+%\begin{itemize}
+%  \item[-] Elemento A
+%  \item[-] Elemento B
+%  \item[-] Elemento C
+%\end{itemize}
+%
+%\begin{enumerate}
+%  \item Alpha
+%  \item Beta
+%  \item Gamma
+%\end{enumerate}
+
+\lipsum[23]
+%\section{Sezione}
+%
+%\lipsum[23]
+%
+%\subsection{Sotto sezione}
+%
+%Un po' di matematica: \newline
+%
+%\begin{math}
+%\frac{n!}{k!(n-k)!} = {n \choose k}
+%\end{math} \newline
+%
+%Un po' di matematica centrata:
+%
+%\begin{center}
+%\begin{math}
+%\frac{n!}{k!(n-k)!} = {n \choose k}
+%\end{math}
+%\end{center}
+%
+%Oppure con \$\$
+%
+%$$
+%\frac{n!}{k!(n-k)!} = {n \choose k}
+%$$
+%
+%Oppure anche direttamente nel testo ${1}\over{n}$ \\
+%
+%\lipsum[23]
+
+\bibliographystyle{unsrt}
+\bibliography{bibliografia}
+\end{document}
