@@ -1,7 +1,8 @@
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+  width: 100%;
+  height: 100vh; /* Impostiamo l'altezza al 100% della viewport */
+  margin: 0;
+  padding: 0; /* Rimuoviamo il padding per utilizzare lo spazio completo */
   text-align: center;
 }
 
@@ -11,9 +12,11 @@
   will-change: filter;
   transition: filter 300ms;
 }
+
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
+
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
@@ -35,8 +38,15 @@
 
 .card {
   padding: 2em;
+  /* Puoi aggiungere un max-width per le card per evitare che diventino troppo larghe su schermi grandi */
+  max-width: 100%;
 }
 
 .read-the-docs {
   color: #888;
+}
+
+.custom-gradient {
+  background: linear-gradient(to right, #007bff, #6f42c1);
+  height: 100%;
 }

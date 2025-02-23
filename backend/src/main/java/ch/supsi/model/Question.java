@@ -1,4 +1,4 @@
-package ch.supsi;
+package ch.supsi.model;
 
 import io.quarkus.mongodb.panache.PanacheMongoEntity;
 

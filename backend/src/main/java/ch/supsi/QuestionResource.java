@@ -1,5 +1,6 @@
 package ch.supsi;
 
+import ch.supsi.model.Question;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
