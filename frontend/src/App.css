@@ -47,6 +47,7 @@
 
 .custom-gradient {
   background: linear-gradient(to right, #007bff, #6f42c1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
   height: 100%;
 }
 *,
@@ -104,5 +105,10 @@ footer p {
 
 .card:hover {
   transform: scale(1.05);
+}
+
+.navbar-brand img {
+  max-width: 150px;
+  height: auto;
 }
 

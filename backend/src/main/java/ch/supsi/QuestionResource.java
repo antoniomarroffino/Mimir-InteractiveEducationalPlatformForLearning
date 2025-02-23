@@ -22,6 +22,6 @@ public class QuestionResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public void addQuestion(Question question) {
-        Question.persist(question);
+        question.persist();
     }
 }

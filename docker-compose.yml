@@ -5,7 +5,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      MONGO_URI: mongodb://mongo:27017/mongoDB
+      MONGO_URI: mongodb://mongo:27017/myApp
     depends_on:
       - mongo
 
@@ -24,7 +24,7 @@ services:
 
   mongo:
     image: mongo:latest
-    container_name: mongo
+    container_name: mongoProd
     ports:
       - "27017:27017"
     volumes:
