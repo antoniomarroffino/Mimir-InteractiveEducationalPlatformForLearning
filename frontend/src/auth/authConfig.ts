@@ -1,8 +1,8 @@
 export const msalConfig = {
     auth: {
-        clientId: "e60732a1-5fd8-4c12-8a48-db860b8d4409", // Sostituisci con il tuo client ID
-        authority: "https://login.microsoftonline.com/3cadd1a7-ce2c-43b6-8986-2f1b472fab3b", // Sostituisci con il tuo tenant ID
-        redirectUri: "http://localhost:3000", // URL di reindirizzamento
+        clientId: import.meta.env.VITE_AZURE_CLIENT_ID!, // Sostituisci con il tuo client ID
+        authority: `https://login.microsoftonline.com/${import.meta.env.VITE_AZURE_TENANT_ID}`, // Sostituisci con il tuo tenant ID
+        redirectUri: import.meta.env.VITE_REDIRECT_URI!, // URL di reindirizzamento
     },
     cache: {
         cacheLocation: "sessionStorage", // Memorizza il token in sessionStorage
@@ -11,6 +11,6 @@ export const msalConfig = {
 };
 
 export const loginRequest = {
-    scopes: ["User.Read"], // Scope richiesti
+    scopes: [`api://${import.meta.env.VITE_BACKEND_CLIENT_ID}/access_as_user`], // Scope richiesti
     prompt: 'select_account',
 };

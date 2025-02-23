@@ -1,48 +1,59 @@
 import React, { useState } from "react";
-import { useMsal } from "@azure/msal-react";
-import LoginButton from "./auth/LoginButton";
+import { useMsal, AuthenticatedTemplate, UnauthenticatedTemplate } from "@azure/msal-react";
+import LoginButton from "./auth/LoginButton.tsx";
+import {loginRequest} from "./auth/authConfig.ts";
 
 const App: React.FC = () => {
-    const { accounts } = useMsal();
-    const [data] = useState<string | null>(null);
+    const { instance, accounts } = useMsal();
+    const [data, setData] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
 
-    // Funzione per chiamare l'endpoint protetto del backend
     const fetchProtectedData = async () => {
+        if (accounts.length === 0) return;
+
         try {
-            const response = await fetch("http://localhost:8080/api/secure/message", {
+            const response = await instance.acquireTokenSilent({
+                ...loginRequest,
+                account: accounts[0]
+            });
+
+            const token = response.accessToken;
+
+            console.log("Access token: ", token);
+
+            const res = await fetch("http://localhost:8080/api/secure/message", {
                 method: "GET",
                 headers: {
-                    Authorization: `Bearer ${accounts[0].idToken}`, // Invia il token
+                    Authorization: `Bearer ${token}`,
                 },
             });
 
-            if (!response.ok) {
-                throw new Error(`Errore nella richiesta: ${response.statusText}`);
+            if (!res.ok) {
+                throw new Error(`Errore nella richiesta: ${res.statusText}`);
             }
 
-            console.log(response.text());
-        } catch (err) {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-expect-error
-            setError(err.message);
+            const text = await res.text();
+            setData(text);
+        } catch (err: unknown) {
+            if(err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError("Si è verificato un errore sconosciuto");
+            }
         }
     };
 
     return (
         <div>
             <h1>Applicazione di Esempio</h1>
-            {accounts.length === 0 ? (
-                // Mostra il pulsante di login se l'utente non è autenticato
+            <UnauthenticatedTemplate>
                 <LoginButton />
-            ) : (
-                // Mostra il pulsante per la dashboard se l'utente è autenticato
-                <div>
-                    <button onClick={fetchProtectedData}>Vai alla Dashboard</button>
-                    {data && <p>Dati protetti: {data}</p>}
-                    {error && <p>Errore: {error}</p>}
-                </div>
-            )}
+            </UnauthenticatedTemplate>
+            <AuthenticatedTemplate>
+                <button onClick={fetchProtectedData}>Vai alla Dashboard</button>
+                {data && <p>Dati protetti: {data}</p>}
+                {error && <p>Errore: {error}</p>}
+            </AuthenticatedTemplate>
         </div>
     );
 };
