@@ -38,7 +38,6 @@
 
 .card {
   padding: 2em;
-  /* Puoi aggiungere un max-width per le card per evitare che diventino troppo larghe su schermi grandi */
   max-width: 100%;
 }
 
@@ -50,3 +49,60 @@
   background: linear-gradient(to right, #007bff, #6f42c1);
   height: 100%;
 }
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body, html {
+  height: 100%;
+  font-family: 'Arial', sans-serif;
+}
+
+header {
+  background: linear-gradient(to right, #00aaff, #0044cc);
+}
+
+section {
+  padding: 5rem 0;
+}
+
+.card-img-top {
+  object-fit: cover;
+  height: 200px;
+}
+
+.bg-info {
+  background: linear-gradient(135deg, #6f42c1, #00aaff);
+}
+
+.bg-light {
+  background: #f8f9fa;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  header h1 {
+    font-size: 2rem;
+  }
+
+  .card-img-top {
+    height: 150px;
+  }
+}
+
+footer p {
+  margin: 0;
+}
+
+.card {
+  transition: transform 0.3s ease-in-out;
+}
+
+.card:hover {
+  transform: scale(1.05);
+}
+
