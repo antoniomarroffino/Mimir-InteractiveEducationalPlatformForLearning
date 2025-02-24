@@ -63,7 +63,7 @@ body, html {
   font-family: 'Arial', sans-serif;
 }
 
-header {
+.custom-gradient-inverse {
   background: linear-gradient(to right, #00aaff, #0044cc);
 }
 
@@ -76,12 +76,8 @@ section {
   height: 200px;
 }
 
-.bg-info {
+.bg-info-custom {
   background: linear-gradient(135deg, #6f42c1, #00aaff);
-}
-
-.bg-light {
-  background: #f8f9fa;
 }
 
 /* Responsive Design */
@@ -110,5 +106,24 @@ footer p {
 .navbar-brand img {
   max-width: 150px;
   height: auto;
+}
+
+.custom-icon{
+  width: 50px;
+  height: 50px;
+}
+
+.shadow-up {
+  box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.shadow-down {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.shadow-both {
+  box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.4),
+  0 4px 8px rgba(0, 0, 0, 0.4) !important;
+  z-index: 1000;
 }
 

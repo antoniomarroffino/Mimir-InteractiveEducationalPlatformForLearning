@@ -20,17 +20,26 @@ const Header = () => {
                 <span className="navbar-toggler-icon"></span>
             </button>
 
-            {/* Navbar content */}
             <div className={`collapse navbar-collapse ${isOpen ? 'show' : ''}`} id="navbarNav">
-                <ul className="navbar-nav">
+                <ul className="navbar-nav me-auto">
                     <li className="nav-item active">
                         <a className="nav-link" href="/">Home</a>
                     </li>
                     <li className="nav-item">
                         <a className="nav-link" href="/milestones">Milestones</a>
                     </li>
-                    <li className="nav-item">
-                        <a className="nav-link" href="/login">Login</a>
+                </ul>
+                <ul className="navbar-nav">
+                    <li className="nav-item d-flex flex-column align-items-center">
+                        <a href="/login" className="text-decoration-none">
+                            <img
+                                className="custom-icon mb-1"
+                                src="../../public/login-icon.png"
+                                alt="Login Icon"
+                                style={{ cursor: 'pointer' }}
+                            />
+                        </a>
+                        <a className="nav-link p-0" href="/login">Login</a>
                     </li>
                 </ul>
             </div>
