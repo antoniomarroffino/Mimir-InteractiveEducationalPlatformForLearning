@@ -1,25 +1,24 @@
 version: '3.8'
 services:
   backend:
-    build:
-      context: ./backend
-    image: backend:latest
+    build: ./backend
     env_file:
       - backend/.env
     ports:
       - "8080:8080"
-
-  frontend:
-    build:
-      context: ./frontend
-    image: frontend:latest
+    networks:
+      - app-network
 
   nginx:
-    build:
-      context: ./nginx
+    build: ./frontend
     image: nginx:latest
     ports:
       - "80:80"
     depends_on:
       - backend
-      - frontend
+    networks:
+     - app-network
+
+networks:
+  app-network:
+    driver: bridge

@@ -31,5 +31,5 @@ Thumbs.db
 *.env*
 
 # NGINX
-nginx/access.log
-nginx/error.log
+frontend/nginx/access.log
+frontend/nginx/error.log
