@@ -21,7 +21,6 @@ public class QuestionController {
             List<Question> questions = questionService.getAllQuestions();
             return Response.ok(questions).build();
         } catch (Exception e) {
-            e.printStackTrace(); // Per debug
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Errore nel recupero delle domande: " + e.getMessage())
                     .build();
@@ -41,7 +40,6 @@ public class QuestionController {
                     .entity(createdQuestion)
                     .build();
         } catch (Exception e) {
-            e.printStackTrace(); // Per debug
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Errore nella creazione della domanda: " + e.getMessage())
                     .build();

@@ -22,7 +22,6 @@ public class MilestoneController {
             List<Milestone> milestones = milestoneService.getAllMilestones();
             return Response.ok(milestones).build();
         } catch (Exception e) {
-            e.printStackTrace(); // Per debug
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Errore nel recupero delle milestone: " + e.getMessage())
                     .build();
@@ -37,14 +36,11 @@ public class MilestoneController {
                         .entity("Il nome della milestone non può essere vuoto")
                         .build();
             }
-            System.out.println("CIAO" + milestone.getName());
             Milestone createdMilestone = milestoneService.createMilestone(milestone);
-            System.out.println("CIAOOOO");
             return Response.status(Response.Status.CREATED)
                     .entity(createdMilestone)
                     .build();
         } catch (Exception e) {
-            e.printStackTrace(); // Per debug
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Errore nella creazione della milestone: " + e.getMessage())
                     .build();
