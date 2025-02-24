@@ -1,9 +1,11 @@
 package ch.supsi.model;
 
 import io.quarkus.mongodb.panache.PanacheMongoEntity;
+import io.quarkus.mongodb.panache.common.MongoEntity;
 
 import java.util.List;
 
+@MongoEntity(collection = "questions")
 public class Question extends PanacheMongoEntity {
     public String questionText;
     private List<String> options;

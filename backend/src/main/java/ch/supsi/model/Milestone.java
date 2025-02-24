@@ -2,7 +2,9 @@ package ch.supsi.model;
 
 
 import io.quarkus.mongodb.panache.PanacheMongoEntity;
+import io.quarkus.mongodb.panache.common.MongoEntity;
 
+@MongoEntity(collection = "milestones")
 public class Milestone extends PanacheMongoEntity {
     public String name;
 

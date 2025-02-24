@@ -17,6 +17,7 @@ public class MilestoneService {
         }
     }
 
+    @Transactional
     public Milestone createMilestone(Milestone milestone) {
         try {
             milestone.persist();
