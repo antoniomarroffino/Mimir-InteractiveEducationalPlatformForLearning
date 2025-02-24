@@ -21,7 +21,13 @@ const App: React.FC = () => {
 
             console.log("Access token: ", token);
 
-            const res = await fetch("http://localhost:8080/api/secure/message", {
+            const backendUrl = import.meta.env.VITE_BACKEND_URL || "";
+            const apiEndpoint = backendUrl ? `${backendUrl}/secure/message` : "/secure/message";
+
+            console.log(apiEndpoint);
+            console.log(import.meta.env.VITE_REDIRECT_URI);
+
+            const res = await fetch(apiEndpoint, {
                 method: "GET",
                 headers: {
                     Authorization: `Bearer ${token}`,
