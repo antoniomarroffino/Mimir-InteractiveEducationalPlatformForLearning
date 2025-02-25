@@ -1,8 +1,13 @@
 FROM node:22.14-alpine AS builder
 WORKDIR /app
+COPY .env.production .env
 COPY package.json .
 RUN npm install
 COPY . .
 RUN npm run build
-EXPOSE 3000
-CMD ["npm", "run", "dev"]
+
+FROM nginx:alpine
+COPY --from=builder /app/dist /usr/share/nginx/html
+COPY nginx/nginx.conf /etc/nginx/nginx.conf
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

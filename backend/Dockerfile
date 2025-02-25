@@ -10,4 +10,4 @@ FROM amazoncorretto:21 AS runner
 WORKDIR /app
 COPY --from=builder /app/target/*-runner.jar app.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-Dquarkus.profile=prod", "-jar", "app.jar"]

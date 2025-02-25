@@ -2,25 +2,26 @@ version: '3.8'
 services:
   backend:
     build: ./backend
+    env_file:
+      - backend/.env
     ports:
       - "8080:8080"
     environment:
       MONGO_URI: mongodb://mongo:27017/myApp
     depends_on:
       - mongo
-
-  frontend:
-    build: ./frontend
-    ports:
-      - "3000:3000"
+    networks:
+      - app-network
 
   nginx:
-    build: ./nginx
+    build: ./frontend
+    image: nginx:latest
     ports:
       - "80:80"
     depends_on:
       - backend
-      - frontend
+    networks:
+     - app-network
 
   mongo:
     image: mongo:latest
@@ -33,3 +34,6 @@ services:
 volumes:
   mongo_data:
     driver: local
+networks:
+  app-network:
+    driver: bridge
