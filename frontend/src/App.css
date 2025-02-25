@@ -127,3 +127,15 @@ footer p {
   z-index: 1000;
 }
 
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.milestone-expanded {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.milestone-content {
+  transition: max-height 0.3s ease-in-out;
+  overflow: hidden;
+}
