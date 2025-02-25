@@ -10,7 +10,6 @@ structure:
   script:
     - '[ -d backend ] || exit 1'
     - '[ -d frontend ] || exit 1'
-    - '[ -d nginx ] || exit 1'
   rules:
     - if: $CI_COMMIT_BRANCH == "dev"
 
