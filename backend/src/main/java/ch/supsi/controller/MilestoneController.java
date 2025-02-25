@@ -1,6 +1,7 @@
 package ch.supsi.controller;
 
 import ch.supsi.model.Milestone;
+import ch.supsi.service.IMilestoneService;
 import ch.supsi.service.MilestoneService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -14,12 +15,12 @@ import java.util.List;
 public class MilestoneController {
 
     @Inject
-    MilestoneService milestoneService;
+    IMilestoneService milestoneService;
 
     @GET
     public Response getMilestones() {
         try {
-            List<Milestone> milestones = milestoneService.getAllMilestones();
+            List<Milestone> milestones = this.milestoneService.getAllMilestones();
             return Response.ok(milestones).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
@@ -36,7 +37,7 @@ public class MilestoneController {
                         .entity("Il nome della milestone non può essere vuoto")
                         .build();
             }
-            Milestone createdMilestone = milestoneService.createMilestone(milestone);
+            Milestone createdMilestone = this.milestoneService.createMilestone(milestone);
             return Response.status(Response.Status.CREATED)
                     .entity(createdMilestone)
                     .build();

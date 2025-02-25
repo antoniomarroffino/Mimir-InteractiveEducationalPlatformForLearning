@@ -2,25 +2,20 @@ package ch.supsi.service;
 
 import ch.supsi.model.Milestone;
 import jakarta.enterprise.context.ApplicationScoped;
+
 import java.util.List;
 
 @ApplicationScoped
-public class MilestoneService {
+public class MilestoneService implements IMilestoneService {
 
+    @Override
     public List<Milestone> getAllMilestones() {
-        try {
-            return Milestone.listAll();
-        } catch (Exception e) {
-            throw new RuntimeException("Errore nel recupero delle milestone", e);
-        }
+        return Milestone.listAll();
     }
 
+    @Override
     public Milestone createMilestone(Milestone milestone) {
-        try {
-            milestone.persist();
-            return milestone;
-        } catch (Exception e) {
-            throw new RuntimeException("Errore nella creazione della milestone", e);
-        }
+        milestone.persist();
+        return milestone;
     }
 }
