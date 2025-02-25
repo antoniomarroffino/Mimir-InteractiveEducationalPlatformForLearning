@@ -6,8 +6,6 @@ services:
       - backend/.env
     ports:
       - "8080:8080"
-    environment:
-      MONGO_URI: mongodb://mongo:27017/myApp
     depends_on:
       - mongo
     networks:
@@ -30,10 +28,13 @@ services:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
+    networks:
+      - app-network
 
 volumes:
   mongo_data:
     driver: local
+
 networks:
   app-network:
     driver: bridge

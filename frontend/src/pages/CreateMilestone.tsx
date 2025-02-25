@@ -1,6 +1,5 @@
 import { useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
-import { API_URL } from '../config';
 
 const CreateMilestone = () => {
     const [name, setName] = useState('');
@@ -11,11 +10,55 @@ const CreateMilestone = () => {
         e.preventDefault();
         setLoading(true);
 
+        /*
+        const fetchProtectedData = async () => {
+        if (accounts.length === 0) return;
+
         try {
-            console.log('Invio richiesta POST a:', `${API_URL}/api/milestones`);
+            const response = await instance.acquireTokenSilent({
+                ...loginRequest,
+                account: accounts[0]
+            });
+
+            const token = response.accessToken;
+
+            console.log("Access token: ", token);
+
+            const backendUrl = import.meta.env.VITE_BACKEND_URL || "";
+            const apiEndpoint = backendUrl ? `${backendUrl}/secure/message` : "/secure/message";
+
+            console.log(apiEndpoint);
+            console.log(import.meta.env.VITE_REDIRECT_URI);
+
+            const res = await fetch(apiEndpoint, {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (!res.ok) {
+                throw new Error(`Errore nella richiesta: ${res.statusText}`);
+            }
+
+            const text = await res.text();
+            setData(text);
+        } catch (err: unknown) {
+            if(err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError("Si è verificato un errore sconosciuto");
+            }
+        }
+    };
+
+         */
+
+        try {
+            console.log('Invio richiesta POST a:', `${import.meta.env.VITE_BACKEND_URL}/milestones`);
             console.log('Payload:', { name });
 
-            const response = await fetch(`${API_URL}/api/milestones`, {
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/milestones`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

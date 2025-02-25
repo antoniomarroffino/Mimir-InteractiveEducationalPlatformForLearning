@@ -1,6 +1,8 @@
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import '../App.css';
 import {useState} from "react";
+import LoginButton from "../auth/LoginButton.tsx";
+import {UnauthenticatedTemplate} from "@azure/msal-react";
 
 const Header = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -31,15 +33,9 @@ const Header = () => {
                 </ul>
                 <ul className="navbar-nav">
                     <li className="nav-item d-flex flex-column align-items-center">
-                        <a href="/login" className="text-decoration-none">
-                            <img
-                                className="custom-icon mb-1"
-                                src="../../public/login-icon.png"
-                                alt="Login Icon"
-                                style={{ cursor: 'pointer' }}
-                            />
-                        </a>
-                        <a className="nav-link p-0" href="/login">Login</a>
+                        <UnauthenticatedTemplate>
+                            <LoginButton />
+                        </UnauthenticatedTemplate>
                     </li>
                 </ul>
             </div>
