@@ -4,15 +4,15 @@ package ch.supsi.model;
 import io.quarkus.mongodb.panache.PanacheMongoEntity;
 import io.quarkus.mongodb.panache.common.MongoEntity;
 
-@MongoEntity(collection = "milestones")
-public class Milestone extends PanacheMongoEntity {
+@MongoEntity(collection = "folders")
+public class Folder extends PanacheMongoEntity {
     public String name;
 
-    public Milestone() {
+    public Folder() {
 
     }
 
-    public Milestone(String name) {
+    public Folder(String name) {
         this.name = name;
     }
 

@@ -17,7 +17,7 @@ const Home = () => {
                         <div className="col-md-4">
                             <div className="card shadow-sm bg-primary bg-opacity-50">
                                 <div className="card-body">
-                                    <img className="custom-icon" src="../../public/quiz-icon.png" alt="Quiz Icon"/>
+                                    <img className="custom-icon" src="/quiz-icon.png" alt="Quiz Icon"/>
                                     <h5 className="card-title text-white">Inserisci il codice della sessione</h5>
                                     <div className="d-flex gap-2">
                                         <input type="text" className="form-control" placeholder="Inserisci il codice"/>
