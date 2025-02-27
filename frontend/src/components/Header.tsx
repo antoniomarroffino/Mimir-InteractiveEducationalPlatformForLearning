@@ -16,8 +16,7 @@ const Header = () => {
             <a className="navbar-brand" href="/">
                 <img src="../../public/supsi-logo.png" alt="SUPSI logo" />
             </a>
-
-            {/* Button for toggling the navbar */}
+            
             <button className="navbar-toggler" type="button" onClick={toggleMenu} aria-expanded={isOpen ? "true" : "false"} aria-label="Toggle navigation">
                 <span className="navbar-toggler-icon"></span>
             </button>
@@ -28,7 +27,7 @@ const Header = () => {
                         <a className="nav-link" href="/">Home</a>
                     </li>
                     <li className="nav-item">
-                        <a className="nav-link" href="/milestones">Milestones</a>
+                        <a className="nav-link" href="/folders">Folders</a>
                     </li>
                 </ul>
                 <ul className="navbar-nav">
