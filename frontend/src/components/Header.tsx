@@ -14,7 +14,7 @@ const Header = () => {
     return (
         <nav className="navbar navbar-expand-lg navbar-light custom-gradient px-3">
             <a className="navbar-brand" href="/">
-                <img src="../../public/supsi-logo.png" alt="SUPSI logo" />
+                <img src="/supsi-logo.png" alt="SUPSI logo" />
             </a>
             
             <button className="navbar-toggler" type="button" onClick={toggleMenu} aria-expanded={isOpen ? "true" : "false"} aria-label="Toggle navigation">

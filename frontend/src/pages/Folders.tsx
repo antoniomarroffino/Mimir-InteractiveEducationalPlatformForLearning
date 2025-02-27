@@ -25,7 +25,6 @@ const Folders = () => {
                 </div>
             </header>
 
-            {/* Se c'è un errore, mostriamo il messaggio, altrimenti la lista delle cartelle */}
             <section className="py-5 shadow-up">
                 <div className="container">
                     {error ? (
@@ -35,7 +34,7 @@ const Folders = () => {
                             <div className="col-md-8">
                                 <div className="d-flex justify-content-between mb-4">
                                     <div className="d-flex align-items-center gap-3 text-start">
-                                        <img className="custom-icon" src="../../public/milestone-icon.png" alt="Folder Icon"/>
+                                        <img className="custom-icon" src="/milestone-icon.png" alt="Folder Icon"/>
                                         <h3 className="text-primary text-start">Le tue Cartelle</h3>
                                     </div>
                                     <button onClick={handleAddFolder} className="btn btn-primary px-4 py-2">
@@ -61,19 +60,7 @@ const Folders = () => {
                                                     <div className="mt-3">
                                                         <div className="bg-white p-3 rounded">
                                                             <h6 className="text-primary">Sotto-cartella</h6>
-                                                            {folder.subFolders?.length ? (
-                                                                <ul className="list-group list-group-flush">
-                                                                    {folder.subFolders.map(sub => (
-                                                                        <li key={sub.id} className="list-group-item">
-                                                                            {sub.name}
-                                                                        </li>
-                                                                    ))}
-                                                                </ul>
-                                                            ) : (
-                                                                <p className="text-muted mb-0">
-                                                                    Nessuna sotto-cartella presente
-                                                                </p>
-                                                            )}
+
                                                             <button className="btn btn-outline-primary mt-3">
                                                                 <i className="fas fa-plus me-2"></i>
                                                                 Aggiungi sotto-cartella

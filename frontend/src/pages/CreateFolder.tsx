@@ -55,10 +55,10 @@ const CreateFolder = () => {
          */
 
         try {
-            console.log('Invio richiesta POST a:', `${import.meta.env.VITE_BACKEND_URL}/milestones`);
+            console.log('Invio richiesta POST a:', `${import.meta.env.VITE_BACKEND_URL}/folders`);
             console.log('Payload:', { name });
 
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/milestones`, {
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/folders`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -76,7 +76,7 @@ const CreateFolder = () => {
             console.log('Risposta del server:', data);
 
             setLoading(false);
-            navigate('/milestones');
+            navigate('/folders');
         } catch (error) {
             console.error('Errore dettagliato:', error);
             setLoading(false);
@@ -84,16 +84,16 @@ const CreateFolder = () => {
     };
     return (
         <div className="container my-5">
-            <h1 className="text-center text-4xl font-bold mb-5">Crea una Nuova Milestone</h1>
+            <h1 className="text-center text-4xl font-bold mb-5">Crea una Nuova Folder</h1>
 
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
-                    <label htmlFor="milestoneName" className="h5">Nome della Milestone</label>
+                    <label htmlFor="folderName" className="h5">Nome della Folder</label>
                     <input
                         type="text"
-                        id="milestoneName"
+                        id="folderName"
                         className="form-control"
-                        placeholder="Inserisci il nome della milestone"
+                        placeholder="Inserisci il nome della folder"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         required
@@ -106,7 +106,7 @@ const CreateFolder = () => {
                         className="btn btn-success px-4 py-2"
                         disabled={loading}
                     >
-                        {loading ? 'Creando...' : 'Crea Milestone'}
+                        {loading ? 'Creando...' : 'Crea Folder'}
                     </button>
                 </div>
             </form>

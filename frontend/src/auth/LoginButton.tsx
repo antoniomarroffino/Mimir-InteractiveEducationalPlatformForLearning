@@ -15,7 +15,7 @@ const LoginButton: React.FC = () => {
         <><a onClick={handleLogin} className="text-decoration-none">
             <img
                 className="custom-icon mb-1"
-                src="../../public/login-icon.png"
+                src="/login-icon.png"
                 alt="Login Icon"
                 style={{cursor: 'pointer'}}/>
         </a><a className="nav-link p-0" onClick={handleLogin}>Login</a></>
