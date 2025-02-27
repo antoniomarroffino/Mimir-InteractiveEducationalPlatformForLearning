@@ -1,4 +1,4 @@
-package ch.supsi.model;
+package ch.supsi.model.api;
 
 import io.quarkus.mongodb.panache.PanacheMongoEntity;
 import io.quarkus.mongodb.panache.common.MongoEntity;

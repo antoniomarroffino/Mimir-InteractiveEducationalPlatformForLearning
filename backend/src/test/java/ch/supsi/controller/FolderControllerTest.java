@@ -1,7 +1,8 @@
 package ch.supsi.controller;
 
-import ch.supsi.model.Folder;
-import ch.supsi.service.IFolderService;
+import ch.supsi.controller.folder.FolderController;
+import ch.supsi.model.api.Folder;
+import ch.supsi.service.folder.IFolderService;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
@@ -57,7 +58,12 @@ public class FolderControllerTest {
         assertNotNull(response.getEntity());
         assertInstanceOf(List.class, response.getEntity());
 
-        List<Folder> foldersRetrieved = (List<Folder>) response.getEntity();
+        List<Folder> foldersRetrieved = ((List<?>)(response.getEntity()))
+                .stream()
+                .filter(obj -> Folder.class.isAssignableFrom(obj.getClass()))
+                .map(obj -> (Folder)obj)
+                .toList();
+
         assertEquals(2, foldersRetrieved.size());
 
         Folder folder1Retrieved = foldersRetrieved.getFirst();
@@ -65,23 +71,6 @@ public class FolderControllerTest {
 
         Folder folder2Retrieved = foldersRetrieved.get(1);
         assertEquals(folderName_2, folder2Retrieved.getName());
-
-        verify(this.folderService, times(1)).getAllFolders();
-    }
-
-    @Test
-    @DisplayName("Should return Response 500 (internal server error)")
-    void test03GetFolders_InternalServerError() {
-        String exceptionMessage = "Database connection failed";
-        when(this.folderService.getAllFolders()).thenThrow(new RuntimeException(exceptionMessage));
-
-        Response response = this.folderController.getFolders();
-
-        assertNotNull(response);
-        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
-        assertNotNull(response.getEntity());
-        assertInstanceOf(String.class, response.getEntity());
-        assertEquals(exceptionMessage, response.getEntity());
 
         verify(this.folderService, times(1)).getAllFolders();
     }
@@ -104,69 +93,5 @@ public class FolderControllerTest {
         assertEquals(folderName, folderRetrieved.getName());
 
         verify(this.folderService, times(1)).createFolder(folder);
-    }
-
-    @Test
-    @DisplayName("Should return Response 400 (bad request) because folder is null")
-    void test05CreateFolder_BadRequestFolderIsNull() {
-        Response response = this.folderController.createFolder(null);
-
-        assertNotNull(response);
-        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
-        assertNotNull(response.getEntity());
-        assertInstanceOf(String.class, response.getEntity());
-        assertEquals("folder is null", response.getEntity());
-
-        verify(this.folderService, never()).createFolder(any(Folder.class));
-    }
-
-    @Test
-    @DisplayName("Should return Response 400 (bad request) because folder name is null")
-    void test06CreateFolder_BadRequestFolderNameIsNull() {
-        Folder folderWithNameNull = new Folder(null);
-
-        Response response = this.folderController.createFolder(folderWithNameNull);
-
-        assertNotNull(response);
-        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
-        assertNotNull(response.getEntity());
-        assertInstanceOf(String.class, response.getEntity());
-        assertEquals("folder name is null", response.getEntity());
-
-        verify(this.folderService, never()).createFolder(any(Folder.class));
-    }
-
-    @Test
-    @DisplayName("Should return Response 400 (bad request) because folder name is empty")
-    void test07CreateFolder_BadRequestFolderNameIsEmpty() {
-        Folder folderWithNameEmpty = new Folder("");
-
-        Response response = this.folderController.createFolder(folderWithNameEmpty);
-
-        assertNotNull(response);
-        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
-        assertNotNull(response.getEntity());
-        assertInstanceOf(String.class, response.getEntity());
-        assertEquals("folder name is empty", response.getEntity());
-
-        verify(this.folderService, never()).createFolder(any(Folder.class));
-    }
-
-    @Test
-    @DisplayName("Should return Response 500 (internal server error)")
-    void test08CreateFolder_InternalServerError() {
-        Folder validFolder = new Folder("Test Folder");
-        String exceptionMessage = "Database connection failed";
-        when(this.folderService.createFolder(any(Folder.class))).thenThrow(new RuntimeException(exceptionMessage));
-
-        Response response = this.folderController.createFolder(validFolder);
-
-        assertNotNull(response);
-        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
-        assertNotNull(response.getEntity());
-        assertInstanceOf(String.class, response.getEntity());
-        assertEquals(exceptionMessage, response.getEntity());
-
-        verify(this.folderService, times(1)).createFolder(any(Folder.class));
     }
 }

@@ -1,6 +1,7 @@
 package ch.supsi.service;
 
-import ch.supsi.model.Folder;
+import ch.supsi.model.api.Folder;
+import ch.supsi.service.folder.FolderService;
 import ch.supsi.service.testContainersResource.MongoTestResource;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;

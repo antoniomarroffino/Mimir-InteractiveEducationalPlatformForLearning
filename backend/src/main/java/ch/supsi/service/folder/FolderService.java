@@ -1,6 +1,6 @@
-package ch.supsi.service;
+package ch.supsi.service.folder;
 
-import ch.supsi.model.Folder;
+import ch.supsi.model.api.Folder;
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.List;

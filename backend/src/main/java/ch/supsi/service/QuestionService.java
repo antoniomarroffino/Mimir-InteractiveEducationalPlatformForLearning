@@ -1,6 +1,6 @@
 package ch.supsi.service;
 
-import ch.supsi.model.Question;
+import ch.supsi.model.api.Question;
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.List;
