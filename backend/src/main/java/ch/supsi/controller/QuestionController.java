@@ -1,6 +1,6 @@
 package ch.supsi.controller;
 
-import ch.supsi.model.Question;
+import ch.supsi.model.api.Question;
 import ch.supsi.service.QuestionService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
