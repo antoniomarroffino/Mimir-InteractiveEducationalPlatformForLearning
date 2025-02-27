@@ -13,12 +13,21 @@ structure:
   rules:
     - if: $CI_COMMIT_BRANCH == "dev"
 
+services:
+  - name: docker:dind
+    alias: dockerhost
+
+variables:
+  DOCKER_HOST: tcp://dockerhost:2375/
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
+
 build_backend:
   stage: build_backend
   image: maven:3.9.6-eclipse-temurin-21
   script:
     - cd backend
-    - mvn clean package
+    - mvn clean package -DskipTests=false
   artifacts:
     paths:
       - backend/target/*.jar
