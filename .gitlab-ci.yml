@@ -33,7 +33,7 @@ build_backend:
     entrypoint: [""]
   script:
     - cd backend
-    #- mvn clean verify -Pnative -Dquarkus.oidc.enabled=false  #per test con oidc sistemare e aggiungere variabili ambiente per tenantID e clientID
+    - chmod 0755 ./mvnw
     - ./mvnw clean verify -Pnative
   artifacts:
     paths:
