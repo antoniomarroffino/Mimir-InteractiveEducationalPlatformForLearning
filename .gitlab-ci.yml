@@ -30,6 +30,7 @@ build_backend:
     AZURE_CLIENT_ID: "527ea26f-be1b-428f-8d09-2849729fe4fe"
   image: quay.io/quarkus/ubi-quarkus-mandrel-builder-image:jdk-21
   script:
+    - mkdir -p /project
     - cd backend
     #- mvn clean verify -Pnative -Dquarkus.oidc.enabled=false  #per test con oidc sistemare e aggiungere variabili ambiente per tenantID e clientID
     - ./mvnw clean verify -Pnative
