@@ -28,9 +28,10 @@ build_backend:
   variables:
     AZURE_TENANT_ID: "3cadd1a7-ce2c-43b6-8986-2f1b472fab3b"  # SOSTITUIRE LE VARIABILI HARD-CODED E METTERLE SU GITLAB -> criptazione. Sol: QUARKUS_OIDC_TENANT_ID: "$OIDC_TENANT_ID"
     AZURE_CLIENT_ID: "527ea26f-be1b-428f-8d09-2849729fe4fe"
-  image: quay.io/quarkus/ubi-quarkus-mandrel-builder-image:jdk-21
+  image:
+    name: quay.io/quarkus/ubi-quarkus-mandrel-builder-image:jdk-21
+    entrypoint: [""]
   script:
-    - mkdir -p /project
     - cd backend
     #- mvn clean verify -Pnative -Dquarkus.oidc.enabled=false  #per test con oidc sistemare e aggiungere variabili ambiente per tenantID e clientID
     - ./mvnw clean verify -Pnative
