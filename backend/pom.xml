@@ -163,6 +163,7 @@
             <properties>
                 <skipITs>false</skipITs>
                 <quarkus.native.enabled>true</quarkus.native.enabled>
+                <quarkus.package.type>native</quarkus.package.type>
             </properties>
         </profile>
     </profiles>

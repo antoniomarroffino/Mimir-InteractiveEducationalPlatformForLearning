@@ -2,7 +2,6 @@ stages:
   - structure
   - build_backend
   - build_frontend
-  - test
   #- deploy
 
 structure:
@@ -12,6 +11,7 @@ structure:
     - '[ -d frontend ] || exit 1'
   rules:
     - if: $CI_COMMIT_BRANCH == "dev"
+    - if: $CI_COMMIT_BRANCH == "spike/51-native-image-quarkus"
 
 services:
   - name: docker:dind
@@ -25,15 +25,18 @@ variables:
 
 build_backend:
   stage: build_backend
-  image: maven:3.9.6-eclipse-temurin-21
+  #image: maven:3.9.6-eclipse-temurin-21
   script:
     - cd backend
-    - mvn clean verify -Dquarkus.oidc.enabled=false  #per test con oidc sistemare e aggiungere variabili ambiente per tenantID e clientID
+    #- mvn clean verify -Dquarkus.oidc.enabled=false  #per test con oidc sistemare e aggiungere variabili ambiente per tenantID e clientID
+    - ./mvnw clean verify -Pnative -Dquarkus.native.container-build=true -Dquarkus.oidc.enabled=false
   artifacts:
     paths:
-      - backend/target/*.jar
+      - backend/target/*-runner
   rules:
     - if: $CI_COMMIT_BRANCH == "dev"
+    - if: $CI_COMMIT_BRANCH == "spike/51-native-image-quarkus"
+
 
 build_frontend:
   stage: build_frontend
@@ -47,6 +50,7 @@ build_frontend:
       - frontend/dist/
   rules:
     - if: $CI_COMMIT_BRANCH == "dev"
+    - if: $CI_COMMIT_BRANCH == "spike/51-native-image-quarkus"
 
 #deploy:
 #  stage: deploy
