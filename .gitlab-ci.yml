@@ -12,7 +12,7 @@ structure:
     - '[ -d frontend ] || exit 1'
   rules:
     - if: $CI_COMMIT_BRANCH == "dev"
-    - if: $CI_COMMIT_BRANCH == "50-fix-CICD"
+    - if: $CI_COMMIT_BRANCH == "bug/50-fix-CICD"
 
 services:
   - name: docker:dind
@@ -36,7 +36,7 @@ build_backend:
       - backend/target/*.jar
   rules:
     - if: $CI_COMMIT_BRANCH == "dev"
-    - if: $CI_COMMIT_BRANCH == "50-fix-CICD"
+    - if: $CI_COMMIT_BRANCH == "bug/50-fix-CICD"
 
 build_frontend:
   stage: build_frontend
@@ -50,7 +50,7 @@ build_frontend:
       - frontend/dist/
   rules:
     - if: $CI_COMMIT_BRANCH == "dev"
-    - if: $CI_COMMIT_BRANCH == "50-fix-CICD"
+    - if: $CI_COMMIT_BRANCH == "bug/50-fix-CICD"
 
 #deploy:
 #  stage: deploy
