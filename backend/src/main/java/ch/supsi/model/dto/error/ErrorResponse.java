@@ -20,4 +20,16 @@ public class ErrorResponse {
         this.details = details;
         this.timestamp = Instant.now();
     }
+
+    public String getMessage() {
+        return this.message;
+    }
+
+    public Instant getTimestamp() {
+        return this.timestamp;
+    }
+
+    public List<String> getDetails() {
+        return this.details;
+    }
 }

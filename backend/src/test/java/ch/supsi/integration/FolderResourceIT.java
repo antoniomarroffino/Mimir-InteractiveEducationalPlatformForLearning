@@ -14,7 +14,6 @@ import static org.hamcrest.Matchers.*;
 @QuarkusTest
 @QuarkusTestResource(MongoTestResource.class)
 @Tag("integration")
-@TestMethodOrder(MethodOrderer.MethodName.class)
 public class FolderResourceIT {
 
     @BeforeEach
@@ -25,7 +24,7 @@ public class FolderResourceIT {
 
     @Test
     @DisplayName("Should return Response 200 (ok) with empty folders list")
-    void test01GetFolders_Empty() {
+    void testGetFolders_Empty() {
         given()
                 .when().get("/folders")
                 .then()
@@ -35,7 +34,7 @@ public class FolderResourceIT {
 
     @Test
     @DisplayName("Should return Response 200 (ok) with two folders into list")
-    void tes02GetFolders() {
+    void tesGetFolders() {
         String folderName_1 = "Test Folder1";
         String folderName_2 = "Test Folder2";
 
@@ -59,7 +58,7 @@ public class FolderResourceIT {
 
     @Test
     @DisplayName("Should return Response 200 (ok) persist one folder passing as argument and return it")
-    void test03CreateFolder() {
+    void testCreateFolder() {
         String folderName = "Test Folder";
 
         Folder folder = new Folder(folderName);
@@ -77,7 +76,7 @@ public class FolderResourceIT {
 
     @Test
     @DisplayName("Should return Response 400 (bad request) folder name is null")
-    void test04CreateFolder_FolderNameIsNull() {
+    void testCreateFolder_FolderNameIsNull() {
         Folder folderWithEmptyName = new Folder();
         given()
                 .contentType(ContentType.JSON)
@@ -91,7 +90,7 @@ public class FolderResourceIT {
 
     @Test
     @DisplayName("Should return Response 400 (bad request) folder is empty")
-    void test05CreateFolder_FolderNameIsEmpty() {
+    void testCreateFolder_FolderNameIsEmpty() {
         Folder folderWithEmptyName = new Folder("");
         given()
                 .contentType(ContentType.JSON)
