@@ -35,7 +35,6 @@ build_backend:
       user: root
   script:
     - cd backend
-    - chmod 0755 ./mvnw
     - ./mvnw clean verify -Pnative
   artifacts:
     paths:
