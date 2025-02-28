@@ -8,7 +8,6 @@ COPY --chown=quarkus:quarkus pom.xml .
 COPY src ./src
 RUN ./mvnw clean package  \
     -Pnative \
-    -Dquarkus.native.container-build=true \
     -DskipTests
 
 # Stage 2: Create minimal runtime image

@@ -164,8 +164,6 @@
                 <skipITs>false</skipITs>
                 <quarkus.native.enabled>true</quarkus.native.enabled>
                 <quarkus.package.type>native</quarkus.package.type>
-                <quarkus.native.container-build>true</quarkus.native.container-build>
-                <quarkus.native.enable-vm-inspection>false</quarkus.native.enable-vm-inspection>
             </properties>
         </profile>
     </profiles>
