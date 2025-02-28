@@ -23,14 +23,13 @@ variables:
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: ""
   TESTCONTAINERS_HOST_OVERRIDE: dockerhost
-  TESTCONTAINERS_RYUK_DISABLED: "true"
 
 build_backend:
   stage: build_backend
   image: maven:3.9.6-eclipse-temurin-21
   script:
     - cd backend
-    - mvn clean package -Dquarkus.oidc.enabled=false
+    - mvn clean package -Dquarkus.oidc.enabled=false  #per test con oidc sistemare e aggiungere variabili ambiente per tenantID e clientID
   artifacts:
     paths:
       - backend/target/*.jar

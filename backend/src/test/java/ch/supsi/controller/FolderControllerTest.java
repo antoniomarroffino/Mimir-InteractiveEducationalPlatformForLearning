@@ -77,7 +77,7 @@ public class FolderControllerTest {
 
     @Test
     @DisplayName("Should return Response 201 (created) one folder")
-    void test04CreateFolder() {
+    void test03CreateFolder() {
         String folderName = "Test Folder";
         Folder folder = new Folder(folderName);
         when(this.folderService.createFolder(folder)).thenReturn(folder);
