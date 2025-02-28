@@ -12,6 +12,7 @@ structure:
     - '[ -d frontend ] || exit 1'
   rules:
     - if: $CI_COMMIT_BRANCH == "dev"
+    - if: $CI_COMMIT_BRANCH == "50-fix-CICD"
 
 services:
   - name: docker:dind
