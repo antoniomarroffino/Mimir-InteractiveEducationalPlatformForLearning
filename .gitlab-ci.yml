@@ -28,7 +28,7 @@ build_backend:
   image: maven:3.9.6-eclipse-temurin-21
   script:
     - cd backend
-    - mvn clean verify -Pnative -Dquarkus.native.container-build=true -Dquarkus.oidc.enabled=false  #per test con oidc sistemare e aggiungere variabili ambiente per tenantID e clientID
+    - mvn clean verify -Pnative -Dquarkus.oidc.enabled=false  #per test con oidc sistemare e aggiungere variabili ambiente per tenantID e clientID
     #- ./mvnw clean verify -Pnative -Dquarkus.native.container-build=true -Dquarkus.oidc.enabled=false
   artifacts:
     paths:
