@@ -21,18 +21,21 @@ variables:
   DOCKER_HOST: tcp://dockerhost:2375/
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: ""
+  TESTCONTAINERS_HOST_OVERRIDE: dockerhost
+  TESTCONTAINERS_RYUK_DISABLED: "true"
 
 build_backend:
   stage: build_backend
   image: maven:3.9.6-eclipse-temurin-21
   script:
     - cd backend
-    - mvn clean package -DskipTests=false
+    - mvn clean package -Dquarkus.oidc.enabled=false
   artifacts:
     paths:
       - backend/target/*.jar
   rules:
     - if: $CI_COMMIT_BRANCH == "dev"
+    - if: $CI_COMMIT_BRANCH == "50-fix-CICD"
 
 build_frontend:
   stage: build_frontend
@@ -46,6 +49,7 @@ build_frontend:
       - frontend/dist/
   rules:
     - if: $CI_COMMIT_BRANCH == "dev"
+    - if: $CI_COMMIT_BRANCH == "50-fix-CICD"
 
 #deploy:
 #  stage: deploy

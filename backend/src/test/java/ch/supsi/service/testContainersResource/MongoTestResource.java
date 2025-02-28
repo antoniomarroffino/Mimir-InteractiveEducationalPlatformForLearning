@@ -15,9 +15,10 @@ public class MongoTestResource implements QuarkusTestResourceLifecycleManager {
     @Override
     public Map<String, String> start() {
         mongoDBContainer.start();
+        String mongoHost = System.getenv().getOrDefault("TESTCONTAINERS_HOST_OVERRIDE", mongoDBContainer.getHost());
         return Collections.singletonMap(
                 "quarkus.mongodb.connection-string",
-                "mongodb://" + mongoDBContainer.getHost() + ":" + mongoDBContainer.getFirstMappedPort()
+                "mongodb://" + mongoHost + ":" + mongoDBContainer.getFirstMappedPort()
         );
     }
 
