@@ -4,8 +4,6 @@ import { useEffect, useState, createContext, ReactNode } from "react";
 export type Folder = {
     id: string;
     name: string;
-    description?: string;
-    subFolders?: Folder[];
 };
 
 type FoldersContextType = {
