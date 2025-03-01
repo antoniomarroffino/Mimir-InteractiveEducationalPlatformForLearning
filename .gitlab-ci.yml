@@ -11,7 +11,6 @@ structure:
     - '[ -d frontend ] || exit 1'
   rules:
     - if: $CI_COMMIT_BRANCH == "dev"
-    - if: $CI_COMMIT_BRANCH == "spike/51-native-image-quarkus"
 
 services:
   - name: docker:dind
@@ -39,7 +38,6 @@ build_backend:
       - backend/target/*-runner
   rules:
     - if: $CI_COMMIT_BRANCH == "dev"
-    - if: $CI_COMMIT_BRANCH == "spike/51-native-image-quarkus"
 
 
 build_frontend:
@@ -54,7 +52,6 @@ build_frontend:
       - frontend/dist/
   rules:
     - if: $CI_COMMIT_BRANCH == "dev"
-    - if: $CI_COMMIT_BRANCH == "spike/51-native-image-quarkus"
 
 #deploy:
 #  stage: deploy
