@@ -3,9 +3,6 @@ package ch.supsi.exception.mapper;
 import ch.supsi.exception.api.ApiException;
 import ch.supsi.model.dto.error.ErrorResponse;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.ws.rs.BadRequestException;
-import jakarta.ws.rs.InternalServerErrorException;
-import jakarta.ws.rs.NotFoundException;
 import org.jboss.resteasy.reactive.RestResponse;
 import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
 

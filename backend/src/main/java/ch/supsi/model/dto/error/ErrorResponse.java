@@ -1,9 +1,12 @@
 package ch.supsi.model.dto.error;
 
+import io.quarkus.runtime.annotations.RegisterForReflection;
+
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
+@RegisterForReflection
 public class ErrorResponse {
     private final String message;
     private final List<String> details;
