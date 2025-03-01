@@ -1,4 +1,34 @@
+import {useMsal} from "@azure/msal-react";
+import {useState} from "react";
+import {loginRequest} from "../auth/authConfig.ts";
+
 const Home = () => {
+    const { instance, accounts } = useMsal();
+    const [message, setMessage] = useState<string>('');
+
+    const callProtectedApi = async () => {
+        if (accounts.length === 0) return;
+
+        try {
+            const token = await instance.acquireTokenSilent({
+                ...loginRequest,
+                account: accounts[0]
+            });
+
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/secure/message`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token.accessToken}`
+                }
+            });
+
+            setMessage(await response.text());
+        } catch (error) {
+            console.error(error);
+            setMessage('Error accessing protected API');
+        }
+    };
+
     return (
         <div className="container-fluid bg-light min-vh-100 p-0">
             <header className="bg-info-custom text-white py-5">
@@ -30,6 +60,10 @@ const Home = () => {
                         </div>
 
                     </div>
+                </div>
+                <div>
+                    <button onClick={callProtectedApi}>Call Protected API</button>
+                    <p>{message}</p>
                 </div>
             </section>
 
