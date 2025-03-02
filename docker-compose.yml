@@ -13,7 +13,7 @@ services:
 
   nginx:
     build: ./frontend
-    image: nginx:latest
+    image: nginx:1.27.4
     ports:
       - "80:80"
     depends_on:
@@ -22,7 +22,7 @@ services:
      - app-network
 
   mongo:
-    image: mongo:latest
+    image: mongo:8.0
     container_name: mongoProd
     ports:
       - "27017:27017"

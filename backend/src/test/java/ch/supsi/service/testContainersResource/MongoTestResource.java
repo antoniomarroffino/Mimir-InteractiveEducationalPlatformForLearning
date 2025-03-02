@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class MongoTestResource implements QuarkusTestResourceLifecycleManager {
 
-    static MongoDBContainer mongoDBContainer = new MongoDBContainer(DockerImageName.parse("mongo:latest"))
+    static MongoDBContainer mongoDBContainer = new MongoDBContainer(DockerImageName.parse("mongo:8.0"))
             .withExposedPorts(27017);
 
     @Override
