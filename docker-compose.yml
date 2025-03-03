@@ -1,40 +1,49 @@
 version: '3.8'
 services:
   backend:
-    build: ./backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     env_file:
       - backend/.env
-    ports:
-      - "8080:8080"
+    expose:
+      - "8080"
     depends_on:
       - mongo
     networks:
-      - app-network
+      - internal
 
   nginx:
-    build: ./frontend
-    image: nginx:1.27.4
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: nginx:1.27.4-alpine
     ports:
       - "80:80"
     depends_on:
       - backend
     networks:
-     - app-network
+      - external
+      - internal
 
   mongo:
-    image: mongo:8.0
+    image: mongo:8.0.4
     container_name: mongoProd
-    ports:
-      - "27017:27017"
+    expose:
+      - "27017"
     volumes:
       - mongo_data:/data/db
     networks:
-      - app-network
+      - internal
 
 volumes:
   mongo_data:
     driver: local
 
 networks:
-  app-network:
+  internal:
     driver: bridge
+    internal: true
+  external:
+    driver: bridge
+    internal: false
