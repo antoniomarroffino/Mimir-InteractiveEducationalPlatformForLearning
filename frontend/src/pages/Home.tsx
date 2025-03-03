@@ -1,67 +1,67 @@
 const Home = () => {
     return (
-        <div className="container-fluid bg-light min-vh-100 p-0">
-            <header className="bg-info-custom text-white py-5">
-                <div className="container">
-                    <h1 className="display-4">Benvenuto alla Home!</h1>
-                    <p className="lead">
-                        Nome Cognome
-                    </p>
+        <div className="min-h-screen bg-base-200">
+            {/* Hero Section con gradiente */}
+            <div className="hero py-16 bg-gradient-to-r from-primary to-secondary">
+                <div className="hero-content text-center text-neutral-content">
+                    <div>
+                        <h1 className="text-5xl font-bold mb-2">Benvenuto alla Home!</h1>
+                        <p className="text-xl">Nome Cognome</p>
+                    </div>
                 </div>
-            </header>
+            </div>
 
-            <section className="text-white py-5 shadow-up">
-                <div className="container text-center">
-                    <h2 className="text-primary mb-4">Partecipa a un quiz</h2>
-                    <div className="row justify-content-center">
-                        <div className="col-md-4">
-                            <div className="card shadow-sm bg-primary bg-opacity-50">
-                                <div className="card-body">
-                                    <img className="custom-icon" src="/quiz-icon.png" alt="Quiz Icon"/>
-                                    <h5 className="card-title text-white">Inserisci il codice della sessione</h5>
-                                    <div className="d-flex gap-2">
-                                        <input type="text" className="form-control" placeholder="Inserisci il codice"/>
-                                        <button className="btn btn-primary">
-                                            Conferma
-                                        </button>
-                                    </div>
+            {/* Quiz Section */}
+            <section className="py-16 relative">
+                {/* Ombra superiore */}
+                <div className="absolute top-0 left-0 right-0 h-4 bg-gradient-to-b from-black/10"></div>
+
+                <div className="container mx-auto px-4">
+                    <h2 className="text-3xl font-bold text-primary text-center mb-8">
+                        Partecipa a un quiz
+                    </h2>
+
+                    <div className="flex justify-center">
+                        <div className="card w-96 bg-primary/20 shadow-xl backdrop-blur-sm">
+                            <div className="card-body items-center text-center">
+                                <img
+                                    src="/quiz-icon.png"
+                                    alt="Quiz Icon"
+                                    className="w-16 h-16 mb-4"
+                                />
+                                <h3 className="card-title text-white">
+                                    Inserisci il codice della sessione
+                                </h3>
+                                <div className="join w-full mt-4">
+                                    <input
+                                        type="text"
+                                        placeholder="Inserisci il codice"
+                                        className="input input-bordered join-item flex-1"
+                                    />
+                                    <button className="btn btn-primary join-item">
+                                        Conferma
+                                    </button>
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </section>
 
+            {/* Review Section */}
+            <section className="py-16 bg-gradient-to-r from-primary to-secondary text-white">
+                <div className="container mx-auto px-4">
+                    <h2 className="text-3xl font-bold text-center mb-8">Quiz review</h2>
 
-            <section className="py-5 bg-info-custom text-white">
-                <div className="container text-center">
-                    <h2 className="mb-4">Quiz review</h2>
-                    <div className="row">
-                        <div className="col-md-4">
-                            <div className="card bg-light shadow-sm">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {[1, 2, 3].map((item) => (
+                            <div key={item} className="card bg-base-100 shadow-xl hover:scale-105 transition-transform duration-300">
                                 <div className="card-body">
-                                    <p className="card-text">"Lorem ipsum"</p>
-                                    <footer className="blockquote-footer">Lorem ipsum</footer>
+                                    <p className="text-base-content">"Lorem ipsum"</p>
+                                    <div className="text-sm opacity-70 mt-2">Lorem ipsum</div>
                                 </div>
                             </div>
-                        </div>
-                        <div className="col-md-4">
-                            <div className="card bg-light shadow-sm">
-                                <div className="card-body">
-                                    <p className="card-text">"Lorem ipsum"</p>
-                                    <footer className="blockquote-footer">Lorem ipsum</footer>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-4">
-                            <div className="card bg-light shadow-sm">
-                                <div className="card-body">
-                                    <p className="card-text">"Lorem ipsum"</p>
-                                    <footer className="blockquote-footer">Lorem ipsum</footer>
-                                </div>
-                            </div>
-                        </div>
+                        ))}
                     </div>
                 </div>
             </section>

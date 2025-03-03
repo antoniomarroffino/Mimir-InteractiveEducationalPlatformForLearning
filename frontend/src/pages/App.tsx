@@ -6,6 +6,8 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import CreateFolder from "./CreateFolder";
 import { FolderProvider } from "../contexts/FoldersContext";
+import '../App.css';
+
 
 const queryClient = new QueryClient();
 

@@ -9,7 +9,7 @@ const FolderContext = createContext<FolderContextType | undefined>(undefined);
 
 export const FolderProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const config = new Configuration({
-        basePath: 'http://localhost:8080'
+        basePath: `${import.meta.env.VITE_BACKEND_URL}`
     });
 
     const folderApi = new FolderControllerApi(config);
