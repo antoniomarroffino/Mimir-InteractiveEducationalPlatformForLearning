@@ -1,6 +1,6 @@
 {
   "inputSpec": "http://localhost:8080/q/openapi",
-  "generatorName": "typescript-fetch",
+  "generatorName": "typescript-axios",
   "outputDir": "src/api/generated",
   "typeMappings": {
     "ObjectId": "string"
@@ -12,12 +12,13 @@
   "additionalProperties": {
     "supportsES6": true,
     "withInterfaces": true,
-    "useSingleRequestParameter": true,
+    "useSingleRequestParameter": false,
     "stringEnums": true,
     "withoutRuntimeChecks": true,
     "npmName": "api-client",
     "npmVersion": "1.0.0",
     "apiPackage": "api",
-    "modelPackage": "models"
+    "modelPackage": "models",
+    "withSeparateModelsAndApi": true
   }
 }

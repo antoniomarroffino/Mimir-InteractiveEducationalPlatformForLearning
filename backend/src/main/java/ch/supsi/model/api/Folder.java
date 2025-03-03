@@ -12,7 +12,7 @@ import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 @MongoEntity(collection = "folders")
-@Schema(description = "Folder model")
+@Schema(description = "Folder model", name = "Folder")
 public class Folder extends PanacheMongoEntity {
 
     @JsonSerialize(using = ToStringSerializer.class)
