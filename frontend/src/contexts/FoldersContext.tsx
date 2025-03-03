@@ -1,44 +1,30 @@
-import { useEffect, useState, createContext, ReactNode } from "react";
+import { createContext, useContext } from 'react';
+import { FolderControllerApi, Configuration } from '../api/generated';
 
+interface FolderContextType {
+    folderApi: FolderControllerApi;
+}
 
-export type Folder = {
-    id: string;
-    name: string;
-};
+const FolderContext = createContext<FolderContextType | undefined>(undefined);
 
-type FoldersContextType = {
-    folders: Folder[];
-    error: string | null;
-    fetchFolders: () => Promise<void>;
-};
+export const FolderProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const config = new Configuration({
+        basePath: 'http://localhost:8080'
+    });
 
-export const FoldersContext = createContext<FoldersContextType | undefined>(undefined);
-
-export const FoldersProvider = ({ children }: { children: ReactNode }) => {
-    const [folders, setFolders] = useState<Folder[]>([]);
-    const [error, setError] = useState<string | null>(null);
-
-    const fetchFolders = async () => {
-        try {
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/folders`);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const data = await response.json();
-            setFolders(data);
-        } catch (err) {
-            console.error('Errore nel caricamento delle folder:', err);
-            setError('Errore nel caricamento delle folder');
-        }
-    };
-
-    useEffect(() => {
-        fetchFolders();
-    }, []);
+    const folderApi = new FolderControllerApi(config);
 
     return (
-        <FoldersContext.Provider value={{ folders, error, fetchFolders }}>
+        <FolderContext.Provider value={{ folderApi }}>
             {children}
-        </FoldersContext.Provider>
+        </FolderContext.Provider>
     );
+};
+
+export const useFolderContext = () => {
+    const context = useContext(FolderContext);
+    if (!context) {
+        throw new Error('useFolderContext must be used within a FolderProvider');
+    }
+    return context;
 };

@@ -1,24 +1,29 @@
 import { Routes, Route } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import Home from './Home';
-import Folders from './Folders.tsx';
-import Header from "../components/Header.tsx";
-import Footer from "../components/Footer.tsx";
-import CreateFolder from "./CreateFolder.tsx";
-import {FoldersProvider} from "../contexts/FoldersContext.tsx";
+import Folders from './Folders';
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import CreateFolder from "./CreateFolder";
+import { FolderProvider } from "../contexts/FoldersContext";
+
+const queryClient = new QueryClient();
 
 const App = () => {
     return (
-        <div>
-        <FoldersProvider>
-            <Header />
-            <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/folders" element={<Folders />} />
-                <Route path="/create-folder" element={<CreateFolder />} />
-            </Routes>
-            <Footer />
-        </FoldersProvider>
-        </div>
+        <QueryClientProvider client={queryClient}>
+            <FolderProvider>
+                <div>
+                    <Header />
+                    <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/folders" element={<Folders />} />
+                        <Route path="/create-folder" element={<CreateFolder />} />
+                    </Routes>
+                    <Footer />
+                </div>
+            </FolderProvider>
+        </QueryClientProvider>
     );
 };
 

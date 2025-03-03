@@ -31,7 +31,7 @@ export const FolderControllerApiAxiosParamCreator = function (configuration?: Co
     return {
         /**
          * 
-         * @summary Get Folders
+         * @summary Get all folders
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -61,7 +61,7 @@ export const FolderControllerApiAxiosParamCreator = function (configuration?: Co
         },
         /**
          * 
-         * @summary Create Folder
+         * @summary Create folder
          * @param {Folder} folder 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -107,11 +107,11 @@ export const FolderControllerApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
-         * @summary Get Folders
+         * @summary Get all folders
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiFoldersGet(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async apiFoldersGet(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<Folder>>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.apiFoldersGet(options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['FolderControllerApi.apiFoldersGet']?.[localVarOperationServerIndex]?.url;
@@ -119,12 +119,12 @@ export const FolderControllerApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @summary Create Folder
+         * @summary Create folder
          * @param {Folder} folder 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiFoldersPost(folder: Folder, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async apiFoldersPost(folder: Folder, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Folder>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.apiFoldersPost(folder, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['FolderControllerApi.apiFoldersPost']?.[localVarOperationServerIndex]?.url;
@@ -142,21 +142,21 @@ export const FolderControllerApiFactory = function (configuration?: Configuratio
     return {
         /**
          * 
-         * @summary Get Folders
+         * @summary Get all folders
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiFoldersGet(options?: RawAxiosRequestConfig): AxiosPromise<void> {
+        apiFoldersGet(options?: RawAxiosRequestConfig): AxiosPromise<Array<Folder>> {
             return localVarFp.apiFoldersGet(options).then((request) => request(axios, basePath));
         },
         /**
          * 
-         * @summary Create Folder
+         * @summary Create folder
          * @param {Folder} folder 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiFoldersPost(folder: Folder, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+        apiFoldersPost(folder: Folder, options?: RawAxiosRequestConfig): AxiosPromise<Folder> {
             return localVarFp.apiFoldersPost(folder, options).then((request) => request(axios, basePath));
         },
     };
@@ -170,22 +170,22 @@ export const FolderControllerApiFactory = function (configuration?: Configuratio
 export interface FolderControllerApiInterface {
     /**
      * 
-     * @summary Get Folders
+     * @summary Get all folders
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof FolderControllerApiInterface
      */
-    apiFoldersGet(options?: RawAxiosRequestConfig): AxiosPromise<void>;
+    apiFoldersGet(options?: RawAxiosRequestConfig): AxiosPromise<Array<Folder>>;
 
     /**
      * 
-     * @summary Create Folder
+     * @summary Create folder
      * @param {Folder} folder 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof FolderControllerApiInterface
      */
-    apiFoldersPost(folder: Folder, options?: RawAxiosRequestConfig): AxiosPromise<void>;
+    apiFoldersPost(folder: Folder, options?: RawAxiosRequestConfig): AxiosPromise<Folder>;
 
 }
 
@@ -198,7 +198,7 @@ export interface FolderControllerApiInterface {
 export class FolderControllerApi extends BaseAPI implements FolderControllerApiInterface {
     /**
      * 
-     * @summary Get Folders
+     * @summary Get all folders
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof FolderControllerApi
@@ -209,7 +209,7 @@ export class FolderControllerApi extends BaseAPI implements FolderControllerApiI
 
     /**
      * 
-     * @summary Create Folder
+     * @summary Create folder
      * @param {Folder} folder 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
