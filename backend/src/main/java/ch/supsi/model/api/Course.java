@@ -10,8 +10,8 @@ import jakarta.validation.constraints.NotBlank;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
+import java.util.ArrayList;
 import java.util.List;
-
 @MongoEntity(collection = "courses")
 @Schema(description = "Course model", name = "Course")
 public class Course extends PanacheMongoEntity {
@@ -19,12 +19,12 @@ public class Course extends PanacheMongoEntity {
     @JsonSerialize(using = ToStringSerializer.class)
     @JsonDeserialize(using = ObjectIdDeserializer.class)
     @Schema(implementation = String.class, description = "Unique identifier")
-    private ObjectId id;
+    public ObjectId id;
 
     @NotBlank(message = "Course name cannot be null or empty")
-    private String name;
+    public String name;
 
-    private List<Folder> folders;
+    public List<Folder> folders = new ArrayList<>();
 
     public Course() {
 
@@ -34,9 +34,14 @@ public class Course extends PanacheMongoEntity {
         this.name = name;
     }
 
+    public ObjectId getId() {
+        return id;
+    }
+
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }

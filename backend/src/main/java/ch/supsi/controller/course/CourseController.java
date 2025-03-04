@@ -1,21 +1,18 @@
 package ch.supsi.controller.course;
 
 import ch.supsi.model.api.Course;
-import ch.supsi.model.api.Folder;
 import ch.supsi.service.course.ICourseService;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
-import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
-
-import java.util.List;
 
 @Path("/courses")
 @Produces(MediaType.APPLICATION_JSON)
@@ -30,39 +27,70 @@ public class CourseController {
     @APIResponse(
             responseCode = "200",
             description = "List of courses retrieved successfully",
-            content = @Content(
-                    mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(type = SchemaType.ARRAY, implementation = Course.class)
-            )
+            content = @Content(mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = Course.class, type = SchemaType.ARRAY))
     )
     public Response getCourses() {
-        List<Course> courses = this.courseService.getAllCourses();
-        return Response.ok(courses).build();
+        return Response.ok(courseService.getAllCourses()).build();
+    }
+
+    @GET
+    @Path("/{id}")
+    @Operation(summary = "Get course by ID")
+    @APIResponse(
+            responseCode = "200",
+            description = "Course retrieved successfully"
+    )
+    @APIResponse(
+            responseCode = "404",
+            description = "Course not found"
+    )
+    public Response getCourse(@PathParam("id") String id) {
+        return Response.ok(courseService.getCourseById(new ObjectId(id))).build();
     }
 
     @POST
-    @Operation(summary = "Create course")
+    @Operation(summary = "Create a new course")
     @APIResponse(
             responseCode = "201",
-            description = "Course created successfully",
-            content = @Content(
-                    mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = Course.class)
-            )
+            description = "Course created successfully"
     )
     public Response createCourse(@Valid Course course) {
-        Course createdCourse = this.courseService.createCourse(course);
+        Course createdCourse = courseService.createCourse(course);
         return Response.status(Response.Status.CREATED)
                 .entity(createdCourse)
                 .build();
     }
 
-    @GET()
+    @PUT
     @Path("/{id}")
-    public Response getFoldersOfACourse(@PathParam("id") String idCourse) {
-        List<Folder> foldersOfACourse = this.courseService.getAllFoldersOfACourse(idCourse);
-        return Response.status(Response.Status.OK)
-                .entity(foldersOfACourse)
-                .build();
+    @Operation(summary = "Update a course")
+    @APIResponse(
+            responseCode = "200",
+            description = "Course updated successfully"
+    )
+    @APIResponse(
+            responseCode = "404",
+            description = "Course not found"
+    )
+    public Response updateCourse(@PathParam("id") String id, @Valid Course course) {
+        course.id = new ObjectId(id);
+        return Response.ok(courseService.updateCourse(course)).build();
+    }
+
+    @DELETE
+    @Path("/{id}")
+    @Operation(summary = "Delete a course")
+    @APIResponse(
+            responseCode = "204",
+            description = "Course deleted successfully"
+    )
+    @APIResponse(
+            responseCode = "404",
+            description = "Course not found"
+    )
+    public Response deleteCourse(@PathParam("id") String id) {
+        courseService.deleteCourse(new ObjectId(id));
+        return Response.noContent().build();
     }
 }

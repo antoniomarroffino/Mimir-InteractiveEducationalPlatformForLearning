@@ -30,8 +30,12 @@ public class Folder extends PanacheMongoEntity {
         this.name = name;
     }
 
+    public ObjectId getId() {
+        return this.id;
+    }
+
     public String getName() {
-        return name;
+        return this.name;
     }
     public void setName(String name) {
         this.name = name;
