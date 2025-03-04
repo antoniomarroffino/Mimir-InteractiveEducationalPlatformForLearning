@@ -1,6 +1,7 @@
 import {useMsal} from "@azure/msal-react";
 import {useState} from "react";
 import {loginRequest} from "../auth/authConfig.ts";
+import CourseList from "../components/course/CourseList.tsx";
 
 const Home = () => {
     const { instance, accounts } = useMsal();
@@ -79,6 +80,16 @@ const Home = () => {
                 <div>
                     <button onClick={callProtectedApi}>Call Protected API</button>
                     <p>{message}</p>
+                </div>
+            </section>
+
+            {/* Nuova sezione Corsi */}
+            <section className="py-16 relative">
+                <div className="container mx-auto px-4">
+                    <h2 className="text-3xl font-bold text-primary text-center mb-8">
+                        I tuoi Corsi
+                    </h2>
+                    <CourseList />
                 </div>
             </section>
 
