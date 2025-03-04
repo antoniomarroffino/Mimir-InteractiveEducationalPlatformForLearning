@@ -14,6 +14,7 @@
 
 
 
+export * from './api/course-controller-api';
 export * from './api/folder-controller-api';
 export * from './api/protected-resource-api';
 export * from './api/question-controller-api';

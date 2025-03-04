@@ -27,8 +27,10 @@ public class CourseController {
     @APIResponse(
             responseCode = "200",
             description = "List of courses retrieved successfully",
-            content = @Content(mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = Course.class, type = SchemaType.ARRAY))
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(type = SchemaType.ARRAY, implementation = Course.class)
+            )
     )
     public Response getCourses() {
         return Response.ok(courseService.getAllCourses()).build();
@@ -39,7 +41,11 @@ public class CourseController {
     @Operation(summary = "Get course by ID")
     @APIResponse(
             responseCode = "200",
-            description = "Course retrieved successfully"
+            description = "Course retrieved successfully",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = Course.class)
+            )
     )
     @APIResponse(
             responseCode = "404",
@@ -53,7 +59,11 @@ public class CourseController {
     @Operation(summary = "Create a new course")
     @APIResponse(
             responseCode = "201",
-            description = "Course created successfully"
+            description = "Course created successfully",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = Course.class)
+            )
     )
     public Response createCourse(@Valid Course course) {
         Course createdCourse = courseService.createCourse(course);
@@ -67,7 +77,11 @@ public class CourseController {
     @Operation(summary = "Update a course")
     @APIResponse(
             responseCode = "200",
-            description = "Course updated successfully"
+            description = "Course updated successfully",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = Course.class)
+            )
     )
     @APIResponse(
             responseCode = "404",

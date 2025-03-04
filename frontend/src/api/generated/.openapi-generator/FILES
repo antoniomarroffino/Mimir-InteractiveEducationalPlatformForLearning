@@ -2,6 +2,7 @@
 .npmignore
 README.md
 api.ts
+api/course-controller-api.ts
 api/folder-controller-api.ts
 api/protected-resource-api.ts
 api/question-controller-api.ts
@@ -10,6 +11,7 @@ common.ts
 configuration.ts
 git_push.sh
 index.ts
+models/course.ts
 models/folder.ts
 models/index.ts
 models/question.ts

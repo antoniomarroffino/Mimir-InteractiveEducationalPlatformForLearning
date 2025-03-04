@@ -31,12 +31,58 @@ export const FolderControllerApiAxiosParamCreator = function (configuration?: Co
     return {
         /**
          * 
-         * @summary Get all folders
+         * @summary Delete folder from course
+         * @param {string} courseId 
+         * @param {string} folderId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiFoldersGet: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/api/folders`;
+        apiCoursesCourseIdFoldersFolderIdDelete: async (courseId: string, folderId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'courseId' is not null or undefined
+            assertParamExists('apiCoursesCourseIdFoldersFolderIdDelete', 'courseId', courseId)
+            // verify required parameter 'folderId' is not null or undefined
+            assertParamExists('apiCoursesCourseIdFoldersFolderIdDelete', 'folderId', folderId)
+            const localVarPath = `/api/courses/{courseId}/folders/{folderId}`
+                .replace(`{${"courseId"}}`, encodeURIComponent(String(courseId)))
+                .replace(`{${"folderId"}}`, encodeURIComponent(String(folderId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Get specific folder in a course
+         * @param {string} courseId 
+         * @param {string} folderId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiCoursesCourseIdFoldersFolderIdGet: async (courseId: string, folderId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'courseId' is not null or undefined
+            assertParamExists('apiCoursesCourseIdFoldersFolderIdGet', 'courseId', courseId)
+            // verify required parameter 'folderId' is not null or undefined
+            assertParamExists('apiCoursesCourseIdFoldersFolderIdGet', 'folderId', folderId)
+            const localVarPath = `/api/courses/{courseId}/folders/{folderId}`
+                .replace(`{${"courseId"}}`, encodeURIComponent(String(courseId)))
+                .replace(`{${"folderId"}}`, encodeURIComponent(String(folderId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -61,15 +107,97 @@ export const FolderControllerApiAxiosParamCreator = function (configuration?: Co
         },
         /**
          * 
-         * @summary Create folder
+         * @summary Update folder in course
+         * @param {string} courseId 
+         * @param {string} folderId 
          * @param {Folder} folder 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiFoldersPost: async (folder: Folder, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        apiCoursesCourseIdFoldersFolderIdPut: async (courseId: string, folderId: string, folder: Folder, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'courseId' is not null or undefined
+            assertParamExists('apiCoursesCourseIdFoldersFolderIdPut', 'courseId', courseId)
+            // verify required parameter 'folderId' is not null or undefined
+            assertParamExists('apiCoursesCourseIdFoldersFolderIdPut', 'folderId', folderId)
             // verify required parameter 'folder' is not null or undefined
-            assertParamExists('apiFoldersPost', 'folder', folder)
-            const localVarPath = `/api/folders`;
+            assertParamExists('apiCoursesCourseIdFoldersFolderIdPut', 'folder', folder)
+            const localVarPath = `/api/courses/{courseId}/folders/{folderId}`
+                .replace(`{${"courseId"}}`, encodeURIComponent(String(courseId)))
+                .replace(`{${"folderId"}}`, encodeURIComponent(String(folderId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(folder, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Get all folders in a course
+         * @param {string} courseId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiCoursesCourseIdFoldersGet: async (courseId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'courseId' is not null or undefined
+            assertParamExists('apiCoursesCourseIdFoldersGet', 'courseId', courseId)
+            const localVarPath = `/api/courses/{courseId}/folders`
+                .replace(`{${"courseId"}}`, encodeURIComponent(String(courseId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Create folder in course
+         * @param {string} courseId 
+         * @param {Folder} folder 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiCoursesCourseIdFoldersPost: async (courseId: string, folder: Folder, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'courseId' is not null or undefined
+            assertParamExists('apiCoursesCourseIdFoldersPost', 'courseId', courseId)
+            // verify required parameter 'folder' is not null or undefined
+            assertParamExists('apiCoursesCourseIdFoldersPost', 'folder', folder)
+            const localVarPath = `/api/courses/{courseId}/folders`
+                .replace(`{${"courseId"}}`, encodeURIComponent(String(courseId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -107,27 +235,72 @@ export const FolderControllerApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
-         * @summary Get all folders
+         * @summary Delete folder from course
+         * @param {string} courseId 
+         * @param {string} folderId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiFoldersGet(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<Folder>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.apiFoldersGet(options);
+        async apiCoursesCourseIdFoldersFolderIdDelete(courseId: string, folderId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiCoursesCourseIdFoldersFolderIdDelete(courseId, folderId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['FolderControllerApi.apiFoldersGet']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['FolderControllerApi.apiCoursesCourseIdFoldersFolderIdDelete']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
          * 
-         * @summary Create folder
+         * @summary Get specific folder in a course
+         * @param {string} courseId 
+         * @param {string} folderId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiCoursesCourseIdFoldersFolderIdGet(courseId: string, folderId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiCoursesCourseIdFoldersFolderIdGet(courseId, folderId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['FolderControllerApi.apiCoursesCourseIdFoldersFolderIdGet']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Update folder in course
+         * @param {string} courseId 
+         * @param {string} folderId 
          * @param {Folder} folder 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiFoldersPost(folder: Folder, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Folder>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.apiFoldersPost(folder, options);
+        async apiCoursesCourseIdFoldersFolderIdPut(courseId: string, folderId: string, folder: Folder, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiCoursesCourseIdFoldersFolderIdPut(courseId, folderId, folder, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['FolderControllerApi.apiFoldersPost']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['FolderControllerApi.apiCoursesCourseIdFoldersFolderIdPut']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Get all folders in a course
+         * @param {string} courseId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiCoursesCourseIdFoldersGet(courseId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiCoursesCourseIdFoldersGet(courseId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['FolderControllerApi.apiCoursesCourseIdFoldersGet']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Create folder in course
+         * @param {string} courseId 
+         * @param {Folder} folder 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiCoursesCourseIdFoldersPost(courseId: string, folder: Folder, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiCoursesCourseIdFoldersPost(courseId, folder, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['FolderControllerApi.apiCoursesCourseIdFoldersPost']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
     }
@@ -142,22 +315,58 @@ export const FolderControllerApiFactory = function (configuration?: Configuratio
     return {
         /**
          * 
-         * @summary Get all folders
+         * @summary Delete folder from course
+         * @param {string} courseId 
+         * @param {string} folderId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiFoldersGet(options?: RawAxiosRequestConfig): AxiosPromise<Array<Folder>> {
-            return localVarFp.apiFoldersGet(options).then((request) => request(axios, basePath));
+        apiCoursesCourseIdFoldersFolderIdDelete(courseId: string, folderId: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.apiCoursesCourseIdFoldersFolderIdDelete(courseId, folderId, options).then((request) => request(axios, basePath));
         },
         /**
          * 
-         * @summary Create folder
+         * @summary Get specific folder in a course
+         * @param {string} courseId 
+         * @param {string} folderId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiCoursesCourseIdFoldersFolderIdGet(courseId: string, folderId: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.apiCoursesCourseIdFoldersFolderIdGet(courseId, folderId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Update folder in course
+         * @param {string} courseId 
+         * @param {string} folderId 
          * @param {Folder} folder 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiFoldersPost(folder: Folder, options?: RawAxiosRequestConfig): AxiosPromise<Folder> {
-            return localVarFp.apiFoldersPost(folder, options).then((request) => request(axios, basePath));
+        apiCoursesCourseIdFoldersFolderIdPut(courseId: string, folderId: string, folder: Folder, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.apiCoursesCourseIdFoldersFolderIdPut(courseId, folderId, folder, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Get all folders in a course
+         * @param {string} courseId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiCoursesCourseIdFoldersGet(courseId: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.apiCoursesCourseIdFoldersGet(courseId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Create folder in course
+         * @param {string} courseId 
+         * @param {Folder} folder 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiCoursesCourseIdFoldersPost(courseId: string, folder: Folder, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.apiCoursesCourseIdFoldersPost(courseId, folder, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -170,22 +379,58 @@ export const FolderControllerApiFactory = function (configuration?: Configuratio
 export interface FolderControllerApiInterface {
     /**
      * 
-     * @summary Get all folders
+     * @summary Delete folder from course
+     * @param {string} courseId 
+     * @param {string} folderId 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof FolderControllerApiInterface
      */
-    apiFoldersGet(options?: RawAxiosRequestConfig): AxiosPromise<Array<Folder>>;
+    apiCoursesCourseIdFoldersFolderIdDelete(courseId: string, folderId: string, options?: RawAxiosRequestConfig): AxiosPromise<void>;
 
     /**
      * 
-     * @summary Create folder
+     * @summary Get specific folder in a course
+     * @param {string} courseId 
+     * @param {string} folderId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof FolderControllerApiInterface
+     */
+    apiCoursesCourseIdFoldersFolderIdGet(courseId: string, folderId: string, options?: RawAxiosRequestConfig): AxiosPromise<void>;
+
+    /**
+     * 
+     * @summary Update folder in course
+     * @param {string} courseId 
+     * @param {string} folderId 
      * @param {Folder} folder 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof FolderControllerApiInterface
      */
-    apiFoldersPost(folder: Folder, options?: RawAxiosRequestConfig): AxiosPromise<Folder>;
+    apiCoursesCourseIdFoldersFolderIdPut(courseId: string, folderId: string, folder: Folder, options?: RawAxiosRequestConfig): AxiosPromise<void>;
+
+    /**
+     * 
+     * @summary Get all folders in a course
+     * @param {string} courseId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof FolderControllerApiInterface
+     */
+    apiCoursesCourseIdFoldersGet(courseId: string, options?: RawAxiosRequestConfig): AxiosPromise<void>;
+
+    /**
+     * 
+     * @summary Create folder in course
+     * @param {string} courseId 
+     * @param {Folder} folder 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof FolderControllerApiInterface
+     */
+    apiCoursesCourseIdFoldersPost(courseId: string, folder: Folder, options?: RawAxiosRequestConfig): AxiosPromise<void>;
 
 }
 
@@ -198,25 +443,67 @@ export interface FolderControllerApiInterface {
 export class FolderControllerApi extends BaseAPI implements FolderControllerApiInterface {
     /**
      * 
-     * @summary Get all folders
+     * @summary Delete folder from course
+     * @param {string} courseId 
+     * @param {string} folderId 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof FolderControllerApi
      */
-    public apiFoldersGet(options?: RawAxiosRequestConfig) {
-        return FolderControllerApiFp(this.configuration).apiFoldersGet(options).then((request) => request(this.axios, this.basePath));
+    public apiCoursesCourseIdFoldersFolderIdDelete(courseId: string, folderId: string, options?: RawAxiosRequestConfig) {
+        return FolderControllerApiFp(this.configuration).apiCoursesCourseIdFoldersFolderIdDelete(courseId, folderId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
-     * @summary Create folder
+     * @summary Get specific folder in a course
+     * @param {string} courseId 
+     * @param {string} folderId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof FolderControllerApi
+     */
+    public apiCoursesCourseIdFoldersFolderIdGet(courseId: string, folderId: string, options?: RawAxiosRequestConfig) {
+        return FolderControllerApiFp(this.configuration).apiCoursesCourseIdFoldersFolderIdGet(courseId, folderId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Update folder in course
+     * @param {string} courseId 
+     * @param {string} folderId 
      * @param {Folder} folder 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof FolderControllerApi
      */
-    public apiFoldersPost(folder: Folder, options?: RawAxiosRequestConfig) {
-        return FolderControllerApiFp(this.configuration).apiFoldersPost(folder, options).then((request) => request(this.axios, this.basePath));
+    public apiCoursesCourseIdFoldersFolderIdPut(courseId: string, folderId: string, folder: Folder, options?: RawAxiosRequestConfig) {
+        return FolderControllerApiFp(this.configuration).apiCoursesCourseIdFoldersFolderIdPut(courseId, folderId, folder, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Get all folders in a course
+     * @param {string} courseId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof FolderControllerApi
+     */
+    public apiCoursesCourseIdFoldersGet(courseId: string, options?: RawAxiosRequestConfig) {
+        return FolderControllerApiFp(this.configuration).apiCoursesCourseIdFoldersGet(courseId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Create folder in course
+     * @param {string} courseId 
+     * @param {Folder} folder 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof FolderControllerApi
+     */
+    public apiCoursesCourseIdFoldersPost(courseId: string, folder: Folder, options?: RawAxiosRequestConfig) {
+        return FolderControllerApiFp(this.configuration).apiCoursesCourseIdFoldersPost(courseId, folder, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
