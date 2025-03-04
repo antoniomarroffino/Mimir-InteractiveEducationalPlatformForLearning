@@ -1,0 +1,24 @@
+{
+  "inputSpec": "http://localhost:8080/q/openapi",
+  "generatorName": "typescript-axios",
+  "outputDir": "src/api/generated",
+  "typeMappings": {
+    "ObjectId": "string"
+  },
+  "modelPropertyNaming": "original",
+  "hooks": {
+    "postProcessModels": "scripts/post-process-models.js"
+  },
+  "additionalProperties": {
+    "supportsES6": true,
+    "withInterfaces": true,
+    "useSingleRequestParameter": false,
+    "stringEnums": true,
+    "withoutRuntimeChecks": true,
+    "npmName": "api-client",
+    "npmVersion": "1.0.0",
+    "apiPackage": "api",
+    "modelPackage": "models",
+    "withSeparateModelsAndApi": true
+  }
+}
