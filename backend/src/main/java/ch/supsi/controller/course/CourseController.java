@@ -1,0 +1,68 @@
+package ch.supsi.controller.course;
+
+import ch.supsi.model.api.Course;
+import ch.supsi.model.api.Folder;
+import ch.supsi.service.course.ICourseService;
+import jakarta.inject.Inject;
+import jakarta.validation.Valid;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Response;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+
+import java.util.List;
+
+@Path("/courses")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+public class CourseController {
+
+    @Inject
+    ICourseService courseService;
+
+    @GET
+    @Operation(summary = "Get all courses")
+    @APIResponse(
+            responseCode = "200",
+            description = "List of courses retrieved successfully",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(type = SchemaType.ARRAY, implementation = Course.class)
+            )
+    )
+    public Response getCourses() {
+        List<Course> courses = this.courseService.getAllCourses();
+        return Response.ok(courses).build();
+    }
+
+    @POST
+    @Operation(summary = "Create course")
+    @APIResponse(
+            responseCode = "201",
+            description = "Course created successfully",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = Course.class)
+            )
+    )
+    public Response createCourse(@Valid Course course) {
+        Course createdCourse = this.courseService.createCourse(course);
+        return Response.status(Response.Status.CREATED)
+                .entity(createdCourse)
+                .build();
+    }
+
+    @GET()
+    @Path("/{id}")
+    public Response getFoldersOfACourse(@PathParam("id") String idCourse) {
+        List<Folder> foldersOfACourse = this.courseService.getAllFoldersOfACourse(idCourse);
+        return Response.status(Response.Status.OK)
+                .entity(foldersOfACourse)
+                .build();
+    }
+}
