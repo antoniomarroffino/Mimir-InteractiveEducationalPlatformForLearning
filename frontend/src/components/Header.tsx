@@ -1,12 +1,9 @@
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import '../App.css';
-import {useState} from "react";
 import LoginButton from "../auth/LoginButton.tsx";
 import {AuthenticatedTemplate, UnauthenticatedTemplate} from "@azure/msal-react";
 import LogoutButton from "../auth/LogoutButton.tsx";
 import { useState } from "react";
-import LoginButton from "../auth/LoginButton";
-import { UnauthenticatedTemplate } from "@azure/msal-react";
 
 const Header = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -62,13 +59,6 @@ const Header = () => {
                         </AuthenticatedTemplate>
                     </li>
                 </ul>
-            </div>
-
-            {/* Login button */}
-            <div className="navbar-end">
-                <UnauthenticatedTemplate>
-                    <LoginButton />
-                </UnauthenticatedTemplate>
             </div>
         </div>
     );
