@@ -7,6 +7,7 @@ import Footer from "../components/Footer";
 import CreateFolder from "./CreateFolder";
 import { FolderProvider } from "../contexts/FoldersContext";
 import '../App.css';
+import CourseDetail from "./CourseDetail.tsx";
 
 
 const queryClient = new QueryClient();
@@ -21,6 +22,7 @@ const App = () => {
                         <Route path="/" element={<Home />} />
                         <Route path="/folders" element={<Folders />} />
                         <Route path="/create-folder" element={<CreateFolder />} />
+                        <Route path="/courses/:courseId" element={<CourseDetail />} />
                     </Routes>
                     <Footer />
                 </div>

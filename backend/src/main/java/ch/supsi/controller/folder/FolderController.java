@@ -9,6 +9,9 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 
 @Path("/courses/{courseId}/folders")
@@ -23,7 +26,11 @@ public class FolderController {
     @Operation(summary = "Get all folders in a course")
     @APIResponse(
             responseCode = "200",
-            description = "List of folders retrieved successfully"
+            description = "List of folders retrieved successfully",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(type = SchemaType.ARRAY, implementation = Folder.class)
+            )
     )
     public Response getFolders(@PathParam("courseId") String courseId) {
         return Response.ok(folderService.getFoldersInCourse(new ObjectId(courseId))).build();
@@ -34,7 +41,11 @@ public class FolderController {
     @Operation(summary = "Get specific folder in a course")
     @APIResponse(
             responseCode = "200",
-            description = "Folder retrieved successfully"
+            description = "Folder retrieved successfully",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = Folder.class)
+            )
     )
     public Response getFolder(
             @PathParam("courseId") String courseId,
@@ -49,7 +60,11 @@ public class FolderController {
     @Operation(summary = "Create folder in course")
     @APIResponse(
             responseCode = "201",
-            description = "Folder created successfully"
+            description = "Folder created successfully",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = Folder.class)
+            )
     )
     public Response createFolder(
             @PathParam("courseId") String courseId,
@@ -65,7 +80,11 @@ public class FolderController {
     @Operation(summary = "Update folder in course")
     @APIResponse(
             responseCode = "200",
-            description = "Folder updated successfully"
+            description = "Folder updated successfully",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = Folder.class)
+            )
     )
     public Response updateFolder(
             @PathParam("courseId") String courseId,

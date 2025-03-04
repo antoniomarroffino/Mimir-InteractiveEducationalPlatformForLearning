@@ -9,7 +9,7 @@
     gap: 10px;
 }
 
-/* src/components/FolderList/FolderItem.module.css */
+/* src/components/FolderList/FolderCard.module.css */
 .folderItem {
     padding: 15px;
     background-color: #f5f5f5;

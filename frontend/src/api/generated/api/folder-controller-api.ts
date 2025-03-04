@@ -255,7 +255,7 @@ export const FolderControllerApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiCoursesCourseIdFoldersFolderIdGet(courseId: string, folderId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async apiCoursesCourseIdFoldersFolderIdGet(courseId: string, folderId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Folder>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.apiCoursesCourseIdFoldersFolderIdGet(courseId, folderId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['FolderControllerApi.apiCoursesCourseIdFoldersFolderIdGet']?.[localVarOperationServerIndex]?.url;
@@ -270,7 +270,7 @@ export const FolderControllerApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiCoursesCourseIdFoldersFolderIdPut(courseId: string, folderId: string, folder: Folder, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async apiCoursesCourseIdFoldersFolderIdPut(courseId: string, folderId: string, folder: Folder, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Folder>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.apiCoursesCourseIdFoldersFolderIdPut(courseId, folderId, folder, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['FolderControllerApi.apiCoursesCourseIdFoldersFolderIdPut']?.[localVarOperationServerIndex]?.url;
@@ -283,7 +283,7 @@ export const FolderControllerApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiCoursesCourseIdFoldersGet(courseId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async apiCoursesCourseIdFoldersGet(courseId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<Folder>>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.apiCoursesCourseIdFoldersGet(courseId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['FolderControllerApi.apiCoursesCourseIdFoldersGet']?.[localVarOperationServerIndex]?.url;
@@ -297,7 +297,7 @@ export const FolderControllerApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiCoursesCourseIdFoldersPost(courseId: string, folder: Folder, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async apiCoursesCourseIdFoldersPost(courseId: string, folder: Folder, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Folder>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.apiCoursesCourseIdFoldersPost(courseId, folder, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['FolderControllerApi.apiCoursesCourseIdFoldersPost']?.[localVarOperationServerIndex]?.url;
@@ -332,7 +332,7 @@ export const FolderControllerApiFactory = function (configuration?: Configuratio
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiCoursesCourseIdFoldersFolderIdGet(courseId: string, folderId: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+        apiCoursesCourseIdFoldersFolderIdGet(courseId: string, folderId: string, options?: RawAxiosRequestConfig): AxiosPromise<Folder> {
             return localVarFp.apiCoursesCourseIdFoldersFolderIdGet(courseId, folderId, options).then((request) => request(axios, basePath));
         },
         /**
@@ -344,7 +344,7 @@ export const FolderControllerApiFactory = function (configuration?: Configuratio
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiCoursesCourseIdFoldersFolderIdPut(courseId: string, folderId: string, folder: Folder, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+        apiCoursesCourseIdFoldersFolderIdPut(courseId: string, folderId: string, folder: Folder, options?: RawAxiosRequestConfig): AxiosPromise<Folder> {
             return localVarFp.apiCoursesCourseIdFoldersFolderIdPut(courseId, folderId, folder, options).then((request) => request(axios, basePath));
         },
         /**
@@ -354,7 +354,7 @@ export const FolderControllerApiFactory = function (configuration?: Configuratio
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiCoursesCourseIdFoldersGet(courseId: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+        apiCoursesCourseIdFoldersGet(courseId: string, options?: RawAxiosRequestConfig): AxiosPromise<Array<Folder>> {
             return localVarFp.apiCoursesCourseIdFoldersGet(courseId, options).then((request) => request(axios, basePath));
         },
         /**
@@ -365,7 +365,7 @@ export const FolderControllerApiFactory = function (configuration?: Configuratio
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiCoursesCourseIdFoldersPost(courseId: string, folder: Folder, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+        apiCoursesCourseIdFoldersPost(courseId: string, folder: Folder, options?: RawAxiosRequestConfig): AxiosPromise<Folder> {
             return localVarFp.apiCoursesCourseIdFoldersPost(courseId, folder, options).then((request) => request(axios, basePath));
         },
     };
@@ -397,7 +397,7 @@ export interface FolderControllerApiInterface {
      * @throws {RequiredError}
      * @memberof FolderControllerApiInterface
      */
-    apiCoursesCourseIdFoldersFolderIdGet(courseId: string, folderId: string, options?: RawAxiosRequestConfig): AxiosPromise<void>;
+    apiCoursesCourseIdFoldersFolderIdGet(courseId: string, folderId: string, options?: RawAxiosRequestConfig): AxiosPromise<Folder>;
 
     /**
      * 
@@ -409,7 +409,7 @@ export interface FolderControllerApiInterface {
      * @throws {RequiredError}
      * @memberof FolderControllerApiInterface
      */
-    apiCoursesCourseIdFoldersFolderIdPut(courseId: string, folderId: string, folder: Folder, options?: RawAxiosRequestConfig): AxiosPromise<void>;
+    apiCoursesCourseIdFoldersFolderIdPut(courseId: string, folderId: string, folder: Folder, options?: RawAxiosRequestConfig): AxiosPromise<Folder>;
 
     /**
      * 
@@ -419,7 +419,7 @@ export interface FolderControllerApiInterface {
      * @throws {RequiredError}
      * @memberof FolderControllerApiInterface
      */
-    apiCoursesCourseIdFoldersGet(courseId: string, options?: RawAxiosRequestConfig): AxiosPromise<void>;
+    apiCoursesCourseIdFoldersGet(courseId: string, options?: RawAxiosRequestConfig): AxiosPromise<Array<Folder>>;
 
     /**
      * 
@@ -430,7 +430,7 @@ export interface FolderControllerApiInterface {
      * @throws {RequiredError}
      * @memberof FolderControllerApiInterface
      */
-    apiCoursesCourseIdFoldersPost(courseId: string, folder: Folder, options?: RawAxiosRequestConfig): AxiosPromise<void>;
+    apiCoursesCourseIdFoldersPost(courseId: string, folder: Folder, options?: RawAxiosRequestConfig): AxiosPromise<Folder>;
 
 }
 

@@ -1,4 +1,4 @@
-import FolderList from '../components/FolderList';
+import FolderList from '../components/folder/FolderList.tsx';
 import React from "react";
 import { BsFolderFill } from 'react-icons/bs';
 
