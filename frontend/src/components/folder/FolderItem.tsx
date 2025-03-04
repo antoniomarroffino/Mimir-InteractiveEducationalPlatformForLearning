@@ -7,7 +7,7 @@ interface FolderCardProps {
     courseId: string;
 }
 
-const FolderCard = ({ folder, courseId }: FolderCardProps) => {
+const FolderItem = ({ folder, courseId }: FolderCardProps) => {
     return (
         <div className="card bg-base-100 shadow-xl hover:shadow-2xl transition-all">
             <div className="card-body">
@@ -28,4 +28,4 @@ const FolderCard = ({ folder, courseId }: FolderCardProps) => {
     );
 };
 
-export default FolderCard;
+export default FolderItem;

@@ -1,5 +1,5 @@
 import { useFolders } from '../../hooks/useFolders';
-import FolderCard from './FolderCard';
+import FolderItem from './FolderItem';
 
 interface FolderListProps {
     courseId: string;
@@ -11,14 +11,19 @@ const FolderList = ({ courseId }: FolderListProps) => {
     if (isLoading) return <div className="loading loading-spinner loading-lg"></div>;
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="flex flex-col gap-2">
             {folders?.map(folder => (
-                <FolderCard
+                <FolderItem
                     key={folder.id}
                     folder={folder}
                     courseId={courseId}
                 />
             ))}
+            {folders?.length === 0 && (
+                <div className="text-center py-8 text-base-content/70">
+                    No folder presents
+                </div>
+            )}
         </div>
     );
 };
