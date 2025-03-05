@@ -1,6 +1,7 @@
 package ch.supsi.controller.folder;
 
 import ch.supsi.model.api.Folder;
+import ch.supsi.service.course.ICourseService;
 import ch.supsi.service.folder.IFolderService;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -22,6 +23,9 @@ public class FolderController {
     @Inject
     IFolderService folderService;
 
+    @Inject
+    ICourseService courseService;
+
     @GET
     @Operation(summary = "Get all folders in a course")
     @APIResponse(
@@ -33,7 +37,7 @@ public class FolderController {
             )
     )
     public Response getFolders(@PathParam("courseId") String courseId) {
-        return Response.ok(folderService.getFoldersInCourse(new ObjectId(courseId))).build();
+        return Response.ok(this.folderService.getFoldersInCourse(new ObjectId(courseId))).build();
     }
 
     @GET
@@ -50,7 +54,7 @@ public class FolderController {
     public Response getFolder(
             @PathParam("courseId") String courseId,
             @PathParam("folderId") String folderId) {
-        return Response.ok(folderService.getFolderInCourse(
+        return Response.ok(this.folderService.getFolderInCourse(
                 new ObjectId(courseId),
                 new ObjectId(folderId)
         )).build();
@@ -69,7 +73,7 @@ public class FolderController {
     public Response createFolder(
             @PathParam("courseId") String courseId,
             @Valid Folder folder) {
-        Folder createdFolder = folderService.addFolderToCourse(new ObjectId(courseId), folder);
+        Folder createdFolder = this.folderService.addFolderToCourse(new ObjectId(courseId), folder);
         return Response.status(Response.Status.CREATED)
                 .entity(createdFolder)
                 .build();
@@ -90,7 +94,7 @@ public class FolderController {
             @PathParam("courseId") String courseId,
             @PathParam("folderId") String folderId,
             @Valid Folder folder) {
-        return Response.ok(folderService.updateFolderInCourse(
+        return Response.ok(this.folderService.updateFolderInCourse(
                 new ObjectId(courseId),
                 new ObjectId(folderId),
                 folder
@@ -107,7 +111,7 @@ public class FolderController {
     public Response deleteFolder(
             @PathParam("courseId") String courseId,
             @PathParam("folderId") String folderId) {
-        folderService.removeFolderFromCourse(
+        this.folderService.removeFolderFromCourse(
                 new ObjectId(courseId),
                 new ObjectId(folderId)
         );

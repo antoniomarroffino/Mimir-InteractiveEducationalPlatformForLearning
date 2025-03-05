@@ -25,7 +25,7 @@ public class FolderService implements IFolderService {
     public Folder getFolderInCourse(ObjectId courseId, ObjectId folderId) {
         Course course = courseService.getCourseById(courseId);
         return course.getFolders().stream()
-                .filter(f -> f.id.equals(folderId))
+                .filter(f -> f.getId().equals(folderId))
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("Folder not found in course"));
     }
@@ -33,7 +33,6 @@ public class FolderService implements IFolderService {
     @Override
     public Folder addFolderToCourse(ObjectId courseId, Folder folder) {
         Course course = courseService.getCourseById(courseId);
-        folder.id = new ObjectId();
         course.getFolders().add(folder);
         course.update();
         return folder;
@@ -45,8 +44,7 @@ public class FolderService implements IFolderService {
         List<Folder> folders = course.getFolders();
 
         for (int i = 0; i < folders.size(); i++) {
-            if (folders.get(i).id.equals(folderId)) {
-                updatedFolder.id = folderId;
+            if (folders.get(i).getId().equals(folderId)) {
                 folders.set(i, updatedFolder);
                 course.update();
                 return updatedFolder;
@@ -58,7 +56,7 @@ public class FolderService implements IFolderService {
     @Override
     public void removeFolderFromCourse(ObjectId courseId, ObjectId folderId) {
         Course course = courseService.getCourseById(courseId);
-        boolean removed = course.getFolders().removeIf(f -> f.id.equals(folderId));
+        boolean removed = course.getFolders().removeIf(f -> f.getId().equals(folderId));
         if (!removed) {
             throw new NotFoundException("Folder not found in course");
         }

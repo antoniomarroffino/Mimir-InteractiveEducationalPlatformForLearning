@@ -33,7 +33,7 @@ public class CourseController {
             )
     )
     public Response getCourses() {
-        return Response.ok(courseService.getAllCourses()).build();
+        return Response.ok(this.courseService.getAllCourses()).build();
     }
 
     @GET
@@ -52,7 +52,7 @@ public class CourseController {
             description = "Course not found"
     )
     public Response getCourse(@PathParam("id") String id) {
-        return Response.ok(courseService.getCourseById(new ObjectId(id))).build();
+        return Response.ok(this.courseService.getCourseById(new ObjectId(id))).build();
     }
 
     @POST
@@ -66,31 +66,12 @@ public class CourseController {
             )
     )
     public Response createCourse(@Valid Course course) {
-        Course createdCourse = courseService.createCourse(course);
+        Course createdCourse = this.courseService.createCourse(course);
         return Response.status(Response.Status.CREATED)
                 .entity(createdCourse)
                 .build();
     }
 
-    @PUT
-    @Path("/{id}")
-    @Operation(summary = "Update a course")
-    @APIResponse(
-            responseCode = "200",
-            description = "Course updated successfully",
-            content = @Content(
-                    mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = Course.class)
-            )
-    )
-    @APIResponse(
-            responseCode = "404",
-            description = "Course not found"
-    )
-    public Response updateCourse(@PathParam("id") String id, @Valid Course course) {
-        course.id = new ObjectId(id);
-        return Response.ok(courseService.updateCourse(course)).build();
-    }
 
     @DELETE
     @Path("/{id}")
@@ -104,7 +85,7 @@ public class CourseController {
             description = "Course not found"
     )
     public Response deleteCourse(@PathParam("id") String id) {
-        courseService.deleteCourse(new ObjectId(id));
+        this.courseService.deleteCourse(new ObjectId(id));
         return Response.noContent().build();
     }
 }

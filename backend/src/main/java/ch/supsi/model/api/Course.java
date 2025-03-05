@@ -7,6 +7,7 @@ import io.quarkus.mongodb.panache.PanacheMongoEntity;
 import io.quarkus.mongodb.panache.common.MongoEntity;
 import io.quarkus.mongodb.panache.common.jackson.ObjectIdDeserializer;
 import jakarta.validation.constraints.NotBlank;
+import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
@@ -14,17 +15,18 @@ import java.util.ArrayList;
 import java.util.List;
 @MongoEntity(collection = "courses")
 @Schema(description = "Course model", name = "Course")
-public class Course extends PanacheMongoEntity {
+public class Course{
 
     @JsonSerialize(using = ToStringSerializer.class)
     @JsonDeserialize(using = ObjectIdDeserializer.class)
     @Schema(implementation = String.class, description = "Unique identifier")
-    public ObjectId id;
+    @BsonId
+    private ObjectId id;
 
     @NotBlank(message = "Course name cannot be null or empty")
-    public String name;
+    private String name;
 
-    public List<Folder> folders = new ArrayList<>();
+    private List<Folder> folders = new ArrayList<>();
 
     public Course() {
 

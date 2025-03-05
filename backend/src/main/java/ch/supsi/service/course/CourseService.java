@@ -31,7 +31,7 @@ public class CourseService implements ICourseService {
 
     @Override
     public Course updateCourse(Course course) {
-        Course existingCourse = getCourseById(course.id);
+        Course existingCourse = getCourseById(course.getId());
         existingCourse.setName(course.getName());
         existingCourse.update();
         return existingCourse;

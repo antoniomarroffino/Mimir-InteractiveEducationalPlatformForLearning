@@ -1,0 +1,9 @@
+package ch.supsi.repository;
+
+import ch.supsi.model.api.Course;
+import io.quarkus.mongodb.panache.PanacheMongoRepository;
+import jakarta.enterprise.context.ApplicationScoped;
+
+@ApplicationScoped
+public class CourseRepository implements PanacheMongoRepository<Course> {
+}
