@@ -53,6 +53,7 @@ publish_npm_package:
     - echo "${NPM_SCOPE}:registry=${NPM_REGISTRY_URL}" > .npmrc
   script:
     - cd backend/target/backend-api-client
+    - npm install
     - npm publish --registry=${NPM_REGISTRY_URL}
   dependencies:
     - build_backend
