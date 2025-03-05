@@ -50,7 +50,8 @@ publish_npm_package:
   stage: publish_npm_package
   image: node:22.14-alpine
   before_script:
-    - echo "${NPM_SCOPE}:registry=${NPM_REGISTRY_URL}" > .npmrc
+    - echo "//gitlab-edu.supsi.ch/api/v4/projects/1051/packages/npm/:_authToken=${CI_JOB_TOKEN}" > backend/target/backend-api-client/.npmrc
+    - echo "${NPM_SCOPE}:registry=${NPM_REGISTRY_URL}" >> .npmrc
   script:
     - cd backend/target/backend-api-client
     - npm install
@@ -65,7 +66,8 @@ build_frontend:
   stage: build_frontend
   image: node:22.14-alpine
   before_script:
-    - echo "${NPM_SCOPE}:registry=${NPM_REGISTRY_URL}" > .npmrc
+    - echo "//gitlab-edu.supsi.ch/api/v4/projects/1051/packages/npm/:_authToken=${CI_JOB_TOKEN}" > frontend/.npmrc
+    - echo "${NPM_SCOPE}:registry=${NPM_REGISTRY_URL}" >> frontend/.npmrc
   script:
     - cd frontend
     - npm install --no-audit
