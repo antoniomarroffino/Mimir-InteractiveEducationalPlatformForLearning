@@ -87,7 +87,6 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-smallrye-openapi</artifactId>
         </dependency>
-
     </dependencies>
 
     <build>
@@ -154,6 +153,41 @@
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>7.12.0</version>
+                <executions>
+                    <execution>
+                        <id>generate-client</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.build.outputDirectory}/META-INF/resources/openapi.json</inputSpec>
+                            <generatorName>typescript-axios</generatorName>
+                            <output>${project.build.directory}/generated-npm-client</output>
+                            <skipValidateSpec>true</skipValidateSpec>
+                            <typeMappings>ObjectId=string</typeMappings>
+                            <configOptions>
+                                <modelPropertyNaming>original</modelPropertyNaming>
+                                <npmName>api-client</npmName>
+                                <npmVersion>1.0.0-alpha.1</npmVersion>
+                                <supportsES6>true</supportsES6>
+                                <withInterfaces>true</withInterfaces>
+                                <useSingleRequestParameter>true</useSingleRequestParameter>
+                                <withoutRuntimeChecks>true</withoutRuntimeChecks>
+                                <apiPackage>api</apiPackage>
+                                <modelPackage>models</modelPackage>
+                                <withSeparateModelsAndApi>true</withSeparateModelsAndApi>
+                                <stringEnums>true</stringEnums>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
 

@@ -11,6 +11,8 @@ structure:
     - '[ -d frontend ] || exit 1'
   rules:
     - if: $CI_COMMIT_BRANCH == "dev"
+    - if: $CI_COMMIT_BRANCH == "spike/68-handle-openAPI-package-registry"
+
 
 services:
   - name: docker:dind
@@ -38,6 +40,7 @@ build_backend:
       - backend/target/*-runner
   rules:
     - if: $CI_COMMIT_BRANCH == "dev"
+    - if: $CI_COMMIT_BRANCH == "spike/68-handle-openAPI-package-registry"
 
 
 build_frontend:
@@ -52,6 +55,7 @@ build_frontend:
       - frontend/dist/
   rules:
     - if: $CI_COMMIT_BRANCH == "dev"
+    - if: $CI_COMMIT_BRANCH == "spike/68-handle-openAPI-package-registry"
 
 #deploy:
 #  stage: deploy
