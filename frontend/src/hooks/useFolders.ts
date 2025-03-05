@@ -1,7 +1,8 @@
 // src/hooks/useFolders.ts
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { useFolderContext } from '../contexts/FoldersContext';
-import { Folder } from '../api/generated';
+//import { Folder } from '../api/generated';
+import { Folder } from "@dti-isin/api-client";
 
 export const useFolders = () => {
     const { folderApi } = useFolderContext();
@@ -18,7 +19,7 @@ export const useCreateFolder = () => {
 
     return useMutation(
         async (name: string) => {
-            const response = await folderApi.apiFoldersPost({ name });
+            const response = await folderApi.apiFoldersPost({ folder: { name } });
             return response.data;
         },
         {

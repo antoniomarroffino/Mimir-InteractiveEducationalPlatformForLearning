@@ -171,10 +171,13 @@
                             <skipValidateSpec>true</skipValidateSpec>
                             <typeMappings>ObjectId=string</typeMappings>
                             <configOptions>
-                                <modelPropertyNaming>original</modelPropertyNaming>
-                                <npmName>api-client</npmName>
-                                <npmVersion>1.0.0-alpha.1</npmVersion>
+                                <npmRepository>false</npmRepository>
                                 <supportsES6>true</supportsES6>
+                                <withoutBuildScripts>true</withoutBuildScripts>
+                                <skipOperationExample>true</skipOperationExample>
+                                <modelPropertyNaming>original</modelPropertyNaming>
+                                <npmName>@dti-isin/api-client</npmName>
+                                <npmVersion>1.0.0-alpha.1</npmVersion>
                                 <withInterfaces>true</withInterfaces>
                                 <useSingleRequestParameter>true</useSingleRequestParameter>
                                 <withoutRuntimeChecks>true</withoutRuntimeChecks>
@@ -182,12 +185,12 @@
                                 <modelPackage>models</modelPackage>
                                 <withSeparateModelsAndApi>true</withSeparateModelsAndApi>
                                 <stringEnums>true</stringEnums>
+                                <useESM>true</useESM>
                             </configOptions>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
 

@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import { FolderControllerApi, Configuration } from '../api/generated';
+import { FolderControllerApi, Configuration } from "@dti-isin/api-client";
 
 interface FolderContextType {
     folderApi: FolderControllerApi;
