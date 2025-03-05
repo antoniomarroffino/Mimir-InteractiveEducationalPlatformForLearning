@@ -23,9 +23,6 @@ public class FolderController {
     @Inject
     IFolderService folderService;
 
-    @Inject
-    ICourseService courseService;
-
     @GET
     @Operation(summary = "Get all folders in a course")
     @APIResponse(

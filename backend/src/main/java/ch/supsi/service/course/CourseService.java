@@ -1,7 +1,9 @@
 package ch.supsi.service.course;
 
 import ch.supsi.model.api.Course;
+import ch.supsi.repository.CourseRepository;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.NotFoundException;
 import org.bson.types.ObjectId;
 import java.util.List;
@@ -9,14 +11,17 @@ import java.util.List;
 @ApplicationScoped
 public class CourseService implements ICourseService {
 
+    @Inject
+    CourseRepository courseRepository;
+
     @Override
     public List<Course> getAllCourses() {
-        return Course.listAll();
+        return this.courseRepository.listAll();
     }
 
     @Override
     public Course getCourseById(ObjectId id) {
-        Course course = Course.findById(id);
+        Course course = this.courseRepository.findById(id);
         if (course == null) {
             throw new NotFoundException("Course not found");
         }
@@ -25,7 +30,7 @@ public class CourseService implements ICourseService {
 
     @Override
     public Course createCourse(Course course) {
-        course.persist();
+        this.courseRepository.persist(course);
         return course;
     }
 
@@ -33,13 +38,13 @@ public class CourseService implements ICourseService {
     public Course updateCourse(Course course) {
         Course existingCourse = getCourseById(course.getId());
         existingCourse.setName(course.getName());
-        existingCourse.update();
+        this.courseRepository.update(existingCourse);
         return existingCourse;
     }
 
     @Override
     public void deleteCourse(ObjectId id) {
         Course course = getCourseById(id);
-        course.delete();
+        this.courseRepository.delete(course);
     }
 }
