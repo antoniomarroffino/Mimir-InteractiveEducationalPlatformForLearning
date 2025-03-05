@@ -1,0 +1,2 @@
+@scope:registry=https://gitlab-edu.supsi.ch/api/v4/projects/<project-id>/packages/npm/
+//gitlab-edu.supsi.ch/api/v4/projects/<project-id>/packages/npm/:_authToken=<private-access-token>
