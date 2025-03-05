@@ -1,6 +1,7 @@
 stages:
   - structure
   - build_backend
+  - publish_npm_package
   - build_frontend
   #- deploy
 
@@ -23,6 +24,8 @@ variables:
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: ""
   TESTCONTAINERS_HOST_OVERRIDE: dockerhost
+  NPM_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/npm/"
+  NPM_SCOPE: "@dti-isin"
 
 build_backend:
   stage: build_backend
@@ -38,18 +41,36 @@ build_backend:
   artifacts:
     paths:
       - backend/target/*-runner
+      - backend/target/backend-api-client
   rules:
     - if: $CI_COMMIT_BRANCH == "dev"
     - if: $CI_COMMIT_BRANCH == "spike/68-handle-openAPI-package-registry"
 
+publish_npm_package:
+  stage: publish_npm_package
+  image: node:22.14-alpine
+  before_script:
+    - echo "${NPM_SCOPE}:registry=${NPM_REGISTRY_URL}" > .npmrc
+  script:
+    - cd backend/target/backend-api-client
+    - npm publish --registry=${NPM_REGISTRY_URL}
+  dependencies:
+    - build_backend
+  rules:
+    - if: $CI_COMMIT_BRANCH == "dev"
+    - if: $CI_COMMIT_BRANCH == "spike/68-handle-openAPI-package-registry"
 
 build_frontend:
   stage: build_frontend
   image: node:22.14-alpine
+  before_script:
+    - echo "${NPM_SCOPE}:registry=${NPM_REGISTRY_URL}" > .npmrc
   script:
     - cd frontend
-    - npm install
+    - npm install --no-audit
     - npm run build
+  dependencies:
+    - publish_npm_package
   artifacts:
     paths:
       - frontend/dist/

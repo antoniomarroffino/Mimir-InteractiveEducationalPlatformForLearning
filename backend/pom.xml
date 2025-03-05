@@ -167,7 +167,7 @@
                         <configuration>
                             <inputSpec>${project.build.outputDirectory}/META-INF/resources/openapi.json</inputSpec>
                             <generatorName>typescript-axios</generatorName>
-                            <output>${project.build.directory}/generated-npm-client</output>
+                            <output>${project.build.directory}/backend-api-client</output>
                             <skipValidateSpec>true</skipValidateSpec>
                             <typeMappings>ObjectId=string</typeMappings>
                             <configOptions>
@@ -176,8 +176,8 @@
                                 <withoutBuildScripts>true</withoutBuildScripts>
                                 <skipOperationExample>true</skipOperationExample>
                                 <modelPropertyNaming>original</modelPropertyNaming>
-                                <npmName>@dti-isin/api-client</npmName>
-                                <npmVersion>1.0.0-alpha.1</npmVersion>
+                                <npmName>@dti-isin/backend-api-client</npmName>
+                                <npmVersion>0.0.1-alpha.1</npmVersion>
                                 <withInterfaces>true</withInterfaces>
                                 <useSingleRequestParameter>true</useSingleRequestParameter>
                                 <withoutRuntimeChecks>true</withoutRuntimeChecks>

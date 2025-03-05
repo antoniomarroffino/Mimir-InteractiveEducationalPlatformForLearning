@@ -30,3 +30,5 @@ Thumbs.db
 # NGINX
 frontend/nginx/access.log
 frontend/nginx/error.log
+
+*.npmrc

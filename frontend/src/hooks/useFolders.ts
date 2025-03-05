@@ -2,7 +2,7 @@
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { useFolderContext } from '../contexts/FoldersContext';
 //import { Folder } from '../api/generated';
-import { Folder } from "@dti-isin/api-client";
+import { Folder } from "@dti-isin/backend-api-client";
 
 export const useFolders = () => {
     const { folderApi } = useFolderContext();
