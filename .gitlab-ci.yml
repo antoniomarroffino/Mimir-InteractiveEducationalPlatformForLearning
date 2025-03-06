@@ -10,9 +10,9 @@ structure:
   script:
     - '[ -d backend ] || exit 1'
     - '[ -d frontend ] || exit 1'
-  rules:
-    - if: $CI_COMMIT_BRANCH == "dev"
-    - if: $CI_COMMIT_BRANCH == "spike/68-handle-openAPI-package-registry"
+  only:
+    - dev
+    - spike/68-handle-openAPI-package-registry
 
 
 services:
@@ -42,9 +42,9 @@ build_backend:
     paths:
       - backend/target/*-runner
       - backend/target/backend-api-client
-  rules:
-    - if: $CI_COMMIT_BRANCH == "dev"
-    - if: $CI_COMMIT_BRANCH == "spike/68-handle-openAPI-package-registry"
+  only:
+    - dev
+    - spike/68-handle-openAPI-package-registry
 
 publish_npm_package:
   stage: publish_npm_package
@@ -58,9 +58,9 @@ publish_npm_package:
     - npm publish --registry=${NPM_REGISTRY_URL}
   dependencies:
     - build_backend
-  rules:
-    - if: $CI_COMMIT_BRANCH == "dev"
-    - if: $CI_COMMIT_BRANCH == "spike/68-handle-openAPI-package-registry"
+  only:
+    - dev
+    - spike/68-handle-openAPI-package-registry
 
 build_frontend:
   stage: build_frontend
@@ -77,9 +77,9 @@ build_frontend:
   artifacts:
     paths:
       - frontend/dist/
-  rules:
-    - if: $CI_COMMIT_BRANCH == "dev"
-    - if: $CI_COMMIT_BRANCH == "spike/68-handle-openAPI-package-registry"
+  only:
+    - dev
+    - spike/68-handle-openAPI-package-registry
 
 #deploy:
 #  stage: deploy
