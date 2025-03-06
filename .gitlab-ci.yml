@@ -12,7 +12,6 @@ structure:
     - '[ -d frontend ] || exit 1'
   only:
     - dev
-    - spike/68-handle-openAPI-package-registry
 
 
 services:
@@ -44,7 +43,6 @@ build_backend:
       - backend/target/backend-api-client
   only:
     - dev
-    - spike/68-handle-openAPI-package-registry
 
 publish_npm_package:
   stage: publish_npm_package
@@ -60,7 +58,6 @@ publish_npm_package:
     - build_backend
   only:
     - dev
-    - spike/68-handle-openAPI-package-registry
 
 build_frontend:
   stage: build_frontend
@@ -79,7 +76,6 @@ build_frontend:
       - frontend/dist/
   only:
     - dev
-    - spike/68-handle-openAPI-package-registry
 
 #deploy:
 #  stage: deploy
