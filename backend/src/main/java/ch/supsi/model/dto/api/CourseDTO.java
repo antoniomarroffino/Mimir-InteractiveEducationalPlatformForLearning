@@ -1,4 +1,4 @@
-package ch.supsi.model.dto;
+package ch.supsi.model.dto.api;
 
 import ch.supsi.model.api.Course;
 import ch.supsi.model.api.Folder;
@@ -6,19 +6,14 @@ import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class CourseDTO {
-    // I campi che verranno inviati/ricevuti dal frontend
     private String id;
     private String name;
     private List<Folder> folders = new ArrayList<>();
 
-    // Costruttore vuoto necessario per la deserializzazione JSON
     public CourseDTO() {
     }
-
-    // Metodo per convertire da Entity (Course) a DTO (CourseDTO)
     public static CourseDTO fromEntity(Course course) {
         if (course == null) return null;
 
@@ -29,7 +24,6 @@ public class CourseDTO {
         return dto;
     }
 
-    // Metodo per convertire da DTO (CourseDTO) a Entity (Course)
     public Course toEntity() {
         Course course = new Course();
         if (this.id != null) {
@@ -40,7 +34,6 @@ public class CourseDTO {
         return course;
     }
 
-    // Getters e Setters
     public String getId() {
         return id;
     }

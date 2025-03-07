@@ -1,7 +1,7 @@
 package ch.supsi.controller.course;
 
 import ch.supsi.model.api.Course;
-import ch.supsi.model.dto.CourseDTO;
+import ch.supsi.model.dto.api.CourseDTO;
 import ch.supsi.service.course.ICourseService;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;

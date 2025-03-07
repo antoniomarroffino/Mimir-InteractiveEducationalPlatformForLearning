@@ -17,6 +17,7 @@ models/folder.ts
 models/index.ts
 models/object-id.ts
 models/question.ts
+models/quiz.ts
 package.json
 tsconfig.esm.json
 tsconfig.json

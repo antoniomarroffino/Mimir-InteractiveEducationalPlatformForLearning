@@ -6,26 +6,21 @@ import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
-import java.util.ArrayList;
-import java.util.List;
-
-@MongoEntity(collection = "courses")
-@Schema(description = "Course model", name = "Course")
-public class Course {
+@MongoEntity(collection = "quizzes")
+@Schema(description = "Quiz model", name = "Quiz")
+public class Quiz {
 
     @BsonId
     private ObjectId id;
 
-    @NotBlank(message = "Course name cannot be null or empty")
+    @NotBlank(message = "Quiz name cannot be null or empty")
     private String name;
 
-    private List<Folder> folders = new ArrayList<>();
-
-    public Course() {
+    public Quiz() {
 
     }
 
-    public Course(String name) {
+    public Quiz(String name) {
         this.name = name;
     }
 
@@ -43,13 +38,5 @@ public class Course {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public List<Folder> getFolders() {
-        return this.folders;
-    }
-
-    public void setFolders(List<Folder> folders) {
-        this.folders = folders;
     }
 }

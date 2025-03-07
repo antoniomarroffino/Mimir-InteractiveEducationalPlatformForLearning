@@ -1,13 +1,10 @@
 import { useCourseContext } from '../../contexts/CourseContext';
 import { CourseCard } from './CourseCard';
-import CreateCourseForm from './CreateCourseForm';
 
 export const CourseList = () => {
-    const { courses, isLoading, error } = useCourseContext();
+    const { courses, error } = useCourseContext();
 
-    if (isLoading) {
-        return <div className="loading loading-spinner loading-lg"></div>;
-    }
+
 
     if (error) {
         return <div className="alert alert-error">Error: {error.message}</div>;
@@ -15,7 +12,7 @@ export const CourseList = () => {
 
     return (
         <div>
-            <CreateCourseForm />
+
             {!courses.length ? (
                 <div className="text-center text-base-content/70 py-8">
                     No courses yet. Create your first course!
