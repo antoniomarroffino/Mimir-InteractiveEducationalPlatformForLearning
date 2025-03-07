@@ -1,15 +1,19 @@
-import { useState } from 'react';
-import { useCreateCourse } from '../../hooks/useCourses';
+import React, { useState } from 'react';
+import { useCourseContext } from '../../contexts/CourseContext';
 
 const CreateCourseForm = () => {
     const [name, setName] = useState('');
-    const createCourse = useCreateCourse();
+    const { createCourse, isLoading } = useCourseContext();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (name.trim()) {
-            await createCourse.mutate(name);
-            setName('');
+            try {
+                await createCourse(name);
+                setName('');
+            } catch (error) {
+                console.error('Failed to create course:', error);
+            }
         }
     };
 
@@ -23,17 +27,18 @@ const CreateCourseForm = () => {
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Enter course name"
                     className="input input-bordered join-item flex-1"
-                    disabled={createCourse.isLoading}
+                    disabled={isLoading}
                 />
                 <button
                     type="submit"
                     className="btn btn-primary join-item"
-                    disabled={createCourse.isLoading || !name.trim()}
+                    disabled={isLoading || !name.trim()}
                 >
-                    {createCourse.isLoading ?
-                        <span className="loading loading-spinner"></span> :
+                    {isLoading ? (
+                        <span className="loading loading-spinner"></span>
+                    ) : (
                         'Create Course'
-                    }
+                    )}
                 </button>
             </div>
         </form>

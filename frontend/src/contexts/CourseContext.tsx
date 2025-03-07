@@ -1,7 +1,21 @@
-import { Configuration, CourseControllerApi } from '../api/generated';
+import { createContext, useContext } from 'react';
+import { CourseDTO } from '../api/generated';
 
-const config = new Configuration({
-    basePath: `${import.meta.env.VITE_BACKEND_URL}`
-});
+interface CourseContextType {
+    courses: CourseDTO[];
+    isLoading: boolean;
+    error: Error | null;
+    createCourse: (name: string) => Promise<void>;
+    selectedCourseId: string | null;
+    setSelectedCourseId: (id: string | null) => void;
+}
 
-export const courseApi = new CourseControllerApi(config);
+export const CourseContext = createContext<CourseContextType | undefined>(undefined);
+
+export const useCourseContext = () => {
+    const context = useContext(CourseContext);
+    if (!context) {
+        throw new Error('useCourseContext must be used within a CourseProvider');
+    }
+    return context;
+};

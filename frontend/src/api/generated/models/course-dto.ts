@@ -18,27 +18,27 @@
 import type { Folder } from './folder';
 
 /**
- * Course model
+ * 
  * @export
- * @interface Course
+ * @interface CourseDTO
  */
-export interface Course {
+export interface CourseDTO {
     /**
      * 
      * @type {string}
-     * @memberof Course
+     * @memberof CourseDTO
      */
     'id'?: string;
     /**
      * 
      * @type {string}
-     * @memberof Course
+     * @memberof CourseDTO
      */
-    'name': string;
+    'name'?: string;
     /**
      * 
      * @type {Array<Folder>}
-     * @memberof Course
+     * @memberof CourseDTO
      */
     'folders'?: Array<Folder>;
 }

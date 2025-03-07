@@ -13,33 +13,42 @@
  */
 
 
-// May contain unused imports in some cases
-// @ts-ignore
-import type { Folder } from './folder';
 
 /**
- * Course model
+ * 
  * @export
- * @interface Course
+ * @interface ObjectId
  */
-export interface Course {
+export interface ObjectId {
+    /**
+     * 
+     * @type {number}
+     * @memberof ObjectId
+     */
+    'timestamp'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof ObjectId
+     */
+    'counter'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof ObjectId
+     */
+    'randomValue1'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof ObjectId
+     */
+    'randomValue2'?: number;
     /**
      * 
      * @type {string}
-     * @memberof Course
+     * @memberof ObjectId
      */
-    'id'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Course
-     */
-    'name': string;
-    /**
-     * 
-     * @type {Array<Folder>}
-     * @memberof Course
-     */
-    'folders'?: Array<Folder>;
+    'date'?: string;
 }
 

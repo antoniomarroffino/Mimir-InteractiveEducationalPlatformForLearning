@@ -1,23 +1,35 @@
-import { useCourses } from '../../hooks/useCourses';
-import CourseCard from './CourseCard';
+import { useCourseContext } from '../../contexts/CourseContext';
+import { CourseCard } from './CourseCard';
 import CreateCourseForm from './CreateCourseForm';
 
-const CourseList = () => {
-    const { data: courses, isLoading, error } = useCourses();
+export const CourseList = () => {
+    const { courses, isLoading, error } = useCourseContext();
 
-    if (isLoading) return <div className="loading loading-spinner loading-lg"></div>;
-    if (error) return <div className="alert alert-error">Error loading courses</div>;
+    if (isLoading) {
+        return <div className="loading loading-spinner loading-lg"></div>;
+    }
+
+    if (error) {
+        return <div className="alert alert-error">Error: {error.message}</div>;
+    }
 
     return (
-        <div className="space-y-6">
+        <div>
             <CreateCourseForm />
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {courses?.map(course => (
-                    <CourseCard key={course.id} course={course} />
-                ))}
-            </div>
+            {!courses.length ? (
+                <div className="text-center text-base-content/70 py-8">
+                    No courses yet. Create your first course!
+                </div>
+            ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+                    {courses.map(course => (
+                        <CourseCard
+                            key={course.id}
+                            course={course}
+                        />
+                    ))}
+                </div>
+            )}
         </div>
     );
 };
-
-export default CourseList;

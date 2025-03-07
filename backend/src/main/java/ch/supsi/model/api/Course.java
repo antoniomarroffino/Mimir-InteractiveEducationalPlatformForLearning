@@ -3,7 +3,6 @@ package ch.supsi.model.api;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import io.quarkus.mongodb.panache.PanacheMongoEntity;
 import io.quarkus.mongodb.panache.common.MongoEntity;
 import io.quarkus.mongodb.panache.common.jackson.ObjectIdDeserializer;
 import jakarta.validation.constraints.NotBlank;
@@ -17,9 +16,6 @@ import java.util.List;
 @Schema(description = "Course model", name = "Course")
 public class Course{
 
-    @JsonSerialize(using = ToStringSerializer.class)
-    @JsonDeserialize(using = ObjectIdDeserializer.class)
-    @Schema(implementation = String.class, description = "Unique identifier")
     @BsonId
     private ObjectId id;
 
@@ -54,5 +50,9 @@ public class Course{
 
     public void setFolders(List<Folder> folders) {
         this.folders = folders;
+    }
+
+    public void setId(ObjectId objectId) {
+        this.id = objectId;
     }
 }

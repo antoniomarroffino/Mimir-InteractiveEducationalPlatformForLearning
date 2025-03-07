@@ -1,6 +1,7 @@
 package ch.supsi.controller.course;
 
 import ch.supsi.model.api.Course;
+import ch.supsi.model.dto.CourseDTO;
 import ch.supsi.service.course.ICourseService;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -13,6 +14,9 @@ import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Path("/courses")
 @Produces(MediaType.APPLICATION_JSON)
@@ -29,11 +33,15 @@ public class CourseController {
             description = "List of courses retrieved successfully",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(type = SchemaType.ARRAY, implementation = Course.class)
+                    schema = @Schema(type = SchemaType.ARRAY, implementation = CourseDTO.class)
             )
     )
     public Response getCourses() {
-        return Response.ok(this.courseService.getAllCourses()).build();
+        List<Course> courses = courseService.getAllCourses();
+        List<CourseDTO> courseDTOs = courses.stream()
+                .map(CourseDTO::fromEntity)
+                .collect(Collectors.toList());
+        return Response.ok(courseDTOs).build();
     }
 
     @GET
@@ -44,7 +52,7 @@ public class CourseController {
             description = "Course retrieved successfully",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = Course.class)
+                    schema = @Schema(implementation = CourseDTO.class)
             )
     )
     @APIResponse(
@@ -52,7 +60,9 @@ public class CourseController {
             description = "Course not found"
     )
     public Response getCourse(@PathParam("id") String id) {
-        return Response.ok(this.courseService.getCourseById(new ObjectId(id))).build();
+        Course course = courseService.getCourseById(new ObjectId(id));
+        CourseDTO courseDTO = CourseDTO.fromEntity(course);
+        return Response.ok(courseDTO).build();
     }
 
     @POST
@@ -62,16 +72,17 @@ public class CourseController {
             description = "Course created successfully",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = Course.class)
+                    schema = @Schema(implementation = CourseDTO.class)
             )
     )
-    public Response createCourse(@Valid Course course) {
-        Course createdCourse = this.courseService.createCourse(course);
+    public Response createCourse(@Valid CourseDTO courseDTO) {
+        Course course = courseDTO.toEntity();
+        Course createdCourse = courseService.createCourse(course);
+        CourseDTO createdCourseDTO = CourseDTO.fromEntity(createdCourse);
         return Response.status(Response.Status.CREATED)
-                .entity(createdCourse)
+                .entity(createdCourseDTO)
                 .build();
     }
-
 
     @DELETE
     @Path("/{id}")
@@ -85,7 +96,7 @@ public class CourseController {
             description = "Course not found"
     )
     public Response deleteCourse(@PathParam("id") String id) {
-        this.courseService.deleteCourse(new ObjectId(id));
+        courseService.deleteCourse(new ObjectId(id));
         return Response.noContent().build();
     }
 }
