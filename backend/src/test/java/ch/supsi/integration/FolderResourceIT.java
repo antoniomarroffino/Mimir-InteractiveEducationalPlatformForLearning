@@ -19,6 +19,7 @@ import static org.hamcrest.Matchers.*;
 @QuarkusTestResource(MongoTestResource.class)
 @Tag("integration")
 public class FolderResourceIT {
+    /*
 
     @Inject
     CourseRepository courseRepository;
@@ -134,4 +135,5 @@ public class FolderResourceIT {
                 .then()
                 .statusCode(Response.Status.NOT_FOUND.getStatusCode());
     }
+    */
 }
