@@ -1,4 +1,4 @@
-import { CourseDTO } from '../../api/generated';
+import { CourseDTO } from '@dti-isin/backend-api-client';
 import { BsFolder2, BsChevronRight } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
 

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FolderDTO } from '../../api/generated';
+import { FolderDTO } from '@dti-isin/backend-api-client';
 import { BsFolder2, BsChevronDown, BsChevronUp } from 'react-icons/bs';
 
 interface FolderRowProps {

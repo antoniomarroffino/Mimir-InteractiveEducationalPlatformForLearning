@@ -2,6 +2,7 @@ package ch.supsi.service.folder;
 
 import ch.supsi.model.api.Course;
 import ch.supsi.model.api.Folder;
+import ch.supsi.model.dto.api.FolderDTO;
 import ch.supsi.repository.CourseRepository;
 import ch.supsi.repository.FolderRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -19,70 +20,49 @@ public class FolderService implements IFolderService {
     FolderRepository folderRepository;
 
     @Override
-    public List<Folder> getFoldersInCourse(ObjectId courseId) {
-        Course course = courseRepository.findById(courseId);
+    public List<FolderDTO> getFoldersInCourse(ObjectId courseId) {
+        Course course = this.courseRepository.findById(courseId);
         if (course == null) {
             throw new NotFoundException("Course not found");
         }
-        return course.getFolders();
+        return course.getFolders().stream().map(new FolderDTO()::fromEntity).toList();
     }
 
     @Override
-    public Folder getFolderInCourse(ObjectId courseId, ObjectId folderId) {
-        Course course = courseRepository.findById(courseId);
+    public FolderDTO getFolderInCourse(ObjectId courseId, ObjectId folderId) {
+        Course course = this.courseRepository.findById(courseId);
         if (course == null) {
             throw new NotFoundException("Course not found");
         }
 
         return course.getFolders().stream()
                 .filter(f -> f.getId().equals(folderId))
+                .map(new FolderDTO()::fromEntity)
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("Folder not found in course"));
     }
 
     @Override
-    public Folder addFolderToCourse(ObjectId courseId, Folder folder) {
-        Course course = courseRepository.findById(courseId);
+    public FolderDTO addFolderToCourse(ObjectId courseId, FolderDTO folderDTO) {
+        Course course = this.courseRepository.findById(courseId);
         if (course == null) {
             throw new NotFoundException("Course not found");
         }
+
+        Folder folder = folderDTO.toEntity();
+        folder.setId(this.createNewFolderId());
+
         course.getFolders().add(folder);
-        courseRepository.update(course);
+        this.courseRepository.update(course);
 
-        return folder;
+        return new FolderDTO().fromEntity(folder);
     }
 
-    @Override
-    public Folder updateFolderInCourse(ObjectId courseId, ObjectId folderId, Folder updatedFolder) {
-        Course course = courseRepository.findById(courseId);
-        if (course == null) {
-            throw new NotFoundException("Course not found");
-        }
-
-        List<Folder> folders = course.getFolders();
-        for (int i = 0; i < folders.size(); i++) {
-            if (folders.get(i).getId().equals(folderId)) {
-                folders.set(i, updatedFolder);
-                courseRepository.update(course);
-                return updatedFolder;
-            }
-        }
-
-        throw new NotFoundException("Folder not found in course");
-    }
-
-    @Override
-    public void removeFolderFromCourse(ObjectId courseId, ObjectId folderId) {
-        Course course = courseRepository.findById(courseId);
-        if (course == null) {
-            throw new NotFoundException("Course not found");
-        }
-
-        boolean removed = course.getFolders().removeIf(f -> f.getId().equals(folderId));
-        if (!removed) {
-            throw new NotFoundException("Folder not found in course");
-        }
-
-        courseRepository.update(course);
+    private ObjectId createNewFolderId() {
+        ObjectId folderId;
+        do{
+            folderId = new ObjectId();
+        }while (this.folderRepository.findById(folderId) != null);
+        return folderId;
     }
 }

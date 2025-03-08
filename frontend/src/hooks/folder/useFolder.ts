@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { FolderDTO } from '../../api/generated';
+import { FolderDTO } from '@dti-isin/backend-api-client';
 import { folderService } from '../../services/folderService';
 
 export const useFolder = (courseId: string | null) => {

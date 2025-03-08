@@ -1,5 +1,5 @@
-import { CourseDTO } from '../api/generated';
-import { courseApi } from '../api/config';
+import { CourseDTO } from '@dti-isin/backend-api-client';
+import { courseApi } from '../../config/config.ts';
 import { AxiosError } from 'axios';
 
 class CourseService {
@@ -14,7 +14,7 @@ class CourseService {
 
     async createCourse(name: string): Promise<CourseDTO> {
         try {
-            const response = await courseApi.apiCoursesPost({ name });
+            const response = await courseApi.apiCoursesPost({ courseDTO: { name: name } });
             return response.data;
         } catch (error) {
             throw this.handleError(error as AxiosError);

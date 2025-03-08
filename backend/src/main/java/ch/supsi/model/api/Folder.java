@@ -1,6 +1,5 @@
 package ch.supsi.model.api;
 
-import io.quarkus.mongodb.panache.common.MongoEntity;
 import jakarta.validation.constraints.NotBlank;
 import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.types.ObjectId;
@@ -9,13 +8,12 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import java.util.ArrayList;
 import java.util.List;
 
-@MongoEntity(collection = "folders")
 @Schema(description = "Folder model", name = "Folder")
 public class Folder {
 
     @BsonId
     private ObjectId id;
-    @NotBlank(message = "Folder name cannot be null or empty")
+
     private String name;
 
     private List<Quiz> quizzes = new ArrayList<>();

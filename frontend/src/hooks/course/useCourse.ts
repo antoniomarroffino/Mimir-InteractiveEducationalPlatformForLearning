@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { CourseDTO } from '../../api/generated';
+import { CourseDTO } from '@dti-isin/backend-api-client';
 import { courseService } from '../../services/courseService';
 
 export const useCourse = () => {

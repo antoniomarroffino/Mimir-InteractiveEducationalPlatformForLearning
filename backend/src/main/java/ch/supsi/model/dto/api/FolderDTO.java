@@ -2,19 +2,26 @@ package ch.supsi.model.dto.api;
 
 import ch.supsi.model.api.Quiz;
 import ch.supsi.model.api.Folder;
+import io.quarkus.runtime.annotations.RegisterForReflection;
+import jakarta.validation.constraints.NotBlank;
 import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@RegisterForReflection
 public class FolderDTO {
     private String id;
+
+    @NotBlank(message = "Folder name cannot be null or empty")
     private String name;
+
     private List<Quiz> quizzes = new ArrayList<>();
 
     public FolderDTO() {
     }
-    public static FolderDTO fromEntity(Folder folder) {
+
+    public FolderDTO fromEntity(Folder folder) {
         if (folder == null) return null;
 
         FolderDTO dto = new FolderDTO();

@@ -16,7 +16,6 @@ public class Course {
     @BsonId
     private ObjectId id;
 
-    @NotBlank(message = "Course name cannot be null or empty")
     private String name;
 
     private List<Folder> folders = new ArrayList<>();

@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import { CourseDTO } from '../api/generated';
+import { CourseDTO } from '@dti-isin/backend-api-client';
 
 interface CourseContextType {
     courses: CourseDTO[];

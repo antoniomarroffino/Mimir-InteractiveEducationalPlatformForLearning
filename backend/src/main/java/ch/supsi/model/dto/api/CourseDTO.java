@@ -3,16 +3,21 @@ package ch.supsi.model.dto.api;
 import ch.supsi.model.api.Course;
 import ch.supsi.model.api.Folder;
 import io.quarkus.runtime.annotations.RegisterForReflection;
+import jakarta.validation.constraints.NotBlank;
 import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RegisterForReflection
 public class CourseDTO {
     private String id;
+
+    @NotBlank(message = "Course name cannot be null or empty")
     private String name;
-    private List<Folder> folders = new ArrayList<>();
+
+    private List<FolderDTO> folders = new ArrayList<>();
 
     public CourseDTO() {
     }
@@ -22,7 +27,7 @@ public class CourseDTO {
         CourseDTO dto = new CourseDTO();
         dto.setId(course.getId() != null ? course.getId().toString() : null);
         dto.setName(course.getName());
-        dto.setFolders(course.getFolders());
+        dto.setFolders(course.getFolders().stream().map(new FolderDTO()::fromEntity).toList());
         return dto;
     }
 
@@ -32,7 +37,7 @@ public class CourseDTO {
             course.setId(new ObjectId(this.id));
         }
         course.setName(this.name);
-        course.setFolders(this.folders);
+        course.setFolders(this.folders.stream().map(FolderDTO::toEntity).toList());
         return course;
     }
 
@@ -52,11 +57,11 @@ public class CourseDTO {
         this.name = name;
     }
 
-    public List<Folder> getFolders() {
+    public List<FolderDTO> getFolders() {
         return this.folders;
     }
 
-    public void setFolders(List<Folder> folders) {
+    public void setFolders(List<FolderDTO> folders) {
         this.folders = folders != null ? folders : new ArrayList<>();
     }
 }

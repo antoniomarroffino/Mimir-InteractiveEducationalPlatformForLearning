@@ -37,11 +37,8 @@ public class FolderController {
             )
     )
     public Response getFolders(@PathParam("courseId") String courseId) {
-        List<Folder> folders = folderService.getFoldersInCourse(new ObjectId(courseId));
-        List<FolderDTO> folderDTOs = folders.stream()
-                .map(FolderDTO::fromEntity)
-                .collect(Collectors.toList());
-        return Response.ok(folderDTOs).build();
+        List<FolderDTO> foldersDTO = folderService.getFoldersInCourse(new ObjectId(courseId));
+        return Response.ok(foldersDTO).build();
     }
 
     @GET
@@ -58,11 +55,10 @@ public class FolderController {
     public Response getFolder(
             @PathParam("courseId") String courseId,
             @PathParam("folderId") String folderId) {
-        Folder folder = folderService.getFolderInCourse(
+        FolderDTO folderDTO = folderService.getFolderInCourse(
                 new ObjectId(courseId),
                 new ObjectId(folderId)
         );
-        FolderDTO folderDTO = FolderDTO.fromEntity(folder);
         return Response.ok(folderDTO).build();
     }
 
@@ -79,53 +75,9 @@ public class FolderController {
     public Response createFolder(
             @PathParam("courseId") String courseId,
             @Valid FolderDTO folderDTO) {
-        Folder folder = folderDTO.toEntity();
-        Folder createdFolder = folderService.addFolderToCourse(new ObjectId(courseId), folder);
-        FolderDTO createdFolderDTO = FolderDTO.fromEntity(createdFolder);
+        FolderDTO createdFolderDTO = folderService.addFolderToCourse(new ObjectId(courseId), folderDTO);
         return Response.status(Response.Status.CREATED)
                 .entity(createdFolderDTO)
                 .build();
-    }
-
-    @PUT
-    @Path("/{folderId}")
-    @Operation(summary = "Update folder in course")
-    @APIResponse(
-            responseCode = "200",
-            description = "Folder updated successfully",
-            content = @Content(
-                    mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = FolderDTO.class)
-            )
-    )
-    public Response updateFolder(
-            @PathParam("courseId") String courseId,
-            @PathParam("folderId") String folderId,
-            @Valid FolderDTO folderDTO) {
-        Folder folder = folderDTO.toEntity();
-        Folder updatedFolder = folderService.updateFolderInCourse(
-                new ObjectId(courseId),
-                new ObjectId(folderId),
-                folder
-        );
-        FolderDTO updatedFolderDTO = FolderDTO.fromEntity(updatedFolder);
-        return Response.ok(updatedFolderDTO).build();
-    }
-
-    @DELETE
-    @Path("/{folderId}")
-    @Operation(summary = "Delete folder from course")
-    @APIResponse(
-            responseCode = "204",
-            description = "Folder deleted successfully"
-    )
-    public Response deleteFolder(
-            @PathParam("courseId") String courseId,
-            @PathParam("folderId") String folderId) {
-        folderService.removeFolderFromCourse(
-                new ObjectId(courseId),
-                new ObjectId(folderId)
-        );
-        return Response.noContent().build();
     }
 }

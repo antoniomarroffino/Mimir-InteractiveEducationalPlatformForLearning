@@ -1,11 +1,11 @@
-import { FolderDTO } from '../api/generated';
-import { folderApi } from '../api/config';
+import { FolderDTO } from '@dti-isin/backend-api-client';
+import { folderApi } from '../../config/config.ts';
 import { AxiosError } from 'axios';
 
 class FolderService {
     async getFoldersInCourse(courseId: string): Promise<FolderDTO[]> {
         try {
-            const response = await folderApi.apiCoursesCourseIdFoldersGet(courseId);
+            const response = await folderApi.apiCoursesCourseIdFoldersGet({courseId});
             return response.data;
         } catch (error) {
             throw this.handleError(error as AxiosError);
@@ -14,7 +14,7 @@ class FolderService {
 
     async createFolder(courseId: string, name: string): Promise<FolderDTO> {
         try {
-            const response = await folderApi.apiCoursesCourseIdFoldersPost(courseId, { name });
+            const response = await folderApi.apiCoursesCourseIdFoldersPost({courseId, folderDTO: {name: name}});
             return response.data;
         } catch (error) {
             throw this.handleError(error as AxiosError);

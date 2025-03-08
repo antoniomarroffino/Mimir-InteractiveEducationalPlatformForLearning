@@ -177,7 +177,7 @@
                                 <skipOperationExample>true</skipOperationExample>
                                 <modelPropertyNaming>original</modelPropertyNaming>
                                 <npmName>@dti-isin/backend-api-client</npmName>
-                                <npmVersion>0.0.1</npmVersion>
+                                <npmVersion>0.0.2</npmVersion>
                                 <withInterfaces>true</withInterfaces>
                                 <useSingleRequestParameter>true</useSingleRequestParameter>
                                 <withoutRuntimeChecks>true</withoutRuntimeChecks>
