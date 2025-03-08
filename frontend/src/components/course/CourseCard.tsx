@@ -1,9 +1,9 @@
-import { Course } from '../../api/generated';
+import { CourseDTO } from '../../api/generated';
 import { BsFolder2, BsChevronRight } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
 
 interface CourseCardProps {
-    course: Course;
+    course: CourseDTO;
 }
 
 export const CourseCard = ({ course }: CourseCardProps) => {

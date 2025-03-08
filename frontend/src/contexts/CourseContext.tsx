@@ -8,6 +8,7 @@ interface CourseContextType {
     createCourse: (name: string) => Promise<void>;
     selectedCourseId: string | null;
     setSelectedCourseId: (id: string | null) => void;
+    fetchCourses: () => Promise<void>;
 }
 
 export const CourseContext = createContext<CourseContextType | undefined>(undefined);

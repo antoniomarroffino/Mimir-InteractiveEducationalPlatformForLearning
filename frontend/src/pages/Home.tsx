@@ -1,7 +1,8 @@
-import {useMsal} from "@azure/msal-react";
-import {useState} from "react";
-import {loginRequest} from "../auth/authConfig.ts";
-import CourseList from "../components/course/CourseList.tsx";
+import { useMsal } from "@azure/msal-react";
+import { useState } from "react";
+import { loginRequest } from "../auth/authConfig.ts";
+import { CourseList } from "../components/course/CourseList.tsx";
+import CreateCourseForm from "../components/course/CreateCourseForm.tsx";
 
 const Home = () => {
     const { instance, accounts } = useMsal();
@@ -83,13 +84,24 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* Nuova sezione Corsi */}
+            {/* Courses Section */}
             <section className="py-16 relative">
                 <div className="container mx-auto px-4">
                     <h2 className="text-3xl font-bold text-primary text-center mb-8">
                         I tuoi Corsi
                     </h2>
-                    <CourseList />
+
+                    <div className="card bg-base-100 shadow-xl">
+                        <div className="card-body">
+                            <CreateCourseForm />
+                        </div>
+                    </div>
+                    {/* Lista dei corsi */}
+                    <div className="card bg-base-100 shadow-xl">
+                        <div className="card-body">
+                            <CourseList />
+                        </div>
+                    </div>
                 </div>
             </section>
 

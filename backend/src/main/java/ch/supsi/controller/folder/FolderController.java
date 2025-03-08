@@ -1,7 +1,7 @@
 package ch.supsi.controller.folder;
 
 import ch.supsi.model.api.Folder;
-import ch.supsi.service.course.ICourseService;
+import ch.supsi.model.dto.api.FolderDTO;
 import ch.supsi.service.folder.IFolderService;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -14,6 +14,9 @@ import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Path("/courses/{courseId}/folders")
 @Produces(MediaType.APPLICATION_JSON)
@@ -30,11 +33,15 @@ public class FolderController {
             description = "List of folders retrieved successfully",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(type = SchemaType.ARRAY, implementation = Folder.class)
+                    schema = @Schema(type = SchemaType.ARRAY, implementation = FolderDTO.class)
             )
     )
     public Response getFolders(@PathParam("courseId") String courseId) {
-        return Response.ok(this.folderService.getFoldersInCourse(new ObjectId(courseId))).build();
+        List<Folder> folders = folderService.getFoldersInCourse(new ObjectId(courseId));
+        List<FolderDTO> folderDTOs = folders.stream()
+                .map(FolderDTO::fromEntity)
+                .collect(Collectors.toList());
+        return Response.ok(folderDTOs).build();
     }
 
     @GET
@@ -45,16 +52,18 @@ public class FolderController {
             description = "Folder retrieved successfully",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = Folder.class)
+                    schema = @Schema(implementation = FolderDTO.class)
             )
     )
     public Response getFolder(
             @PathParam("courseId") String courseId,
             @PathParam("folderId") String folderId) {
-        return Response.ok(this.folderService.getFolderInCourse(
+        Folder folder = folderService.getFolderInCourse(
                 new ObjectId(courseId),
                 new ObjectId(folderId)
-        )).build();
+        );
+        FolderDTO folderDTO = FolderDTO.fromEntity(folder);
+        return Response.ok(folderDTO).build();
     }
 
     @POST
@@ -64,15 +73,17 @@ public class FolderController {
             description = "Folder created successfully",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = Folder.class)
+                    schema = @Schema(implementation = FolderDTO.class)
             )
     )
     public Response createFolder(
             @PathParam("courseId") String courseId,
-            @Valid Folder folder) {
-        Folder createdFolder = this.folderService.addFolderToCourse(new ObjectId(courseId), folder);
+            @Valid FolderDTO folderDTO) {
+        Folder folder = folderDTO.toEntity();
+        Folder createdFolder = folderService.addFolderToCourse(new ObjectId(courseId), folder);
+        FolderDTO createdFolderDTO = FolderDTO.fromEntity(createdFolder);
         return Response.status(Response.Status.CREATED)
-                .entity(createdFolder)
+                .entity(createdFolderDTO)
                 .build();
     }
 
@@ -84,18 +95,21 @@ public class FolderController {
             description = "Folder updated successfully",
             content = @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = Folder.class)
+                    schema = @Schema(implementation = FolderDTO.class)
             )
     )
     public Response updateFolder(
             @PathParam("courseId") String courseId,
             @PathParam("folderId") String folderId,
-            @Valid Folder folder) {
-        return Response.ok(this.folderService.updateFolderInCourse(
+            @Valid FolderDTO folderDTO) {
+        Folder folder = folderDTO.toEntity();
+        Folder updatedFolder = folderService.updateFolderInCourse(
                 new ObjectId(courseId),
                 new ObjectId(folderId),
                 folder
-        )).build();
+        );
+        FolderDTO updatedFolderDTO = FolderDTO.fromEntity(updatedFolder);
+        return Response.ok(updatedFolderDTO).build();
     }
 
     @DELETE
@@ -108,7 +122,7 @@ public class FolderController {
     public Response deleteFolder(
             @PathParam("courseId") String courseId,
             @PathParam("folderId") String folderId) {
-        this.folderService.removeFolderFromCourse(
+        folderService.removeFolderFromCourse(
                 new ObjectId(courseId),
                 new ObjectId(folderId)
         );

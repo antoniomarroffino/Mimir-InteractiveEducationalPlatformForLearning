@@ -13,6 +13,7 @@ git_push.sh
 index.ts
 models/course-dto.ts
 models/course.ts
+models/folder-dto.ts
 models/folder.ts
 models/index.ts
 models/object-id.ts

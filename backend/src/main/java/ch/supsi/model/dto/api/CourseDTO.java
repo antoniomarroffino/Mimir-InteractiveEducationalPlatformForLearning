@@ -35,7 +35,7 @@ public class CourseDTO {
     }
 
     public String getId() {
-        return id;
+        return this.id;
     }
 
     public void setId(String id) {
@@ -43,7 +43,7 @@ public class CourseDTO {
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public void setName(String name) {
@@ -51,7 +51,7 @@ public class CourseDTO {
     }
 
     public List<Folder> getFolders() {
-        return folders;
+        return this.folders;
     }
 
     public void setFolders(List<Folder> folders) {

@@ -22,7 +22,7 @@ import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObj
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS, type RequestArgs, BaseAPI, RequiredError, operationServerMap } from '../base';
 // @ts-ignore
-import type { Folder } from '../models';
+import type { FolderDTO } from '../models';
 /**
  * FolderControllerApi - axios parameter creator
  * @export
@@ -110,17 +110,17 @@ export const FolderControllerApiAxiosParamCreator = function (configuration?: Co
          * @summary Update folder in course
          * @param {string} courseId 
          * @param {string} folderId 
-         * @param {Folder} folder 
+         * @param {FolderDTO} folderDTO 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiCoursesCourseIdFoldersFolderIdPut: async (courseId: string, folderId: string, folder: Folder, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        apiCoursesCourseIdFoldersFolderIdPut: async (courseId: string, folderId: string, folderDTO: FolderDTO, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'courseId' is not null or undefined
             assertParamExists('apiCoursesCourseIdFoldersFolderIdPut', 'courseId', courseId)
             // verify required parameter 'folderId' is not null or undefined
             assertParamExists('apiCoursesCourseIdFoldersFolderIdPut', 'folderId', folderId)
-            // verify required parameter 'folder' is not null or undefined
-            assertParamExists('apiCoursesCourseIdFoldersFolderIdPut', 'folder', folder)
+            // verify required parameter 'folderDTO' is not null or undefined
+            assertParamExists('apiCoursesCourseIdFoldersFolderIdPut', 'folderDTO', folderDTO)
             const localVarPath = `/api/courses/{courseId}/folders/{folderId}`
                 .replace(`{${"courseId"}}`, encodeURIComponent(String(courseId)))
                 .replace(`{${"folderId"}}`, encodeURIComponent(String(folderId)));
@@ -142,7 +142,7 @@ export const FolderControllerApiAxiosParamCreator = function (configuration?: Co
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(folder, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(folderDTO, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -187,15 +187,15 @@ export const FolderControllerApiAxiosParamCreator = function (configuration?: Co
          * 
          * @summary Create folder in course
          * @param {string} courseId 
-         * @param {Folder} folder 
+         * @param {FolderDTO} folderDTO 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiCoursesCourseIdFoldersPost: async (courseId: string, folder: Folder, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        apiCoursesCourseIdFoldersPost: async (courseId: string, folderDTO: FolderDTO, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'courseId' is not null or undefined
             assertParamExists('apiCoursesCourseIdFoldersPost', 'courseId', courseId)
-            // verify required parameter 'folder' is not null or undefined
-            assertParamExists('apiCoursesCourseIdFoldersPost', 'folder', folder)
+            // verify required parameter 'folderDTO' is not null or undefined
+            assertParamExists('apiCoursesCourseIdFoldersPost', 'folderDTO', folderDTO)
             const localVarPath = `/api/courses/{courseId}/folders`
                 .replace(`{${"courseId"}}`, encodeURIComponent(String(courseId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -216,7 +216,7 @@ export const FolderControllerApiAxiosParamCreator = function (configuration?: Co
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(folder, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(folderDTO, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -255,7 +255,7 @@ export const FolderControllerApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiCoursesCourseIdFoldersFolderIdGet(courseId: string, folderId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Folder>> {
+        async apiCoursesCourseIdFoldersFolderIdGet(courseId: string, folderId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<FolderDTO>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.apiCoursesCourseIdFoldersFolderIdGet(courseId, folderId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['FolderControllerApi.apiCoursesCourseIdFoldersFolderIdGet']?.[localVarOperationServerIndex]?.url;
@@ -266,12 +266,12 @@ export const FolderControllerApiFp = function(configuration?: Configuration) {
          * @summary Update folder in course
          * @param {string} courseId 
          * @param {string} folderId 
-         * @param {Folder} folder 
+         * @param {FolderDTO} folderDTO 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiCoursesCourseIdFoldersFolderIdPut(courseId: string, folderId: string, folder: Folder, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Folder>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.apiCoursesCourseIdFoldersFolderIdPut(courseId, folderId, folder, options);
+        async apiCoursesCourseIdFoldersFolderIdPut(courseId: string, folderId: string, folderDTO: FolderDTO, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<FolderDTO>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiCoursesCourseIdFoldersFolderIdPut(courseId, folderId, folderDTO, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['FolderControllerApi.apiCoursesCourseIdFoldersFolderIdPut']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -283,7 +283,7 @@ export const FolderControllerApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiCoursesCourseIdFoldersGet(courseId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<Folder>>> {
+        async apiCoursesCourseIdFoldersGet(courseId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<FolderDTO>>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.apiCoursesCourseIdFoldersGet(courseId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['FolderControllerApi.apiCoursesCourseIdFoldersGet']?.[localVarOperationServerIndex]?.url;
@@ -293,12 +293,12 @@ export const FolderControllerApiFp = function(configuration?: Configuration) {
          * 
          * @summary Create folder in course
          * @param {string} courseId 
-         * @param {Folder} folder 
+         * @param {FolderDTO} folderDTO 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiCoursesCourseIdFoldersPost(courseId: string, folder: Folder, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Folder>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.apiCoursesCourseIdFoldersPost(courseId, folder, options);
+        async apiCoursesCourseIdFoldersPost(courseId: string, folderDTO: FolderDTO, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<FolderDTO>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiCoursesCourseIdFoldersPost(courseId, folderDTO, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['FolderControllerApi.apiCoursesCourseIdFoldersPost']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -332,7 +332,7 @@ export const FolderControllerApiFactory = function (configuration?: Configuratio
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiCoursesCourseIdFoldersFolderIdGet(courseId: string, folderId: string, options?: RawAxiosRequestConfig): AxiosPromise<Folder> {
+        apiCoursesCourseIdFoldersFolderIdGet(courseId: string, folderId: string, options?: RawAxiosRequestConfig): AxiosPromise<FolderDTO> {
             return localVarFp.apiCoursesCourseIdFoldersFolderIdGet(courseId, folderId, options).then((request) => request(axios, basePath));
         },
         /**
@@ -340,12 +340,12 @@ export const FolderControllerApiFactory = function (configuration?: Configuratio
          * @summary Update folder in course
          * @param {string} courseId 
          * @param {string} folderId 
-         * @param {Folder} folder 
+         * @param {FolderDTO} folderDTO 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiCoursesCourseIdFoldersFolderIdPut(courseId: string, folderId: string, folder: Folder, options?: RawAxiosRequestConfig): AxiosPromise<Folder> {
-            return localVarFp.apiCoursesCourseIdFoldersFolderIdPut(courseId, folderId, folder, options).then((request) => request(axios, basePath));
+        apiCoursesCourseIdFoldersFolderIdPut(courseId: string, folderId: string, folderDTO: FolderDTO, options?: RawAxiosRequestConfig): AxiosPromise<FolderDTO> {
+            return localVarFp.apiCoursesCourseIdFoldersFolderIdPut(courseId, folderId, folderDTO, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -354,19 +354,19 @@ export const FolderControllerApiFactory = function (configuration?: Configuratio
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiCoursesCourseIdFoldersGet(courseId: string, options?: RawAxiosRequestConfig): AxiosPromise<Array<Folder>> {
+        apiCoursesCourseIdFoldersGet(courseId: string, options?: RawAxiosRequestConfig): AxiosPromise<Array<FolderDTO>> {
             return localVarFp.apiCoursesCourseIdFoldersGet(courseId, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Create folder in course
          * @param {string} courseId 
-         * @param {Folder} folder 
+         * @param {FolderDTO} folderDTO 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiCoursesCourseIdFoldersPost(courseId: string, folder: Folder, options?: RawAxiosRequestConfig): AxiosPromise<Folder> {
-            return localVarFp.apiCoursesCourseIdFoldersPost(courseId, folder, options).then((request) => request(axios, basePath));
+        apiCoursesCourseIdFoldersPost(courseId: string, folderDTO: FolderDTO, options?: RawAxiosRequestConfig): AxiosPromise<FolderDTO> {
+            return localVarFp.apiCoursesCourseIdFoldersPost(courseId, folderDTO, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -397,19 +397,19 @@ export interface FolderControllerApiInterface {
      * @throws {RequiredError}
      * @memberof FolderControllerApiInterface
      */
-    apiCoursesCourseIdFoldersFolderIdGet(courseId: string, folderId: string, options?: RawAxiosRequestConfig): AxiosPromise<Folder>;
+    apiCoursesCourseIdFoldersFolderIdGet(courseId: string, folderId: string, options?: RawAxiosRequestConfig): AxiosPromise<FolderDTO>;
 
     /**
      * 
      * @summary Update folder in course
      * @param {string} courseId 
      * @param {string} folderId 
-     * @param {Folder} folder 
+     * @param {FolderDTO} folderDTO 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof FolderControllerApiInterface
      */
-    apiCoursesCourseIdFoldersFolderIdPut(courseId: string, folderId: string, folder: Folder, options?: RawAxiosRequestConfig): AxiosPromise<Folder>;
+    apiCoursesCourseIdFoldersFolderIdPut(courseId: string, folderId: string, folderDTO: FolderDTO, options?: RawAxiosRequestConfig): AxiosPromise<FolderDTO>;
 
     /**
      * 
@@ -419,18 +419,18 @@ export interface FolderControllerApiInterface {
      * @throws {RequiredError}
      * @memberof FolderControllerApiInterface
      */
-    apiCoursesCourseIdFoldersGet(courseId: string, options?: RawAxiosRequestConfig): AxiosPromise<Array<Folder>>;
+    apiCoursesCourseIdFoldersGet(courseId: string, options?: RawAxiosRequestConfig): AxiosPromise<Array<FolderDTO>>;
 
     /**
      * 
      * @summary Create folder in course
      * @param {string} courseId 
-     * @param {Folder} folder 
+     * @param {FolderDTO} folderDTO 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof FolderControllerApiInterface
      */
-    apiCoursesCourseIdFoldersPost(courseId: string, folder: Folder, options?: RawAxiosRequestConfig): AxiosPromise<Folder>;
+    apiCoursesCourseIdFoldersPost(courseId: string, folderDTO: FolderDTO, options?: RawAxiosRequestConfig): AxiosPromise<FolderDTO>;
 
 }
 
@@ -472,13 +472,13 @@ export class FolderControllerApi extends BaseAPI implements FolderControllerApiI
      * @summary Update folder in course
      * @param {string} courseId 
      * @param {string} folderId 
-     * @param {Folder} folder 
+     * @param {FolderDTO} folderDTO 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof FolderControllerApi
      */
-    public apiCoursesCourseIdFoldersFolderIdPut(courseId: string, folderId: string, folder: Folder, options?: RawAxiosRequestConfig) {
-        return FolderControllerApiFp(this.configuration).apiCoursesCourseIdFoldersFolderIdPut(courseId, folderId, folder, options).then((request) => request(this.axios, this.basePath));
+    public apiCoursesCourseIdFoldersFolderIdPut(courseId: string, folderId: string, folderDTO: FolderDTO, options?: RawAxiosRequestConfig) {
+        return FolderControllerApiFp(this.configuration).apiCoursesCourseIdFoldersFolderIdPut(courseId, folderId, folderDTO, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -497,13 +497,13 @@ export class FolderControllerApi extends BaseAPI implements FolderControllerApiI
      * 
      * @summary Create folder in course
      * @param {string} courseId 
-     * @param {Folder} folder 
+     * @param {FolderDTO} folderDTO 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof FolderControllerApi
      */
-    public apiCoursesCourseIdFoldersPost(courseId: string, folder: Folder, options?: RawAxiosRequestConfig) {
-        return FolderControllerApiFp(this.configuration).apiCoursesCourseIdFoldersPost(courseId, folder, options).then((request) => request(this.axios, this.basePath));
+    public apiCoursesCourseIdFoldersPost(courseId: string, folderDTO: FolderDTO, options?: RawAxiosRequestConfig) {
+        return FolderControllerApiFp(this.configuration).apiCoursesCourseIdFoldersPost(courseId, folderDTO, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

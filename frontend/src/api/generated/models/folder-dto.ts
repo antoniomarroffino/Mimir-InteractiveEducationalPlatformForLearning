@@ -18,27 +18,27 @@
 import type { Quiz } from './quiz';
 
 /**
- * Folder model
+ * 
  * @export
- * @interface Folder
+ * @interface FolderDTO
  */
-export interface Folder {
+export interface FolderDTO {
     /**
      * 
      * @type {string}
-     * @memberof Folder
+     * @memberof FolderDTO
      */
     'id'?: string;
     /**
      * 
      * @type {string}
-     * @memberof Folder
+     * @memberof FolderDTO
      */
-    'name': string;
+    'name'?: string;
     /**
      * 
      * @type {Array<Quiz>}
-     * @memberof Folder
+     * @memberof FolderDTO
      */
     'quizzes'?: Array<Quiz>;
 }

@@ -13,33 +13,24 @@
  */
 
 
-// May contain unused imports in some cases
-// @ts-ignore
-import type { Quiz } from './quiz';
 
 /**
- * Folder model
+ * Quiz model
  * @export
- * @interface Folder
+ * @interface Quiz
  */
-export interface Folder {
+export interface Quiz {
     /**
      * 
      * @type {string}
-     * @memberof Folder
+     * @memberof Quiz
      */
     'id'?: string;
     /**
      * 
      * @type {string}
-     * @memberof Folder
+     * @memberof Quiz
      */
     'name': string;
-    /**
-     * 
-     * @type {Array<Quiz>}
-     * @memberof Folder
-     */
-    'quizzes'?: Array<Quiz>;
 }
 

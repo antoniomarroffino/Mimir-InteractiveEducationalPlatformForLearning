@@ -1,31 +1,35 @@
-import { useFolders } from '../../hooks/useFolders';
-import FolderItem from './FolderItem';
+import { useFolderContext } from '../../contexts/FolderContext';
+import { FolderRow } from './FolderRow';
+import CreateFolderForm from './CreateFolderForm';
 
-interface FolderListProps {
-    courseId: string;
-}
+export const FolderList = () => {
+    const { folders, isLoading, error } = useFolderContext();
 
-const FolderList = ({ courseId }: FolderListProps) => {
-    const { data: folders, isLoading } = useFolders(courseId);
+    if (isLoading) {
+        return <div className="loading loading-spinner loading-lg"></div>;
+    }
 
-    if (isLoading) return <div className="loading loading-spinner loading-lg"></div>;
+    if (error) {
+        return <div className="alert alert-error">Error: {error.message}</div>;
+    }
 
     return (
-        <div className="flex flex-col gap-2">
-            {folders?.map(folder => (
-                <FolderItem
-                    key={folder.id}
-                    folder={folder}
-                    courseId={courseId}
-                />
-            ))}
-            {folders?.length === 0 && (
-                <div className="text-center py-8 text-base-content/70">
-                    No folder presents
+        <div className="space-y-4">
+            <CreateFolderForm />
+            {!folders.length ? (
+                <div className="text-center text-base-content/70 py-8">
+                    No folders yet. Create your first folder!
+                </div>
+            ) : (
+                <div className="space-y-2">
+                    {folders.map(folder => (
+                        <FolderRow
+                            key={folder.id}
+                            folder={folder}
+                        />
+                    ))}
                 </div>
             )}
         </div>
     );
 };
-
-export default FolderList;
