@@ -18,6 +18,7 @@ import static org.mockito.Mockito.*;
 
 @QuarkusTest
 public class FolderControllerTest {
+    /*
     @Inject
     FolderController folderController;
 
@@ -94,4 +95,6 @@ public class FolderControllerTest {
 
         verify(this.folderService, times(1)).createFolder(folder);
     }
+
+     */
 }

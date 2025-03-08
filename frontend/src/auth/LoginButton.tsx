@@ -1,6 +1,7 @@
 import React from "react";
 import { useMsal } from "@azure/msal-react";
-import {loginRequest} from "./authConfig.ts";
+import { loginRequest } from "./authConfig";
+import { BsPersonCircle } from 'react-icons/bs';
 
 const LoginButton: React.FC = () => {
     const { instance } = useMsal();
@@ -12,13 +13,13 @@ const LoginButton: React.FC = () => {
     };
 
     return (
-        <><a onClick={handleLogin} className="text-decoration-none">
-            <img
-                className="custom-icon mb-1"
-                src="/login-icon.png"
-                alt="Login Icon"
-                style={{cursor: 'pointer'}}/>
-        </a><a className="nav-link p-0" onClick={handleLogin}>Login</a></>
+        <button
+            onClick={handleLogin}
+            className="btn btn-ghost normal-case"
+        >
+            <BsPersonCircle className="w-5 h-5 mr-2" />
+            Login
+        </button>
     );
 };
 

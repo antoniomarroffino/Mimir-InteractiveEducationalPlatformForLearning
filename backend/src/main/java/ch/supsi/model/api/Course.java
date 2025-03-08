@@ -9,22 +9,23 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import java.util.ArrayList;
 import java.util.List;
 
-@MongoEntity(collection = "folders")
-@Schema(description = "Folder model", name = "Folder")
-public class Folder {
+@MongoEntity(collection = "courses")
+@Schema(description = "Course model", name = "Course")
+public class Course {
 
     @BsonId
     private ObjectId id;
-    @NotBlank(message = "Folder name cannot be null or empty")
+
+    @NotBlank(message = "Course name cannot be null or empty")
     private String name;
 
-    private List<Quiz> quizzes = new ArrayList<>();
+    private List<Folder> folders = new ArrayList<>();
 
-    public Folder() {
+    public Course() {
 
     }
 
-    public Folder(String name) {
+    public Course(String name) {
         this.name = name;
     }
 
@@ -32,8 +33,8 @@ public class Folder {
         return this.id;
     }
 
-    public void setId(ObjectId id) {
-        this.id = id;
+    public void setId(ObjectId objectId) {
+        this.id = objectId;
     }
 
     public String getName() {
@@ -44,11 +45,11 @@ public class Folder {
         this.name = name;
     }
 
-    public List<Quiz> getQuizzes() {
-        return this.quizzes;
+    public List<Folder> getFolders() {
+        return this.folders;
     }
 
-    public void setQuizzes(List<Quiz> quizzes) {
-        this.quizzes = quizzes;
+    public void setFolders(List<Folder> folders) {
+        this.folders = folders;
     }
 }
