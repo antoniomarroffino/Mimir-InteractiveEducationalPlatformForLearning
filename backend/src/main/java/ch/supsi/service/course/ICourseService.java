@@ -1,13 +1,11 @@
 package ch.supsi.service.course;
 
-import ch.supsi.model.api.Course;
+import ch.supsi.model.dto.api.CourseDTO;
 import org.bson.types.ObjectId;
 import java.util.List;
 
 public interface ICourseService {
-    List<Course> getAllCourses();
-    Course getCourseById(ObjectId id);
-    Course createCourse(Course course);
-    Course updateCourse(Course course);
-    void deleteCourse(ObjectId id);
+    List<CourseDTO> getAllCourses();
+    CourseDTO getCourseById(ObjectId id);
+    CourseDTO createCourse(CourseDTO course);
 }

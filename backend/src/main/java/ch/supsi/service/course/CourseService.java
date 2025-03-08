@@ -1,12 +1,14 @@
 package ch.supsi.service.course;
 
 import ch.supsi.model.api.Course;
+import ch.supsi.model.dto.api.CourseDTO;
 import ch.supsi.repository.CourseRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.NotFoundException;
 import org.bson.types.ObjectId;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class CourseService implements ICourseService {
@@ -15,36 +17,25 @@ public class CourseService implements ICourseService {
     CourseRepository courseRepository;
 
     @Override
-    public List<Course> getAllCourses() {
-        return this.courseRepository.listAll();
+    public List<CourseDTO> getAllCourses() {
+        return this.courseRepository.listAll().stream()
+                .map(new CourseDTO()::fromEntity)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Course getCourseById(ObjectId id) {
+    public CourseDTO getCourseById(ObjectId id) {
         Course course = this.courseRepository.findById(id);
         if (course == null) {
             throw new NotFoundException("Course not found");
         }
-        return course;
+        return new CourseDTO().fromEntity(course);
     }
 
     @Override
-    public Course createCourse(Course course) {
-        this.courseRepository.persist(course);
-        return course;
+    public CourseDTO createCourse(CourseDTO courseDTO) {
+        this.courseRepository.persist(courseDTO.toEntity());
+        return courseDTO;
     }
 
-    @Override
-    public Course updateCourse(Course course) {
-        Course existingCourse = getCourseById(course.getId());
-        existingCourse.setName(course.getName());
-        this.courseRepository.update(existingCourse);
-        return existingCourse;
-    }
-
-    @Override
-    public void deleteCourse(ObjectId id) {
-        Course course = getCourseById(id);
-        this.courseRepository.delete(course);
-    }
 }

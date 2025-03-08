@@ -61,40 +61,6 @@ export const CourseControllerApiAxiosParamCreator = function (configuration?: Co
         },
         /**
          * 
-         * @summary Delete a course
-         * @param {string} id 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        apiCoursesIdDelete: async (id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('apiCoursesIdDelete', 'id', id)
-            const localVarPath = `/api/courses/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
          * @summary Get course by ID
          * @param {string} id 
          * @param {*} [options] Override http request option.
@@ -187,19 +153,6 @@ export const CourseControllerApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @summary Delete a course
-         * @param {string} id 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async apiCoursesIdDelete(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.apiCoursesIdDelete(id, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['CourseControllerApi.apiCoursesIdDelete']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * 
          * @summary Get course by ID
          * @param {string} id 
          * @param {*} [options] Override http request option.
@@ -245,16 +198,6 @@ export const CourseControllerApiFactory = function (configuration?: Configuratio
         },
         /**
          * 
-         * @summary Delete a course
-         * @param {string} id 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        apiCoursesIdDelete(id: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.apiCoursesIdDelete(id, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
          * @summary Get course by ID
          * @param {string} id 
          * @param {*} [options] Override http request option.
@@ -290,16 +233,6 @@ export interface CourseControllerApiInterface {
      * @memberof CourseControllerApiInterface
      */
     apiCoursesGet(options?: RawAxiosRequestConfig): AxiosPromise<Array<CourseDTO>>;
-
-    /**
-     * 
-     * @summary Delete a course
-     * @param {string} id 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof CourseControllerApiInterface
-     */
-    apiCoursesIdDelete(id: string, options?: RawAxiosRequestConfig): AxiosPromise<void>;
 
     /**
      * 
@@ -339,18 +272,6 @@ export class CourseControllerApi extends BaseAPI implements CourseControllerApiI
      */
     public apiCoursesGet(options?: RawAxiosRequestConfig) {
         return CourseControllerApiFp(this.configuration).apiCoursesGet(options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @summary Delete a course
-     * @param {string} id 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof CourseControllerApi
-     */
-    public apiCoursesIdDelete(id: string, options?: RawAxiosRequestConfig) {
-        return CourseControllerApiFp(this.configuration).apiCoursesIdDelete(id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

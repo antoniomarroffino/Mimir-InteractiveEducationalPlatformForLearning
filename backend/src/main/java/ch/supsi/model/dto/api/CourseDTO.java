@@ -2,11 +2,13 @@ package ch.supsi.model.dto.api;
 
 import ch.supsi.model.api.Course;
 import ch.supsi.model.api.Folder;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@RegisterForReflection
 public class CourseDTO {
     private String id;
     private String name;
@@ -14,7 +16,7 @@ public class CourseDTO {
 
     public CourseDTO() {
     }
-    public static CourseDTO fromEntity(Course course) {
+    public CourseDTO fromEntity(Course course) {
         if (course == null) return null;
 
         CourseDTO dto = new CourseDTO();
