@@ -11,9 +11,9 @@ import java.util.List;
 @Schema(description = "Folder model", name = "Folder")
 public class Folder {
 
-    @BsonId
     private ObjectId id;
 
+    @NotBlank(message = "Folder name cannot be null or empty")
     private String name;
 
     private List<Quiz> quizzes = new ArrayList<>();

@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
 import { useFolderContext } from '../../contexts/FolderContext';
+import {useCourseContext } from "../../contexts/CourseContext.tsx";
 
 const CreateFolderForm = () => {
     const [name, setName] = useState('');
     const { createFolder, isLoading } = useFolderContext();
+    const { fetchCourses } = useCourseContext();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (name.trim()) {
             try {
                 await createFolder(name);
+                await fetchCourses();
                 setName('');
             } catch (error) {
                 console.error('Failed to create folder:', error);
