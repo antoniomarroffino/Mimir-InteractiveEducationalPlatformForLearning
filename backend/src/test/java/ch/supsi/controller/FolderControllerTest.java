@@ -2,14 +2,17 @@ package ch.supsi.controller;
 
 import ch.supsi.controller.folder.FolderController;
 import ch.supsi.model.api.Folder;
+import ch.supsi.model.dto.api.FolderDTO;
 import ch.supsi.service.folder.IFolderService;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.Response;
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.io.ObjectInput;
 import java.util.Collections;
 import java.util.List;
 
@@ -18,19 +21,21 @@ import static org.mockito.Mockito.*;
 
 @QuarkusTest
 public class FolderControllerTest {
-    /*
+
     @Inject
     FolderController folderController;
 
     @InjectMock
     IFolderService folderService;
 
+    private static final String STR_FOR_OBJECT_ID = ObjectId.get().toString();
+
     @Test
     @DisplayName("Should return Response 200 (ok) with empty list of folders")
     void test01GetFolders_Empty() {
-        when(this.folderService.getAllFolders()).thenReturn(Collections.emptyList());
+        when(this.folderService.getFoldersInCourse(any(ObjectId.class))).thenReturn(Collections.emptyList());
 
-        Response response = this.folderController.getFolders();
+        Response response = this.folderController.getFolders(STR_FOR_OBJECT_ID);
 
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
@@ -38,7 +43,7 @@ public class FolderControllerTest {
         assertInstanceOf(List.class, response.getEntity());
         assertTrue(((List<?>) response.getEntity()).isEmpty());
 
-        verify(this.folderService, times(1)).getAllFolders();
+        verify(this.folderService, times(1)).getFoldersInCourse(any(ObjectId.class));
     }
 
     @Test
@@ -47,54 +52,74 @@ public class FolderControllerTest {
         String folderName_1 = "Test Folder1";
         String folderName_2 = "Test Folder2";
 
-        Folder folder1 = new Folder(folderName_1);
-        Folder folder2 = new Folder(folderName_2);
+        FolderDTO folder1 = new FolderDTO(folderName_1);
+        FolderDTO folder2 = new FolderDTO(folderName_2);
 
-        when(this.folderService.getAllFolders()).thenReturn(List.of(folder1, folder2));
+        when(this.folderService.getFoldersInCourse(any(ObjectId.class))).thenReturn(List.of(folder1, folder2));
 
-        Response response = this.folderController.getFolders();
+        Response response = this.folderController.getFolders(STR_FOR_OBJECT_ID);
 
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         assertNotNull(response.getEntity());
         assertInstanceOf(List.class, response.getEntity());
 
-        List<Folder> foldersRetrieved = ((List<?>)(response.getEntity()))
+        List<FolderDTO> foldersRetrieved = ((List<?>)(response.getEntity()))
                 .stream()
-                .filter(obj -> Folder.class.isAssignableFrom(obj.getClass()))
-                .map(obj -> (Folder)obj)
+                .filter(obj -> FolderDTO.class.isAssignableFrom(obj.getClass()))
+                .map(obj -> (FolderDTO)obj)
                 .toList();
 
         assertEquals(2, foldersRetrieved.size());
 
-        Folder folder1Retrieved = foldersRetrieved.getFirst();
+        FolderDTO folder1Retrieved = foldersRetrieved.getFirst();
         assertEquals(folderName_1, folder1Retrieved.getName());
 
-        Folder folder2Retrieved = foldersRetrieved.get(1);
+        FolderDTO folder2Retrieved = foldersRetrieved.get(1);
         assertEquals(folderName_2, folder2Retrieved.getName());
 
-        verify(this.folderService, times(1)).getAllFolders();
+        verify(this.folderService, times(1)).getFoldersInCourse(any(ObjectId.class));
+    }
+
+    @Test
+    @DisplayName("Should return Response 200 (ok) with one FolderDTO")
+    void test03GetFolder() {
+        String folderName = "Test Folder";
+        FolderDTO folderDTO = new FolderDTO(folderName);
+
+        when(this.folderService.getFolderInCourse(any(ObjectId.class), eq(folderDTO.getName()))).thenReturn(folderDTO);
+
+        Response response = this.folderController.getFolder(STR_FOR_OBJECT_ID, folderDTO.getName());
+
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        assertNotNull(response.getEntity());
+        assertInstanceOf(FolderDTO.class, response.getEntity());
+
+        FolderDTO folderRetrieved = ((FolderDTO)response.getEntity());
+        assertEquals(folderDTO.getName(), folderRetrieved.getName());
+
+        verify(this.folderService, times(1)).getFolderInCourse(any(ObjectId.class), eq(folderDTO.getName()));
     }
 
     @Test
     @DisplayName("Should return Response 201 (created) one folder")
-    void test03CreateFolder() {
+    void test04CreateFolder() {
         String folderName = "Test Folder";
-        Folder folder = new Folder(folderName);
-        when(this.folderService.createFolder(folder)).thenReturn(folder);
+        FolderDTO folderDTO = new FolderDTO(folderName);
 
-        Response response = this.folderController.createFolder(folder);
+        when(this.folderService.addFolderToCourse(any(ObjectId.class), eq(folderDTO))).thenReturn(folderDTO);
+
+        Response response = this.folderController.createFolder(STR_FOR_OBJECT_ID, folderDTO);
 
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         assertNotNull(response.getEntity());
-        assertInstanceOf(Folder.class, response.getEntity());
+        assertInstanceOf(FolderDTO.class, response.getEntity());
 
-        Folder folderRetrieved = (Folder) response.getEntity();
-        assertEquals(folderName, folderRetrieved.getName());
+        FolderDTO folderDTORetrieved = ((FolderDTO)response.getEntity());
+        assertEquals(folderDTO.getName(), folderDTORetrieved.getName());
 
-        verify(this.folderService, times(1)).createFolder(folder);
+        verify(this.folderService, times(1)).addFolderToCourse(any(ObjectId.class), eq(folderDTO));
     }
-
-     */
 }

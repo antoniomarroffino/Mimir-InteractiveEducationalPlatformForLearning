@@ -1,4 +1,4 @@
-package ch.supsi.service.testContainersResource;
+package ch.supsi.integration.testContainersResource;
 
 import io.quarkus.test.common.QuarkusTestResourceLifecycleManager;
 import org.testcontainers.containers.MongoDBContainer;

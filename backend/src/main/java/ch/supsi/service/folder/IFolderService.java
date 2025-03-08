@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface IFolderService {
     List<FolderDTO> getFoldersInCourse(ObjectId courseId);
-    FolderDTO getFolderInCourse(ObjectId courseId, ObjectId folderId);
+    FolderDTO getFolderInCourse(ObjectId courseId, String folderName);
     FolderDTO addFolderToCourse(ObjectId courseId, FolderDTO folderDTO);
 }

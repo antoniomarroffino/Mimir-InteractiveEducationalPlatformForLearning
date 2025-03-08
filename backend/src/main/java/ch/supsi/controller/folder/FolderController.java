@@ -1,6 +1,5 @@
 package ch.supsi.controller.folder;
 
-import ch.supsi.model.api.Folder;
 import ch.supsi.model.dto.api.FolderDTO;
 import ch.supsi.service.folder.IFolderService;
 import jakarta.inject.Inject;
@@ -16,7 +15,6 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Path("/courses/{courseId}/folders")
 @Produces(MediaType.APPLICATION_JSON)
@@ -42,7 +40,7 @@ public class FolderController {
     }
 
     @GET
-    @Path("/{folderId}")
+    @Path("/{folderName}")
     @Operation(summary = "Get specific folder in a course")
     @APIResponse(
             responseCode = "200",
@@ -54,11 +52,8 @@ public class FolderController {
     )
     public Response getFolder(
             @PathParam("courseId") String courseId,
-            @PathParam("folderId") String folderId) {
-        FolderDTO folderDTO = folderService.getFolderInCourse(
-                new ObjectId(courseId),
-                new ObjectId(folderId)
-        );
+            @PathParam("folderName") String folderName) {
+        FolderDTO folderDTO = folderService.getFolderInCourse(new ObjectId(courseId), folderName);
         return Response.ok(folderDTO).build();
     }
 

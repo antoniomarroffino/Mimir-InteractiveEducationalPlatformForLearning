@@ -1,19 +1,11 @@
 package ch.supsi.integration;
 
-import ch.supsi.model.api.Course;
-import ch.supsi.model.api.Folder;
-import ch.supsi.repository.CourseRepository;
-import ch.supsi.service.testContainersResource.MongoTestResource;
+import ch.supsi.integration.testContainersResource.MongoTestResource;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
-import io.restassured.http.ContentType;
-import jakarta.inject.Inject;
-import jakarta.ws.rs.core.Response;
-import org.bson.types.ObjectId;
 import org.junit.jupiter.api.*;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.*;
 
 @QuarkusTest
 @QuarkusTestResource(MongoTestResource.class)
