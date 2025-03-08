@@ -26,9 +26,9 @@ public class QuizDTO {
         dto.setId(quiz.getId() != null ? quiz.getId().toString() : null);
         dto.setName(quiz.getName());
         dto.setDescription(quiz.getDescription());
-        dto.setQuestions(quiz.getQuestions().stream()
+        /*dto.setQuestions(quiz.getQuestions().stream()
                 .map(QuestionDTO::fromEntity)
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList()));*/
         dto.setCreatedAt(quiz.getCreatedAt());
         dto.setUpdatedAt(quiz.getUpdatedAt());
         return dto;
@@ -41,9 +41,9 @@ public class QuizDTO {
         }
         quiz.setName(this.name);
         quiz.setDescription(this.description);
-        quiz.setQuestions(this.questions.stream()
+        /*quiz.setQuestions(this.questions.stream()
                 .map(QuestionDTO::toEntity)
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList()));*/
         quiz.setCreatedAt(this.createdAt);
         quiz.setUpdatedAt(this.updatedAt);
         return quiz;
