@@ -35,7 +35,7 @@ public class FolderController {
             )
     )
     public Response getFolders(@PathParam("courseId") String courseId) {
-        List<FolderDTO> foldersDTO = folderService.getFoldersInCourse(new ObjectId(courseId));
+        List<FolderDTO> foldersDTO = this.folderService.getFoldersInCourse(new ObjectId(courseId));
         return Response.ok(foldersDTO).build();
     }
 
@@ -53,7 +53,7 @@ public class FolderController {
     public Response getFolder(
             @PathParam("courseId") String courseId,
             @PathParam("folderName") String folderName) {
-        FolderDTO folderDTO = folderService.getFolderInCourse(new ObjectId(courseId), folderName);
+        FolderDTO folderDTO = this.folderService.getFolderInCourse(new ObjectId(courseId), folderName);
         return Response.ok(folderDTO).build();
     }
 
@@ -70,7 +70,7 @@ public class FolderController {
     public Response createFolder(
             @PathParam("courseId") String courseId,
             @Valid FolderDTO folderDTO) {
-        FolderDTO createdFolderDTO = folderService.addFolderToCourse(new ObjectId(courseId), folderDTO);
+        FolderDTO createdFolderDTO = this.folderService.addFolderToCourse(new ObjectId(courseId), folderDTO);
         return Response.status(Response.Status.CREATED)
                 .entity(createdFolderDTO)
                 .build();
