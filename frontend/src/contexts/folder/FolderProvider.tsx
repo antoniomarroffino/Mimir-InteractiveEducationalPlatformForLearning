@@ -1,7 +1,7 @@
 import React from 'react';
-import { FolderContext } from './FolderContext';
-import { useFolder } from '../hooks/folder/useFolder';
-import { useCourseContext } from './CourseContext';
+import { FolderContext } from './FolderContext.tsx';
+import { useFolder } from '../../hooks/folder/useFolder.ts';
+import { useCourseContext } from '../course/CourseContext.tsx';
 
 export const FolderProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const { selectedCourseId } = useCourseContext();

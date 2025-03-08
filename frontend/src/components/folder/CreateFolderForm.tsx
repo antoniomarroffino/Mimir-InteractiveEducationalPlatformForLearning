@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useFolderContext } from '../../contexts/FolderContext';
-import {useCourseContext } from "../../contexts/CourseContext.tsx";
+import { useFolderContext } from '../../contexts/folder/FolderContext.tsx';
+import {useCourseContext } from "../../contexts/course/CourseContext.tsx";
 
 const CreateFolderForm = () => {
     const [name, setName] = useState('');

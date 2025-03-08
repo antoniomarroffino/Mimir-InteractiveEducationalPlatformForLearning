@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { useCourseContext } from '../contexts/CourseContext';
+import { useCourseContext } from '../contexts/course/CourseContext.tsx';
 import { FolderList } from '../components/folder/FolderList';
 import { BsChevronRight } from 'react-icons/bs';
 

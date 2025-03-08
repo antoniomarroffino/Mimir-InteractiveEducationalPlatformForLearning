@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import { FolderDTO } from '@dti-isin/backend-api-client';
+import { FolderDTO } from 'backend/target/backend-api-client/index.ts';
 
 interface FolderContextType {
     folders: FolderDTO[];

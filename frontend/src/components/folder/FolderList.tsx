@@ -1,4 +1,4 @@
-import { useFolderContext } from '../../contexts/FolderContext';
+import { useFolderContext } from '../../contexts/folder/FolderContext.tsx';
 import { FolderRow } from './FolderRow';
 import CreateFolderForm from './CreateFolderForm';
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useCourseContext } from '../../contexts/CourseContext';
+import { useCourseContext } from '../../contexts/course/CourseContext.tsx';
 
 const CreateCourseForm = () => {
     const [name, setName] = useState('');

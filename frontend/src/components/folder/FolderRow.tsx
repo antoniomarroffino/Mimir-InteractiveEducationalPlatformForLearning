@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { FolderDTO } from '@dti-isin/backend-api-client';
 import { BsFolder2, BsChevronDown, BsChevronUp } from 'react-icons/bs';
+import { useQuizContext } from '../../contexts/quiz/QuizContext';
+import { QuizRow } from '../quiz/QuizRow';
+import { CreateQuizButton } from '../quiz/CreateQuizButton';
 
 interface FolderRowProps {
     folder: FolderDTO;
@@ -8,10 +11,11 @@ interface FolderRowProps {
 
 export const FolderRow = ({ folder }: FolderRowProps) => {
     const [isExpanded, setIsExpanded] = useState(false);
+    const { quizzes, isLoading } = useQuizContext();
 
     return (
         <div className="bg-base-100 shadow-sm hover:shadow-md transition-all">
-            {/* Header Row - Always visible */}
+            {/* Header Row */}
             <div
                 className="p-4 flex items-center justify-between cursor-pointer"
                 onClick={() => setIsExpanded(!isExpanded)}
@@ -22,7 +26,7 @@ export const FolderRow = ({ folder }: FolderRowProps) => {
                 </div>
                 <div className="flex items-center gap-4">
                     <span className="text-base-content/70">
-                        {folder.quizzes?.length || 0} quizzes
+                        {quizzes.length} quizzes
                     </span>
                     {isExpanded ? <BsChevronUp /> : <BsChevronDown />}
                 </div>
@@ -31,23 +35,23 @@ export const FolderRow = ({ folder }: FolderRowProps) => {
             {/* Expanded Content */}
             {isExpanded && (
                 <div className="border-t border-base-200 p-4">
-                    {folder.quizzes && folder.quizzes.length > 0 ? (
-                        <div className="space-y-2">
-                            {folder.quizzes.map(quiz => (
-                                <div
-                                    key={quiz.id}
-                                    className="p-2 bg-base-200 rounded-lg flex justify-between items-center"
-                                >
-                                    <span>{quiz.name}</span>
-                                    <button className="btn btn-sm btn-primary">
-                                        View Quiz
-                                    </button>
-                                </div>
-                            ))}
+                    {isLoading ? (
+                        <div className="flex justify-center py-4">
+                            <span className="loading loading-spinner"></span>
                         </div>
                     ) : (
-                        <div className="text-base-content/70 text-center py-4">
-                            No quizzes in this folder yet
+                        <div className="space-y-4">
+                            {quizzes.map(quiz => (
+                                <QuizRow
+                                    key={quiz.id}
+                                    quiz={quiz}
+                                    onDelete={(quizId) => {
+                                        // Implementare la cancellazione
+                                        console.log('Delete quiz:', quizId);
+                                    }}
+                                />
+                            ))}
+                            <CreateQuizButton />
                         </div>
                     )}
                 </div>

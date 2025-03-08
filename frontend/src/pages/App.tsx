@@ -4,9 +4,10 @@ import Home from './Home';
 import CourseDetails from './CourseDetails';
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { FolderProvider } from "../contexts/FolderProvider";
+import { FolderProvider } from "../contexts/folder/FolderProvider.tsx";
 import '../App.css';
-import { CourseProvider } from "../contexts/CourseProvider";
+import { CourseProvider } from "../contexts/course/CourseProvider.tsx";
+import {QuizProvider} from "../contexts/quiz/QuizProvider.tsx";
 
 const queryClient = new QueryClient();
 
@@ -15,6 +16,7 @@ const App = () => {
         <QueryClientProvider client={queryClient}>
             <CourseProvider>
                 <FolderProvider>
+                    <QuizProvider>
                     <div>
                         <Header />
                         <Routes>
@@ -23,6 +25,7 @@ const App = () => {
                         </Routes>
                         <Footer />
                     </div>
+                    </QuizProvider>
                 </FolderProvider>
             </CourseProvider>
         </QueryClientProvider>

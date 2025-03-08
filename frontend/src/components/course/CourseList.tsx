@@ -1,4 +1,4 @@
-import { useCourseContext } from '../../contexts/CourseContext';
+import { useCourseContext } from '../../contexts/course/CourseContext.tsx';
 import { CourseCard } from './CourseCard';
 
 export const CourseList = () => {
