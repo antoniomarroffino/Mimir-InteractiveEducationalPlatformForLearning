@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>ch.supsi</groupId>
     <artifactId>backend</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3</version>
 
     <properties>
         <compiler-plugin.version>3.13.0</compiler-plugin.version>
@@ -177,7 +177,7 @@
                                 <skipOperationExample>true</skipOperationExample>
                                 <modelPropertyNaming>original</modelPropertyNaming>
                                 <npmName>@dti-isin/backend-api-client</npmName>
-                                <npmVersion>0.0.2</npmVersion>
+                                <npmVersion>${project.version}</npmVersion>
                                 <withInterfaces>true</withInterfaces>
                                 <useSingleRequestParameter>true</useSingleRequestParameter>
                                 <withoutRuntimeChecks>true</withoutRuntimeChecks>
