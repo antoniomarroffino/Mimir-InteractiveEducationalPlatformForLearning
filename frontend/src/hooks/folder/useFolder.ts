@@ -16,7 +16,9 @@ export const useFolder = (courseId: string | null) => {
             setIsLoading(true);
             setError(null);
             const data = await folderService.getFoldersInCourse(courseId);
+            console.log('Folders before setState:', folders);
             setFolders(data);
+            console.log('Folders after setState:', folders);
         } catch (err) {
             setError(err instanceof Error ? err : new Error('Error fetching folders'));
         } finally {
@@ -56,7 +58,6 @@ export const useFolder = (courseId: string | null) => {
     }, [initializeFolders]);
 
     useEffect(() => {
-        setFolders([]);
         setError(null);
         initialized.current = false;
     }, [courseId]);

@@ -38,6 +38,7 @@ public class FolderController {
     )
     public Response getFolders(@PathParam("courseId") String courseId) {
         List<FolderDTO> foldersDTO = folderService.getFoldersInCourse(new ObjectId(courseId));
+        foldersDTO.forEach(f -> System.out.println(f.getId()));
         return Response.ok(foldersDTO).build();
     }
 

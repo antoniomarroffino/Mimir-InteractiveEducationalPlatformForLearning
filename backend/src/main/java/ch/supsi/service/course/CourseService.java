@@ -19,7 +19,7 @@ public class CourseService implements ICourseService {
     @Override
     public List<CourseDTO> getAllCourses() {
         return this.courseRepository.listAll().stream()
-                .map(new CourseDTO()::fromEntity)
+                .map(CourseDTO::fromEntity)
                 .collect(Collectors.toList());
     }
 
@@ -29,7 +29,7 @@ public class CourseService implements ICourseService {
         if (course == null) {
             throw new NotFoundException("Course not found");
         }
-        return new CourseDTO().fromEntity(course);
+        return CourseDTO.fromEntity(course);
     }
 
     @Override

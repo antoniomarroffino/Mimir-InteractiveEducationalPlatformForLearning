@@ -81,6 +81,12 @@ public class QuizController {
             @PathParam("courseId") String courseId,
             @PathParam("folderId") String folderId,
             @Valid QuizDTO quizDTO) {
+
+        System.out.println("Received request to create quiz in controller");
+        System.out.println("CourseId: " + courseId);
+        System.out.println("FolderId: " + folderId);
+        System.out.println("Quiz name: " + quizDTO.getName());
+
         QuizDTO createdQuizDTO = quizService.addQuizToFolder(
                 new ObjectId(courseId),
                 new ObjectId(folderId),

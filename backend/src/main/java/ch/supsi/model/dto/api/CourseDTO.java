@@ -21,13 +21,13 @@ public class CourseDTO {
 
     public CourseDTO() {
     }
-    public CourseDTO fromEntity(Course course) {
+    public static CourseDTO fromEntity(Course course) {
         if (course == null) return null;
 
         CourseDTO dto = new CourseDTO();
         dto.setId(course.getId() != null ? course.getId().toString() : null);
         dto.setName(course.getName());
-        dto.setFolders(course.getFolders().stream().map(new FolderDTO()::fromEntity).toList());
+        dto.setFolders(course.getFolders().stream().map(FolderDTO::fromEntity).toList());
         return dto;
     }
 

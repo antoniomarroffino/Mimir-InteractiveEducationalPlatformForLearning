@@ -9,6 +9,8 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.NotFoundException;
 import org.bson.types.ObjectId;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 @ApplicationScoped
@@ -37,8 +39,13 @@ public class QuizService implements IQuizService {
 
     @Override
     public QuizDTO addQuizToFolder(ObjectId courseId, ObjectId folderId, QuizDTO quizDTO) {
+        System.out.println("Starting quiz creation with data: " + quizDTO.getName());
+
         Course course = courseRepository.findById(courseId);
+        System.out.println("Course found: " + (course != null ? course.getName() : "null"));
+
         if (course == null) {
+            System.out.println("Course not found for ID: " + courseId);
             throw new NotFoundException("Course not found");
         }
 
@@ -46,14 +53,19 @@ public class QuizService implements IQuizService {
                 .filter(f -> f.getId().equals(folderId))
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("Folder not found in course"));
+        System.out.println("Folder found: " + folder.getName());
 
         Quiz quiz = quizDTO.toEntity();
-        quiz.setId(new ObjectId());
+        System.out.println("Quiz entity created with ID: " + quiz.getId());
 
         folder.getQuizzes().add(quiz);
         courseRepository.update(course);
+        System.out.println("Quiz added to folder and course updated");
 
-        return QuizDTO.fromEntity(quiz);
+        QuizDTO createdQuizDTO = QuizDTO.fromEntity(quiz);
+        System.out.println("Returning created quiz DTO with ID: " + createdQuizDTO.getId());
+
+        return createdQuizDTO;
     }
 
     @Override
@@ -75,6 +87,8 @@ public class QuizService implements IQuizService {
 
         Quiz updatedQuiz = quizDTO.toEntity();
         updatedQuiz.setId(existingQuiz.getId());
+        updatedQuiz.setCreatedAt(existingQuiz.getCreatedAt());
+        updatedQuiz.setUpdatedAt(LocalDateTime.now());
 
         int index = folder.getQuizzes().indexOf(existingQuiz);
         folder.getQuizzes().set(index, updatedQuiz);

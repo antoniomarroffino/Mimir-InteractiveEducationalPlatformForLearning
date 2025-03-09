@@ -1,13 +1,14 @@
 package ch.supsi.model.dto.api;
 
 import ch.supsi.model.api.Quiz;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 import org.bson.types.ObjectId;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
+@RegisterForReflection
 public class QuizDTO {
     private String id;
     private String name;
@@ -35,17 +36,19 @@ public class QuizDTO {
     }
 
     public Quiz toEntity() {
-        Quiz quiz = new Quiz();
+        Quiz quiz = new Quiz(this.name);
+
         if (this.id != null) {
             quiz.setId(new ObjectId(this.id));
         }
-        quiz.setName(this.name);
+
         quiz.setDescription(this.description);
         /*quiz.setQuestions(this.questions.stream()
                 .map(QuestionDTO::toEntity)
                 .collect(Collectors.toList()));*/
-        quiz.setCreatedAt(this.createdAt);
-        quiz.setUpdatedAt(this.updatedAt);
+        quiz.setCreatedAt(this.createdAt != null ? this.createdAt : LocalDateTime.now());
+        quiz.setUpdatedAt(this.updatedAt != null ? this.updatedAt : LocalDateTime.now());
+
         return quiz;
     }
 

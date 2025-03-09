@@ -6,6 +6,12 @@ class FolderService {
     async getFoldersInCourse(courseId: string): Promise<FolderDTO[]> {
         try {
             const response = await folderApi.apiCoursesCourseIdFoldersGet({courseId});
+            response.data.forEach((folder: FolderDTO) => {
+                console.log('Folder:', {
+                    id: folder.id,
+                    name: folder.name
+                });
+            });
             return response.data;
         } catch (error) {
             throw this.handleError(error as AxiosError);

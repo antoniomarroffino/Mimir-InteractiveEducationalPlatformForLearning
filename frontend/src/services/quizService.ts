@@ -1,20 +1,33 @@
 import { QuizDTO } from '@dti-isin/backend-api-client';
-import { quizApi } from '../../config/config';
+import { quizApi } from '../../config/config.ts';
 import { AxiosError } from 'axios';
 
 class QuizService {
     async getQuizzesInFolder(courseId: string, folderId: string): Promise<QuizDTO[]> {
         try {
-            const response = await quizApi.apiCoursesCourseIdFoldersFolderIdQuizzesGet({courseId, folderId});
+            const response = await quizApi.apiCoursesCourseIdFoldersFolderIdQuizzesGet({
+                courseId,
+                folderId
+            });
+            response.data.forEach((quiz: QuizDTO) => {
+                console.log('Quiz:', {
+                    id: quiz.id,
+                    name: quiz.name
+                });
+            });
             return response.data;
         } catch (error) {
             throw this.handleError(error as AxiosError);
         }
     }
 
-    async createQuiz(courseId: string, folderId: string, quiz: { name: string }): Promise<QuizDTO> {
+    async createQuiz(courseId: string, folderId: string, name: string): Promise<QuizDTO> {
         try {
-            const response = await quizApi.apiCoursesCourseIdFoldersFolderIdQuizzesPost({courseId, folderId, quizDTO: quiz});
+            const response = await quizApi.apiCoursesCourseIdFoldersFolderIdQuizzesPost({
+                courseId,
+                folderId,
+                quizDTO: { name: name }
+            });
             return response.data;
         } catch (error) {
             throw this.handleError(error as AxiosError);

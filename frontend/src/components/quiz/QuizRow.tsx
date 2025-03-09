@@ -1,15 +1,16 @@
 import { QuizDTO } from '@dti-isin/backend-api-client';
-import { BsFileEarmarkText, BsPencilSquare, BsTrash } from 'react-icons/bs';
+import { BsFileEarmarkText, BsPencilSquare } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 
 interface QuizRowProps {
     quiz: QuizDTO;
-    onDelete: (quizId: string) => void;
+    folderId: string;
 }
 
-export const QuizRow = ({ quiz, onDelete }: QuizRowProps) => {
-    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+export const QuizRow = ({ quiz, folderId }: QuizRowProps) => {
+    const [showDeleteConfirm] = useState(false);
+    console.log('Quiz called with folderId:', folderId);
 
     return (
         <div className="bg-base-200 rounded-lg p-4 mb-2 hover:shadow-md transition-all">
@@ -26,13 +27,7 @@ export const QuizRow = ({ quiz, onDelete }: QuizRowProps) => {
                     >
                         <BsPencilSquare className="text-base-content/70" />
                     </Link>
-                    <button
-                        className="btn btn-ghost btn-sm text-error"
-                        onClick={() => setShowDeleteConfirm(true)}
-                        title="Delete Quiz"
-                    >
-                        <BsTrash />
-                    </button>
+
                 </div>
             </div>
 
@@ -41,24 +36,11 @@ export const QuizRow = ({ quiz, onDelete }: QuizRowProps) => {
                 <div className="modal modal-open">
                     <div className="modal-box">
                         <h3 className="font-bold text-lg">Delete Quiz</h3>
-                        <p className="py-4">Are you sure you want to delete "{quiz.name}"? This action cannot be undone.</p>
-                        <div className="modal-action">
-                            <button
-                                className="btn btn-ghost"
-                                onClick={() => setShowDeleteConfirm(false)}
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                className="btn btn-error"
-                                onClick={() => {
-                                    onDelete(quiz.id!);
-                                    setShowDeleteConfirm(false);
-                                }}
-                            >
-                                Delete
-                            </button>
-                        </div>
+                        <p className="py-4">
+                            Are you sure you want to delete "{quiz.name}"?
+                            This action cannot be undone.
+                        </p>
+
                     </div>
                 </div>
             )}

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useCourseContext } from '../contexts/course/CourseContext.tsx';
-import { FolderList } from '../components/folder/FolderList';
 import { BsChevronRight } from 'react-icons/bs';
+import {FolderList} from "../components/folder/FolderList.tsx";
 
 const CourseDetails = () => {
     const { courseId } = useParams();
@@ -50,7 +50,7 @@ const CourseDetails = () => {
         );
     }
 
-    if (!currentCourse) {
+    if (!courseId || !currentCourse) {
         return (
             <div className="alert alert-warning">
                 Course not found.
@@ -96,7 +96,8 @@ const CourseDetails = () => {
             {/* Folders Section */}
             <div className="bg-base-100 rounded-lg p-6 shadow-lg">
                 <h2 className="text-2xl font-semibold mb-4">Folders</h2>
-                <FolderList />
+                <FolderList folders={currentCourse.folders || []}
+                            courseId={courseId}/>
             </div>
         </div>
     );

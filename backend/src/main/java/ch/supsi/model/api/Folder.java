@@ -1,7 +1,6 @@
 package ch.supsi.model.api;
 
 import jakarta.validation.constraints.NotBlank;
-import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
@@ -19,10 +18,11 @@ public class Folder {
     private List<Quiz> quizzes = new ArrayList<>();
 
     public Folder() {
-
+        this.id = new ObjectId();
     }
 
     public Folder(String name) {
+        this();
         this.name = name;
     }
 
@@ -47,6 +47,6 @@ public class Folder {
     }
 
     public void setQuizzes(List<Quiz> quizzes) {
-        this.quizzes = quizzes;
+        this.quizzes = quizzes != null ? quizzes : new ArrayList<>();
     }
 }
