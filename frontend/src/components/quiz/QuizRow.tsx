@@ -1,49 +1,105 @@
+import React, { useState } from 'react';
 import { QuizDTO } from '@dti-isin/backend-api-client';
-import { BsFileEarmarkText, BsPencilSquare } from 'react-icons/bs';
-import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { BsTrash, BsPencil } from 'react-icons/bs';
+import { useNavigate } from 'react-router-dom';
+import { quizService } from '../../services/quizService';
 
 interface QuizRowProps {
     quiz: QuizDTO;
+    courseId: string;
     folderId: string;
+    onDelete: () => void;
 }
 
-export const QuizRow = ({ quiz, folderId }: QuizRowProps) => {
-    const [showDeleteConfirm] = useState(false);
-    console.log('Quiz called with folderId:', folderId);
+export const QuizRow: React.FC<QuizRowProps> = ({
+                                                    quiz,
+                                                    courseId,
+                                                    folderId,
+                                                    onDelete
+                                                }) => {
+    const navigate = useNavigate();
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const handleUpdateQuiz = () => {
+        navigate(`/courses/${courseId}/folders/${folderId}/quizzes/${quiz.id}/edit`);
+    };
+
+    const handleDeleteQuiz = async () => {
+        try {
+            setIsDeleting(true);
+            setError(null);
+            await quizService.deleteQuiz(courseId, folderId, quiz.id!);
+            setShowDeleteModal(false);
+            onDelete();
+        } catch (error) {
+            console.error('Failed to delete quiz:', error);
+            setError('Failed to delete quiz');
+        } finally {
+            setIsDeleting(false);
+        }
+    };
 
     return (
-        <div className="bg-base-200 rounded-lg p-4 mb-2 hover:shadow-md transition-all">
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                    <BsFileEarmarkText className="text-xl text-primary" />
-                    <span className="font-medium">{quiz.name}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                    <Link
-                        to={`quiz/${quiz.id}/edit`}
-                        className="btn btn-ghost btn-sm"
-                        title="Edit Quiz"
+        <>
+            <div className="p-3 bg-base-200 rounded flex justify-between items-center">
+                <span>{quiz.name}</span>
+                <div className="flex gap-2">
+                    <button
+                        onClick={handleUpdateQuiz}
+                        className="btn btn-sm btn-ghost"
+                        title="Edit quiz"
                     >
-                        <BsPencilSquare className="text-base-content/70" />
-                    </Link>
-
+                        <BsPencil className="text-primary" />
+                    </button>
+                    <button
+                        onClick={() => setShowDeleteModal(true)}
+                        className="btn btn-sm btn-ghost"
+                        title="Delete quiz"
+                    >
+                        <BsTrash className="text-error" />
+                    </button>
                 </div>
             </div>
 
             {/* Delete Confirmation Modal */}
-            {showDeleteConfirm && (
+            {showDeleteModal && (
                 <div className="modal modal-open">
                     <div className="modal-box">
                         <h3 className="font-bold text-lg">Delete Quiz</h3>
+                        {error && (
+                            <div className="alert alert-error mt-4">
+                                {error}
+                            </div>
+                        )}
                         <p className="py-4">
                             Are you sure you want to delete "{quiz.name}"?
                             This action cannot be undone.
                         </p>
-
+                        <div className="modal-action">
+                            <button
+                                className="btn btn-error"
+                                onClick={handleDeleteQuiz}
+                                disabled={isDeleting}
+                            >
+                                {isDeleting ? (
+                                    <span className="loading loading-spinner"></span>
+                                ) : (
+                                    'Delete'
+                                )}
+                            </button>
+                            <button
+                                className="btn"
+                                onClick={() => setShowDeleteModal(false)}
+                                disabled={isDeleting}
+                            >
+                                Cancel
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
-        </div>
+        </>
     );
 };

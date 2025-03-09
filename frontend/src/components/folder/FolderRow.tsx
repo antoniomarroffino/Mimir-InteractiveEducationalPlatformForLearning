@@ -2,6 +2,7 @@ import React, {useState, useEffect, useCallback} from 'react';
 import { FolderDTO, QuizDTO } from '@dti-isin/backend-api-client';
 import { BsFolder2, BsChevronDown, BsChevronUp } from 'react-icons/bs';
 import { quizService } from '../../services/quizService';
+import {QuizList} from "../quiz/QuizList.tsx";
 
 interface FolderRowProps {
     folder: FolderDTO;
@@ -116,21 +117,12 @@ export const FolderRow = ({ folder, courseId }: FolderRowProps) => {
                         </div>
                     ) : (
                         <div className="space-y-4">
-                            {/* Lista dei quiz */}
-                            {quizzes.length > 0 ? (
-                                quizzes.map(quiz => (
-                                    <div
-                                        key={quiz.id}
-                                        className="p-3 bg-base-200 rounded flex justify-between items-center"
-                                    >
-                                        <span>{quiz.name}</span>
-                                    </div>
-                                ))
-                            ) : (
-                                <p className="text-center text-base-content/70">
-                                    No quizzes in this folder
-                                </p>
-                            )}
+                            <QuizList
+                                quizzes={quizzes}
+                                courseId={courseId}
+                                folderId={folder.id!}
+                                onQuizDeleted={loadQuizzes}
+                            />
 
                             {/* Form per creare un nuovo quiz */}
                             <form onSubmit={handleCreateQuiz} className="mt-4">

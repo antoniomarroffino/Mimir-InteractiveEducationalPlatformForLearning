@@ -34,6 +34,31 @@ class QuizService {
         }
     }
 
+    async deleteQuiz(courseId: string, folderId: string, quizId: string): Promise<void> {
+        try {
+            await quizApi.apiCoursesCourseIdFoldersFolderIdQuizzesQuizIdDelete({
+                courseId,
+                folderId,
+                quizId
+            });
+        } catch (error) {
+            throw this.handleError(error as AxiosError);
+        }
+    }
+
+    async getQuiz(courseId: string, folderId: string, quizId: string): Promise<QuizDTO> {
+        try {
+            const response = await quizApi.apiCoursesCourseIdFoldersFolderIdQuizzesQuizIdGet({
+                courseId,
+                folderId,
+                quizId
+            });
+            return response.data;
+        } catch (error) {
+            throw this.handleError(error as AxiosError);
+        }
+    }
+
     private handleError(error: AxiosError): Error {
         console.error('API Error:', error);
         if (error.response) {
