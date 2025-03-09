@@ -20,8 +20,8 @@ public class Question extends PanacheMongoEntity {
     @Schema(implementation = String.class, description = "Unique identifier")
     public ObjectId id;
     public String questionText;
-    private List<String> options;
     public String correctAnswer;
+    private List<String> options;
 
     public Question() {
 

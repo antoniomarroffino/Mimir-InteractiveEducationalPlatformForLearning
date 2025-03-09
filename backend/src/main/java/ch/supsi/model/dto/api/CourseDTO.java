@@ -1,14 +1,12 @@
 package ch.supsi.model.dto.api;
 
 import ch.supsi.model.api.Course;
-import ch.supsi.model.api.Folder;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.validation.constraints.NotBlank;
 import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RegisterForReflection
 public class CourseDTO {

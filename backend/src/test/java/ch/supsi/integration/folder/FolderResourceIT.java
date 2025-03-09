@@ -1,10 +1,10 @@
 package ch.supsi.integration.folder;
 
-import ch.supsi.testContainersResource.MongoTestResource;
 import ch.supsi.model.api.Course;
 import ch.supsi.model.api.Folder;
 import ch.supsi.model.dto.api.FolderDTO;
 import ch.supsi.repository.CourseRepository;
+import ch.supsi.testContainersResource.MongoTestResource;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
@@ -16,6 +16,7 @@ import org.junit.jupiter.api.*;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @QuarkusTest
 @QuarkusTestResource(MongoTestResource.class)
@@ -54,9 +55,11 @@ public class FolderResourceIT {
     void test02GetFolders() {
         String folderName1 = "Test Folder1";
         String folderName2 = "Test Folder2";
+        Folder folder1 = new Folder(folderName1);
+        Folder folder2 = new Folder(folderName2);
 
-        this.testCourse.getFolders().add(new Folder(folderName1));
-        this.testCourse.getFolders().add(new Folder(folderName2));
+        this.testCourse.getFolders().add(folder1);
+        this.testCourse.getFolders().add(folder2);
         this.courseRepository.update(testCourse);
 
         given().when()
@@ -64,7 +67,9 @@ public class FolderResourceIT {
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .body("$", hasSize(2))
+                .body("[0].id", equalTo(folder1.getId().toString()))
                 .body("[0].name", equalTo(folderName1))
+                .body("[1].id", equalTo(folder2.getId().toString()))
                 .body("[1].name", equalTo(folderName2));
     }
 
@@ -85,14 +90,16 @@ public class FolderResourceIT {
     @DisplayName("Should return Response 200 (ok) with one folder")
     void test04GetFolder() {
         String folderName = "Test Folder";
+        Folder folder = new Folder(folderName);
 
-        this.testCourse.getFolders().add(new Folder(folderName));
+        this.testCourse.getFolders().add(folder);
         this.courseRepository.update(this.testCourse);
 
         given().when()
-                .get("/courses/" + this.courseId + "/folders/" + folderName)
+                .get("/courses/" + this.courseId + "/folders/" + folder.getId().toString())
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
+                .body("id", equalTo(folder.getId().toString()))
                 .body("name", equalTo(folderName));
     }
 
@@ -100,10 +107,9 @@ public class FolderResourceIT {
     @DisplayName("Should return Response 404 (not found) when course doesn't exist")
     void test05GetFolder_CourseNotFound() {
         ObjectId nonExistentCourseId = new ObjectId();
-        String folderName = "Test Folder";
 
         given().when()
-                .get("/courses/" + nonExistentCourseId + "/folders/" + folderName)
+                .get("/courses/" + nonExistentCourseId + "/folders/" + new ObjectId())
                 .then()
                 .statusCode(Response.Status.NOT_FOUND.getStatusCode())
                 .body("message", equalTo("Not Found"))
@@ -113,14 +119,14 @@ public class FolderResourceIT {
     @Test
     @DisplayName("Should return Response 404 (not found) when folder doesn't exist")
     void test06GetFolder_FolderNotFound() {
-        String nonExistentFolderName = "test";
+        ObjectId nonExistentFolderId = new ObjectId();
 
         given().when()
-                .get("/courses/" + this.courseId + "/folders/" + nonExistentFolderName)
+                .get("/courses/" + this.courseId + "/folders/" + nonExistentFolderId)
                 .then()
                 .statusCode(Response.Status.NOT_FOUND.getStatusCode())
                 .body("message", equalTo("Not Found"))
-                .body("details[0]", equalTo("Folder " + nonExistentFolderName + " not found in course: " + this.courseId));
+                .body("details[0]", equalTo("Folder " + nonExistentFolderId + " not found in course: " + this.courseId));
     }
 
     @Test
@@ -136,10 +142,12 @@ public class FolderResourceIT {
                 .post("/courses/" + this.courseId + "/folders")
                 .then()
                 .statusCode(Response.Status.CREATED.getStatusCode())
+                .body("id", notNullValue())
                 .body("name", equalTo(folderName));
 
         Course updatedCourse = this.courseRepository.findById(courseId);
         assertEquals(1, updatedCourse.getFolders().size());
+        assertNotNull(updatedCourse.getFolders().getFirst().getId());
         assertEquals(folderName, updatedCourse.getFolders().getFirst().getName());
     }
 

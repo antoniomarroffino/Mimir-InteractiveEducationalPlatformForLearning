@@ -15,7 +15,6 @@ import org.junit.jupiter.api.*;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -28,7 +27,7 @@ public class CourseResourceIT {
 
     @BeforeEach
     @AfterEach
-    public void setup(){
+    public void setup() {
         this.courseRepository.deleteAll();
     }
 

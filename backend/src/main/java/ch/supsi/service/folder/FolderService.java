@@ -9,7 +9,9 @@ import ch.supsi.repository.CourseRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.bson.types.ObjectId;
+
 import java.util.List;
+
 @ApplicationScoped
 public class FolderService implements IFolderService {
 
@@ -26,19 +28,16 @@ public class FolderService implements IFolderService {
     }
 
     @Override
-    public FolderDTO getFolderInCourse(ObjectId courseId, String folderName) {
+    public FolderDTO getFolderInCourse(ObjectId courseId, String folderId) {
         Course course = this.courseRepository.findById(courseId);
         if (course == null)
             throw new NotFoundException("Course " + courseId + " not found");
 
-        if(folderName == null || folderName.isEmpty())
-            throw new BadRequestException("Folder name cannot be null or empty");
-
         return course.getFolders().stream()
-                .filter(f -> f.getName().equals(folderName))
+                .filter(f -> f.getId().toString().equals(folderId))
                 .map(new FolderDTO()::fromEntity)
                 .findFirst()
-                .orElseThrow(() -> new NotFoundException("Folder " + folderName + " not found in course: " + courseId));
+                .orElseThrow(() -> new NotFoundException("Folder " + folderId + " not found in course: " + courseId));
     }
 
     @Override
@@ -58,18 +57,18 @@ public class FolderService implements IFolderService {
     }
 
     private void verifyFolderIsValid(Course course, FolderDTO folderDTO) {
-        if(folderDTO == null)
+        if (folderDTO == null)
             throw new BadRequestException("Folder is null");
 
         String folderName = folderDTO.getName();
 
-        if(this.isFolderNameDuplicated(course, folderName))
+        if (this.isFolderNameDuplicated(course, folderName))
             throw new BadRequestException("Folder name " + folderName + " already existing in course " + course.getId());
     }
 
     private boolean isFolderNameDuplicated(Course course, String folderName) {
-        for(Folder folder : course.getFolders())
-            if(folder.getName().equals(folderName))
+        for (Folder folder : course.getFolders())
+            if (folder.getName().equals(folderName))
                 return true;
 
         return false;

@@ -1,7 +1,6 @@
 package ch.supsi.model.api;
 
 import io.quarkus.mongodb.panache.common.MongoEntity;
-import jakarta.validation.constraints.NotBlank;
 import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;

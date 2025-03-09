@@ -98,9 +98,9 @@ public class CourseServiceTest {
 
         verify(this.courseRepository, times(1)).findById(any(ObjectId.class));
 
-        try{
+        try {
             this.courseService.getCourseById(courseId);
-        }catch (NotFoundException e){
+        } catch (NotFoundException e) {
             assertEquals(e.getMessage(), "Course " + courseId + " not found");
         }
     }
@@ -125,9 +125,9 @@ public class CourseServiceTest {
         verify(this.courseRepository, never()).persist(any(Course.class));
         verify(this.courseRepository, never()).listAll();
 
-        try{
+        try {
             this.courseService.createCourse(null);
-        }catch (BadRequestException e){
+        } catch (BadRequestException e) {
             assertEquals("Course is null", e.getMessage());
         }
     }
@@ -147,9 +147,9 @@ public class CourseServiceTest {
         verify(this.courseRepository, never()).persist(any(Course.class));
         verify(this.courseRepository, times(1)).listAll();
 
-        try{
+        try {
             this.courseService.createCourse(courseDTO);
-        }catch (BadRequestException e){
+        } catch (BadRequestException e) {
             assertEquals("Course name " + courseName + " already existing", e.getMessage());
         }
     }

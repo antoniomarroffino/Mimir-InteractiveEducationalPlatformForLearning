@@ -1,9 +1,7 @@
 package ch.supsi.controller.course;
 
-import ch.supsi.model.api.Course;
 import ch.supsi.model.dto.api.CourseDTO;
 import ch.supsi.model.dto.api.FolderDTO;
-import ch.supsi.service.course.CourseService;
 import ch.supsi.service.course.ICourseService;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
@@ -19,20 +17,16 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class CourseControllerTest {
+    private static final String STR_FOR_OBJECT_ID = ObjectId.get().toString();
     @Inject
     CourseController courseController;
-
     @InjectMock
     ICourseService courseService;
-
-    private static final String STR_FOR_OBJECT_ID = ObjectId.get().toString();
-
 
     @Test
     @DisplayName("Should return Response 200 (ok) with empty list of courses DTO")
@@ -71,10 +65,10 @@ public class CourseControllerTest {
         assertNotNull(response.getEntity());
         assertInstanceOf(List.class, response.getEntity());
 
-        List<CourseDTO> coursesRetrieved = ((List<?>)(response.getEntity()))
+        List<CourseDTO> coursesRetrieved = ((List<?>) (response.getEntity()))
                 .stream()
                 .filter(obj -> CourseDTO.class.isAssignableFrom(obj.getClass()))
-                .map(obj -> (CourseDTO)obj)
+                .map(obj -> (CourseDTO) obj)
                 .toList();
 
         assertEquals(2, coursesRetrieved.size());

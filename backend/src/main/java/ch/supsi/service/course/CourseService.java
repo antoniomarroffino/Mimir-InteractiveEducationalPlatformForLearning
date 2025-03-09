@@ -3,13 +3,12 @@ package ch.supsi.service.course;
 import ch.supsi.exception.api.BadRequestException;
 import ch.supsi.exception.api.NotFoundException;
 import ch.supsi.model.api.Course;
-import ch.supsi.model.api.Folder;
 import ch.supsi.model.dto.api.CourseDTO;
-import ch.supsi.model.dto.api.FolderDTO;
 import ch.supsi.repository.CourseRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.bson.types.ObjectId;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,18 +45,18 @@ public class CourseService implements ICourseService {
     }
 
     private void verifyCourseIsValid(CourseDTO courseDTO) {
-        if(courseDTO == null)
+        if (courseDTO == null)
             throw new BadRequestException("Course is null");
 
         String courseName = courseDTO.getName();
 
-        if(this.isCourseNameDuplicated(courseName))
+        if (this.isCourseNameDuplicated(courseName))
             throw new BadRequestException("Course name " + courseName + " already existing");
     }
 
     private boolean isCourseNameDuplicated(String courseName) {
-        for(Course course : this.courseRepository.listAll())
-            if(course.getName().equals(courseName))
+        for (Course course : this.courseRepository.listAll())
+            if (course.getName().equals(courseName))
                 return true;
 
         return false;

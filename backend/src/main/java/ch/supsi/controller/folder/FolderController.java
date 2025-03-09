@@ -40,7 +40,7 @@ public class FolderController {
     }
 
     @GET
-    @Path("/{folderName}")
+    @Path("/{folderId}")
     @Operation(summary = "Get specific folder in a course")
     @APIResponse(
             responseCode = "200",
@@ -52,8 +52,8 @@ public class FolderController {
     )
     public Response getFolder(
             @PathParam("courseId") String courseId,
-            @PathParam("folderName") String folderName) {
-        FolderDTO folderDTO = this.folderService.getFolderInCourse(new ObjectId(courseId), folderName);
+            @PathParam("folderId") String folderId) {
+        FolderDTO folderDTO = this.folderService.getFolderInCourse(new ObjectId(courseId), folderId);
         return Response.ok(folderDTO).build();
     }
 

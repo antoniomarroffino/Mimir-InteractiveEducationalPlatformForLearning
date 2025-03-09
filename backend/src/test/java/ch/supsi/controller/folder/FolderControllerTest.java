@@ -19,13 +19,11 @@ import static org.mockito.Mockito.*;
 @QuarkusTest
 public class FolderControllerTest {
 
+    private static final String STR_FOR_OBJECT_ID = ObjectId.get().toString();
     @Inject
     FolderController folderController;
-
     @InjectMock
     IFolderService folderService;
-
-    private static final String STR_FOR_OBJECT_ID = ObjectId.get().toString();
 
     @Test
     @DisplayName("Should return Response 200 (ok) with empty list of folders")
@@ -61,10 +59,10 @@ public class FolderControllerTest {
         assertNotNull(response.getEntity());
         assertInstanceOf(List.class, response.getEntity());
 
-        List<FolderDTO> foldersRetrieved = ((List<?>)(response.getEntity()))
+        List<FolderDTO> foldersRetrieved = ((List<?>) (response.getEntity()))
                 .stream()
                 .filter(obj -> FolderDTO.class.isAssignableFrom(obj.getClass()))
-                .map(obj -> (FolderDTO)obj)
+                .map(obj -> (FolderDTO) obj)
                 .toList();
 
         assertEquals(2, foldersRetrieved.size());
@@ -93,7 +91,7 @@ public class FolderControllerTest {
         assertNotNull(response.getEntity());
         assertInstanceOf(FolderDTO.class, response.getEntity());
 
-        FolderDTO folderRetrieved = ((FolderDTO)response.getEntity());
+        FolderDTO folderRetrieved = ((FolderDTO) response.getEntity());
         assertEquals(folderDTO.getName(), folderRetrieved.getName());
 
         verify(this.folderService, times(1)).getFolderInCourse(any(ObjectId.class), eq(folderDTO.getName()));
@@ -114,7 +112,7 @@ public class FolderControllerTest {
         assertNotNull(response.getEntity());
         assertInstanceOf(FolderDTO.class, response.getEntity());
 
-        FolderDTO folderDTORetrieved = ((FolderDTO)response.getEntity());
+        FolderDTO folderDTORetrieved = ((FolderDTO) response.getEntity());
         assertEquals(folderDTO.getName(), folderDTORetrieved.getName());
 
         verify(this.folderService, times(1)).addFolderToCourse(any(ObjectId.class), eq(folderDTO));
