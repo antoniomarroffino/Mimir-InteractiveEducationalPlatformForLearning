@@ -1,36 +1,38 @@
 package ch.supsi.model.api;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import io.quarkus.mongodb.panache.PanacheMongoEntity;
-import io.quarkus.mongodb.panache.common.MongoEntity;
-import io.quarkus.mongodb.panache.common.jackson.ObjectIdDeserializer;
+import jakarta.validation.constraints.NotNull;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
-import java.util.List;
+@Schema(description = "Base Question model", name = "Question")
+public abstract class Question {
+    private ObjectId id;
 
-@MongoEntity(collection = "questions")
-@Schema(description = "Question model", name = "Question")
-public class Question extends PanacheMongoEntity {
+    private String questionText;
 
-    @JsonSerialize(using = ToStringSerializer.class)
-    @JsonDeserialize(using = ObjectIdDeserializer.class)
-    @Schema(implementation = String.class, description = "Unique identifier")
-    public ObjectId id;
-    public String questionText;
-    private List<String> options;
-    public String correctAnswer;
+    @NotNull(message = "Question type cannot be null")
+    private QuestionType type;
 
-    public Question() {
-
+    protected Question() {
+        this.id = new ObjectId();
     }
 
-    public Question(String questionText, List<String> options, String correctAnswer) {
+    protected Question(QuestionType type) {
+        this();
+        this.type = type;
+    }
+
+    protected Question(QuestionType type, String questionText) {
+        this(type);
         this.questionText = questionText;
-        this.options = options;
-        this.correctAnswer = correctAnswer;
+    }
+
+    public ObjectId getId() {
+        return id;
+    }
+
+    public void setId(ObjectId id) {
+        this.id = id;
     }
 
     public String getQuestionText() {
@@ -41,20 +43,11 @@ public class Question extends PanacheMongoEntity {
         this.questionText = questionText;
     }
 
-    public List<String> getOptions() {
-        return options;
+    public QuestionType getType() {
+        return type;
     }
 
-    public void setOptions(List<String> options) {
-        this.options = options;
-    }
-
-    public String getCorrectAnswer() {
-        return correctAnswer;
-    }
-
-    public void setCorrectAnswer(String correctAnswer) {
-        this.correctAnswer = correctAnswer;
+    protected void setType(QuestionType type) {
+        this.type = type;
     }
 }
-
