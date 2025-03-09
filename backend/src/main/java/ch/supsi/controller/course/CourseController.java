@@ -55,7 +55,7 @@ public class CourseController {
             description = "Course not found"
     )
     public Response getCourse(@PathParam("id") String id) {
-        CourseDTO courseDTO = courseService.getCourseById(new ObjectId(id));
+        CourseDTO courseDTO = this.courseService.getCourseById(new ObjectId(id));
         return Response.ok(courseDTO).build();
     }
 
@@ -70,10 +70,9 @@ public class CourseController {
             )
     )
     public Response createCourse(@Valid CourseDTO courseDTO) {
-        CourseDTO createdCourseDTO = courseService.createCourse(courseDTO);
+        CourseDTO createdCourseDTO = this.courseService.createCourse(courseDTO);
         return Response.status(Response.Status.CREATED)
                 .entity(createdCourseDTO)
                 .build();
     }
-
 }

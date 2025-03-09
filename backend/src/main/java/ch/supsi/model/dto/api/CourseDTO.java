@@ -21,6 +21,11 @@ public class CourseDTO {
 
     public CourseDTO() {
     }
+
+    public CourseDTO(String name) {
+        this.name = name;
+    }
+
     public CourseDTO fromEntity(Course course) {
         if (course == null) return null;
 

@@ -1,4 +1,4 @@
-package ch.supsi.integration.testContainersResource;
+package ch.supsi.testContainersResource;
 
 import io.quarkus.test.common.QuarkusTestResourceLifecycleManager;
 import org.testcontainers.containers.MongoDBContainer;
@@ -27,3 +27,4 @@ public class MongoTestResource implements QuarkusTestResourceLifecycleManager {
         mongoDBContainer.close();
     }
 }
+

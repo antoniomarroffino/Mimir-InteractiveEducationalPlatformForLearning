@@ -1,6 +1,6 @@
-package ch.supsi.integration;
+package ch.supsi.integration.folder;
 
-import ch.supsi.integration.testContainersResource.MongoTestResource;
+import ch.supsi.testContainersResource.MongoTestResource;
 import ch.supsi.model.api.Course;
 import ch.supsi.model.api.Folder;
 import ch.supsi.model.dto.api.FolderDTO;

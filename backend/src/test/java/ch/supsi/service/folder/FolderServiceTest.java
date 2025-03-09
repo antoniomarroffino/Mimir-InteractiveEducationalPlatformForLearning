@@ -1,4 +1,4 @@
-package ch.supsi.service;
+package ch.supsi.service.folder;
 
 import ch.supsi.exception.api.BadRequestException;
 import ch.supsi.exception.api.NotFoundException;
@@ -6,7 +6,6 @@ import ch.supsi.model.api.Course;
 import ch.supsi.model.api.Folder;
 import ch.supsi.model.dto.api.FolderDTO;
 import ch.supsi.repository.CourseRepository;
-import ch.supsi.service.folder.FolderService;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
@@ -23,7 +22,7 @@ import static org.mockito.Mockito.*;
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class FolderServiceTest {
     @Inject
-    FolderService folderServiceTest;
+    FolderService folderService;
 
     @InjectMock
     CourseRepository courseRepository;
@@ -34,7 +33,7 @@ public class FolderServiceTest {
         Course courseWithEmptyFolders = new Course();
         when(this.courseRepository.findById(any(ObjectId.class))).thenReturn(courseWithEmptyFolders);
 
-        List<FolderDTO> folders = this.folderServiceTest.getFoldersInCourse(new ObjectId());
+        List<FolderDTO> folders = this.folderService.getFoldersInCourse(new ObjectId());
         assertTrue(folders.isEmpty());
 
         verify(this.courseRepository, times(1)).findById(any(ObjectId.class));
@@ -51,7 +50,7 @@ public class FolderServiceTest {
 
         when(this.courseRepository.findById(any(ObjectId.class))).thenReturn(courseWithTwoFolders);
 
-        List<FolderDTO> folders = this.folderServiceTest.getFoldersInCourse(new ObjectId());
+        List<FolderDTO> folders = this.folderService.getFoldersInCourse(new ObjectId());
         assertEquals(2, folders.size());
 
         FolderDTO folder1RetrievedDTO = folders.getFirst();
@@ -70,12 +69,12 @@ public class FolderServiceTest {
 
         when(this.courseRepository.findById(any(ObjectId.class))).thenReturn(null);
 
-        assertThrows(NotFoundException.class,() -> this.folderServiceTest.getFoldersInCourse(new ObjectId()));
+        assertThrows(NotFoundException.class,() -> this.folderService.getFoldersInCourse(new ObjectId()));
 
         verify(this.courseRepository, times(1)).findById(any(ObjectId.class));
 
         try{
-            this.folderServiceTest.getFoldersInCourse(courseId);
+            this.folderService.getFoldersInCourse(courseId);
         }catch (NotFoundException e){
             assertEquals("Course " + courseId + " not found", e.getMessage());
         }
@@ -91,7 +90,7 @@ public class FolderServiceTest {
 
         when(this.courseRepository.findById(any(ObjectId.class))).thenReturn(courseWithOneFolder);
 
-        FolderDTO folderFoundedDTo = this.folderServiceTest.getFolderInCourse(new ObjectId(), "folder1");
+        FolderDTO folderFoundedDTo = this.folderService.getFolderInCourse(new ObjectId(), "folder1");
         assertEquals(folder1.getName(), folderFoundedDTo.getName());
 
         verify(this.courseRepository, times(1)).findById(any(ObjectId.class));
@@ -103,12 +102,12 @@ public class FolderServiceTest {
         ObjectId courseId = new ObjectId();
         when(this.courseRepository.findById(any(ObjectId.class))).thenReturn(null);
 
-        assertThrows(NotFoundException.class, () -> this.folderServiceTest.getFolderInCourse(new ObjectId(), ""));
+        assertThrows(NotFoundException.class, () -> this.folderService.getFolderInCourse(new ObjectId(), ""));
 
         verify(this.courseRepository, times(1)).findById(any(ObjectId.class));
 
         try{
-            this.folderServiceTest.getFolderInCourse(courseId, "");
+            this.folderService.getFolderInCourse(courseId, "");
         }catch (NotFoundException e){
             assertEquals("Course " + courseId + " not found", e.getMessage());
         }
@@ -120,7 +119,7 @@ public class FolderServiceTest {
         Course course = new Course();
         when(this.courseRepository.findById(any(ObjectId.class))).thenReturn(course);
 
-        assertThrows(BadRequestException.class, () -> this.folderServiceTest.getFolderInCourse(new ObjectId(), null));
+        assertThrows(BadRequestException.class, () -> this.folderService.getFolderInCourse(new ObjectId(), null));
 
         verify(this.courseRepository, times(1)).findById(any(ObjectId.class));
 
@@ -128,18 +127,18 @@ public class FolderServiceTest {
 
         when(this.courseRepository.findById(any(ObjectId.class))).thenReturn(course);
 
-        assertThrows(BadRequestException.class, () -> this.folderServiceTest.getFolderInCourse(new ObjectId(), ""));
+        assertThrows(BadRequestException.class, () -> this.folderService.getFolderInCourse(new ObjectId(), ""));
 
         verify(this.courseRepository, times(1)).findById(any(ObjectId.class));
 
         try{
-            this.folderServiceTest.getFolderInCourse(new ObjectId(), null);
+            this.folderService.getFolderInCourse(new ObjectId(), null);
         }catch (BadRequestException e){
             assertEquals("Folder name cannot be null or empty", e.getMessage());
         }
 
         try{
-            this.folderServiceTest.getFolderInCourse(new ObjectId(), "");
+            this.folderService.getFolderInCourse(new ObjectId(), "");
         }catch (BadRequestException e){
             assertEquals("Folder name cannot be null or empty", e.getMessage());
         }
@@ -156,12 +155,12 @@ public class FolderServiceTest {
 
         when(this.courseRepository.findById(any(ObjectId.class))).thenReturn(courseWithOneFolder);
 
-        assertThrows(NotFoundException.class, () -> this.folderServiceTest.getFolderInCourse(courseId, "this is not a folder"));
+        assertThrows(NotFoundException.class, () -> this.folderService.getFolderInCourse(courseId, "this is not a folder"));
 
         verify(this.courseRepository, times(1)).findById(any(ObjectId.class));
 
         try{
-            this.folderServiceTest.getFoldersInCourse(new ObjectId());
+            this.folderService.getFoldersInCourse(new ObjectId());
         }catch (NotFoundException e){
             assertEquals("Folder this is not a folder not found in course: " + courseId, e.getMessage());
         }
@@ -177,7 +176,7 @@ public class FolderServiceTest {
 
         when(this.courseRepository.findById(any(ObjectId.class))).thenReturn(course);
 
-        FolderDTO folderRetrievedDTO = this.folderServiceTest.addFolderToCourse(new ObjectId(), folderDTO);
+        FolderDTO folderRetrievedDTO = this.folderService.addFolderToCourse(new ObjectId(), folderDTO);
         assertEquals(folderDTO.getName(), folderRetrievedDTO.getName());
         assertEquals(1, course.getFolders().size());
 
@@ -191,13 +190,13 @@ public class FolderServiceTest {
         ObjectId courseId = new ObjectId();
         when(this.courseRepository.findById(any(ObjectId.class))).thenReturn(null);
 
-        assertThrows(NotFoundException.class, () -> this.folderServiceTest.addFolderToCourse(courseId, null));
+        assertThrows(NotFoundException.class, () -> this.folderService.addFolderToCourse(courseId, null));
 
         verify(this.courseRepository, times(1)).findById(any(ObjectId.class));
-        verify(this.courseRepository, times(0)).update(any(Course.class));
+        verify(this.courseRepository, never()).update(any(Course.class));
 
         try{
-            this.folderServiceTest.addFolderToCourse(courseId, null);
+            this.folderService.addFolderToCourse(courseId, null);
         }catch (NotFoundException e){
             assertEquals("Course " + courseId + " not found", e.getMessage());
         }
@@ -208,13 +207,13 @@ public class FolderServiceTest {
     void test10AddFolderToCourse_ThrowBadRequestExceptionFolderIsNull() {
         when(this.courseRepository.findById(any(ObjectId.class))).thenReturn(new Course());
 
-        assertThrows(BadRequestException.class, () -> this.folderServiceTest.addFolderToCourse(new ObjectId(), null));
+        assertThrows(BadRequestException.class, () -> this.folderService.addFolderToCourse(new ObjectId(), null));
 
         verify(this.courseRepository, times(1)).findById(any(ObjectId.class));
-        verify(this.courseRepository, times(0)).update(any(Course.class));
+        verify(this.courseRepository, never()).update(any(Course.class));
 
         try{
-            this.folderServiceTest.addFolderToCourse(new ObjectId(), null);
+            this.folderService.addFolderToCourse(new ObjectId(), null);
         }catch (BadRequestException e){
             assertEquals("Folder is null", e.getMessage());
         }
@@ -234,13 +233,13 @@ public class FolderServiceTest {
 
         when(this.courseRepository.findById(any(ObjectId.class))).thenReturn(course);
 
-        assertThrows(BadRequestException.class, () -> this.folderServiceTest.addFolderToCourse(new ObjectId(), folderNotValidDTO));
+        assertThrows(BadRequestException.class, () -> this.folderService.addFolderToCourse(new ObjectId(), folderNotValidDTO));
 
         verify(this.courseRepository, times(1)).findById(any(ObjectId.class));
-        verify(this.courseRepository, times(0)).update(any(Course.class));
+        verify(this.courseRepository, never()).update(any(Course.class));
 
         try{
-            this.folderServiceTest.addFolderToCourse(courseId, folderNotValidDTO);
+            this.folderService.addFolderToCourse(courseId, folderNotValidDTO);
         }catch (BadRequestException e){
             assertEquals("Folder name " + folder.getName() + " already existing in course " + courseId, e.getMessage());
         }

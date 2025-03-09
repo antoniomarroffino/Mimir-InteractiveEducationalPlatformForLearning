@@ -1,7 +1,5 @@
-package ch.supsi.controller;
+package ch.supsi.controller.folder;
 
-import ch.supsi.controller.folder.FolderController;
-import ch.supsi.model.api.Folder;
 import ch.supsi.model.dto.api.FolderDTO;
 import ch.supsi.service.folder.IFolderService;
 import io.quarkus.test.InjectMock;
@@ -12,7 +10,6 @@ import org.bson.types.ObjectId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.io.ObjectInput;
 import java.util.Collections;
 import java.util.List;
 
