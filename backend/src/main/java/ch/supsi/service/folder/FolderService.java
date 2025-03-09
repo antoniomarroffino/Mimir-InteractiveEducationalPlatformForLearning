@@ -11,6 +11,7 @@ import jakarta.inject.Inject;
 import org.bson.types.ObjectId;
 
 import java.util.List;
+import java.util.Optional;
 
 @ApplicationScoped
 public class FolderService implements IFolderService {
@@ -20,20 +21,21 @@ public class FolderService implements IFolderService {
 
     @Override
     public List<FolderDTO> getFoldersInCourse(ObjectId courseId) {
-        Course course = this.courseRepository.findById(courseId);
-        if (course == null) {
+        Optional<Course> courseOpt = this.courseRepository.findByIdOptional(courseId);
+        if (courseOpt.isEmpty()) {
             throw new NotFoundException("Course " + courseId + " not found");
         }
-        return course.getFolders().stream().map(new FolderDTO()::fromEntity).toList();
+        return courseOpt.get().getFolders().stream().map(new FolderDTO()::fromEntity).toList();
     }
 
     @Override
     public FolderDTO getFolderInCourse(ObjectId courseId, String folderId) {
-        Course course = this.courseRepository.findById(courseId);
-        if (course == null)
+        Optional<Course> courseOpt = this.courseRepository.findByIdOptional(courseId);
+        if (courseOpt.isEmpty()) {
             throw new NotFoundException("Course " + courseId + " not found");
+        }
 
-        return course.getFolders().stream()
+        return courseOpt.get().getFolders().stream()
                 .filter(f -> f.getId().toString().equals(folderId))
                 .map(new FolderDTO()::fromEntity)
                 .findFirst()
@@ -42,10 +44,12 @@ public class FolderService implements IFolderService {
 
     @Override
     public FolderDTO addFolderToCourse(ObjectId courseId, FolderDTO folderDTO) {
-        Course course = this.courseRepository.findById(courseId);
-        if (course == null) {
+        Optional<Course> courseOpt = this.courseRepository.findByIdOptional(courseId);
+        if (courseOpt.isEmpty()) {
             throw new NotFoundException("Course " + courseId + " not found");
         }
+
+        Course course = courseOpt.get();
 
         this.verifyFolderIsValid(course, folderDTO);
 

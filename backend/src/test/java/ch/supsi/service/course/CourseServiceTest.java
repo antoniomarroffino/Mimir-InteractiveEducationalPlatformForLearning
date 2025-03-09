@@ -17,6 +17,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -76,7 +77,7 @@ public class CourseServiceTest {
         Folder folder1 = new Folder("folder1");
         course.getFolders().add(folder1);
 
-        when(this.courseRepository.findById(any(ObjectId.class))).thenReturn(course);
+        when(this.courseRepository.findByIdOptional(any(ObjectId.class))).thenReturn(Optional.of(course));
 
         CourseDTO courseDTO = this.courseService.getCourseById(new ObjectId());
         assertEquals(course.getName(), courseDTO.getName());
@@ -84,7 +85,7 @@ public class CourseServiceTest {
         assertEquals(folder1.getName(), courseDTO.getFolders().getFirst().getName());
 
 
-        verify(this.courseRepository, times(1)).findById(any(ObjectId.class));
+        verify(this.courseRepository, times(1)).findByIdOptional(any(ObjectId.class));
     }
 
     @Test
@@ -92,11 +93,11 @@ public class CourseServiceTest {
     void test04GetCourseById_ThrowNotFoundExceptionCourseNotFound() {
         ObjectId courseId = new ObjectId();
 
-        when(this.courseRepository.findById(any(ObjectId.class))).thenReturn(null);
+        when(this.courseRepository.findByIdOptional(any(ObjectId.class))).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> this.courseService.getCourseById(new ObjectId()));
 
-        verify(this.courseRepository, times(1)).findById(any(ObjectId.class));
+        verify(this.courseRepository, times(1)).findByIdOptional(any(ObjectId.class));
 
         try {
             this.courseService.getCourseById(courseId);

@@ -10,6 +10,7 @@ import jakarta.inject.Inject;
 import org.bson.types.ObjectId;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -27,11 +28,11 @@ public class CourseService implements ICourseService {
 
     @Override
     public CourseDTO getCourseById(ObjectId id) {
-        Course course = this.courseRepository.findById(id);
-        if (course == null) {
+        Optional<Course> course = this.courseRepository.findByIdOptional(id);
+        if (course.isEmpty()) {
             throw new NotFoundException("Course " + id + " not found");
         }
-        return new CourseDTO().fromEntity(course);
+        return new CourseDTO().fromEntity(course.get());
     }
 
     @Override
