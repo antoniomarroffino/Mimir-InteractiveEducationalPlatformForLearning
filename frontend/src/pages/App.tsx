@@ -7,6 +7,7 @@ import Footer from "../components/Footer";
 import { FolderProvider } from "../contexts/folder/FolderProvider.tsx";
 import '../App.css';
 import { CourseProvider } from "../contexts/course/CourseProvider.tsx";
+import {QuizCreation} from "./QuizCreation.tsx";
 
 const queryClient = new QueryClient();
 
@@ -20,6 +21,7 @@ const App = () => {
                         <Routes>
                             <Route path="/" element={<Home />} />
                             <Route path="/courses/:courseId" element={<CourseDetails />} />
+                            <Route path="/courses/:courseId/folders/:folderId/quizzes/:quizId/edit" element={<QuizCreation />} />
                         </Routes>
                         <Footer />
                     </div>

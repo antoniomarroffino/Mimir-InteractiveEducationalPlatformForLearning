@@ -59,6 +59,20 @@ class QuizService {
         }
     }
 
+    async updateQuiz(courseId: string, folderId: string, quizId: string, quizDTO: QuizDTO): Promise<QuizDTO> {
+        try {
+            const response = await quizApi.apiCoursesCourseIdFoldersFolderIdQuizzesQuizIdPut({
+                courseId,
+                folderId,
+                quizId,
+                quizDTO
+            });
+            return response.data;
+        } catch (error) {
+            throw this.handleError(error as AxiosError);
+        }
+    }
+
     private handleError(error: AxiosError): Error {
         console.error('API Error:', error);
         if (error.response) {
