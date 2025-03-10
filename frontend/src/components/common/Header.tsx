@@ -1,7 +1,7 @@
-import '../App.css';
-import LoginButton from "../auth/LoginButton";
+import '../../App.css';
+import LoginButton from "../../auth/LoginButton.tsx";
 import {AuthenticatedTemplate, UnauthenticatedTemplate} from "@azure/msal-react";
-import LogoutButton from "../auth/LogoutButton";
+import LogoutButton from "../../auth/LogoutButton.tsx";
 import { useState } from "react";
 
 const Header = () => {
@@ -11,7 +11,7 @@ const Header = () => {
         <div className="navbar bg-gradient-to-r from-primary to-secondary text-primary-content shadow-lg">
             {/* Logo e Brand */}
             <div className="navbar-start">
-                <a href="/" className="px-2">
+                <a href="/frontend/public" className="px-2">
                     <img
                         src="/supsi-logo.png"
                         alt="SUPSI logo"
@@ -34,7 +34,7 @@ const Header = () => {
                     </button>
                     {isOpen && (
                         <ul className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52 absolute top-full left-0">
-                            <li><a href="/" className="text-base-content">Home</a></li>
+                            <li><a href="/frontend/public" className="text-base-content">Home</a></li>
                             <li className="lg:hidden">
                                 <UnauthenticatedTemplate>
                                     <LoginButton />
@@ -49,7 +49,7 @@ const Header = () => {
 
                 {/* Menu desktop */}
                 <ul className="menu menu-horizontal px-1 hidden lg:flex">
-                    <li><a href="/" className="text-primary-content hover:bg-primary/20">Home</a></li>
+                    <li><a href="/frontend/public" className="text-primary-content hover:bg-primary/20">Home</a></li>
                 </ul>
             </div>
 

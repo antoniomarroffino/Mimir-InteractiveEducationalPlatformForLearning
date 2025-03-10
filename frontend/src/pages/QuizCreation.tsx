@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useParams, useNavigate } from 'react-router-dom';
-import { QuestionDTO, QuestionType } from '@dti-isin/backend-api-client';
-import { questionService } from '../services/questionService';
-import { QuestionTypeSelector } from '../components/question/QuestionTypeSelector';
-import { QuestionEditor } from '../components/question/QuestionEditor';
-import { QuestionsList } from '../components/question/QuestionList';
-import { useCourseContext } from '../contexts/course/CourseContext';
-import { BsChevronRight } from 'react-icons/bs';
+import React, {useEffect, useState} from 'react';
+import {useNavigate, useParams} from 'react-router-dom';
+import {QuestionDTO, QuestionType} from '@dti-isin/backend-api-client';
+import {questionService} from '../services/questionService';
+import {QuestionTypeSelector} from '../components/question/QuestionTypeSelector';
+import {QuestionEditor} from '../components/question/QuestionEditor';
+import {QuestionsList} from '../components/question/QuestionList';
+import {useCourseContext} from '../contexts/course/CourseContext';
+import {Breadcrumb} from "../components/common/Breadcrumb.tsx";
 
 export const QuizCreation: React.FC = () => {
-    const { courseId, folderId, quizId } = useParams();
+    const {courseId, folderId, quizId} = useParams();
     const navigate = useNavigate();
-    const { courses } = useCourseContext();
+    const {courses} = useCourseContext();
 
     const [questions, setQuestions] = useState<QuestionDTO[]>([]);
     const [isCreatingQuestion, setIsCreatingQuestion] = useState(false);
@@ -126,31 +126,11 @@ export const QuizCreation: React.FC = () => {
     return (
         <div className="container mx-auto px-4 py-8">
             {/* Breadcrumb */}
-            <div className="mb-8">
-                <ul className="flex items-center gap-2 text-sm">
-                    <li>
-                        <Link
-                            to="/"
-                            className="text-primary hover:text-primary-focus"
-                        >
-                            Home
-                        </Link>
-                    </li>
-                    <BsChevronRight className="text-gray-400" />
-                    <li>
-                        <Link
-                            to={`/courses/${courseId}`}
-                            className="text-primary hover:text-primary-focus"
-                        >
-                            {currentCourse.name}
-                        </Link>
-                    </li>
-                    <BsChevronRight className="text-gray-400" />
-                    <li>
-                        <span className="font-semibold">{currentQuiz.name}</span>
-                    </li>
-                </ul>
-            </div>
+            <Breadcrumb
+                course={currentCourse}
+                folder={currentFolder}
+                quiz={currentQuiz}
+            />
 
             {error && (
                 <div className="alert alert-error mb-4">

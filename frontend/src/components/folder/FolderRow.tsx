@@ -3,6 +3,7 @@ import { FolderDTO, QuizDTO } from '@dti-isin/backend-api-client';
 import { BsFolder2, BsChevronDown, BsChevronUp } from 'react-icons/bs';
 import { quizService } from '../../services/quizService';
 import {QuizList} from "../quiz/QuizList.tsx";
+import {useNavigate} from "react-router-dom";
 
 interface FolderRowProps {
     folder: FolderDTO;
@@ -16,6 +17,7 @@ export const FolderRow = ({ folder, courseId }: FolderRowProps) => {
     const [isLoading, setIsLoading] = useState(false);
     const [newQuizName, setNewQuizName] = useState('');
     const [error, setError] = useState<string | null>(null);
+    const navigate = useNavigate();
 
     const loadQuizCount = useCallback(async () => {
         try {
@@ -41,7 +43,6 @@ export const FolderRow = ({ folder, courseId }: FolderRowProps) => {
         }
     }, [courseId, folder.id]);
 
-    // Carica il conteggio dei quiz all'inizializzazione
     useEffect(() => {
         const initializeQuizCount = async () => {
             await loadQuizCount();
@@ -49,7 +50,6 @@ export const FolderRow = ({ folder, courseId }: FolderRowProps) => {
         void initializeQuizCount();
     }, [loadQuizCount]);
 
-    // Carica i quiz quando la folder viene espansa
     useEffect(() => {
         const loadQuizzesIfExpanded = async () => {
             if (isExpanded) {
@@ -73,9 +73,7 @@ export const FolderRow = ({ folder, courseId }: FolderRowProps) => {
                 newQuizName.trim()
             );
 
-            setQuizzes(prevQuizzes => [...prevQuizzes, newQuiz]);
-            setQuizCount(prev => prev + 1);
-            setNewQuizName('');
+            navigate(`/courses/${courseId}/folders/${folder.id}/quizzes/${newQuiz.id}/edit`);
         } catch (error) {
             console.error('Failed to create quiz:', error);
             setError('Failed to create quiz');

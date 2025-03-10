@@ -3,6 +3,7 @@ import {Link, useNavigate, useParams} from 'react-router-dom';
 import {useCourseContext} from '../contexts/course/CourseContext.tsx';
 import {BsChevronRight} from 'react-icons/bs';
 import {FolderList} from "../components/folder/FolderList.tsx";
+import CreateFolderForm from "../components/folder/CreateFolderForm.tsx";
 
 const CourseDetails = () => {
     const {courseId} = useParams();
@@ -93,6 +94,7 @@ const CourseDetails = () => {
                 </p>
             </div>
 
+            <CreateFolderForm/>
             {/* Folders Section */}
             <div className="bg-base-100 rounded-lg p-6 shadow-lg">
                 <h2 className="text-2xl font-semibold mb-4">Folders</h2>
