@@ -1,4 +1,4 @@
-package ch.supsi.model.api;
+package ch.supsi.model.api.question;
 
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 

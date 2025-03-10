@@ -1,6 +1,5 @@
-package ch.supsi.model.api;
+package ch.supsi.model.api.question;
 
-import jakarta.validation.constraints.NotNull;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
@@ -10,7 +9,6 @@ public abstract class Question {
 
     private String questionText;
 
-    @NotNull(message = "Question type cannot be null")
     private QuestionType type;
 
     protected Question() {
@@ -45,9 +43,5 @@ public abstract class Question {
 
     public QuestionType getType() {
         return type;
-    }
-
-    protected void setType(QuestionType type) {
-        this.type = type;
     }
 }

@@ -2,6 +2,7 @@ package ch.supsi.model.dto.api;
 
 import ch.supsi.model.api.Quiz;
 import io.quarkus.runtime.annotations.RegisterForReflection;
+import jakarta.validation.constraints.NotBlank;
 import org.bson.types.ObjectId;
 
 import java.time.LocalDateTime;
@@ -11,6 +12,7 @@ import java.util.List;
 @RegisterForReflection
 public class QuizDTO {
     private String id;
+    @NotBlank(message = "Quiz name cannot be null or empty")
     private String name;
     private String description;
     private List<QuestionDTO> questions = new ArrayList<>();

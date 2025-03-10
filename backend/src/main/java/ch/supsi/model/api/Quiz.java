@@ -1,7 +1,7 @@
 package ch.supsi.model.api;
 
+import ch.supsi.model.api.question.Question;
 import org.bson.types.ObjectId;
-import jakarta.validation.constraints.NotBlank;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import java.time.LocalDateTime;
@@ -12,7 +12,6 @@ import java.util.List;
 public class Quiz {
     private ObjectId id;
 
-    @NotBlank(message = "Quiz name cannot be null or empty")
     private String name;
 
     private String description;
