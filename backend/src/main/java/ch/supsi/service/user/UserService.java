@@ -1,18 +1,22 @@
 package ch.supsi.service.user;
 
+import ch.supsi.auth.AdminConfig;
+import ch.supsi.model.api.user.Role;
 import ch.supsi.model.api.user.User;
 import ch.supsi.repository.UserRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
-import java.util.Map;
 import java.util.Optional;
 
 @ApplicationScoped
 public class UserService implements IUserService{
     @Inject
     UserRepository userRepository;
+
+    @Inject
+    AdminConfig adminConfig;
 
     @Override
     public User getUserByAzureOid(String oid) {
@@ -54,5 +58,16 @@ public class UserService implements IUserService{
         String jwtEmail = jwt.getClaim("preferred_username");
         if(jwtEmail != null && !jwtEmail.equals(user.getEmail()))
             user.setEmail(jwtEmail);
+
+        if(isAdminUser(user))
+            user.setRole(Role.ADMIN);
+        else if(user.getRole() == Role.ADMIN)
+            user.setRole(Role.STUDENT);
+    }
+
+    private boolean isAdminUser(User user) {
+        if(this.adminConfig.getAdminNames().contains(user.getName()))
+            return this.adminConfig.getAdminEmails().contains(user.getEmail());
+        return false;
     }
 }

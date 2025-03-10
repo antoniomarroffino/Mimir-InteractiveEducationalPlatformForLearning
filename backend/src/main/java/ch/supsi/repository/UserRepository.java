@@ -11,8 +11,4 @@ public class UserRepository implements PanacheMongoRepository<User> {
     public Optional<User> findByAzureOidOptional(String oid) {
         return Optional.ofNullable(find("azureOid", oid).firstResult());
     }
-
-    public Optional<User> findByEmailOptional(String email) {
-        return Optional.ofNullable(find("email", email).firstResult());
-    }
 }

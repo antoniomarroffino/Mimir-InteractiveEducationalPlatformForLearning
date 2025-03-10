@@ -1,5 +1,6 @@
 package ch.supsi.controller.user;
 
+import ch.supsi.model.api.user.Role;
 import ch.supsi.model.api.user.User;
 import ch.supsi.model.dto.api.CourseDTO;
 import ch.supsi.service.user.IUserService;
@@ -29,16 +30,39 @@ public class UserController {
 
     @POST
     @Path("/login")
+    @Authenticated
     @Operation(summary = "Local login")
     @APIResponse(
             responseCode = "201",
-            description = "If user does not exist, he will created; if user already exist check for personal update (firstname, lastname etc)"
+            description = "If user does not exist, he will created; if user already exist check for personal update"
     )
     public Response localLogin(){
-        System.out.println(securityIdentity.getPrincipal().getName());
-
-        User user = this.userService.updateUser((JsonWebToken) securityIdentity.getPrincipal());
+        this.userService.updateUser((JsonWebToken) securityIdentity.getPrincipal());
 
         return Response.status(Response.Status.CREATED).build();
+    }
+
+    @GET
+    @Path("/admin")
+    @RolesAllowed("ADMIN")
+    @Operation(summary = "Admin Resource")
+    @APIResponse(
+            responseCode = "200",
+            description = "Resource admin"
+    )
+    public Response adminResource(){
+        return Response.status(Response.Status.OK).build();
+    }
+
+    @GET
+    @Path("/student")
+    @RolesAllowed("STUDENT")
+    @Operation(summary = "student Resource")
+    @APIResponse(
+            responseCode = "200",
+            description = "Resource student"
+    )
+    public Response studentResource(){
+        return Response.status(Response.Status.OK).build();
     }
 }

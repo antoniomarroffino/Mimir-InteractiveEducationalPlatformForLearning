@@ -28,7 +28,6 @@ public class RolesAugmentor implements SecurityIdentityAugmentor {
         if(identity.isAnonymous())
             return () -> identity;
         else {
-            System.out.println("ENTRO QUI BELLA, " + identity.getPrincipal().getName());
             QuarkusSecurityIdentity.Builder builder = QuarkusSecurityIdentity.builder(identity);
 
             JsonWebToken jwt = (JsonWebToken) identity.getPrincipal();
