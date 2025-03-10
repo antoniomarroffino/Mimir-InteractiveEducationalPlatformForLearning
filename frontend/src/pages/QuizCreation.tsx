@@ -1,17 +1,18 @@
-import React, {useEffect, useState} from 'react';
-import {useNavigate, useParams} from 'react-router-dom';
-import {QuestionDTO, QuestionType} from '@dti-isin/backend-api-client';
-import {questionService} from '../services/questionService';
-import {QuestionTypeSelector} from '../components/question/QuestionTypeSelector';
-import {QuestionEditor} from '../components/question/QuestionEditor';
-import {QuestionsList} from '../components/question/QuestionList';
-import {useCourseContext} from '../contexts/course/CourseContext';
-import {Breadcrumb} from "../components/common/Breadcrumb.tsx";
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { QuestionDTO, QuestionType } from '@dti-isin/backend-api-client';
+import { questionService } from '../services/questionService';
+import { QuestionTypeSelector } from '../components/question/QuestionTypeSelector';
+import { QuestionEditor } from '../components/question/QuestionEditor';
+import { QuestionsList } from '../components/question/QuestionList';
+import { useCourseContext } from '../contexts/course/CourseContext';
+import { Breadcrumb } from "../components/common/Breadcrumb.tsx";
+import CreateQuestionForm from '../components/question/CreateQuestionForm';
 
 export const QuizCreation: React.FC = () => {
-    const {courseId, folderId, quizId} = useParams();
+    const { courseId, folderId, quizId } = useParams();
     const navigate = useNavigate();
-    const {courses} = useCourseContext();
+    const { courses } = useCourseContext();
 
     const [questions, setQuestions] = useState<QuestionDTO[]>([]);
     const [isCreatingQuestion, setIsCreatingQuestion] = useState(false);
@@ -19,6 +20,10 @@ export const QuizCreation: React.FC = () => {
     const [questionTemplate, setQuestionTemplate] = useState<QuestionDTO | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [draftQuestion, setDraftQuestion] = useState<Partial<QuestionDTO>>({
+        questionText: '',
+        type: selectedQuestionType || undefined
+    });
 
     const currentCourse = courses.find(course => course.id === courseId);
     const currentFolder = currentCourse?.folders?.find(folder => folder.id === folderId);
@@ -29,7 +34,6 @@ export const QuizCreation: React.FC = () => {
 
         const initializePage = async () => {
             try {
-                // Add any initial loading logic if needed
                 if (isMounted) {
                     setIsLoading(false);
                 }
@@ -71,24 +75,6 @@ export const QuizCreation: React.FC = () => {
             </div>
         );
     }
-
-    const handleStartQuestionCreation = () => {
-        setIsCreatingQuestion(true);
-    };
-
-    const handleSelectQuestionType = async (type: QuestionType) => {
-        try {
-            setIsLoading(true);
-            setError(null);
-            const template = await questionService.createQuestionTemplate(type);
-            setSelectedQuestionType(type);
-            setQuestionTemplate(template);
-        } catch (err) {
-            setError(err instanceof Error ? err.message : 'Failed to create question template');
-        } finally {
-            setIsLoading(false);
-        }
-    };
 
     const handleSaveQuestion = async (questionData: QuestionDTO) => {
         if (!courseId || !folderId || !quizId) {
@@ -132,6 +118,14 @@ export const QuizCreation: React.FC = () => {
                 quiz={currentQuiz}
             />
 
+            {/* Quiz Title and Info */}
+            <div className="bg-base-100 rounded-lg p-6 shadow-lg mb-8">
+                <h1 className="text-3xl font-bold mb-2">{currentQuiz.name}</h1>
+                <p className="text-base-content/70">
+                    {questions.length} questions
+                </p>
+            </div>
+
             {error && (
                 <div className="alert alert-error mb-4">
                     {error}
@@ -143,22 +137,44 @@ export const QuizCreation: React.FC = () => {
                     </button>
                 </div>
             )}
-            <div className="grid grid-cols-12 gap-6">
+
+            <div className="grid grid-cols-12 gap-6 mt-6">
                 {/* Sidebar con la lista delle domande */}
                 <div className="col-span-3">
-                    <div className="bg-base-100 rounded-lg p-4 shadow">
+                    <div className="bg-base-100 rounded-lg p-4 shadow space-y-4">
                         <QuestionsList
                             questions={questions}
                             onDeleteQuestion={handleDeleteQuestion}
                         />
 
-                        <button
-                            className="btn btn-primary w-full mt-4"
-                            onClick={handleStartQuestionCreation}
-                            disabled={isCreatingQuestion || isLoading}
-                        >
-                            Create New Question
-                        </button>
+                        {isCreatingQuestion && (
+                            <div className="p-3 bg-base-200 rounded">
+                                <div className="flex justify-between items-center mb-2">
+                                    <span className="text-sm font-semibold">
+                                        Draft Question
+                                    </span>
+                                    {selectedQuestionType && (
+                                        <span className="badge badge-primary">
+                                            {selectedQuestionType}
+                                        </span>
+                                    )}
+                                </div>
+                                <p className="text-base-content/70">
+                                    {draftQuestion.questionText || 'Start typing your question...'}
+                                </p>
+                            </div>
+                        )}
+
+                        {!isCreatingQuestion && (
+                            <CreateQuestionForm
+                                onStartCreation={() => {
+                                    setIsCreatingQuestion(true);
+                                    // Resetta il draft question quando inizia la creazione
+                                    setDraftQuestion({ questionText: '' });
+                                }}
+                                isDisabled={isLoading}
+                            />
+                        )}
                     </div>
                 </div>
 
@@ -166,7 +182,18 @@ export const QuizCreation: React.FC = () => {
                 <div className="col-span-3">
                     {isCreatingQuestion && !selectedQuestionType ? (
                         <QuestionTypeSelector
-                            onSelectType={handleSelectQuestionType}
+                            onSelectType={(type) => {
+                                questionService.createQuestionTemplate(type)
+                                    .then(template => {
+                                        setSelectedQuestionType(type);
+                                        setQuestionTemplate(template);
+                                        setDraftQuestion(prev => ({
+                                            ...prev,
+                                            type
+                                        }));
+                                    })
+                                    .catch(err => setError(err.message));
+                            }}
                             isLoading={isLoading}
                         />
                     ) : (
@@ -190,8 +217,15 @@ export const QuizCreation: React.FC = () => {
                                 setIsCreatingQuestion(false);
                                 setSelectedQuestionType(null);
                                 setQuestionTemplate(null);
+                                setDraftQuestion({});
                             }}
                             isLoading={isLoading}
+                            onQuestionTextChange={(text) => {
+                                setDraftQuestion(prev => ({
+                                    ...prev,
+                                    questionText: text
+                                }));
+                            }}
                         />
                     ) : (
                         <div className="bg-base-100 rounded-lg p-4 shadow opacity-50">
@@ -206,7 +240,3 @@ export const QuizCreation: React.FC = () => {
         </div>
     );
 };
-
-
-
-

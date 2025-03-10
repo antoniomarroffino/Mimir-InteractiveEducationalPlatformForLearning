@@ -6,6 +6,7 @@ interface QuestionEditorProps {
     template: QuestionDTO;
     onSave: (question: QuestionDTO) => void;
     onCancel: () => void;
+    onQuestionTextChange?: (text: string) => void;
     isLoading?: boolean;
 }
 
@@ -14,10 +15,17 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
                                                                   template,
                                                                   onSave,
                                                                   onCancel,
+                                                                  onQuestionTextChange,
                                                                   isLoading = false
                                                               }) => {
     const [questionText, setQuestionText] = useState(template.questionText || '');
     const [correctAnswer, setCorrectAnswer] = useState<boolean>(true);
+
+    const handleQuestionTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        const text = e.target.value;
+        setQuestionText(text);
+        onQuestionTextChange?.(text);
+    };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -44,7 +52,7 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
                     </label>
                     <textarea
                         value={questionText}
-                        onChange={(e) => setQuestionText(e.target.value)}
+                        onChange={handleQuestionTextChange}
                         className="textarea textarea-bordered h-24"
                         placeholder="Enter your question"
                         required
