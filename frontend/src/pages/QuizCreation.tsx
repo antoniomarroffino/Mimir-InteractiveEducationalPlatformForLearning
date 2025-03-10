@@ -1,105 +1,55 @@
-// src/pages/QuizCreation.tsx
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { QuizDTO, FolderDTO } from '@dti-isin/backend-api-client';
-import { quizService } from '../services/quizService';
-import { useCourseContext } from '../contexts/course/CourseContext';
-import { folderService } from '../services/folderService';
-import { QuizBreadcrumb } from '../components/quiz/QuizBreadcrumb';
-import { QuestionsList } from '../components/question/QuestionList';
+import { Link, useParams, useNavigate } from 'react-router-dom';
+import { QuestionDTO, QuestionType } from '@dti-isin/backend-api-client';
+import { questionService } from '../services/questionService';
 import { QuestionTypeSelector } from '../components/question/QuestionTypeSelector';
 import { QuestionEditor } from '../components/question/QuestionEditor';
-import { QuestionType } from '../components/question/QuestionTypes';
-
-interface Question {
-    id: string;
-    text: string;
-    type: QuestionType;
-    answers?: string[];
-    correctAnswer?: number | boolean | number[];
-}
+import { QuestionsList } from '../components/question/QuestionList';
+import { useCourseContext } from '../contexts/course/CourseContext';
+import { BsChevronRight } from 'react-icons/bs';
 
 export const QuizCreation: React.FC = () => {
     const { courseId, folderId, quizId } = useParams();
     const navigate = useNavigate();
-    const { courses, selectedCourseId } = useCourseContext();
+    const { courses } = useCourseContext();
 
-    // Stati base
-    const [quiz, setQuiz] = useState<QuizDTO | null>(null);
-    const [folder, setFolder] = useState<FolderDTO | null>(null);
-    const [quizName, setQuizName] = useState('');
+    const [questions, setQuestions] = useState<QuestionDTO[]>([]);
+    const [isCreatingQuestion, setIsCreatingQuestion] = useState(false);
+    const [selectedQuestionType, setSelectedQuestionType] = useState<QuestionType | null>(null);
+    const [questionTemplate, setQuestionTemplate] = useState<QuestionDTO | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    // Stati per la gestione delle domande
-    const [questions, setQuestions] = useState<Question[]>([]);
-    const [selectedQuestionType, setSelectedQuestionType] = useState<QuestionType>(
-        QuestionType.MULTIPLE_CHOICE
-    );
-
-    // Trova il corso corrente
-    const currentCourse = courses.find(course => course.id === selectedCourseId);
+    const currentCourse = courses.find(course => course.id === courseId);
+    const currentFolder = currentCourse?.folders?.find(folder => folder.id === folderId);
+    const currentQuiz = currentFolder?.quizzes?.find(quiz => quiz.id === quizId);
 
     useEffect(() => {
-        const initializeData = async () => {
-            if (!courseId || !folderId) return;
+        let isMounted = true;
 
+        const initializePage = async () => {
             try {
-                setIsLoading(true);
-                setError(null);
-
-                // Carica la folder
-                const folders = await folderService.getFoldersInCourse(courseId);
-                const currentFolder = folders.find(f => f.id === folderId);
-                if (currentFolder) {
-                    setFolder(currentFolder);
-                }
-
-                // Carica il quiz se in modalità modifica
-                if (quizId) {
-                    const quizData = await quizService.getQuiz(courseId, folderId, quizId);
-                    setQuiz(quizData);
-                    setQuizName(quizData.name || '');
-                    // Qui dovresti anche caricare le domande esistenti se ci sono
-                    // setQuestions(quizData.questions || []);
+                // Add any initial loading logic if needed
+                if (isMounted) {
+                    setIsLoading(false);
                 }
             } catch (error) {
-                console.error('Failed to load data:', error);
-                setError('Failed to load data');
-            } finally {
-                setIsLoading(false);
+                console.error('Failed to initialize page:', error);
+                if (isMounted) {
+                    setIsLoading(false);
+                    setError('Failed to load page');
+                }
             }
         };
 
-        initializeData();
+        initializePage();
+
+        return () => {
+            isMounted = false;
+        };
     }, [courseId, folderId, quizId]);
 
-    const handleSaveQuestion = (questionData: Partial<Question>) => {
-        const newQuestion: Question = {
-            id: Date.now().toString(), // Temporaneo, dovrebbe essere generato dal backend
-            text: questionData.text!,
-            type: questionData.type!,
-            answers: questionData.answers,
-            correctAnswer: questionData.correctAnswer
-        };
-
-        setQuestions(prev => [...prev, newQuestion]);
-    };
-
-    if (!currentCourse || !courseId || !folderId) {
-        return (
-            <div className="alert alert-error">
-                Invalid course or folder
-                <button
-                    className="btn btn-sm btn-outline ml-4"
-                    onClick={() => navigate('/')}
-                >
-                    Back to Home
-                </button>
-            </div>
-        );
-    }
-
+    // Validation checks
     if (isLoading) {
         return (
             <div className="flex justify-center items-center min-h-screen">
@@ -108,57 +58,175 @@ export const QuizCreation: React.FC = () => {
         );
     }
 
+    if (!courseId || !folderId || !quizId || !currentCourse || !currentFolder || !currentQuiz) {
+        return (
+            <div className="alert alert-warning">
+                Quiz not found.
+                <button
+                    className="btn btn-sm btn-outline ml-4"
+                    onClick={() => navigate(`/courses/${courseId}`)}
+                >
+                    Back to Course
+                </button>
+            </div>
+        );
+    }
+
+    const handleStartQuestionCreation = () => {
+        setIsCreatingQuestion(true);
+    };
+
+    const handleSelectQuestionType = async (type: QuestionType) => {
+        try {
+            setIsLoading(true);
+            setError(null);
+            const template = await questionService.createQuestionTemplate(type);
+            setSelectedQuestionType(type);
+            setQuestionTemplate(template);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Failed to create question template');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleSaveQuestion = async (questionData: QuestionDTO) => {
+        if (!courseId || !folderId || !quizId) {
+            setError('Missing course, folder, or quiz information');
+            return;
+        }
+
+        try {
+            setIsLoading(true);
+            setError(null);
+            const savedQuestion = await questionService.addQuestionToQuiz(
+                courseId,
+                folderId,
+                quizId,
+                questionData
+            );
+            setQuestions(prev => [...prev, savedQuestion]);
+
+            // Reset creation state
+            setIsCreatingQuestion(false);
+            setSelectedQuestionType(null);
+            setQuestionTemplate(null);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Failed to save question');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleDeleteQuestion = async (questionId: string) => {
+        // Implementazione futura della cancellazione
+        setQuestions(prev => prev.filter(q => q.id !== questionId));
+    };
+
     return (
         <div className="container mx-auto px-4 py-8">
-            <QuizBreadcrumb
-                course={currentCourse}
-                folder={folder}
-                quiz={quiz}
-                courseId={courseId}
-            />
+            {/* Breadcrumb */}
+            <div className="mb-8">
+                <ul className="flex items-center gap-2 text-sm">
+                    <li>
+                        <Link
+                            to="/"
+                            className="text-primary hover:text-primary-focus"
+                        >
+                            Home
+                        </Link>
+                    </li>
+                    <BsChevronRight className="text-gray-400" />
+                    <li>
+                        <Link
+                            to={`/courses/${courseId}`}
+                            className="text-primary hover:text-primary-focus"
+                        >
+                            {currentCourse.name}
+                        </Link>
+                    </li>
+                    <BsChevronRight className="text-gray-400" />
+                    <li>
+                        <span className="font-semibold">{currentQuiz.name}</span>
+                    </li>
+                </ul>
+            </div>
 
+            {error && (
+                <div className="alert alert-error mb-4">
+                    {error}
+                    <button
+                        className="btn btn-sm btn-ghost ml-2"
+                        onClick={() => setError(null)}
+                    >
+                        Dismiss
+                    </button>
+                </div>
+            )}
             <div className="grid grid-cols-12 gap-6">
                 {/* Sidebar con la lista delle domande */}
                 <div className="col-span-3">
-                    <QuestionsList questions={questions} />
+                    <div className="bg-base-100 rounded-lg p-4 shadow">
+                        <QuestionsList
+                            questions={questions}
+                            onDeleteQuestion={handleDeleteQuestion}
+                        />
+
+                        <button
+                            className="btn btn-primary w-full mt-4"
+                            onClick={handleStartQuestionCreation}
+                            disabled={isCreatingQuestion || isLoading}
+                        >
+                            Create New Question
+                        </button>
+                    </div>
                 </div>
 
-                {/* Area principale per la creazione delle domande */}
-                <div className="col-span-6">
-                    <QuestionEditor
-                        questionType={selectedQuestionType}
-                        onSave={handleSaveQuestion}
-                    />
-                </div>
-
-                {/* Sidebar destra con il selettore del tipo di domanda */}
+                {/* Selettore di tipo domanda */}
                 <div className="col-span-3">
-                    <QuestionTypeSelector
-                        selectedType={selectedQuestionType}
-                        onTypeChange={setSelectedQuestionType}
-                    />
+                    {isCreatingQuestion && !selectedQuestionType ? (
+                        <QuestionTypeSelector
+                            onSelectType={handleSelectQuestionType}
+                            isLoading={isLoading}
+                        />
+                    ) : (
+                        <div className="bg-base-100 rounded-lg p-4 shadow opacity-50">
+                            <h2 className="text-lg font-semibold mb-4">Question Type</h2>
+                            <p className="text-center text-base-content/70">
+                                Select "Create New Question" to start
+                            </p>
+                        </div>
+                    )}
                 </div>
-            </div>
 
-            {/* Pulsanti di azione principali */}
-            <div className="mt-8 flex justify-end gap-4">
-                <button
-                    className="btn"
-                    onClick={() => navigate(`/courses/${courseId}`)}
-                >
-                    Cancel
-                </button>
-                <button
-                    className="btn btn-primary"
-                    disabled={questions.length === 0}
-                    onClick={() => {
-                        // Implementare il salvataggio finale del quiz
-                        console.log('Saving quiz with questions:', questions);
-                    }}
-                >
-                    Save Quiz
-                </button>
+                {/* Editor della domanda */}
+                <div className="col-span-6">
+                    {selectedQuestionType && questionTemplate ? (
+                        <QuestionEditor
+                            questionType={selectedQuestionType}
+                            template={questionTemplate}
+                            onSave={handleSaveQuestion}
+                            onCancel={() => {
+                                setIsCreatingQuestion(false);
+                                setSelectedQuestionType(null);
+                                setQuestionTemplate(null);
+                            }}
+                            isLoading={isLoading}
+                        />
+                    ) : (
+                        <div className="bg-base-100 rounded-lg p-4 shadow opacity-50">
+                            <h2 className="text-lg font-semibold mb-4">Question Editor</h2>
+                            <p className="text-center text-base-content/70">
+                                Select a question type to start editing
+                            </p>
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );
 };
+
+
+
+

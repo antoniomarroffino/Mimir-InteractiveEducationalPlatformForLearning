@@ -1,13 +1,13 @@
-import { useEffect, useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
-import { useCourseContext } from '../contexts/course/CourseContext.tsx';
-import { BsChevronRight } from 'react-icons/bs';
+import {useEffect, useState} from 'react';
+import {Link, useNavigate, useParams} from 'react-router-dom';
+import {useCourseContext} from '../contexts/course/CourseContext.tsx';
+import {BsChevronRight} from 'react-icons/bs';
 import {FolderList} from "../components/folder/FolderList.tsx";
 
 const CourseDetails = () => {
-    const { courseId } = useParams();
+    const {courseId} = useParams();
     const navigate = useNavigate();
-    const { courses, setSelectedCourseId, fetchCourses } = useCourseContext();
+    const {courses, setSelectedCourseId, fetchCourses} = useCourseContext();
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -78,7 +78,7 @@ const CourseDetails = () => {
                             Home
                         </Link>
                     </li>
-                    <BsChevronRight className="text-gray-400" />
+                    <BsChevronRight className="text-gray-400"/>
                     <li>
                         <span className="font-semibold">{currentCourse.name}</span>
                     </li>

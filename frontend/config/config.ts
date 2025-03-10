@@ -1,4 +1,4 @@
-import { Configuration, CourseControllerApi, FolderControllerApi, QuizControllerApi } from '@dti-isin/backend-api-client';
+import { Configuration, CourseControllerApi, FolderControllerApi, QuizControllerApi, QuestionControllerApi } from '@dti-isin/backend-api-client';
 
 const config = new Configuration({
     basePath: import.meta.env.VITE_BACKEND_URL,
@@ -12,3 +12,4 @@ const config = new Configuration({
 export const courseApi = new CourseControllerApi(config);
 export const folderApi = new FolderControllerApi(config);
 export const quizApi = new QuizControllerApi(config);
+export const questionApi = new QuestionControllerApi(config);
