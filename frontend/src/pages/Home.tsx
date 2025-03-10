@@ -6,7 +6,7 @@ import CreateCourseForm from "../components/course/CreateCourseForm.tsx";
 
 const Home = () => {
     const { instance, accounts } = useMsal();
-    const [message, setMessage] = useState<string>('');
+    const [message] = useState<string>('');
 
     const callProtectedApi = async () => {
         if (accounts.length === 0) return;
@@ -17,17 +17,17 @@ const Home = () => {
                 account: accounts[0]
             });
 
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/secure/message`, {
-                method: 'GET',
+            await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/user/login`, {
+                method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token.accessToken}`
                 }
             });
 
-            setMessage(await response.text());
+            //setMessage(await response.text());
         } catch (error) {
             console.error(error);
-            setMessage('Error accessing protected API');
+            //setMessage('Error accessing protected API');
         }
     };
 

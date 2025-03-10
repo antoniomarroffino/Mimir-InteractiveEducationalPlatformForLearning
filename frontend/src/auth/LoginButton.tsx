@@ -4,12 +4,13 @@ import { loginRequest } from "./authConfig";
 import { BsPersonCircle } from 'react-icons/bs';
 
 const LoginButton: React.FC = () => {
-    const { instance } = useMsal();
+    const { instance} = useMsal();
 
     const handleLogin = () => {
         instance.loginPopup(loginRequest).catch(e => {
             console.error(e);
         });
+
     };
 
     return (
