@@ -1,14 +1,9 @@
 package ch.supsi.model.dto.api;
 
-import ch.supsi.model.api.Course;
-import ch.supsi.model.api.Folder;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.validation.constraints.NotBlank;
-import org.bson.types.ObjectId;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RegisterForReflection
 public class CourseDTO {
@@ -20,25 +15,6 @@ public class CourseDTO {
     private List<FolderDTO> folders = new ArrayList<>();
 
     public CourseDTO() {
-    }
-    public static CourseDTO fromEntity(Course course) {
-        if (course == null) return null;
-
-        CourseDTO dto = new CourseDTO();
-        dto.setId(course.getId() != null ? course.getId().toString() : null);
-        dto.setName(course.getName());
-        dto.setFolders(course.getFolders().stream().map(FolderDTO::fromEntity).toList());
-        return dto;
-    }
-
-    public Course toEntity() {
-        Course course = new Course();
-        if (this.id != null) {
-            course.setId(new ObjectId(this.id));
-        }
-        course.setName(this.name);
-        course.setFolders(this.folders.stream().map(FolderDTO::toEntity).toList());
-        return course;
     }
 
     public String getId() {

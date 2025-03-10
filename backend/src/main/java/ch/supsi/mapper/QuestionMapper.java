@@ -2,7 +2,7 @@ package ch.supsi.mapper;
 
 import ch.supsi.model.api.question.Question;
 import ch.supsi.model.api.question.TrueFalseQuestion;
-import ch.supsi.model.dto.api.QuestionDTO;
+import ch.supsi.model.dto.api.question.QuestionDTO;
 import ch.supsi.service.question.QuestionFactory;
 import org.bson.types.ObjectId;
 

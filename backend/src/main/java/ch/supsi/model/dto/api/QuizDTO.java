@@ -1,10 +1,8 @@
 package ch.supsi.model.dto.api;
 
-import ch.supsi.model.api.Quiz;
+import ch.supsi.model.dto.api.question.QuestionDTO;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.validation.constraints.NotBlank;
-import org.bson.types.ObjectId;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,46 +10,19 @@ import java.util.List;
 @RegisterForReflection
 public class QuizDTO {
     private String id;
+
     @NotBlank(message = "Quiz name cannot be null or empty")
     private String name;
+
     private String description;
+
     private List<QuestionDTO> questions = new ArrayList<>();
+
     private LocalDateTime createdAt;
+
     private LocalDateTime updatedAt;
 
     public QuizDTO() {
-    }
-
-    public static QuizDTO fromEntity(Quiz quiz) {
-        if (quiz == null) return null;
-
-        QuizDTO dto = new QuizDTO();
-        dto.setId(quiz.getId() != null ? quiz.getId().toString() : null);
-        dto.setName(quiz.getName());
-        dto.setDescription(quiz.getDescription());
-        /*dto.setQuestions(quiz.getQuestions().stream()
-                .map(QuestionDTO::fromEntity)
-                .collect(Collectors.toList()));*/
-        dto.setCreatedAt(quiz.getCreatedAt());
-        dto.setUpdatedAt(quiz.getUpdatedAt());
-        return dto;
-    }
-
-    public Quiz toEntity() {
-        Quiz quiz = new Quiz(this.name);
-
-        if (this.id != null) {
-            quiz.setId(new ObjectId(this.id));
-        }
-
-        quiz.setDescription(this.description);
-        /*quiz.setQuestions(this.questions.stream()
-                .map(QuestionDTO::toEntity)
-                .collect(Collectors.toList()));*/
-        quiz.setCreatedAt(this.createdAt != null ? this.createdAt : LocalDateTime.now());
-        quiz.setUpdatedAt(this.updatedAt != null ? this.updatedAt : LocalDateTime.now());
-
-        return quiz;
     }
 
     public String getId() {

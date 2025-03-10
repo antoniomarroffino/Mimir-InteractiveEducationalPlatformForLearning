@@ -1,7 +1,7 @@
 package ch.supsi.controller.question;
 
 import ch.supsi.model.api.question.QuestionType;
-import ch.supsi.model.dto.api.QuestionDTO;
+import ch.supsi.model.dto.api.question.QuestionDTO;
 import ch.supsi.service.question.IQuestionService;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;

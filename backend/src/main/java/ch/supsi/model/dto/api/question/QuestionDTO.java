@@ -1,4 +1,4 @@
-package ch.supsi.model.dto.api;
+package ch.supsi.model.dto.api.question;
 
 import ch.supsi.model.api.question.QuestionType;
 import io.quarkus.runtime.annotations.RegisterForReflection;

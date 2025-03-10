@@ -6,7 +6,7 @@ import ch.supsi.model.api.Folder;
 import ch.supsi.model.api.Quiz;
 import ch.supsi.model.api.question.Question;
 import ch.supsi.model.api.question.QuestionType;
-import ch.supsi.model.dto.api.QuestionDTO;
+import ch.supsi.model.dto.api.question.QuestionDTO;
 import ch.supsi.repository.CourseRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;

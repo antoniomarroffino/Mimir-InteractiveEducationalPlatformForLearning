@@ -1,7 +1,7 @@
 package ch.supsi.service.question;
 
 import ch.supsi.model.api.question.QuestionType;
-import ch.supsi.model.dto.api.QuestionDTO;
+import ch.supsi.model.dto.api.question.QuestionDTO;
 import org.bson.types.ObjectId;
 
 import java.util.List;
