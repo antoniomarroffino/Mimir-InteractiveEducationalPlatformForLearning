@@ -1,8 +1,6 @@
 package ch.supsi.controller.user;
 
-import ch.supsi.model.api.user.Role;
-import ch.supsi.model.api.user.User;
-import ch.supsi.model.dto.api.CourseDTO;
+
 import ch.supsi.service.user.IUserService;
 import io.quarkus.security.Authenticated;
 import io.quarkus.security.identity.SecurityIdentity;
@@ -13,8 +11,6 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.Operation;
-import org.eclipse.microprofile.openapi.annotations.media.Content;
-import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 
 @Path("/user")
@@ -33,13 +29,13 @@ public class UserController {
     @Authenticated
     @Operation(summary = "Local login")
     @APIResponse(
-            responseCode = "201",
-            description = "If user does not exist, he will created; if user already exist check for personal update"
+            responseCode = "204",
+            description = "If user does not exist, he will be created; if user already exist, he will be synchronized with current azure options"
     )
     public Response localLogin(){
         this.userService.updateUser((JsonWebToken) securityIdentity.getPrincipal());
 
-        return Response.status(Response.Status.CREATED).build();
+        return Response.status(Response.Status.NO_CONTENT).build();
     }
 
     @GET
