@@ -1,12 +1,12 @@
 package ch.supsi.service.course;
 
-import ch.supsi.exception.api.BadRequestException;
-import ch.supsi.exception.api.NotFoundException;
 import ch.supsi.model.api.Course;
 import ch.supsi.model.dto.api.CourseDTO;
 import ch.supsi.repository.CourseRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.NotFoundException;
 import org.bson.types.ObjectId;
 
 import java.util.List;

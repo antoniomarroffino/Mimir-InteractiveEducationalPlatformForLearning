@@ -1,7 +1,5 @@
 package ch.supsi.service.folder;
 
-import ch.supsi.exception.api.BadRequestException;
-import ch.supsi.exception.api.NotFoundException;
 import ch.supsi.model.api.Course;
 import ch.supsi.model.api.Folder;
 import ch.supsi.model.dto.api.FolderDTO;
@@ -9,6 +7,8 @@ import ch.supsi.repository.CourseRepository;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.NotFoundException;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
@@ -48,6 +48,7 @@ public class FolderServiceTest {
         Folder folder1 = new Folder("folder1");
         Folder folder2 = new Folder("folder2");
         Course courseWithTwoFolders = new Course();
+        courseWithTwoFolders.getFolders().add(folder1);
         courseWithTwoFolders.getFolders().add(folder1);
         courseWithTwoFolders.getFolders().add(folder2);
 

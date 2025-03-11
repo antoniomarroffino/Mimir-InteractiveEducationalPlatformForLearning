@@ -1,7 +1,5 @@
 package ch.supsi.service.course;
 
-import ch.supsi.exception.api.BadRequestException;
-import ch.supsi.exception.api.NotFoundException;
 import ch.supsi.model.api.Course;
 import ch.supsi.model.api.Folder;
 import ch.supsi.model.dto.api.CourseDTO;
@@ -9,6 +7,8 @@ import ch.supsi.repository.CourseRepository;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.NotFoundException;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;

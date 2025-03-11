@@ -16,7 +16,7 @@ const LoginButton: React.FC = () => {
                 account: instance.getAllAccounts()[0]
             });
 
-            await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/user/login`, {
+            await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/users/login`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token.accessToken}`

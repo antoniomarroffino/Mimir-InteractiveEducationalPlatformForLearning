@@ -6,8 +6,11 @@ import ch.supsi.model.api.user.User;
 import ch.supsi.repository.UserRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.ForbiddenException;
+import jakarta.ws.rs.NotFoundException;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
+import java.util.List;
 import java.util.Optional;
 
 @ApplicationScoped
@@ -25,6 +28,27 @@ public class UserService implements IUserService{
     }
 
     @Override
+    public List<User> getAllUsers() {
+        return this.userRepository.findNonAdminUsers();
+    }
+
+    @Override
+    public void changeRole(String oid, Role newRole) {
+        Optional<User> userOpt = this.userRepository.findByAzureOidOptional(oid);
+
+        if(userOpt.isEmpty())
+            throw new NotFoundException("User with oid " + oid + " not found");
+
+        User user = userOpt.get();
+
+        if(user.getRole() == Role.ADMIN)
+            throw new ForbiddenException("Cannot promote / demote admin users");
+
+        user.setRole(newRole);
+        this.userRepository.update(user);
+    }
+
+    @Override
     public User createBaseUser(String oid) {
         User user = new User();
         user.setAzureOid(oid);
@@ -33,7 +57,7 @@ public class UserService implements IUserService{
     }
 
     @Override
-    public User updateUser(JsonWebToken jwt) {
+    public void updateUser(JsonWebToken jwt) {
         if(jwt == null)
             throw new RuntimeException("jwt is null");
 
@@ -47,7 +71,6 @@ public class UserService implements IUserService{
         this.syncUser(jwt, user);
 
         this.userRepository.update(user);
-        return user;
     }
 
     private void syncUser(JsonWebToken jwt, User user) {

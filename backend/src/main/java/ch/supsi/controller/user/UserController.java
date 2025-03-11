@@ -1,6 +1,8 @@
 package ch.supsi.controller.user;
 
 
+import ch.supsi.model.api.user.Role;
+import ch.supsi.model.api.user.User;
 import ch.supsi.service.user.IUserService;
 import io.quarkus.security.Authenticated;
 import io.quarkus.security.identity.SecurityIdentity;
@@ -13,7 +15,9 @@ import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 
-@Path("/user")
+import java.util.List;
+
+@Path("/users")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class UserController {
@@ -39,26 +43,28 @@ public class UserController {
     }
 
     @GET
-    @Path("/admin")
     @RolesAllowed("ADMIN")
-    @Operation(summary = "Admin Resource")
+    @Operation(summary = "Get all Users (no admins)")
     @APIResponse(
-            responseCode = "200",
-            description = "Resource admin"
+            responseCode = "204",
+            description = "Return all users which are not admin"
     )
-    public Response adminResource(){
-        return Response.status(Response.Status.OK).build();
+    public Response getAllUsers(){
+        List<User> users = this.userService.getAllUsers();
+        return Response.ok(users).build();
     }
 
-    @GET
-    @Path("/student")
-    @RolesAllowed("STUDENT")
-    @Operation(summary = "student Resource")
+    @PUT
+    @Path("/promote/{azureOid}")
+    @RolesAllowed("ADMIN")
+    @Operation(summary = "Promote or Demote users")
     @APIResponse(
-            responseCode = "200",
-            description = "Resource student"
+            responseCode = "204",
+            description = "Admin can promote or demote user from STUDENT to TEACHER and vice versa"
     )
-    public Response studentResource(){
-        return Response.status(Response.Status.OK).build();
+    public Response promoteDemoteUser(@PathParam("azureOid") String azureOid, Role role){
+        this.userService.changeRole(azureOid, role);
+
+        return Response.status(Response.Status.NO_CONTENT).build();
     }
 }
