@@ -2,6 +2,7 @@ package ch.supsi.mapper;
 
 import ch.supsi.model.api.Folder;
 import ch.supsi.model.dto.api.FolderDTO;
+import ch.supsi.model.dto.api.QuizDTO;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.bson.types.ObjectId;
@@ -17,18 +18,41 @@ public class FolderMapper implements BaseMapper<Folder, FolderDTO> {
     @Override
     public FolderDTO toDTO(Folder folder) {
         if (folder == null) {
+            System.err.println("Received null Folder");
             return null;
         }
 
-        FolderDTO dto = new FolderDTO();
-        dto.setId(folder.getId() != null ? folder.getId().toString() : null);
-        dto.setName(folder.getName());
+        try {
+            FolderDTO dto = new FolderDTO();
+            dto.setId(folder.getId().toString());
+            dto.setName(folder.getName());
 
-        dto.setQuizzes(folder.getQuizzes().stream()
-                .map(quizMapper::toDTO)
-                .collect(Collectors.toList()));
+            System.out.println("Converting folder: " + folder.getName());
+            System.out.println("Quizzes count: " + (folder.getQuizzes() != null ? folder.getQuizzes().size() : "null"));
 
-        return dto;
+            if (folder.getQuizzes() != null) {
+                dto.setQuizzes(folder.getQuizzes().stream()
+                        .map(quiz -> {
+                            try {
+                                QuizDTO quizDTO = quizMapper.toDTO(quiz);
+                                System.out.println("  Converted quiz: " + quiz.getName());
+                                System.out.println("  Questions count: " + (quiz.getQuestions() != null ? quiz.getQuestions().size() : "null"));
+                                return quizDTO;
+                            } catch (Exception e) {
+                                System.err.println("Error converting quiz: " + quiz.getName());
+                                e.printStackTrace();
+                                throw e;
+                            }
+                        })
+                        .collect(Collectors.toList()));
+            }
+
+            return dto;
+        } catch (Exception e) {
+            System.err.println("Error converting Folder to DTO for folder: " + folder.getName());
+            e.printStackTrace();
+            throw new RuntimeException("Failed to convert Folder to DTO", e);
+        }
     }
 
     @Override

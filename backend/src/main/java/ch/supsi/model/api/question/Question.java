@@ -1,10 +1,20 @@
 package ch.supsi.model.api.question;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 @Schema(description = "Base Question model", name = "Question")
-public abstract class Question {
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "type"
+)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = TrueFalseQuestion.class, name = "TRUE_FALSE")
+})
+public class Question {
     private ObjectId id;
 
     private String questionText;

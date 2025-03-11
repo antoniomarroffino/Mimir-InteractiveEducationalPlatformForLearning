@@ -2,6 +2,7 @@ package ch.supsi.mapper;
 
 import ch.supsi.model.api.Course;
 import ch.supsi.model.dto.api.CourseDTO;
+import ch.supsi.model.dto.api.FolderDTO;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.bson.types.ObjectId;
@@ -17,18 +18,41 @@ public class CourseMapper implements BaseMapper<Course, CourseDTO> {
     @Override
     public CourseDTO toDTO(Course course) {
         if (course == null) {
+            System.err.println("Received null Course");
             return null;
         }
 
-        CourseDTO dto = new CourseDTO();
-        dto.setId(course.getId() != null ? course.getId().toString() : null);
-        dto.setName(course.getName());
+        try {
+            CourseDTO dto = new CourseDTO();
+            dto.setId(course.getId().toString());
+            dto.setName(course.getName());
 
-        dto.setFolders(course.getFolders().stream()
-                .map(folderMapper::toDTO)
-                .collect(Collectors.toList()));
+            System.out.println("Converting course: " + course.getName());
+            System.out.println("Folders count: " + (course.getFolders() != null ? course.getFolders().size() : "null"));
 
-        return dto;
+            if (course.getFolders() != null) {
+                dto.setFolders(course.getFolders().stream()
+                        .map(folder -> {
+                            try {
+                                FolderDTO folderDTO = folderMapper.toDTO(folder);
+                                System.out.println("  Converted folder: " + folder.getName());
+                                System.out.println("  Quizzes count: " + (folder.getQuizzes() != null ? folder.getQuizzes().size() : "null"));
+                                return folderDTO;
+                            } catch (Exception e) {
+                                System.err.println("Error converting folder: " + folder.getName());
+                                e.printStackTrace();
+                                throw e;
+                            }
+                        })
+                        .collect(Collectors.toList()));
+            }
+
+            return dto;
+        } catch (Exception e) {
+            System.err.println("Error converting Course to DTO for course: " + course.getName());
+            e.printStackTrace();
+            throw new RuntimeException("Failed to convert Course to DTO", e);
+        }
     }
 
     @Override

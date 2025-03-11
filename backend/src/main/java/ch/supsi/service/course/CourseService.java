@@ -22,9 +22,19 @@ public class CourseService implements ICourseService {
 
     @Override
     public List<CourseDTO> getAllCourses() {
-        return this.courseRepository.listAll().stream()
-                .map(courseMapper::toDTO)
-                .collect(Collectors.toList());
+        try {
+            System.out.println("Starting getAllCourses method");
+            List<Course> courses = this.courseRepository.findAllCourses();
+            System.out.println("Courses retrieved successfully");
+
+            return courses.stream()
+                    .map(courseMapper::toDTO)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            System.err.println("Detailed error in getAllCourses:");
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     @Override

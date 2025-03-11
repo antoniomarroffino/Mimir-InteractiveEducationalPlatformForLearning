@@ -2,6 +2,7 @@ package ch.supsi.mapper;
 
 import ch.supsi.model.api.Quiz;
 import ch.supsi.model.dto.api.QuizDTO;
+import ch.supsi.model.dto.api.question.QuestionDTO;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.bson.types.ObjectId;
@@ -17,22 +18,42 @@ public class QuizMapper implements BaseMapper<Quiz, QuizDTO> {
     @Override
     public QuizDTO toDTO(Quiz quiz) {
         if (quiz == null) {
+            System.err.println("Received null Quiz");
             return null;
         }
 
-        QuizDTO dto = new QuizDTO();
-        dto.setId(quiz.getId() != null ? quiz.getId().toString() : null);
-        dto.setName(quiz.getName());
-        dto.setDescription(quiz.getDescription());
+        try {
+            QuizDTO dto = new QuizDTO();
+            dto.setId(quiz.getId().toString());
+            dto.setName(quiz.getName());
+            dto.setDescription(quiz.getDescription());
 
-        dto.setQuestions(quiz.getQuestions().stream()
-                .map(questionMapper::toDTO)
-                .collect(Collectors.toList()));
+            System.out.println("Converting quiz: " + quiz.getName());
+            System.out.println("Questions count: " + (quiz.getQuestions() != null ? quiz.getQuestions().size() : "null"));
 
-        dto.setCreatedAt(quiz.getCreatedAt());
-        dto.setUpdatedAt(quiz.getUpdatedAt());
+            if (quiz.getQuestions() != null) {
+                dto.setQuestions(quiz.getQuestions().stream()
+                        .map(question -> {
+                            try {
+                                QuestionDTO questionDTO = questionMapper.toDTO(question);
+                                System.out.println("  Converted question: " + question.getQuestionText());
+                                System.out.println("  Question type: " + question.getType());
+                                return questionDTO;
+                            } catch (Exception e) {
+                                System.err.println("Error converting question: " + question.getQuestionText());
+                                e.printStackTrace();
+                                throw e;
+                            }
+                        })
+                        .collect(Collectors.toList()));
+            }
 
-        return dto;
+            return dto;
+        } catch (Exception e) {
+            System.err.println("Error converting Quiz to DTO for quiz: " + quiz.getName());
+            e.printStackTrace();
+            throw new RuntimeException("Failed to convert Quiz to DTO", e);
+        }
     }
 
     @Override
@@ -52,7 +73,7 @@ public class QuizMapper implements BaseMapper<Quiz, QuizDTO> {
         // Usa il questionMapper che ha già l'injection del factory
         quiz.setQuestions(dto.getQuestions().stream()
                 .map(questionMapper::toEntity)
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList()).reversed());
 
         quiz.setCreatedAt(dto.getCreatedAt() != null ? dto.getCreatedAt() : LocalDateTime.now());
         quiz.setUpdatedAt(dto.getUpdatedAt() != null ? dto.getUpdatedAt() : LocalDateTime.now());

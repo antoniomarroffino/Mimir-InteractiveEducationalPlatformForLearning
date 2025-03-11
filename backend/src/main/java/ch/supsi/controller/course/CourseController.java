@@ -15,6 +15,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import java.util.List;
+import java.util.Map;
 
 @Path("/courses")
 @Produces(MediaType.APPLICATION_JSON)
@@ -35,8 +36,49 @@ public class CourseController {
             )
     )
     public Response getCourses() {
-        List<CourseDTO> coursesDTO = this.courseService.getAllCourses();
-        return Response.ok(coursesDTO).build();
+        try {
+            List<CourseDTO> coursesDTO = this.courseService.getAllCourses();
+
+            // Log dettagliato dei corsi
+            System.out.println("Fetched Courses:");
+            coursesDTO.forEach(course -> {
+                System.out.println("Course ID: " + course.getId());
+                System.out.println("Course Name: " + course.getName());
+                System.out.println("Folders count: " + (course.getFolders() != null ? course.getFolders().size() : "null"));
+
+                // Log dettagliato delle cartelle
+                if (course.getFolders() != null) {
+                    course.getFolders().forEach(folder -> {
+                        System.out.println("  Folder ID: " + folder.getId());
+                        System.out.println("  Folder Name: " + folder.getName());
+                        System.out.println("  Quizzes count: " + (folder.getQuizzes() != null ? folder.getQuizzes().size() : "null"));
+
+                        // Log dettagliato dei quiz
+                        if (folder.getQuizzes() != null) {
+                            folder.getQuizzes().forEach(quiz -> {
+                                System.out.println("    Quiz ID: " + quiz.getId());
+                                System.out.println("    Quiz Name: " + quiz.getName());
+                                System.out.println("    Questions count: " + (quiz.getQuestions() != null ? quiz.getQuestions().size() : "null"));
+                            });
+                        }
+                    });
+                }
+            });
+
+            return Response.ok(coursesDTO).build();
+        } catch (Exception e) {
+            // Log dell'eccezione dettagliata
+            System.err.println("Error fetching courses:");
+            e.printStackTrace();
+
+            // Restituisci un errore specifico
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(Map.of(
+                            "error", "Failed to retrieve courses",
+                            "details", e.getMessage()
+                    ))
+                    .build();
+        }
     }
 
     @GET

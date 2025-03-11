@@ -10,12 +10,9 @@ public class TrueFalseQuestion extends Question {
         super(QuestionType.TRUE_FALSE);
     }
 
-    public TrueFalseQuestion(String questionText) {
-        super(QuestionType.TRUE_FALSE, questionText);
-    }
-
     public TrueFalseQuestion(String questionText, boolean correctAnswer) {
-        this(questionText);
+        super(QuestionType.TRUE_FALSE);
+        setQuestionText(questionText);
         this.correctAnswer = correctAnswer;
     }
 
