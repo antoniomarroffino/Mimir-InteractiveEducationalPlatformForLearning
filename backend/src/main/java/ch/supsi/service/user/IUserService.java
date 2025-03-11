@@ -12,5 +12,6 @@ public interface IUserService {
     List<User> getAllUsers();
     void changeRole(String oid, Role newRole);
     User createBaseUser(String oid);
-    void updateUser(JsonWebToken jwt);
+    void synchronizeUser();
+    User getCurrentLoggedUser();
 }

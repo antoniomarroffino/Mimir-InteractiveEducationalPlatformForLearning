@@ -17,7 +17,7 @@ const LoginButton: React.FC = () => {
             });
 
             await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/users/login`, {
-                method: 'POST',
+                method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${token.accessToken}`
                 }

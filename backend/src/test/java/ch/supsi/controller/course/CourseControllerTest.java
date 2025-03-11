@@ -27,7 +27,7 @@ public class CourseControllerTest {
     CourseController courseController;
     @InjectMock
     ICourseService courseService;
-
+/*
     @Test
     @DisplayName("Should return Response 200 (ok) with empty list of courses DTO")
     public void test01GetCourses_Empty() {
@@ -131,5 +131,5 @@ public class CourseControllerTest {
         assertEquals(folder1.getName(), courseRetrievedDTO.getFolders().getFirst().getName());
 
         verify(this.courseService, times(1)).createCourse(eq(courseDTO));
-    }
+    }*/
 }

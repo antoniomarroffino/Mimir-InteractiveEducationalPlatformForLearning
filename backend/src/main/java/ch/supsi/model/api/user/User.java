@@ -5,7 +5,9 @@ import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @MongoEntity(collection = "users")
@@ -22,11 +24,11 @@ public class User {
 
     private Role role;
 
-    private final Set<ObjectId> coursesId;
+    private final List<ObjectId> coursesId;
 
     public User() {
         this.role = Role.STUDENT;
-        this.coursesId = new HashSet<>();
+        this.coursesId = new ArrayList<>();
     }
 
     public ObjectId getId() {
@@ -69,11 +71,12 @@ public class User {
         this.role = role;
     }
 
-    public Set<ObjectId> getCoursesId() {
+    public List<ObjectId> getCoursesId() {
         return this.coursesId;
     }
 
     public void addCourse(ObjectId coursesId) {
-        this.coursesId.add(coursesId);
+        if(!this.coursesId.contains(coursesId))
+            this.coursesId.add(coursesId);
     }
 }

@@ -26,10 +26,7 @@ public class UserController {
     @Inject
     IUserService userService;
 
-    @Inject
-    SecurityIdentity securityIdentity;
-
-    @POST
+    @PUT
     @Path("/login")
     @Authenticated
     @Operation(summary = "Local login")
@@ -38,8 +35,7 @@ public class UserController {
             description = "If user does not exist, he will be created; if user already exist, he will be synchronized with current azure options"
     )
     public Response localLogin(){
-        this.userService.updateUser((JsonWebToken) securityIdentity.getPrincipal());
-
+        this.userService.synchronizeUser();
         return Response.status(Response.Status.NO_CONTENT).build();
     }
 

@@ -2,6 +2,7 @@ package ch.supsi.controller.folder;
 
 import ch.supsi.model.dto.api.FolderDTO;
 import ch.supsi.service.folder.IFolderService;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
@@ -17,6 +18,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import java.util.List;
 
 @Path("/courses/{courseId}/folders")
+@RolesAllowed("TEACHER")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class FolderController {

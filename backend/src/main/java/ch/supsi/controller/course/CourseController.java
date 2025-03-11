@@ -2,6 +2,8 @@ package ch.supsi.controller.course;
 
 import ch.supsi.model.dto.api.CourseDTO;
 import ch.supsi.service.course.ICourseService;
+import ch.supsi.service.user.IUserService;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
@@ -17,12 +19,15 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import java.util.List;
 
 @Path("/courses")
+@RolesAllowed("TEACHER")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class CourseController {
-
     @Inject
     ICourseService courseService;
+
+    @Inject
+    IUserService userService;
 
     @GET
     @Operation(summary = "Get all courses")
@@ -35,7 +40,7 @@ public class CourseController {
             )
     )
     public Response getCourses() {
-        List<CourseDTO> coursesDTO = this.courseService.getAllCourses();
+        List<CourseDTO> coursesDTO = this.courseService.getAllCourses(this.userService.getCurrentLoggedUser());
         return Response.ok(coursesDTO).build();
     }
 
@@ -70,9 +75,22 @@ public class CourseController {
             )
     )
     public Response createCourse(@Valid CourseDTO courseDTO) {
-        CourseDTO createdCourseDTO = this.courseService.createCourse(courseDTO);
+        CourseDTO createdCourseDTO = this.courseService.createCourse(courseDTO, this.userService.getCurrentLoggedUser());
         return Response.status(Response.Status.CREATED)
                 .entity(createdCourseDTO)
+                .build();
+    }
+
+    @PUT
+    @Path("/assign/{id}")
+    @Operation(summary = "Assign course to logged user given courseID")
+    @APIResponse(
+            responseCode = "204",
+            description = "Assign course to logged user given courseID"
+    )
+    public Response assignCourse(@PathParam("id") String id) {
+        this.courseService.assignCourse(new ObjectId(id), this.userService.getCurrentLoggedUser());
+        return Response.status(Response.Status.NO_CONTENT)
                 .build();
     }
 }
