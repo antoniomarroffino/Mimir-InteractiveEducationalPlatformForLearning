@@ -1,10 +1,18 @@
-import React, { useState } from 'react';
-import { QuestionDTO, QuestionType } from '@dti-isin/backend-api-client';
+import React, { useState, useEffect } from 'react';
+import {
+    QuestionDTO,
+    QuestionType,
+    TrueFalseQuestionDTO
+} from '@dti-isin/backend-api-client';
+
+type SpecificQuestionDTO =
+    | QuestionDTO
+    | TrueFalseQuestionDTO
 
 interface QuestionEditorProps {
     questionType: QuestionType;
-    template: QuestionDTO;
-    onSave: (question: QuestionDTO) => void;
+    template: SpecificQuestionDTO;
+    onSave: (question: SpecificQuestionDTO) => void;
     onCancel: () => void;
     onQuestionTextChange?: (text: string) => void;
     isLoading?: boolean;
@@ -19,7 +27,18 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
                                                                   isLoading = false
                                                               }) => {
     const [questionText, setQuestionText] = useState(template.questionText || '');
-    const [correctAnswer, setCorrectAnswer] = useState<boolean>(true);
+    const [correctAnswer, setCorrectAnswer] = useState<boolean>(
+        questionType === QuestionType.TrueFalse
+            ? (template as TrueFalseQuestionDTO).correctAnswer
+            : true
+    );
+
+    // Effetto per aggiornare il template quando cambia correctAnswer
+    useEffect(() => {
+        if (questionType === QuestionType.TrueFalse) {
+            (template as TrueFalseQuestionDTO).correctAnswer = correctAnswer;
+        }
+    }, [correctAnswer, template, questionType]);
 
     const handleQuestionTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const text = e.target.value;
@@ -30,37 +49,25 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        const finalQuestion: QuestionDTO = {
+        const finalQuestion: SpecificQuestionDTO = {
             ...template,
             questionText,
-            type: questionType,
-            correctAnswer: questionType === QuestionType.TrueFalse ? correctAnswer : undefined
+            type: questionType
         };
+
+        switch(questionType) {
+            case QuestionType.TrueFalse:
+                (finalQuestion as TrueFalseQuestionDTO).correctAnswer = correctAnswer;
+                break;
+        }
 
         onSave(finalQuestion);
     };
 
-    return (
-        <div className="bg-base-100 rounded-lg p-6 shadow">
-            <h2 className="text-xl font-semibold mb-4">
-                {questionType} Question
-            </h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="form-control">
-                    <label className="label">
-                        <span className="label-text">Question Text</span>
-                    </label>
-                    <textarea
-                        value={questionText}
-                        onChange={handleQuestionTextChange}
-                        className="textarea textarea-bordered h-24"
-                        placeholder="Enter your question"
-                        required
-                        disabled={isLoading}
-                    />
-                </div>
-
-                {questionType === QuestionType.TrueFalse && (
+    const renderSpecificFields = () => {
+        switch(questionType) {
+            case QuestionType.TrueFalse: {
+                return (
                     <div className="form-control">
                         <label className="label">
                             <span className="label-text">Correct Answer</span>
@@ -84,7 +91,34 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
                             />
                         </div>
                     </div>
-                )}
+                );
+            }
+            default:
+                return null;
+        }
+    };
+
+    return (
+        <div className="bg-base-100 rounded-lg p-6 shadow">
+            <h2 className="text-xl font-semibold mb-4">
+                {questionType} Question
+            </h2>
+            <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="form-control">
+                    <label className="label">
+                        <span className="label-text">Question Text</span>
+                    </label>
+                    <textarea
+                        value={questionText}
+                        onChange={handleQuestionTextChange}
+                        className="textarea textarea-bordered h-24"
+                        placeholder="Enter your question"
+                        required
+                        disabled={isLoading}
+                    />
+                </div>
+
+                {renderSpecificFields()}
 
                 <div className="flex justify-end space-x-4">
                     <button

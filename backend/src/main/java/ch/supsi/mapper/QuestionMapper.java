@@ -3,6 +3,7 @@ package ch.supsi.mapper;
 import ch.supsi.model.api.question.Question;
 import ch.supsi.model.api.question.TrueFalseQuestion;
 import ch.supsi.model.dto.api.question.QuestionDTO;
+import ch.supsi.model.dto.api.question.TrueFalseQuestionDTO;
 import ch.supsi.service.question.QuestionFactory;
 import org.bson.types.ObjectId;
 
@@ -21,15 +22,18 @@ public class QuestionMapper implements BaseMapper<Question, QuestionDTO> {
             return null;
         }
 
+        if (question instanceof TrueFalseQuestion tfQuestion) {
+            TrueFalseQuestionDTO dto = new TrueFalseQuestionDTO();
+            dto.setId(question.getId().toString());
+            dto.setQuestionText(question.getQuestionText());
+            dto.setCorrectAnswer(tfQuestion.isCorrectAnswer());
+            return dto;
+        }
+
         QuestionDTO dto = new QuestionDTO();
         dto.setId(question.getId().toString());
         dto.setQuestionText(question.getQuestionText());
         dto.setType(question.getType());
-
-        if (question instanceof TrueFalseQuestion) {
-            dto.setCorrectAnswer(((TrueFalseQuestion) question).isCorrectAnswer());
-        }
-
         return dto;
     }
 
@@ -46,8 +50,8 @@ public class QuestionMapper implements BaseMapper<Question, QuestionDTO> {
         }
         question.setQuestionText(dto.getQuestionText());
 
-        if (question instanceof TrueFalseQuestion && dto.getCorrectAnswer() != null) {
-            ((TrueFalseQuestion) question).setCorrectAnswer(dto.getCorrectAnswer());
+        if (question instanceof TrueFalseQuestion tfQuestion && dto instanceof TrueFalseQuestionDTO trueFalseDTO) {
+            tfQuestion.setCorrectAnswer(trueFalseDTO.getCorrectAnswer());
         }
 
         return question;

@@ -13,6 +13,7 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.NotFoundException;
 import org.bson.types.ObjectId;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @ApplicationScoped
@@ -31,8 +32,7 @@ public class QuestionService implements IQuestionService {
 
     @Override
     public QuestionDTO createQuestionTemplate(QuestionType type) {
-        Question question = questionFactory.createQuestion(type);
-        return questionMapper.toDTO(question);
+        return questionFactory.createQuestionTemplate(type);
     }
 
     @Override
@@ -44,28 +44,35 @@ public class QuestionService implements IQuestionService {
     }
 
     @Override
-    public QuestionDTO addQuestionToQuiz(ObjectId courseId, ObjectId folderId, ObjectId quizId, QuestionDTO questionDTO) {
+    public QuestionDTO addQuestionToQuiz(
+            ObjectId courseId,
+            ObjectId folderId,
+            ObjectId quizId,
+            QuestionDTO questionDTO) {
+
         Course course = courseRepository.findById(courseId);
-        if (course == null) {
-            throw new NotFoundException("Course not found");
-        }
 
         Folder folder = course.getFolders().stream()
                 .filter(f -> f.getId().equals(folderId))
                 .findFirst()
-                .orElseThrow(() -> new NotFoundException("Folder not found in course"));
+                .orElseThrow(() -> new NotFoundException("Folder not found"));
 
         Quiz quiz = folder.getQuizzes().stream()
                 .filter(q -> q.getId().equals(quizId))
                 .findFirst()
-                .orElseThrow(() -> new NotFoundException("Quiz not found in folder"));
+                .orElseThrow(() -> new NotFoundException("Quiz not found"));
 
-        Question question = questionMapper.toEntity(questionDTO);
+        Question question = QuestionMapper.getInstance().toEntity(questionDTO);
         quiz.getQuestions().add(question);
+        quiz.setUpdatedAt(LocalDateTime.now());
+        this.courseRepository.update(course);
 
-        courseRepository.update(course);
+        Question savedQuestion = quiz.getQuestions().stream()
+                .filter(q -> q.getId().equals(question.getId()))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Question not saved"));
 
-        return questionMapper.toDTO(question);
+        return QuestionMapper.getInstance().toDTO(savedQuestion);
     }
 
     private Quiz getQuizFromCourse(ObjectId courseId, ObjectId folderId, ObjectId quizId) {

@@ -1,8 +1,12 @@
-import { QuestionDTO } from '@dti-isin/backend-api-client';
+import {QuestionDTO, QuestionType, TrueFalseQuestionDTO} from '@dti-isin/backend-api-client';
 import React from "react";
 
+type SpecificQuestionDTO =
+    | QuestionDTO
+    | TrueFalseQuestionDTO;
+
 interface QuestionsListProps {
-    questions: QuestionDTO[];
+    questions: SpecificQuestionDTO[];
     onDeleteQuestion: (questionId: string) => void;
 }
 
@@ -23,7 +27,25 @@ export const QuestionsList: React.FC<QuestionsListProps> = ({
                         key={question.id}
                         className="flex justify-between items-center p-2 bg-base-200 rounded"
                     >
-                        <span>{index + 1}. {question.questionText}</span>
+                        <div className="flex flex-col">
+                            <div className="flex items-center gap-2">
+                                <span className="font-semibold">{index + 1}. {question.questionText}</span>
+                                <span className="badge badge-primary">
+                                    {question.type}
+                                </span>
+                            </div>
+
+                            {/* Dettagli specifici per TRUE/FALSE */}
+                            {question.type === QuestionType.TrueFalse && (
+                                <div className="text-sm text-base-content/70 mt-1">
+                                    Correct
+                                    Answer: {(question as TrueFalseQuestionDTO).correctAnswer ? 'True' : 'False'}
+                                </div>
+                            )}
+
+                            {/* Aggiungi altri tipi di domande in futuro */}
+                        </div>
+
                         <button
                             className="btn btn-xs btn-error"
                             onClick={() => question.id && onDeleteQuestion(question.id)}

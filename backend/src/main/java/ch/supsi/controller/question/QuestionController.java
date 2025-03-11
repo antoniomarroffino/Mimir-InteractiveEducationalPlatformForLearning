@@ -1,5 +1,7 @@
 package ch.supsi.controller.question;
 
+import ch.supsi.mapper.QuestionMapper;
+import ch.supsi.model.api.question.Question;
 import ch.supsi.model.api.question.QuestionType;
 import ch.supsi.model.dto.api.question.QuestionDTO;
 import ch.supsi.service.question.IQuestionService;
@@ -16,6 +18,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 
 import java.util.List;
+import java.util.Map;
 
 @Path("/courses/{courseId}/folders/{folderId}/quizzes/{quizId}/questions")
 @Produces(MediaType.APPLICATION_JSON)
@@ -60,6 +63,7 @@ public class QuestionController {
     )
     public Response createQuestionTemplate(
             @QueryParam("type") QuestionType type) {
+
         QuestionDTO questionDTO = questionService.createQuestionTemplate(type);
         return Response.status(Response.Status.CREATED)
                 .entity(questionDTO)
@@ -67,7 +71,7 @@ public class QuestionController {
     }
 
     @POST
-    @Operation(summary = "Add question to quiz")
+    @Operation(summary = "Add a question to a quiz")
     @APIResponse(
             responseCode = "201",
             description = "Question added successfully",
@@ -81,14 +85,26 @@ public class QuestionController {
             @PathParam("folderId") String folderId,
             @PathParam("quizId") String quizId,
             @Valid QuestionDTO questionDTO) {
-        QuestionDTO createdQuestionDTO = questionService.addQuestionToQuiz(
-                new ObjectId(courseId),
-                new ObjectId(folderId),
-                new ObjectId(quizId),
-                questionDTO
-        );
-        return Response.status(Response.Status.CREATED)
-                .entity(createdQuestionDTO)
-                .build();
+
+        try {
+            QuestionDTO savedQuestionDTO = questionService.addQuestionToQuiz(
+                    new ObjectId(courseId),
+                    new ObjectId(folderId),
+                    new ObjectId(quizId),
+                    questionDTO
+            );
+
+            return Response.status(Response.Status.CREATED)
+                    .entity(savedQuestionDTO)
+                    .build();
+        } catch (NotFoundException e) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity(Map.of("error", e.getMessage()))
+                    .build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(Map.of("error", "Failed to add question", "details", e.getMessage()))
+                    .build();
+        }
     }
 }

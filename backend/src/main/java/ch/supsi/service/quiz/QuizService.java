@@ -1,5 +1,6 @@
 package ch.supsi.service.quiz;
 
+import ch.supsi.mapper.QuizMapper;
 import ch.supsi.model.api.Course;
 import ch.supsi.model.api.Folder;
 import ch.supsi.model.api.Quiz;
@@ -12,6 +13,7 @@ import org.bson.types.ObjectId;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class QuizService implements IQuizService {
@@ -19,12 +21,14 @@ public class QuizService implements IQuizService {
     @Inject
     CourseRepository courseRepository;
 
+    private final QuizMapper quizMapper = QuizMapper.getInstance();
+
     @Override
     public List<QuizDTO> getQuizzesInFolder(ObjectId courseId, ObjectId folderId) {
         Folder folder = getFolderFromCourse(courseId, folderId);
         return folder.getQuizzes().stream()
-                .map(QuizDTO::fromEntity)
-                .toList();
+                .map(quizMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -32,7 +36,7 @@ public class QuizService implements IQuizService {
         Folder folder = getFolderFromCourse(courseId, folderId);
         return folder.getQuizzes().stream()
                 .filter(q -> q.getId().equals(quizId))
-                .map(QuizDTO::fromEntity)
+                .map(quizMapper::toDTO)
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("Quiz not found in folder"));
     }
@@ -55,14 +59,14 @@ public class QuizService implements IQuizService {
                 .orElseThrow(() -> new NotFoundException("Folder not found in course"));
         System.out.println("Folder found: " + folder.getName());
 
-        Quiz quiz = quizDTO.toEntity();
+        Quiz quiz = quizMapper.toEntity(quizDTO);
         System.out.println("Quiz entity created with ID: " + quiz.getId());
 
         folder.getQuizzes().add(quiz);
         courseRepository.update(course);
         System.out.println("Quiz added to folder and course updated");
 
-        QuizDTO createdQuizDTO = QuizDTO.fromEntity(quiz);
+        QuizDTO createdQuizDTO = quizMapper.toDTO(quiz);
         System.out.println("Returning created quiz DTO with ID: " + createdQuizDTO.getId());
 
         return createdQuizDTO;
@@ -85,7 +89,7 @@ public class QuizService implements IQuizService {
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("Quiz not found in folder"));
 
-        Quiz updatedQuiz = quizDTO.toEntity();
+        Quiz updatedQuiz = quizMapper.toEntity(quizDTO);
         updatedQuiz.setId(existingQuiz.getId());
         updatedQuiz.setCreatedAt(existingQuiz.getCreatedAt());
         updatedQuiz.setUpdatedAt(LocalDateTime.now());
@@ -95,7 +99,7 @@ public class QuizService implements IQuizService {
 
         courseRepository.update(course);
 
-        return QuizDTO.fromEntity(updatedQuiz);
+        return quizMapper.toDTO(updatedQuiz);
     }
 
     @Override

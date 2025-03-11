@@ -1,5 +1,6 @@
 package ch.supsi.service.course;
 
+import ch.supsi.mapper.CourseMapper;
 import ch.supsi.model.api.Course;
 import ch.supsi.model.dto.api.CourseDTO;
 import ch.supsi.repository.CourseRepository;
@@ -16,10 +17,12 @@ public class CourseService implements ICourseService {
     @Inject
     CourseRepository courseRepository;
 
+    private final CourseMapper courseMapper = CourseMapper.getInstance();
+
     @Override
     public List<CourseDTO> getAllCourses() {
         return this.courseRepository.listAll().stream()
-                .map(CourseDTO::fromEntity)
+                .map(courseMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
@@ -29,13 +32,13 @@ public class CourseService implements ICourseService {
         if (course == null) {
             throw new NotFoundException("Course not found");
         }
-        return CourseDTO.fromEntity(course);
+        return courseMapper.toDTO(course);
     }
 
     @Override
     public CourseDTO createCourse(CourseDTO courseDTO) {
-        this.courseRepository.persist(courseDTO.toEntity());
-        return courseDTO;
+        Course course = courseMapper.toEntity(courseDTO);
+        this.courseRepository.persist(course);
+        return courseMapper.toDTO(course);
     }
-
 }

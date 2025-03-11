@@ -14,8 +14,6 @@ public class QuestionDTO {
     @NotNull(message = "Question type cannot be null")
     private QuestionType type;
 
-    private Boolean correctAnswer;
-
     public QuestionDTO() {}
 
     public String getId() {
@@ -42,11 +40,4 @@ public class QuestionDTO {
         this.type = type;
     }
 
-    public Boolean getCorrectAnswer() {
-        return correctAnswer;
-    }
-
-    public void setCorrectAnswer(Boolean correctAnswer) {
-        this.correctAnswer = correctAnswer;
-    }
 }

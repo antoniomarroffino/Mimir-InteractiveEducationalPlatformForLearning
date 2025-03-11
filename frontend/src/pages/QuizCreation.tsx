@@ -30,27 +30,25 @@ export const QuizCreation: React.FC = () => {
     const currentQuiz = currentFolder?.quizzes?.find(quiz => quiz.id === quizId);
 
     useEffect(() => {
-        let isMounted = true;
-
-        const initializePage = async () => {
-            try {
-                if (isMounted) {
+        const fetchQuestions = async () => {
+            if (courseId && folderId && quizId) {
+                try {
+                    const existingQuestions = await questionService.getQuestionsInQuiz(
+                        courseId,
+                        folderId,
+                        quizId
+                    );
+                    setQuestions(existingQuestions);
+                } catch (error) {
+                    console.error('Failed to fetch existing questions', error);
+                    setError('Failed to load existing questions');
+                } finally {
                     setIsLoading(false);
-                }
-            } catch (error) {
-                console.error('Failed to initialize page:', error);
-                if (isMounted) {
-                    setIsLoading(false);
-                    setError('Failed to load page');
                 }
             }
         };
 
-        initializePage();
-
-        return () => {
-            isMounted = false;
-        };
+        fetchQuestions();
     }, [courseId, folderId, quizId]);
 
     // Validation checks
