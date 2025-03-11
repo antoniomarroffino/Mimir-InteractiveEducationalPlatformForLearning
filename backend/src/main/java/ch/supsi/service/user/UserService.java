@@ -41,7 +41,7 @@ public class UserService implements IUserService{
 
         User user = userOpt.get();
 
-        if(user.getRole() == Role.ADMIN)
+        if(newRole == Role.ADMIN || user.getRole() == Role.ADMIN)
             throw new ForbiddenException("Cannot promote / demote admin users");
 
         user.setRole(newRole);

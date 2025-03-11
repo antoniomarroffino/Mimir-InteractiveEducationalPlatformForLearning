@@ -3,6 +3,7 @@ package ch.supsi.controller.user;
 
 import ch.supsi.model.api.user.Role;
 import ch.supsi.model.api.user.User;
+import ch.supsi.model.dto.api.RoleUpdateRequest;
 import ch.supsi.service.user.IUserService;
 import io.quarkus.security.Authenticated;
 import io.quarkus.security.identity.SecurityIdentity;
@@ -62,8 +63,8 @@ public class UserController {
             responseCode = "204",
             description = "Admin can promote or demote user from STUDENT to TEACHER and vice versa"
     )
-    public Response promoteDemoteUser(@PathParam("azureOid") String azureOid, Role role){
-        this.userService.changeRole(azureOid, role);
+    public Response promoteDemoteUser(@PathParam("azureOid") String azureOid, RoleUpdateRequest roleUpdateRequest){
+        this.userService.changeRole(azureOid, roleUpdateRequest.getRole());
 
         return Response.status(Response.Status.NO_CONTENT).build();
     }
