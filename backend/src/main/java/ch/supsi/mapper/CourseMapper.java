@@ -2,21 +2,17 @@ package ch.supsi.mapper;
 
 import ch.supsi.model.api.Course;
 import ch.supsi.model.dto.api.CourseDTO;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import org.bson.types.ObjectId;
 
 import java.util.stream.Collectors;
 
+@ApplicationScoped
 public class CourseMapper implements BaseMapper<Course, CourseDTO> {
-    private static CourseMapper instance;
-    private final FolderMapper folderMapper;
 
-    private CourseMapper() {
-        this.folderMapper = FolderMapper.getInstance();
-    }
-
-    public static CourseMapper getInstance() {
-        return instance == null ? instance = new CourseMapper() : instance;
-    }
+    @Inject
+    FolderMapper folderMapper;
 
     @Override
     public CourseDTO toDTO(Course course) {

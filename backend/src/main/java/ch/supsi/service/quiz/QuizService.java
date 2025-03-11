@@ -1,5 +1,6 @@
 package ch.supsi.service.quiz;
 
+import ch.supsi.mapper.CourseMapper;
 import ch.supsi.mapper.QuizMapper;
 import ch.supsi.model.api.Course;
 import ch.supsi.model.api.Folder;
@@ -21,8 +22,8 @@ public class QuizService implements IQuizService {
     @Inject
     CourseRepository courseRepository;
 
-    private final QuizMapper quizMapper = QuizMapper.getInstance();
-
+    @Inject
+    QuizMapper quizMapper;
     @Override
     public List<QuizDTO> getQuizzesInFolder(ObjectId courseId, ObjectId folderId) {
         Folder folder = getFolderFromCourse(courseId, folderId);
@@ -34,6 +35,7 @@ public class QuizService implements IQuizService {
     @Override
     public QuizDTO getQuizInFolder(ObjectId courseId, ObjectId folderId, ObjectId quizId) {
         Folder folder = getFolderFromCourse(courseId, folderId);
+
         return folder.getQuizzes().stream()
                 .filter(q -> q.getId().equals(quizId))
                 .map(quizMapper::toDTO)

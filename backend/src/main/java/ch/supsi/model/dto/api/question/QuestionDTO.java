@@ -1,11 +1,21 @@
 package ch.supsi.model.dto.api.question;
 
 import ch.supsi.model.api.question.QuestionType;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.validation.constraints.NotNull;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 @RegisterForReflection
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "type"
+)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = TrueFalseQuestionDTO.class, name = "TRUE_FALSE")
+})
 public class QuestionDTO {
     private String id;
     private String questionText;
@@ -39,5 +49,4 @@ public class QuestionDTO {
     public void setType(QuestionType type) {
         this.type = type;
     }
-
 }

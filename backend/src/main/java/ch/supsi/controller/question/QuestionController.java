@@ -47,6 +47,13 @@ public class QuestionController {
                 new ObjectId(folderId),
                 new ObjectId(quizId)
         );
+
+        questionsDTO.forEach(q -> {
+            System.out.println("Returning question: " +
+                    q.getClass().getSimpleName() +
+                    " with type " + q.getType()
+            );
+        });
         return Response.ok(questionsDTO).build();
     }
 

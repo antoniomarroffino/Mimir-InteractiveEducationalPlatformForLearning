@@ -2,21 +2,17 @@ package ch.supsi.mapper;
 
 import ch.supsi.model.api.Folder;
 import ch.supsi.model.dto.api.FolderDTO;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import org.bson.types.ObjectId;
 
 import java.util.stream.Collectors;
 
+@ApplicationScoped
 public class FolderMapper implements BaseMapper<Folder, FolderDTO> {
-    private static FolderMapper instance;
-    private final QuizMapper quizMapper;
 
-    private FolderMapper() {
-        this.quizMapper = QuizMapper.getInstance();
-    }
-
-    public static FolderMapper getInstance() {
-        return instance == null ? instance = new FolderMapper() : instance;
-    }
+    @Inject
+    QuizMapper quizMapper;
 
     @Override
     public FolderDTO toDTO(Folder folder) {

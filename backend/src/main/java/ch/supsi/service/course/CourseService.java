@@ -17,7 +17,8 @@ public class CourseService implements ICourseService {
     @Inject
     CourseRepository courseRepository;
 
-    private final CourseMapper courseMapper = CourseMapper.getInstance();
+    @Inject
+    CourseMapper courseMapper;
 
     @Override
     public List<CourseDTO> getAllCourses() {

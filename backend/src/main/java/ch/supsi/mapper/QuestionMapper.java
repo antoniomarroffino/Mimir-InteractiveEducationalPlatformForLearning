@@ -5,55 +5,82 @@ import ch.supsi.model.api.question.TrueFalseQuestion;
 import ch.supsi.model.dto.api.question.QuestionDTO;
 import ch.supsi.model.dto.api.question.TrueFalseQuestionDTO;
 import ch.supsi.service.question.QuestionFactory;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+@ApplicationScoped
 public class QuestionMapper implements BaseMapper<Question, QuestionDTO> {
-    private static QuestionMapper instance;
 
-    private QuestionMapper() {}
+    private static final Logger logger = LoggerFactory.getLogger(QuestionMapper.class);
 
-    public static QuestionMapper getInstance() {
-        return instance == null ? instance = new QuestionMapper() : instance;
-    }
+    @Inject
+    QuestionFactory questionFactory;
 
     @Override
     public QuestionDTO toDTO(Question question) {
         if (question == null) {
+            logger.warn("Attempting to convert null question to DTO");
             return null;
         }
 
-        if (question instanceof TrueFalseQuestion tfQuestion) {
-            TrueFalseQuestionDTO dto = new TrueFalseQuestionDTO();
+        try {
+            if (question instanceof TrueFalseQuestion tfQuestion) {
+                TrueFalseQuestionDTO dto = new TrueFalseQuestionDTO();
+                dto.setId(question.getId().toString());
+                dto.setQuestionText(question.getQuestionText());
+                dto.setCorrectAnswer(tfQuestion.isCorrectAnswer());
+
+                logger.debug("Converted TrueFalseQuestion to DTO: {}", dto);
+                return dto;
+            }
+
+            QuestionDTO dto = new QuestionDTO();
             dto.setId(question.getId().toString());
             dto.setQuestionText(question.getQuestionText());
-            dto.setCorrectAnswer(tfQuestion.isCorrectAnswer());
-            return dto;
-        }
+            dto.setType(question.getType());
 
-        QuestionDTO dto = new QuestionDTO();
-        dto.setId(question.getId().toString());
-        dto.setQuestionText(question.getQuestionText());
-        dto.setType(question.getType());
-        return dto;
+            logger.debug("Converted generic Question to DTO: {}", dto);
+            return dto;
+        } catch (Exception e) {
+            logger.error("Error converting Question to DTO", e);
+            throw new RuntimeException("Failed to convert Question to DTO", e);
+        }
     }
 
     @Override
     public Question toEntity(QuestionDTO dto) {
         if (dto == null) {
+            logger.warn("Attempting to convert null DTO to Question entity");
             return null;
         }
 
-        Question question = QuestionFactory.getInstance().createQuestion(dto.getType());
+        try {
+            Question question = questionFactory.createQuestion(dto.getType());
 
-        if (dto.getId() != null) {
-            question.setId(new ObjectId(dto.getId()));
+            if (dto.getId() != null) {
+                try {
+                    question.setId(new ObjectId(dto.getId()));
+                } catch (IllegalArgumentException e) {
+                    logger.error("Invalid ObjectId: {}", dto.getId(), e);
+                    throw new IllegalArgumentException("Invalid ID format", e);
+                }
+            }
+
+            question.setQuestionText(dto.getQuestionText());
+
+            if (question instanceof TrueFalseQuestion tfQuestion && dto instanceof TrueFalseQuestionDTO trueFalseDTO) {
+                tfQuestion.setCorrectAnswer(trueFalseDTO.getCorrectAnswer());
+                logger.debug("Set correct answer for TrueFalseQuestion: {}", trueFalseDTO.getCorrectAnswer());
+            }
+
+            logger.debug("Converted DTO to Question entity: {}", question);
+            return question;
+        } catch (Exception e) {
+            logger.error("Error converting DTO to Question entity", e);
+            throw new RuntimeException("Failed to convert DTO to Question entity", e);
         }
-        question.setQuestionText(dto.getQuestionText());
-
-        if (question instanceof TrueFalseQuestion tfQuestion && dto instanceof TrueFalseQuestionDTO trueFalseDTO) {
-            tfQuestion.setCorrectAnswer(trueFalseDTO.getCorrectAnswer());
-        }
-
-        return question;
     }
 }

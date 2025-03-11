@@ -2,21 +2,17 @@ package ch.supsi.mapper;
 
 import ch.supsi.model.api.Quiz;
 import ch.supsi.model.dto.api.QuizDTO;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import org.bson.types.ObjectId;
 
+import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
+@ApplicationScoped
 public class QuizMapper implements BaseMapper<Quiz, QuizDTO> {
-    private static QuizMapper instance;
-    private final QuestionMapper questionMapper;
-
-    private QuizMapper() {
-        this.questionMapper = QuestionMapper.getInstance();
-    }
-
-    public static QuizMapper getInstance() {
-        return instance == null ? instance = new QuizMapper() : instance;
-    }
+    @Inject
+    QuestionMapper questionMapper;
 
     @Override
     public QuizDTO toDTO(Quiz quiz) {
@@ -53,12 +49,13 @@ public class QuizMapper implements BaseMapper<Quiz, QuizDTO> {
 
         quiz.setDescription(dto.getDescription());
 
+        // Usa il questionMapper che ha già l'injection del factory
         quiz.setQuestions(dto.getQuestions().stream()
                 .map(questionMapper::toEntity)
                 .collect(Collectors.toList()));
 
-        quiz.setCreatedAt(dto.getCreatedAt());
-        quiz.setUpdatedAt(dto.getUpdatedAt());
+        quiz.setCreatedAt(dto.getCreatedAt() != null ? dto.getCreatedAt() : LocalDateTime.now());
+        quiz.setUpdatedAt(dto.getUpdatedAt() != null ? dto.getUpdatedAt() : LocalDateTime.now());
 
         return quiz;
     }

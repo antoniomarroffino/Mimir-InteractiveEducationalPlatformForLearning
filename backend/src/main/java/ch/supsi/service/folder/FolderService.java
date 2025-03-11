@@ -1,5 +1,6 @@
 package ch.supsi.service.folder;
 
+import ch.supsi.mapper.CourseMapper;
 import ch.supsi.mapper.FolderMapper;
 import ch.supsi.model.api.Course;
 import ch.supsi.model.api.Folder;
@@ -18,7 +19,8 @@ public class FolderService implements IFolderService {
     @Inject
     CourseRepository courseRepository;
 
-    private final FolderMapper folderMapper = FolderMapper.getInstance();
+    @Inject
+    FolderMapper folderMapper;
 
     @Override
     public List<FolderDTO> getFoldersInCourse(ObjectId courseId) {

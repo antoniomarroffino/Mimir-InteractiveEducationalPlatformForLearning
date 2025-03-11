@@ -3,21 +3,18 @@ package ch.supsi.service.question;
 import ch.supsi.model.api.question.Question;
 import ch.supsi.model.api.question.QuestionType;
 import ch.supsi.model.dto.api.question.QuestionDTO;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.EnumMap;
 import java.util.Map;
 
+@ApplicationScoped
 public class QuestionFactory {
-    private static QuestionFactory instance;
     private final Map<QuestionType, QuestionCreationStrategy> strategies;
 
-    private QuestionFactory() {
+    public QuestionFactory() {
         strategies = new EnumMap<>(QuestionType.class);
         strategies.put(QuestionType.TRUE_FALSE, new TrueFalseQuestionStrategy());
-    }
-
-    public static QuestionFactory getInstance() {
-        return instance == null ? instance = new QuestionFactory() : instance;
     }
 
     public Question createQuestion(QuestionType type) {

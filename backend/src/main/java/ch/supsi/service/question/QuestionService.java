@@ -7,6 +7,7 @@ import ch.supsi.model.api.Quiz;
 import ch.supsi.model.api.question.Question;
 import ch.supsi.model.api.question.QuestionType;
 import ch.supsi.model.dto.api.question.QuestionDTO;
+import ch.supsi.model.dto.api.question.TrueFalseQuestionDTO;
 import ch.supsi.repository.CourseRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -22,12 +23,14 @@ public class QuestionService implements IQuestionService {
     @Inject
     CourseRepository courseRepository;
 
-    private final QuestionFactory questionFactory;
-    private final QuestionMapper questionMapper;
+    @Inject
+    QuestionFactory questionFactory;
+
+    @Inject
+    QuestionMapper questionMapper;
+
 
     public QuestionService() {
-        this.questionFactory = QuestionFactory.getInstance();
-        this.questionMapper = QuestionMapper.getInstance();
     }
 
     @Override
@@ -38,9 +41,22 @@ public class QuestionService implements IQuestionService {
     @Override
     public List<QuestionDTO> getQuestionsInQuiz(ObjectId courseId, ObjectId folderId, ObjectId quizId) {
         Quiz quiz = getQuizFromCourse(courseId, folderId, quizId);
-        return quiz.getQuestions().stream()
+        List<QuestionDTO> questions = quiz.getQuestions().stream()
                 .map(questionMapper::toDTO)
                 .toList();
+
+        // Log per verificare
+        questions.forEach(q -> {
+            System.out.println("Question class: " + q.getClass().getSimpleName());
+            System.out.println("Question type: " + q.getType());
+
+            // Esempio di accesso a campi specifici
+            if (q instanceof TrueFalseQuestionDTO trueFalseQuestion) {
+                System.out.println("Correct Answer: " + trueFalseQuestion.getCorrectAnswer());
+            }
+        });
+
+        return questions;
     }
 
     @Override
@@ -62,7 +78,7 @@ public class QuestionService implements IQuestionService {
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("Quiz not found"));
 
-        Question question = QuestionMapper.getInstance().toEntity(questionDTO);
+        Question question = questionMapper.toEntity(questionDTO);
         quiz.getQuestions().add(question);
         quiz.setUpdatedAt(LocalDateTime.now());
         this.courseRepository.update(course);
@@ -72,7 +88,7 @@ public class QuestionService implements IQuestionService {
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Question not saved"));
 
-        return QuestionMapper.getInstance().toDTO(savedQuestion);
+        return questionMapper.toDTO(savedQuestion);
     }
 
     private Quiz getQuizFromCourse(ObjectId courseId, ObjectId folderId, ObjectId quizId) {
