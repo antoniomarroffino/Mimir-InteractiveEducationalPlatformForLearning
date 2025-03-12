@@ -7,7 +7,11 @@ import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 @Schema(description = "Base Question model", name = "Question")
-@BsonDiscriminator
+@BsonDiscriminator(key = "type")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = TrueFalseQuestion.class, name = "TRUE_FALSE")
+})
 public abstract class Question {
     private ObjectId id;
 
