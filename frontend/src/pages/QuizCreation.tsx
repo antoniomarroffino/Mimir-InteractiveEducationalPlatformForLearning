@@ -91,7 +91,6 @@ export const QuizCreation: React.FC = () => {
             );
             setQuestions(prev => [...prev, savedQuestion]);
 
-            // Reset creation state
             setIsCreatingQuestion(false);
             setSelectedQuestionType(null);
             setQuestionTemplate(null);
@@ -100,11 +99,6 @@ export const QuizCreation: React.FC = () => {
         } finally {
             setIsLoading(false);
         }
-    };
-
-    const handleDeleteQuestion = async (questionId: string) => {
-        // Implementazione futura della cancellazione
-        setQuestions(prev => prev.filter(q => q.id !== questionId));
     };
 
     return (
@@ -142,7 +136,6 @@ export const QuizCreation: React.FC = () => {
                     <div className="bg-base-100 rounded-lg p-4 shadow space-y-4">
                         <QuestionsList
                             questions={questions}
-                            onDeleteQuestion={handleDeleteQuestion}
                         />
 
                         {isCreatingQuestion && (

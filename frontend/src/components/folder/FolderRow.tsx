@@ -72,8 +72,9 @@ export const FolderRow = ({ folder, courseId }: FolderRowProps) => {
                 folder.id!,
                 newQuizName.trim()
             );
-
+            await loadQuizzes();
             navigate(`/courses/${courseId}/folders/${folder.id}/quizzes/${newQuiz.id}/edit`);
+
         } catch (error) {
             console.error('Failed to create quiz:', error);
             setError('Failed to create quiz');

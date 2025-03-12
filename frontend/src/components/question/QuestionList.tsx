@@ -7,12 +7,10 @@ type SpecificQuestionDTO =
 
 interface QuestionsListProps {
     questions: SpecificQuestionDTO[];
-    onDeleteQuestion: (questionId: string) => void;
 }
 
 export const QuestionsList: React.FC<QuestionsListProps> = ({
-                                                                questions,
-                                                                onDeleteQuestion
+                                                                questions
                                                             }) => (
     <div>
         <h2 className="text-lg font-semibold mb-4">Questions</h2>
@@ -48,7 +46,7 @@ export const QuestionsList: React.FC<QuestionsListProps> = ({
 
                         <button
                             className="btn btn-xs btn-error"
-                            onClick={() => question.id && onDeleteQuestion(question.id)}
+                            onClick={() => question.id}
                         >
                             Delete
                         </button>

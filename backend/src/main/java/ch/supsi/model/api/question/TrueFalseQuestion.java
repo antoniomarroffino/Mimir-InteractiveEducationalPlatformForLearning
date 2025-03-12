@@ -1,8 +1,11 @@
 package ch.supsi.model.api.question;
 
+import org.bson.codecs.pojo.annotations.BsonCreator;
+import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 @Schema(description = "True/False Question model", name = "TrueFalseQuestion")
+@BsonDiscriminator(key = "type", value = "TRUE_FALSE")
 public class TrueFalseQuestion extends Question {
     private boolean correctAnswer;
 

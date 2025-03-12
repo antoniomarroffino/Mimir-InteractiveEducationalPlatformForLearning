@@ -1,5 +1,5 @@
-import { createContext, useContext } from 'react';
-import { CourseDTO } from '@dti-isin/backend-api-client';
+import { createContext, useContext } from "react";
+import { CourseDTO } from "@dti-isin/backend-api-client";
 
 interface CourseContextType {
     courses: CourseDTO[];
@@ -16,7 +16,7 @@ export const CourseContext = createContext<CourseContextType | undefined>(undefi
 export const useCourseContext = () => {
     const context = useContext(CourseContext);
     if (!context) {
-        throw new Error('useCourseContext must be used within a CourseProvider');
+        throw new Error("useCourseContext must be used within a CourseProvider");
     }
     return context;
 };

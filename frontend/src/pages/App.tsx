@@ -6,7 +6,7 @@ import Header from "../components/common/Header.tsx";
 import Footer from "../components/common/Footer.tsx";
 import { FolderProvider } from "../contexts/folder/FolderProvider.tsx";
 import '../App.css';
-import { CourseProvider } from "../contexts/course/CourseProvider.tsx";
+import { CourseProvider } from "../provider/CourseProvider.tsx";
 import {QuizCreation} from "./QuizCreation.tsx";
 
 const queryClient = new QueryClient();
