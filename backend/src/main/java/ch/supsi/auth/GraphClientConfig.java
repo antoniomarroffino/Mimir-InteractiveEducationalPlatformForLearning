@@ -41,7 +41,7 @@ public class GraphClientConfig {
                 Collections.singletonList(this.graphScope),
                 clientSecretCredential);
 
-        return  GraphServiceClient
+        return GraphServiceClient
                 .builder()
                 .authenticationProvider(authProvider)
                 .buildClient();

@@ -3,10 +3,11 @@ package ch.supsi.controller.user;
 
 import ch.supsi.model.api.user.User;
 import ch.supsi.model.dto.api.PromotionRequestDTO;
-import ch.supsi.service.microsoftGraph.IMicrosoftGraphService;
-import ch.supsi.service.user.IUserService;
+import ch.supsi.service.user.api.IUserService;
+import ch.supsi.service.user.microsoftGraph.IMicrosoftGraphService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -25,20 +26,6 @@ public class UserController {
 
     @Inject
     IMicrosoftGraphService microsoftGraphService;
-
-    @PUT
-    @Path("/login")
-    @RolesAllowed({"TEACHER", "ADMIN"})
-    @Operation(summary = "Local login")
-    @APIResponse(
-            responseCode = "204",
-            description = "If user does not exist, he will be created; if user already exist, he will be synchronized with current azure options"
-    )
-    public Response localLogin() {
-        this.microsoftGraphService.getUserByEmail("admin@testforprojectsupsi.onmicrosoft.com");
-        //this.userService.synchronizeUser();
-        return Response.status(Response.Status.NO_CONTENT).build();
-    }
 
     @GET
     @RolesAllowed("ADMIN")
@@ -60,8 +47,11 @@ public class UserController {
             responseCode = "204",
             description = "Admin can promote or demote user from STUDENT to TEACHER and vice versa"
     )
-    public Response promoteDemoteUser(PromotionRequestDTO promotionRequestDTO) {
-        this.userService.changeRole(promotionRequestDTO);
+    public Response promoteDemoteUser(@Valid PromotionRequestDTO promotionRequestDTO) {
+        this.userService.changeRole(
+                this.microsoftGraphService.getUserByEmail(promotionRequestDTO.getEmail()),
+                promotionRequestDTO.getRole()
+        );
 
         return Response.status(Response.Status.NO_CONTENT).build();
     }

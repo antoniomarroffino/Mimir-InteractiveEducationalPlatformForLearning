@@ -6,25 +6,11 @@ import {BsPersonCircle} from 'react-icons/bs';
 const LoginButton: React.FC = () => {
     const {instance} = useMsal();
 
-    const handleLogin = async () => {
+    const handleLogin = () => {
+        instance.loginPopup(loginRequest).catch(e => {
+            console.error(e);
+        });
 
-        try {
-            await instance.loginPopup(loginRequest);
-
-            const token = await instance.acquireTokenSilent({
-                ...loginRequest,
-                account: instance.getAllAccounts()[0]
-            });
-
-            await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/users/login`, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `Bearer ${token.accessToken}`
-                }
-            });
-        } catch (error) {
-            console.error(error);
-        }
     };
 
     return (

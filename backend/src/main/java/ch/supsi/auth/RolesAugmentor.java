@@ -2,7 +2,7 @@ package ch.supsi.auth;
 
 import ch.supsi.model.api.user.Role;
 import ch.supsi.model.api.user.User;
-import ch.supsi.service.user.IUserService;
+import ch.supsi.service.user.api.IUserService;
 import io.quarkus.security.identity.AuthenticationRequestContext;
 import io.quarkus.security.identity.SecurityIdentity;
 import io.quarkus.security.identity.SecurityIdentityAugmentor;
@@ -26,7 +26,7 @@ public class RolesAugmentor implements SecurityIdentityAugmentor {
     }
 
     private Supplier<SecurityIdentity> build(SecurityIdentity identity) {
-        if(identity.isAnonymous())
+        if (identity.isAnonymous())
             return () -> identity;
         else {
             QuarkusSecurityIdentity.Builder builder = QuarkusSecurityIdentity.builder(identity);
@@ -35,7 +35,7 @@ public class RolesAugmentor implements SecurityIdentityAugmentor {
             String oid = jwt.getClaim("oid");
             User user = this.userService.getUserByAzureOid(oid);
 
-            builder.addRole(user == null? Role.STUDENT.name() : user.role.name());
+            builder.addRole(user == null ? Role.STUDENT.name() : user.role.name());
             return builder::build;
         }
     }

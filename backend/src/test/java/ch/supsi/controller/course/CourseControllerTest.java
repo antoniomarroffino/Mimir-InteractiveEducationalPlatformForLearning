@@ -1,23 +1,12 @@
 package ch.supsi.controller.course;
 
-import ch.supsi.model.dto.api.CourseDTO;
-import ch.supsi.model.dto.api.FolderDTO;
 import ch.supsi.service.course.ICourseService;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.core.Response;
 import org.bson.types.ObjectId;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-
-import java.util.Collections;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.MethodName.class)

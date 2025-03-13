@@ -17,4 +17,12 @@ public class UserRepository implements PanacheMongoRepository<User> {
     public List<User> findNonAdminUsers() {
         return list("role != ?1", Role.ADMIN);
     }
+
+    public void addCourseToUser(String courseId, String azureOid) {
+        update("{$addToSet: {coursesId: ?1}}", courseId).where("azureOid", azureOid);
+    }
+
+    public void deleteByAzureOid(String oid) {
+        delete("azureOid", oid);
+    }
 }

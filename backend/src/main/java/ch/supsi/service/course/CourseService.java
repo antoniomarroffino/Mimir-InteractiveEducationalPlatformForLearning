@@ -7,14 +7,11 @@ import ch.supsi.repository.CourseRepository;
 import ch.supsi.repository.UserRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.InternalServerErrorException;
 import jakarta.ws.rs.NotFoundException;
-import org.bson.Document;
 import org.bson.types.ObjectId;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,7 +27,7 @@ public class CourseService implements ICourseService {
 
     @Override
     public List<CourseDTO> getAllCourses(User user) {
-        if(user == null)
+        if (user == null)
             throw new InternalServerErrorException();
 
         return user.coursesId.stream()
@@ -51,7 +48,7 @@ public class CourseService implements ICourseService {
 
     @Override
     public CourseDTO createCourse(CourseDTO courseDTO, User currentUser) {
-        if(currentUser == null)
+        if (currentUser == null)
             throw new InternalServerErrorException();
 
         this.verifyCourseIsValid(courseDTO);
@@ -59,23 +56,21 @@ public class CourseService implements ICourseService {
         Course course = courseDTO.toEntity();
         this.courseRepository.persist(course);
 
-        currentUser.addCourse(course.getId().toString());
-        this.userRepository.update(currentUser);
+        this.userRepository.addCourseToUser(course.getId().toString(), currentUser.azureOid);
 
         return courseDTO.fromEntity(course);
     }
 
     @Override
     public void assignCourse(ObjectId id, User currentUser) {
-        if(currentUser == null)
+        if (currentUser == null)
             throw new InternalServerErrorException();
 
         Optional<Course> course = this.courseRepository.findByIdOptional(id);
         if (course.isEmpty())
             throw new NotFoundException("Course " + id + " not found");
 
-        currentUser.addCourse(course.get().getId().toString());
-        this.userRepository.update(currentUser);
+        this.userRepository.addCourseToUser(course.get().getId().toString(), currentUser.azureOid);
     }
 
     private void verifyCourseIsValid(CourseDTO courseDTO) {
