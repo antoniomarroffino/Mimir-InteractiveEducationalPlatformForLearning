@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { useCourseContext } from '../../contexts/course/CourseContext.tsx';
+import { useCourse } from '../../hooks/useCourse';
 
 const CreateCourseForm = () => {
     const [name, setName] = useState('');
-    const { createCourse, isLoading } = useCourseContext();
+    const { createCourse, isLoading } = useCourse();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();

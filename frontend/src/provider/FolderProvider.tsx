@@ -1,13 +1,13 @@
 import React from "react";
 import { useQuery, useMutation, useQueryClient } from "react-query";
-import { FolderContext } from "./FolderContext";
+import { FolderContext } from "../contexts/FolderContext.tsx";
 import { FolderDTO } from "@dti-isin/backend-api-client";
-import { folderApi } from "../../../config/config";
-import { useCourseContext } from "../course/CourseContext";
+import { folderApi } from "../../config/config.ts";
+import { useCourse } from "../hooks/useCourse";
 
 export const FolderProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const queryClient = useQueryClient();
-    const { selectedCourseId } = useCourseContext();
+    const { selectedCourseId } = useCourse();
     const [selectedFolderId, setSelectedFolderId] = React.useState<string | null>(null);
 
     const { data: folders = [], isLoading, error: queryError } = useQuery<FolderDTO[], Error>({

@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
 import {Link, useNavigate, useParams} from 'react-router-dom';
-import {useCourseContext} from '../contexts/course/CourseContext.tsx';
+import {useCourse} from '../hooks/useCourse';
 import {BsChevronRight} from 'react-icons/bs';
 import {FolderList} from "../components/folder/FolderList.tsx";
 import CreateFolderForm from "../components/folder/CreateFolderForm.tsx";
@@ -8,7 +8,7 @@ import CreateFolderForm from "../components/folder/CreateFolderForm.tsx";
 const CourseDetails = () => {
     const {courseId} = useParams();
     const navigate = useNavigate();
-    const {courses, setSelectedCourseId, fetchCourses} = useCourseContext();
+    const {courses, setSelectedCourseId, fetchCourses} = useCourse();
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {

@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { useFolderContext } from '../../contexts/folder/FolderContext.tsx';
-import {useCourseContext } from "../../contexts/course/CourseContext.tsx";
+import React, {useState} from 'react';
+import {useFolder} from '../../hooks/useFolder';
+import {useCourse} from "../../hooks/useCourse";
 
 const CreateFolderForm = () => {
     const [name, setName] = useState('');
-    const { createFolder, isLoading } = useFolderContext();
-    const { fetchCourses } = useCourseContext();
+    const {createFolder, isLoading} = useFolder();
+    const {fetchCourses} = useCourse();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();

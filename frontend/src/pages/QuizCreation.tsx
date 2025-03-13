@@ -5,7 +5,7 @@ import { questionService } from '../services/questionService';
 import { QuestionTypeSelector } from '../components/question/QuestionTypeSelector';
 import { QuestionEditor } from '../components/question/QuestionEditor';
 import { QuestionsList } from '../components/question/QuestionList';
-import { useCourseContext } from '../contexts/course/CourseContext';
+import { useCourseContext } from '../contexts/CourseContext.tsx';
 import { Breadcrumb } from "../components/common/Breadcrumb.tsx";
 import CreateQuestionForm from '../components/question/CreateQuestionForm';
 

@@ -1,6 +1,6 @@
 import React from "react";
 import { useQuery, useMutation, useQueryClient } from "react-query";
-import { CourseContext } from "../contexts/course/CourseContext";
+import { CourseContext } from "../contexts/CourseContext.tsx";
 import { CourseDTO } from "@dti-isin/backend-api-client";
 import { courseApi } from "../../config/config";
 

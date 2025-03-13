@@ -4,7 +4,7 @@ import Home from './Home';
 import CourseDetails from './CourseDetails';
 import Header from "../components/common/Header.tsx";
 import Footer from "../components/common/Footer.tsx";
-import { FolderProvider } from "../contexts/folder/FolderProvider.tsx";
+import { FolderProvider } from "../provider/FolderProvider.tsx";
 import '../App.css';
 import { CourseProvider } from "../provider/CourseProvider.tsx";
 import {QuizCreation} from "./QuizCreation.tsx";
