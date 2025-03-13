@@ -3,12 +3,11 @@ package ch.supsi.service.user;
 import ch.supsi.auth.AdminConfig;
 import ch.supsi.model.api.user.Role;
 import ch.supsi.model.api.user.User;
+import ch.supsi.model.dto.api.PromotionRequestDTO;
 import ch.supsi.repository.UserRepository;
 import io.quarkus.security.identity.SecurityIdentity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
-import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.NotFoundException;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
@@ -42,25 +41,25 @@ public class UserService implements IUserService{
     }
 
     @Override
-    public void changeRole(String oid, Role newRole) {
-        Optional<User> userOpt = this.userRepository.findByAzureOidOptional(oid);
+    public void changeRole(PromotionRequestDTO promotionRequestDTO) {
+        /*Optional<User> userOpt = this.userRepository.findByAzureOidOptional(oid);
 
         if(userOpt.isEmpty())
             throw new NotFoundException("User with oid " + oid + " not found");
 
         User user = userOpt.get();
 
-        if(newRole == Role.ADMIN || user.getRole() == Role.ADMIN)
+        if(newRole == Role.ADMIN || user.role == Role.ADMIN)
             throw new ForbiddenException("Cannot promote / demote admin users");
 
-        user.setRole(newRole);
-        this.userRepository.update(user);
+        user.role = newRole;
+        this.userRepository.update(user);*/
     }
 
     @Override
     public User createBaseUser(String oid) {
         User user = new User();
-        user.setAzureOid(oid);
+        user.azureOid = oid;
         this.userRepository.persist(user);
         return user;
     }
@@ -95,17 +94,16 @@ public class UserService implements IUserService{
 
     private void syncUser(User user) {
         String jwtName = this.getNameFromJWT();
-        if(jwtName != null && !jwtName.equals(user.getName()))
-            user.setName(jwtName);
+        if(jwtName != null && !jwtName.equals(user.name))
+            user.name = jwtName;
 
         String jwtEmail = this.getEmailFromJWT();
-        if(jwtEmail != null && !jwtEmail.equals(user.getEmail()))
-            user.setEmail(jwtEmail);
-
+        if(jwtEmail != null && !jwtEmail.equals(user.email))
+            user.email = jwtEmail;
         if(isAdminUser(user))
-            user.setRole(Role.ADMIN);
-        else if(user.getRole() == Role.ADMIN)
-            user.setRole(Role.STUDENT);
+            user.role = Role.ADMIN;
+        else if(user.role == Role.ADMIN)
+            user.role = Role.STUDENT;
     }
 
     private String getOidFromJWT() {
@@ -121,8 +119,8 @@ public class UserService implements IUserService{
     }
 
     private boolean isAdminUser(User user) {
-        if(this.adminConfig.getAdminNames().contains(user.getName()))
-            return this.adminConfig.getAdminEmails().contains(user.getEmail());
+        if(this.adminConfig.getAdminNames().contains(user.name))
+            return this.adminConfig.getAdminEmails().contains(user.email);
         return false;
     }
 

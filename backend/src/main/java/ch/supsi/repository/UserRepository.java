@@ -11,7 +11,7 @@ import java.util.Optional;
 @ApplicationScoped
 public class UserRepository implements PanacheMongoRepository<User> {
     public Optional<User> findByAzureOidOptional(String oid) {
-        return Optional.ofNullable(find("azureOid", oid).firstResult());
+        return find("azureOid", oid).firstResultOptional();
     }
 
     public List<User> findNonAdminUsers() {

@@ -11,8 +11,10 @@ import jakarta.transaction.Transactional;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.InternalServerErrorException;
 import jakarta.ws.rs.NotFoundException;
+import org.bson.Document;
 import org.bson.types.ObjectId;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -31,9 +33,8 @@ public class CourseService implements ICourseService {
         if(user == null)
             throw new InternalServerErrorException();
 
-        System.out.println(user.getCoursesId().toString());
-        return user.getCoursesId().stream()
-                .map(courseId -> this.courseRepository.findByIdOptional(courseId))
+        return user.coursesId.stream()
+                .map(courseId -> this.courseRepository.findByIdOptional(new ObjectId(courseId)))
                 .map(Optional::orElseThrow)
                 .map(new CourseDTO()::fromEntity)
                 .collect(Collectors.toList());
@@ -58,7 +59,7 @@ public class CourseService implements ICourseService {
         Course course = courseDTO.toEntity();
         this.courseRepository.persist(course);
 
-        currentUser.addCourse(course.getId());
+        currentUser.addCourse(course.getId().toString());
         this.userRepository.update(currentUser);
 
         return courseDTO.fromEntity(course);
@@ -73,7 +74,7 @@ public class CourseService implements ICourseService {
         if (course.isEmpty())
             throw new NotFoundException("Course " + id + " not found");
 
-        currentUser.addCourse(course.get().getId());
+        currentUser.addCourse(course.get().getId().toString());
         this.userRepository.update(currentUser);
     }
 

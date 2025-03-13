@@ -1,5 +1,6 @@
 package ch.supsi.auth;
 
+import ch.supsi.model.api.user.Role;
 import ch.supsi.model.api.user.User;
 import ch.supsi.service.user.IUserService;
 import io.quarkus.security.identity.AuthenticationRequestContext;
@@ -34,10 +35,7 @@ public class RolesAugmentor implements SecurityIdentityAugmentor {
             String oid = jwt.getClaim("oid");
             User user = this.userService.getUserByAzureOid(oid);
 
-            if(user == null)
-                user = this.userService.createBaseUser(oid);
-
-            builder.addRole(user.getRole().name());
+            builder.addRole(user == null? Role.STUDENT.name() : user.role.name());
             return builder::build;
         }
     }
