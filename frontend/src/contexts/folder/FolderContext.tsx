@@ -1,5 +1,5 @@
-import { createContext, useContext } from 'react';
-import { FolderDTO } from '@dti-isin/backend-api-client';
+import { createContext, useContext } from "react";
+import { FolderDTO } from "@dti-isin/backend-api-client";
 
 interface FolderContextType {
     folders: FolderDTO[];
@@ -8,6 +8,7 @@ interface FolderContextType {
     createFolder: (name: string) => Promise<void>;
     selectedFolderId: string | null;
     setSelectedFolderId: (id: string | null) => void;
+    fetchFolders: () => Promise<void>;
 }
 
 export const FolderContext = createContext<FolderContextType | undefined>(undefined);
@@ -15,7 +16,7 @@ export const FolderContext = createContext<FolderContextType | undefined>(undefi
 export const useFolderContext = () => {
     const context = useContext(FolderContext);
     if (!context) {
-        throw new Error('useFolderContext must be used within a FolderProvider');
+        throw new Error("useFolderContext must be used within a FolderProvider");
     }
     return context;
 };
