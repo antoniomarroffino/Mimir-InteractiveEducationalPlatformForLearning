@@ -3,6 +3,7 @@ package ch.supsi.auth.admin;
 import ch.supsi.auth.AdminConfig;
 import ch.supsi.service.user.admin.IAdminService;
 import ch.supsi.service.user.microsoftGraph.IMicrosoftGraphService;
+import io.quarkus.runtime.ShutdownEvent;
 import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
@@ -21,6 +22,11 @@ public class AdminInitializer {
 
     public void onStart(@Observes StartupEvent ev) {
         this.createAdmins();
+    }
+
+    public void onStop(@Observes ShutdownEvent ev) {
+        System.out.println("Shutting down");
+        this.adminService.deleteAdmins();
     }
 
     private void createAdmins() {

@@ -3,7 +3,6 @@ package ch.supsi.service.user.admin;
 import ch.supsi.auth.AdminConfig;
 import ch.supsi.model.api.user.Role;
 import ch.supsi.model.api.user.User;
-import ch.supsi.model.dto.api.UserWithoutCoursesDTO;
 import ch.supsi.repository.UserRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -31,6 +30,12 @@ public class AdminService implements IAdminService {
         Optional<User> adminOpt = this.userRepository.findByAzureOidOptional(oid);
         if (adminOpt.isEmpty())
             this.buildNewAdmin(microsoftUser);
+    }
+
+    @Override
+    public void deleteAdmins() {
+        for (User admin : this.userRepository.findAdminUsers())
+            this.userRepository.delete(admin);
     }
 
     private boolean isNotAnAdmin(com.microsoft.graph.models.User microsoftUser) {

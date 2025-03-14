@@ -6,7 +6,6 @@ import ch.supsi.model.dto.api.PromotionRequestDTO;
 import ch.supsi.model.dto.api.UserWithoutCoursesDTO;
 import ch.supsi.service.user.IUserService;
 import ch.supsi.service.user.microsoftGraph.IMicrosoftGraphService;
-import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;

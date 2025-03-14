@@ -2,7 +2,6 @@ package ch.supsi.service.user.changeRole.strategy;
 
 import ch.supsi.model.api.user.Role;
 import ch.supsi.model.api.user.User;
-import ch.supsi.model.dto.api.UserWithoutCoursesDTO;
 import ch.supsi.repository.UserRepository;
 import jakarta.enterprise.context.Dependent;
 import jakarta.inject.Inject;

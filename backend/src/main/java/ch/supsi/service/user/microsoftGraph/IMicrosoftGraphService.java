@@ -1,6 +1,5 @@
 package ch.supsi.service.user.microsoftGraph;
 
-import ch.supsi.model.dto.api.UserWithoutCoursesDTO;
 import com.microsoft.graph.models.User;
 
 import java.util.List;

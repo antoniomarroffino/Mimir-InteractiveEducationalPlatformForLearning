@@ -1,20 +1,10 @@
 package ch.supsi.controller.folder;
 
-import ch.supsi.model.dto.api.FolderDTO;
 import ch.supsi.service.folder.IFolderService;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.core.Response;
 import org.bson.types.ObjectId;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
-import java.util.Collections;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 @QuarkusTest
 public class FolderControllerTest {

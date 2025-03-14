@@ -18,6 +18,10 @@ public class UserRepository implements PanacheMongoRepository<User> {
         return list("role != ?1", Role.ADMIN);
     }
 
+    public List<User> findAdminUsers() {
+        return list("role = ?1", Role.ADMIN);
+    }
+
     public void addCourseToUser(String courseId, String azureOid) {
         update("{$addToSet: {coursesId: ?1}}", courseId).where("azureOid", azureOid);
     }

@@ -19,6 +19,8 @@ public interface IUserService {
     UserWithoutCoursesDTO buildUserWithoutCoursesDTO(com.microsoft.graph.models.User microsoftUser);
 
     String getOidFromJWT();
+
     String getNameFromJWT();
+
     String getEmailFromJWT();
 }

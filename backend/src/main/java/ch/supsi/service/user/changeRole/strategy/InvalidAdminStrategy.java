@@ -1,6 +1,5 @@
 package ch.supsi.service.user.changeRole.strategy;
 
-import ch.supsi.model.dto.api.UserWithoutCoursesDTO;
 import jakarta.enterprise.context.Dependent;
 import jakarta.ws.rs.ForbiddenException;
 

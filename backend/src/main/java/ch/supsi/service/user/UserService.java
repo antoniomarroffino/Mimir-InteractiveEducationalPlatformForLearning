@@ -57,7 +57,7 @@ public class UserService implements IUserService {
 
     @Override
     public UserWithoutCoursesDTO buildUserWithoutCoursesDTO(com.microsoft.graph.models.User microsoftUser) {
-        if(microsoftUser == null)
+        if (microsoftUser == null)
             throw new InternalServerErrorException("Microsoft user is null");
 
         Optional<User> userOpt = this.userRepository.findByAzureOidOptional(microsoftUser.id);
@@ -66,7 +66,7 @@ public class UserService implements IUserService {
                 microsoftUser.id,
                 microsoftUser.displayName,
                 microsoftUser.userPrincipalName,
-                userOpt.isEmpty()? Role.STUDENT : userOpt.get().role
+                userOpt.isEmpty() ? Role.STUDENT : userOpt.get().role
         );
     }
 
