@@ -6,14 +6,12 @@ interface QuizListProps {
     quizzes: QuizDTO[];
     courseId: string;
     folderId: string;
-    onQuizDeleted: () => void;
 }
 
 export const QuizList: React.FC<QuizListProps> = ({
                                                       quizzes,
                                                       courseId,
-                                                      folderId,
-                                                      onQuizDeleted
+                                                      folderId
                                                   }) => {
     if (quizzes.length === 0) {
         return (
@@ -30,9 +28,7 @@ export const QuizList: React.FC<QuizListProps> = ({
                     key={quiz.id}
                     quiz={quiz}
                     courseId={courseId}
-                    folderId={folderId}
-                    onDelete={onQuizDeleted}
-                />
+                    folderId={folderId}/>
             ))}
         </div>
     );

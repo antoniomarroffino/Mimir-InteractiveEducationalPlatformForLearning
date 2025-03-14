@@ -2,21 +2,20 @@ import React, { useState } from 'react';
 import { QuizDTO } from '@dti-isin/backend-api-client';
 import { BsTrash, BsPencil } from 'react-icons/bs';
 import { useNavigate } from 'react-router-dom';
-import { quizService } from '../../services/quizService';
+import { useQuiz } from '../../hooks/useQuiz';
 
 interface QuizRowProps {
     quiz: QuizDTO;
     courseId: string;
     folderId: string;
-    onDelete: () => void;
 }
 
 export const QuizRow: React.FC<QuizRowProps> = ({
                                                     quiz,
                                                     courseId,
                                                     folderId,
-                                                    onDelete
                                                 }) => {
+    const { deleteQuiz } = useQuiz();
     const navigate = useNavigate();
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -30,12 +29,11 @@ export const QuizRow: React.FC<QuizRowProps> = ({
         try {
             setIsDeleting(true);
             setError(null);
-            await quizService.deleteQuiz(courseId, folderId, quiz.id!);
+            await deleteQuiz(quiz.id!);
             setShowDeleteModal(false);
-            onDelete();
         } catch (error) {
             console.error('Failed to delete quiz:', error);
-            setError('Failed to delete quiz');
+            setError(error instanceof Error ? error.message : 'Failed to delete quiz');
         } finally {
             setIsDeleting(false);
         }

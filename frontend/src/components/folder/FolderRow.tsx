@@ -1,9 +1,9 @@
-import React, {useState, useEffect, useCallback} from 'react';
-import { FolderDTO, QuizDTO } from '@dti-isin/backend-api-client';
-import { BsFolder2, BsChevronDown, BsChevronUp } from 'react-icons/bs';
-import { quizService } from '../../services/quizService';
-import {QuizList} from "../quiz/QuizList.tsx";
-import {useNavigate} from "react-router-dom";
+import { useQuiz } from '../../hooks/useQuiz';
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { FolderDTO } from "@dti-isin/backend-api-client";
+import { BsChevronDown, BsChevronUp, BsFolder2 } from "react-icons/bs";
+import { QuizList } from "../quiz/QuizList.tsx";
 
 interface FolderRowProps {
     folder: FolderDTO;
@@ -12,77 +12,39 @@ interface FolderRowProps {
 
 export const FolderRow = ({ folder, courseId }: FolderRowProps) => {
     const [isExpanded, setIsExpanded] = useState(false);
-    const [quizzes, setQuizzes] = useState<QuizDTO[]>([]);
-    const [quizCount, setQuizCount] = useState(0);
-    const [isLoading, setIsLoading] = useState(false);
     const [newQuizName, setNewQuizName] = useState('');
-    const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
 
-    const loadQuizCount = useCallback(async () => {
-        try {
-            const data = await quizService.getQuizzesInFolder(courseId, folder.id!);
-            setQuizCount(data.length);
-        } catch (error) {
-            console.error('Failed to load quiz count:', error);
-        }
-    }, [courseId, folder.id]);
+    const {
+        quizzes,
+        isLoading,
+        error,
+        createQuiz,
+        fetchQuizzes
+    } = useQuiz();
 
-    const loadQuizzes = useCallback(async () => {
-        try {
-            setIsLoading(true);
-            setError(null);
-            const data = await quizService.getQuizzesInFolder(courseId, folder.id!);
-            setQuizzes(data);
-            setQuizCount(data.length);
-        } catch (error) {
-            console.error('Failed to load quizzes:', error);
-            setError('Failed to load quizzes');
-        } finally {
-            setIsLoading(false);
-        }
-    }, [courseId, folder.id]);
+    const quizCount = quizzes.length;
 
     useEffect(() => {
-        const initializeQuizCount = async () => {
-            await loadQuizCount();
-        };
-        void initializeQuizCount();
-    }, [loadQuizCount]);
-
-    useEffect(() => {
-        const loadQuizzesIfExpanded = async () => {
-            if (isExpanded) {
-                await loadQuizzes();
-            }
-        };
-        void loadQuizzesIfExpanded();
-    }, [isExpanded, loadQuizzes]);
+        if (isExpanded && folder.id) {
+            fetchQuizzes();
+        }
+    }, [isExpanded, fetchQuizzes, folder.id]);
 
     const handleCreateQuiz = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!newQuizName.trim()) return;
+        if (!newQuizName.trim() || !folder.id) return;
 
         try {
-            setIsLoading(true);
-            setError(null);
-
-            const newQuiz = await quizService.createQuiz(
-                courseId,
-                folder.id!,
-                newQuizName.trim()
-            );
-            await loadQuizzes();
-            navigate(`/courses/${courseId}/folders/${folder.id}/quizzes/${newQuiz.id}/edit`);
-
+            const newQuiz = await createQuiz(newQuizName.trim());
+            if (newQuiz?.id) {
+                navigate(`/courses/${courseId}/folders/${folder.id}/quizzes/${newQuiz.id}/edit`);
+                setNewQuizName('');
+            }
         } catch (error) {
             console.error('Failed to create quiz:', error);
-            setError('Failed to create quiz');
-        } finally {
-            setIsLoading(false);
         }
     };
-
 
     return (
         <div className="bg-base-100 shadow-sm hover:shadow-md transition-all">
@@ -106,7 +68,7 @@ export const FolderRow = ({ folder, courseId }: FolderRowProps) => {
                 <div className="border-t border-base-200 p-4">
                     {error && (
                         <div className="alert alert-error mb-4">
-                            {error}
+                            {error.message}
                         </div>
                     )}
 
@@ -119,11 +81,9 @@ export const FolderRow = ({ folder, courseId }: FolderRowProps) => {
                             <QuizList
                                 quizzes={quizzes}
                                 courseId={courseId}
-                                folderId={folder.id!}
-                                onQuizDeleted={loadQuizzes}
+                                folderId={folder.id || ""}
                             />
 
-                            {/* Form per creare un nuovo quiz */}
                             <form onSubmit={handleCreateQuiz} className="mt-4">
                                 <div className="join w-full">
                                     <input

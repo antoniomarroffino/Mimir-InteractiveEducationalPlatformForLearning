@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
-import {useFolder} from '../../hooks/useFolder';
-import {useCourse} from "../../hooks/useCourse";
+import { useFolder } from '../../hooks/useFolder';
+import { useCourse } from "../../hooks/useCourse";
 
 const CreateFolderForm = () => {
     const [name, setName] = useState('');
-    const {createFolder, isLoading} = useFolder();
-    const {fetchCourses} = useCourse();
+    const { createFolder, isLoading } = useFolder();
+    const { fetchCourses } = useCourse();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
