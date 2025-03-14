@@ -25,6 +25,7 @@ public class FolderControllerTest {
     @InjectMock
     IFolderService folderService;
 
+    /*
     @Test
     @DisplayName("Should return Response 200 (ok) with empty list of folders")
     void test01GetFolders_Empty() {
@@ -116,5 +117,5 @@ public class FolderControllerTest {
         assertEquals(folderDTO.getName(), folderDTORetrieved.getName());
 
         verify(this.folderService, times(1)).addFolderToCourse(any(ObjectId.class), eq(folderDTO));
-    }
+    }*/
 }

@@ -1,10 +1,10 @@
-package ch.supsi.service.user.api;
+package ch.supsi.service.user;
 
 import ch.supsi.model.api.user.Role;
 import ch.supsi.model.api.user.User;
 import ch.supsi.model.dto.api.UserWithoutCoursesDTO;
 import ch.supsi.repository.UserRepository;
-import ch.supsi.service.user.api.changeRole.builder.IChangeRoleStrategyBuilder;
+import ch.supsi.service.user.changeRole.builder.IChangeRoleStrategyBuilder;
 import io.quarkus.security.identity.SecurityIdentity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -39,11 +39,11 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public void changeRole(UserWithoutCoursesDTO userWithoutCoursesDTO, Role newRole) {
-        if (userWithoutCoursesDTO == null)
-            throw new InternalServerErrorException("userWithoutCoursesDTO is null");
+    public void changeRole(com.microsoft.graph.models.User microsoftUser, Role newRole) {
+        if (microsoftUser == null)
+            throw new InternalServerErrorException("Microsoft user is null");
 
-        this.changeRoleStrategyBuilder.buildChangeRoleStrategy(newRole).changeRole(userWithoutCoursesDTO);
+        this.changeRoleStrategyBuilder.buildChangeRoleStrategy(newRole).changeRole(microsoftUser);
     }
 
     @Override
@@ -55,15 +55,33 @@ public class UserService implements IUserService {
         return userOpt.get();
     }
 
-    private String getOidFromJWT() {
+    @Override
+    public UserWithoutCoursesDTO buildUserWithoutCoursesDTO(com.microsoft.graph.models.User microsoftUser) {
+        if(microsoftUser == null)
+            throw new InternalServerErrorException("Microsoft user is null");
+
+        Optional<User> userOpt = this.userRepository.findByAzureOidOptional(microsoftUser.id);
+
+        return new UserWithoutCoursesDTO(
+                microsoftUser.id,
+                microsoftUser.displayName,
+                microsoftUser.userPrincipalName,
+                userOpt.isEmpty()? Role.STUDENT : userOpt.get().role
+        );
+    }
+
+    @Override
+    public String getOidFromJWT() {
         return this.getJwtFromSecurityIdentity().getClaim(OID_CLAIM_KEY);
     }
 
-    private String getNameFromJWT() {
+    @Override
+    public String getNameFromJWT() {
         return this.getJwtFromSecurityIdentity().getClaim(NAME_CLAIM_KEY);
     }
 
-    private String getEmailFromJWT() {
+    @Override
+    public String getEmailFromJWT() {
         return this.getJwtFromSecurityIdentity().getClaim(EMAIL_CLAIM_KEY);
     }
 

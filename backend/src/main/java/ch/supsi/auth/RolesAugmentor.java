@@ -2,7 +2,7 @@ package ch.supsi.auth;
 
 import ch.supsi.model.api.user.Role;
 import ch.supsi.model.api.user.User;
-import ch.supsi.service.user.api.IUserService;
+import ch.supsi.service.user.IUserService;
 import io.quarkus.security.identity.AuthenticationRequestContext;
 import io.quarkus.security.identity.SecurityIdentity;
 import io.quarkus.security.identity.SecurityIdentityAugmentor;

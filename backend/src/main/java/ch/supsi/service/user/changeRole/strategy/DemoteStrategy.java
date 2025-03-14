@@ -1,4 +1,4 @@
-package ch.supsi.service.user.api.changeRole.strategy;
+package ch.supsi.service.user.changeRole.strategy;
 
 import ch.supsi.model.api.user.Role;
 import ch.supsi.model.api.user.User;
@@ -14,8 +14,8 @@ public class DemoteStrategy implements ChangeRoleStrategy {
     UserRepository userRepository;
 
     @Override
-    public void changeRole(UserWithoutCoursesDTO userWithoutCoursesDTO) {
-        User userToDelete = this.userRepository.findByAzureOidOptional(userWithoutCoursesDTO.getAzureOid()).orElseThrow();
+    public void changeRole(com.microsoft.graph.models.User microsoftUser) {
+        User userToDelete = this.userRepository.findByAzureOidOptional(microsoftUser.id).orElseThrow();
 
         if (userToDelete.role == Role.ADMIN)
             throw new ForbiddenException("Cannot change role of admin");

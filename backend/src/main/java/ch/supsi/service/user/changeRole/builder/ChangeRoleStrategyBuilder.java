@@ -1,10 +1,10 @@
-package ch.supsi.service.user.api.changeRole.builder;
+package ch.supsi.service.user.changeRole.builder;
 
 import ch.supsi.model.api.user.Role;
-import ch.supsi.service.user.api.changeRole.strategy.ChangeRoleStrategy;
-import ch.supsi.service.user.api.changeRole.strategy.DemoteStrategy;
-import ch.supsi.service.user.api.changeRole.strategy.InvalidAdminStrategy;
-import ch.supsi.service.user.api.changeRole.strategy.PromoteStrategy;
+import ch.supsi.service.user.changeRole.strategy.ChangeRoleStrategy;
+import ch.supsi.service.user.changeRole.strategy.DemoteStrategy;
+import ch.supsi.service.user.changeRole.strategy.InvalidAdminStrategy;
+import ch.supsi.service.user.changeRole.strategy.PromoteStrategy;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 

@@ -2,7 +2,7 @@ package ch.supsi.controller.course;
 
 import ch.supsi.model.dto.api.CourseDTO;
 import ch.supsi.service.course.ICourseService;
-import ch.supsi.service.user.api.IUserService;
+import ch.supsi.service.user.IUserService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;

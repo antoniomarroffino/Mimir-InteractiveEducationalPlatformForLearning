@@ -20,28 +20,28 @@ public class AdminService implements IAdminService {
     AdminConfig adminConfig;
 
     @Override
-    public void createAdmin(UserWithoutCoursesDTO userWithoutCoursesDTO) {
-        if (userWithoutCoursesDTO == null)
-            throw new InternalServerErrorException("UserWithoutCoursesDTO is null");
+    public void createAdmin(com.microsoft.graph.models.User microsoftUser) {
+        if (microsoftUser == null)
+            throw new InternalServerErrorException("Microsoft user is null");
 
-        if (this.isNotAnAdmin(userWithoutCoursesDTO))
+        if (this.isNotAnAdmin(microsoftUser))
             return;
 
-        String oid = userWithoutCoursesDTO.getAzureOid();
+        String oid = microsoftUser.id;
         Optional<User> adminOpt = this.userRepository.findByAzureOidOptional(oid);
         if (adminOpt.isEmpty())
-            this.buildNewAdmin(userWithoutCoursesDTO);
+            this.buildNewAdmin(microsoftUser);
     }
 
-    private boolean isNotAnAdmin(UserWithoutCoursesDTO userWithoutCoursesDTO) {
-        if (this.adminConfig.getAdminNames().contains(userWithoutCoursesDTO.getName()))
-            return !this.adminConfig.getAdminEmails().contains(userWithoutCoursesDTO.getEmail());
+    private boolean isNotAnAdmin(com.microsoft.graph.models.User microsoftUser) {
+        if (this.adminConfig.getAdminNames().contains(microsoftUser.displayName))
+            return !this.adminConfig.getAdminEmails().contains(microsoftUser.userPrincipalName);
         return true;
     }
 
-    private void buildNewAdmin(UserWithoutCoursesDTO userWithoutCoursesDTO) {
+    private void buildNewAdmin(com.microsoft.graph.models.User microsoftUser) {
         User admin = new User();
-        admin.azureOid = userWithoutCoursesDTO.getAzureOid();
+        admin.azureOid = microsoftUser.id;
         admin.role = Role.ADMIN;
         this.userRepository.persist(admin);
     }

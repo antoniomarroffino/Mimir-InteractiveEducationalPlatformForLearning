@@ -3,8 +3,10 @@ package ch.supsi.controller.user;
 
 import ch.supsi.model.api.user.User;
 import ch.supsi.model.dto.api.PromotionRequestDTO;
-import ch.supsi.service.user.api.IUserService;
+import ch.supsi.model.dto.api.UserWithoutCoursesDTO;
+import ch.supsi.service.user.IUserService;
 import ch.supsi.service.user.microsoftGraph.IMicrosoftGraphService;
+import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -31,7 +33,7 @@ public class UserController {
     @RolesAllowed("ADMIN")
     @Operation(summary = "Get all Users (no admins)")
     @APIResponse(
-            responseCode = "204",
+            responseCode = "200",
             description = "Return all users which are not admin"
     )
     public Response getAllUsers() {
@@ -54,5 +56,19 @@ public class UserController {
         );
 
         return Response.status(Response.Status.NO_CONTENT).build();
+    }
+
+    @GET
+    @Path("/me")
+    @RolesAllowed({"STUDENT", "TEACHER", "ADMIN"})
+    @Operation(summary = "Get user by azure oid")
+    @APIResponse(
+            responseCode = "200",
+            description = "Return user given oid"
+    )
+    public Response getUser() {
+        String oid = this.userService.getOidFromJWT();
+        UserWithoutCoursesDTO userDTO = this.userService.buildUserWithoutCoursesDTO(this.microsoftGraphService.getUserByOid(oid));
+        return Response.ok(userDTO).build();
     }
 }

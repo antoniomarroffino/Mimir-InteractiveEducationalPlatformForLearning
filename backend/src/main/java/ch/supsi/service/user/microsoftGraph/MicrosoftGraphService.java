@@ -28,20 +28,20 @@ public class MicrosoftGraphService implements IMicrosoftGraphService {
     }
 
     @Override
-    public UserWithoutCoursesDTO getUserByOid(String oid) {
-        Optional<UserWithoutCoursesDTO> userWithoutCoursesDTOOptional =
-                this.buildUser(this.graphServiceClient.users(oid)
+    public User getUserByOid(String oid) {
+        Optional<User> microsoftUser =
+                Optional.ofNullable(this.graphServiceClient.users(oid)
                         .buildRequest()
                         .get());
 
-        if (userWithoutCoursesDTOOptional.isEmpty())
-            throw new NotFoundException("User with OID " + oid + " not found");
+        if (microsoftUser.isEmpty())
+            throw new NotFoundException("User with OID " + oid + " does not exist in microsoft graph");
 
-        return userWithoutCoursesDTOOptional.get();
+        return microsoftUser.get();
     }
 
     @Override
-    public UserWithoutCoursesDTO getUserByEmail(String email) {
+    public User getUserByEmail(String email) {
         UserCollectionPage response = this.graphServiceClient.users()
                 .buildRequest()
                 .filter("userPrincipalName eq '" + email + "'")
@@ -50,19 +50,16 @@ public class MicrosoftGraphService implements IMicrosoftGraphService {
         if (response == null)
             throw new InternalServerErrorException("Error calling MicrosoftGraphService");
 
+        Optional<User> microsoftUser = response.getCurrentPage().stream().findFirst();
 
-        Optional<UserWithoutCoursesDTO> userWithoutCoursesDTOOptional =
-                this.buildUser(response.getCurrentPage().stream()
-                        .findFirst().orElse(null));
+        if (microsoftUser.isEmpty())
+            throw new NotFoundException("User with mail " + email + " does not exist in microsoft graph");
 
-        if (userWithoutCoursesDTOOptional.isEmpty())
-            throw new NotFoundException("User with mail " + email + " not found");
-
-        return userWithoutCoursesDTOOptional.get();
+        return microsoftUser.get();
     }
 
     @Override
-    public List<UserWithoutCoursesDTO> getAllUsers() {
+    public List<User> getAllUsers() {
         UserCollectionPage response = this.graphServiceClient.users()
                 .buildRequest()
                 .get();
@@ -72,18 +69,6 @@ public class MicrosoftGraphService implements IMicrosoftGraphService {
 
         return response.getCurrentPage()
                 .stream()
-                .map(this::buildUser)
-                .map(Optional::orElseThrow)
                 .toList();
-    }
-
-    private Optional<UserWithoutCoursesDTO> buildUser(User microsoftGraphUser) {
-        if (microsoftGraphUser == null) return Optional.empty();
-
-        UserWithoutCoursesDTO userWithoutCoursesDTO = new UserWithoutCoursesDTO();
-        userWithoutCoursesDTO.setAzureOid(microsoftGraphUser.id);
-        userWithoutCoursesDTO.setName(microsoftGraphUser.displayName);
-        userWithoutCoursesDTO.setEmail(microsoftGraphUser.userPrincipalName);
-        return Optional.of(userWithoutCoursesDTO);
     }
 }
