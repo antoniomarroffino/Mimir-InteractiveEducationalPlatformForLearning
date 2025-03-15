@@ -1,16 +1,26 @@
-import {QuestionDTO, QuestionType, TrueFalseQuestionDTO} from '@dti-isin/backend-api-client';
 import React from "react";
+import {
+    QuestionDTO,
+    TrueFalseQuestionDTO,
+    MultipleChoiceQuestionDTO
+} from '@dti-isin/backend-api-client';
+import { QuestionElement } from './QuestionElement';
 
 type SpecificQuestionDTO =
     | QuestionDTO
-    | TrueFalseQuestionDTO;
+    | TrueFalseQuestionDTO
+    | MultipleChoiceQuestionDTO;
 
 interface QuestionsListProps {
     questions: SpecificQuestionDTO[];
+    onEditQuestion?: (question: SpecificQuestionDTO) => void;
+    onDeleteQuestion?: (questionId: string) => void;
 }
 
 export const QuestionsList: React.FC<QuestionsListProps> = ({
-                                                                questions
+                                                                questions,
+                                                                onEditQuestion,
+                                                                onDeleteQuestion
                                                             }) => (
     <div>
         <h2 className="text-lg font-semibold mb-4">Questions</h2>
@@ -21,36 +31,13 @@ export const QuestionsList: React.FC<QuestionsListProps> = ({
         ) : (
             <div className="space-y-2">
                 {questions.map((question, index) => (
-                    <div
+                    <QuestionElement
                         key={question.id}
-                        className="flex justify-between items-center p-2 bg-base-200 rounded"
-                    >
-                        <div className="flex flex-col">
-                            <div className="flex items-center gap-2">
-                                <span className="font-semibold">{index + 1}. {question.questionText}</span>
-                                <span className="badge badge-primary">
-                                    {question.type}
-                                </span>
-                            </div>
-
-                            {/* Dettagli specifici per TRUE/FALSE */}
-                            {question.type === QuestionType.TrueFalse && (
-                                <div className="text-sm text-base-content/70 mt-1">
-                                    Correct
-                                    Answer: {(question as TrueFalseQuestionDTO).correctAnswer ? 'True' : 'False'}
-                                </div>
-                            )}
-
-                            {/* Aggiungi altri tipi di domande in futuro */}
-                        </div>
-
-                        <button
-                            className="btn btn-xs btn-error"
-                            onClick={() => question.id}
-                        >
-                            Delete
-                        </button>
-                    </div>
+                        question={question}
+                        index={index}
+                        onEdit={onEditQuestion}
+                        onDelete={onDeleteQuestion}
+                    />
                 ))}
             </div>
         )}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BsCheckCircleFill, BsCircle } from 'react-icons/bs';
 
 interface MultipleChoiceTemplateProps {
@@ -8,6 +8,7 @@ interface MultipleChoiceTemplateProps {
     onCorrectChoicesChange: (correctChoices: number[]) => void;
     isLoading?: boolean;
     disabled?: boolean;
+    onValidationChange?: (isValid: boolean) => void;
 }
 
 export const MultipleChoiceQuestionTemplate: React.FC<MultipleChoiceTemplateProps> = ({
@@ -16,9 +17,34 @@ export const MultipleChoiceQuestionTemplate: React.FC<MultipleChoiceTemplateProp
                                                                                           onChoicesChange,
                                                                                           onCorrectChoicesChange,
                                                                                           isLoading = false,
-                                                                                          disabled = false
+                                                                                          disabled = false,
+                                                                                          onValidationChange
                                                                                       }) => {
     const [availableChoices, setAvailableChoices] = useState(4);
+
+    // Effetto per impostare le 4 scelte di default all'inizio
+    useEffect(() => {
+        const initialChoices = Array(4).fill('');
+        onChoicesChange(initialChoices);
+    }, [onChoicesChange]);
+
+    // Effetto per gestire le risposte corrette quando cambiano le scelte disponibili
+    useEffect(() => {
+        // Filtra le risposte corrette per mantenere solo quelle visibili
+        const filteredCorrectChoices = correctChoices.filter(index => index < availableChoices);
+
+        // Se le risposte corrette sono cambiate, aggiorna
+        if (filteredCorrectChoices.length !== correctChoices.length) {
+            onCorrectChoicesChange(filteredCorrectChoices);
+        }
+    }, [availableChoices, correctChoices, onCorrectChoicesChange]);
+
+    useEffect(() => {
+        const isValid = correctChoices.length > 0 &&
+            choices.slice(0, availableChoices).some(choice => choice.trim() !== '');
+
+        onValidationChange?.(isValid);
+    }, [correctChoices, choices, availableChoices, onValidationChange]);
 
     const handleChoiceChange = (index: number, value: string) => {
         const newChoices = [...choices];
@@ -33,7 +59,7 @@ export const MultipleChoiceQuestionTemplate: React.FC<MultipleChoiceTemplateProp
             // Rimuovi se già selezionata
             onCorrectChoicesChange(correctChoices.filter(i => i !== index));
         } else {
-            // Aggiungi se non ha raggiunto il massimo
+            // Aggiungi
             onCorrectChoicesChange([...correctChoices, index]);
         }
     };
@@ -50,7 +76,7 @@ export const MultipleChoiceQuestionTemplate: React.FC<MultipleChoiceTemplateProp
                         className={`btn btn-xs ${availableChoices === num ? 'btn-primary' : 'btn-outline'}`}
                         onClick={() => {
                             setAvailableChoices(num);
-                            // Aggiorna le scelte se necessario
+                            // Assicura che ci siano abbastanza scelte
                             const newChoices = [...choices];
                             while (newChoices.length < num) {
                                 newChoices.push('');
@@ -89,6 +115,13 @@ export const MultipleChoiceQuestionTemplate: React.FC<MultipleChoiceTemplateProp
                     </div>
                 ))}
             </div>
+
+            {/* Messaggio di validazione */}
+            {correctChoices.length === 0 && (
+                <div className="text-error text-sm mt-2">
+                    Please select at least one correct answer
+                </div>
+            )}
         </div>
     );
 };

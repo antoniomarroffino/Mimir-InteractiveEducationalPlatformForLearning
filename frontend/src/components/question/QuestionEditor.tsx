@@ -1,7 +1,12 @@
-import React, {useEffect, useState} from 'react';
-import {MultipleChoiceQuestionDTO, QuestionDTO, QuestionType, TrueFalseQuestionDTO} from '@dti-isin/backend-api-client';
-import {TrueFalseQuestionTemplate} from './TrueFalseQuestionTemplate';
-import {MultipleChoiceQuestionTemplate} from './MultipleChoiceQuestionTemplate';
+import React, { useState, useEffect } from 'react';
+import {
+    MultipleChoiceQuestionDTO,
+    QuestionDTO,
+    QuestionType,
+    TrueFalseQuestionDTO
+} from '@dti-isin/backend-api-client';
+import { TrueFalseQuestionTemplate } from './TrueFalseQuestionTemplate';
+import { MultipleChoiceQuestionTemplate } from './MultipleChoiceQuestionTemplate';
 
 type SpecificQuestionDTO =
     | QuestionDTO
@@ -28,6 +33,7 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
                                                                   disabled = false
                                                               }) => {
     const [questionText, setQuestionText] = useState(template.questionText || '');
+    const [isQuestionValid, setIsQuestionValid] = useState(false);
 
     // State per True/False
     const [correctAnswer, setCorrectAnswer] = useState<boolean>(
@@ -62,6 +68,11 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Validazione aggiuntiva per Multiple Choice
+        if (questionType === QuestionType.MultipleChoice && !isQuestionValid) {
+            return;
+        }
 
         const finalQuestion: SpecificQuestionDTO = {
             ...template,
@@ -104,6 +115,7 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
                         onCorrectChoicesChange={setCorrectChoices}
                         isLoading={isLoading}
                         disabled={disabled}
+                        onValidationChange={setIsQuestionValid}
                     />
                 );
             default:
@@ -145,7 +157,12 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
                     <button
                         type="submit"
                         className="btn btn-primary"
-                        disabled={!questionText.trim() || isLoading || disabled}
+                        disabled={
+                            !questionText.trim() ||
+                            isLoading ||
+                            disabled ||
+                            (questionType === QuestionType.MultipleChoice && !isQuestionValid)
+                        }
                     >
                         {isLoading ? <span className="loading loading-spinner"></span> : 'Save Question'}
                     </button>
