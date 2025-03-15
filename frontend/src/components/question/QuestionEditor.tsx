@@ -16,6 +16,7 @@ interface QuestionEditorProps {
     onCancel: () => void;
     onQuestionTextChange?: (text: string) => void;
     isLoading?: boolean;
+    disabled?: boolean;
 }
 
 export const QuestionEditor: React.FC<QuestionEditorProps> = ({
@@ -24,7 +25,8 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
                                                                   onSave,
                                                                   onCancel,
                                                                   onQuestionTextChange,
-                                                                  isLoading = false
+                                                                  isLoading = false,
+                                                                  disabled = false
                                                               }) => {
     const [questionText, setQuestionText] = useState(template.questionText || '');
     const [correctAnswer, setCorrectAnswer] = useState<boolean>(
@@ -33,7 +35,6 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
             : true
     );
 
-    // Effetto per aggiornare il template quando cambia correctAnswer
     useEffect(() => {
         if (questionType === QuestionType.TrueFalse) {
             (template as TrueFalseQuestionDTO).correctAnswer = correctAnswer;
@@ -77,7 +78,7 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
                             <input
                                 type="radio"
                                 className="radio"
-                                checked={correctAnswer === true}
+                                checked={correctAnswer}
                                 onChange={() => setCorrectAnswer(true)}
                                 disabled={isLoading}
                             />
@@ -85,7 +86,7 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
                             <input
                                 type="radio"
                                 className="radio"
-                                checked={correctAnswer === false}
+                                checked={!correctAnswer}
                                 onChange={() => setCorrectAnswer(false)}
                                 disabled={isLoading}
                             />
@@ -99,7 +100,7 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
     };
 
     return (
-        <div className="bg-base-100 rounded-lg p-6 shadow">
+        <div className={`bg-base-100 rounded-lg p-6 shadow ${disabled ? 'opacity-50' : ''}`}>
             <h2 className="text-xl font-semibold mb-4">
                 {questionType} Question
             </h2>
@@ -114,7 +115,7 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
                         className="textarea textarea-bordered h-24"
                         placeholder="Enter your question"
                         required
-                        disabled={isLoading}
+                        disabled={isLoading || disabled}
                     />
                 </div>
 
@@ -125,14 +126,14 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
                         type="button"
                         className="btn btn-ghost"
                         onClick={onCancel}
-                        disabled={isLoading}
+                        disabled={isLoading || disabled}
                     >
                         Cancel
                     </button>
                     <button
                         type="submit"
                         className="btn btn-primary"
-                        disabled={!questionText.trim() || isLoading}
+                        disabled={!questionText.trim() || isLoading || disabled}
                     >
                         {isLoading ? <span className="loading loading-spinner"></span> : 'Save Question'}
                     </button>
