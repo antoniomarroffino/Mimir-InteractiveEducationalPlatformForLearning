@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import {
-    QuestionDTO,
-    QuestionType,
-    TrueFalseQuestionDTO
-} from '@dti-isin/backend-api-client';
+import React, {useEffect, useState} from 'react';
+import {MultipleChoiceQuestionDTO, QuestionDTO, QuestionType, TrueFalseQuestionDTO} from '@dti-isin/backend-api-client';
+import {TrueFalseQuestionTemplate} from './TrueFalseQuestionTemplate';
+import {MultipleChoiceQuestionTemplate} from './MultipleChoiceQuestionTemplate';
 
 type SpecificQuestionDTO =
     | QuestionDTO
     | TrueFalseQuestionDTO
+    | MultipleChoiceQuestionDTO;
 
 interface QuestionEditorProps {
     questionType: QuestionType;
@@ -29,10 +28,24 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
                                                                   disabled = false
                                                               }) => {
     const [questionText, setQuestionText] = useState(template.questionText || '');
+
+    // State per True/False
     const [correctAnswer, setCorrectAnswer] = useState<boolean>(
         questionType === QuestionType.TrueFalse
             ? (template as TrueFalseQuestionDTO).correctAnswer
             : true
+    );
+
+    // State per Multiple Choice
+    const [choices, setChoices] = useState<string[]>(
+        questionType === QuestionType.MultipleChoice
+            ? (template as MultipleChoiceQuestionDTO).choices || ['', '', '', '']
+            : []
+    );
+    const [correctChoices, setCorrectChoices] = useState<number[]>(
+        questionType === QuestionType.MultipleChoice
+            ? (template as MultipleChoiceQuestionDTO).correctAnswerIndexes || []
+            : []
     );
 
     useEffect(() => {
@@ -56,44 +69,43 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
             type: questionType
         };
 
-        switch(questionType) {
+        switch (questionType) {
             case QuestionType.TrueFalse:
                 (finalQuestion as TrueFalseQuestionDTO).correctAnswer = correctAnswer;
                 break;
+            case QuestionType.MultipleChoice: {
+                const mcQuestion = finalQuestion as MultipleChoiceQuestionDTO;
+                mcQuestion.choices = choices;
+                mcQuestion.correctAnswerIndexes = correctChoices;
+                break;
+            }
         }
 
         onSave(finalQuestion);
     };
 
     const renderSpecificFields = () => {
-        switch(questionType) {
-            case QuestionType.TrueFalse: {
+        switch (questionType) {
+            case QuestionType.TrueFalse:
                 return (
-                    <div className="form-control">
-                        <label className="label">
-                            <span className="label-text">Correct Answer</span>
-                        </label>
-                        <div className="flex items-center space-x-4">
-                            <span>True</span>
-                            <input
-                                type="radio"
-                                className="radio"
-                                checked={correctAnswer}
-                                onChange={() => setCorrectAnswer(true)}
-                                disabled={isLoading}
-                            />
-                            <span>False</span>
-                            <input
-                                type="radio"
-                                className="radio"
-                                checked={!correctAnswer}
-                                onChange={() => setCorrectAnswer(false)}
-                                disabled={isLoading}
-                            />
-                        </div>
-                    </div>
+                    <TrueFalseQuestionTemplate
+                        correctAnswer={correctAnswer}
+                        onCorrectAnswerChange={setCorrectAnswer}
+                        isLoading={isLoading}
+                        disabled={disabled}
+                    />
                 );
-            }
+            case QuestionType.MultipleChoice:
+                return (
+                    <MultipleChoiceQuestionTemplate
+                        choices={choices}
+                        correctChoices={correctChoices}
+                        onChoicesChange={setChoices}
+                        onCorrectChoicesChange={setCorrectChoices}
+                        isLoading={isLoading}
+                        disabled={disabled}
+                    />
+                );
             default:
                 return null;
         }
