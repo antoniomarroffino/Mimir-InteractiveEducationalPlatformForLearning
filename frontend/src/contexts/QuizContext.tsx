@@ -1,24 +1,19 @@
-import { createContext, useContext } from "react";
+import { createContext } from "react";
 import { QuizDTO } from "@dti-isin/backend-api-client";
 
-interface QuizContextType {
+export type QuizContextType = {
     quizzes: QuizDTO[];
-    isLoading: boolean;
-    error: Error | null;
-    createQuiz: (name: string) => Promise<void>;
-    updateQuiz: (quizId: string, data: QuizDTO) => Promise<void>;
-    deleteQuiz: (quizId: string) => Promise<void>;
+    isLoadingQuizzes: boolean;
+    errorQuizzes: Error | null;
     selectedQuizId: string | null;
     setSelectedQuizId: (id: string | null) => void;
+    createQuiz: (name: string) => Promise<QuizDTO>;
     fetchQuizzes: () => Promise<void>;
-}
+    isCreatingQuiz: boolean;
+    errorCreateQuiz: Error | null;
+    deleteQuiz: (quizId: string) => Promise<void>;
+    isDeletingQuiz: boolean;
+    errorDeleteQuiz: Error | null;
+};
 
 export const QuizContext = createContext<QuizContextType | undefined>(undefined);
-
-export const useQuizContext = () => {
-    const context = useContext(QuizContext);
-    if (!context) {
-        throw new Error("useQuizContext must be used within a QuizProvider");
-    }
-    return context;
-};

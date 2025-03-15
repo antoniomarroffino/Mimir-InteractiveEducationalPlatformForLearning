@@ -1,39 +1,14 @@
-import {useEffect, useState} from 'react';
-import {Link, useNavigate, useParams} from 'react-router-dom';
-import {useCourse} from '../hooks/useCourse';
-import {BsChevronRight} from 'react-icons/bs';
-import {FolderList} from "../components/folder/FolderList.tsx";
+import { useEffect } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useCourse } from '../hooks/useCourse';
+import { BsChevronRight } from 'react-icons/bs';
+import { FolderList } from "../components/folder/FolderList.tsx";
 import CreateFolderForm from "../components/folder/CreateFolderForm.tsx";
 
 const CourseDetails = () => {
-    const {courseId} = useParams();
+    const { courseId } = useParams();
     const navigate = useNavigate();
-    const {courses, setSelectedCourseId, fetchCourses} = useCourse();
-    const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-        let isMounted = true;
-
-        (async () => {
-            try {
-                if (courses.length === 0) {
-                    await fetchCourses();
-                }
-                if (isMounted) {
-                    setIsLoading(false);
-                }
-            } catch (error) {
-                console.error('Failed to initialize page:', error);
-                if (isMounted) {
-                    setIsLoading(false);
-                }
-            }
-        })();
-
-        return () => {
-            isMounted = false;
-        };
-    }, [fetchCourses, courses.length]);
+    const { courses, setSelectedCourseId } = useCourse();
 
     useEffect(() => {
         if (courseId) {
@@ -43,20 +18,12 @@ const CourseDetails = () => {
 
     const currentCourse = courses.find(course => course.id === courseId);
 
-    if (isLoading) {
-        return (
-            <div className="flex justify-center items-center min-h-screen">
-                <div className="loading loading-spinner loading-lg"></div>
-            </div>
-        );
-    }
-
     if (!courseId || !currentCourse) {
         return (
-            <div className="alert alert-warning">
-                Course not found.
+            <div className="alert alert-warning flex justify-between items-center">
+                <span>Course not found.</span>
                 <button
-                    className="btn btn-sm btn-outline ml-4"
+                    className="btn btn-sm btn-outline"
                     onClick={() => navigate('/')}
                 >
                     Back to Courses
@@ -95,11 +62,14 @@ const CourseDetails = () => {
             </div>
 
             <CreateFolderForm/>
+
             {/* Folders Section */}
             <div className="bg-base-100 rounded-lg p-6 shadow-lg">
                 <h2 className="text-2xl font-semibold mb-4">Folders</h2>
-                <FolderList folders={currentCourse.folders || []}
-                            courseId={courseId}/>
+                <FolderList
+                    folders={currentCourse.folders || []}
+                    courseId={courseId}
+                />
             </div>
         </div>
     );

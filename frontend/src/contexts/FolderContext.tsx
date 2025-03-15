@@ -1,15 +1,20 @@
 import { createContext, useContext } from "react";
-import { FolderDTO } from "backend/target/backend-api-client/index.ts";
+import { FolderDTO } from "@dti-isin/backend-api-client";
 
-interface FolderContextType {
+type FolderContextType = {
     folders: FolderDTO[];
-    isLoading: boolean;
-    error: Error | null;
-    createFolder: (name: string) => Promise<void>;
+    isFetchingFolders: boolean;
+    fetchError: Error | null;
+
+    isCreatingFolder: boolean;
+    createError: Error | null;
+
     selectedFolderId: string | null;
     setSelectedFolderId: (id: string | null) => void;
+
+    createFolder: (name: string) => Promise<void>;
     fetchFolders: () => Promise<void>;
-}
+};
 
 export const FolderContext = createContext<FolderContextType | undefined>(undefined);
 

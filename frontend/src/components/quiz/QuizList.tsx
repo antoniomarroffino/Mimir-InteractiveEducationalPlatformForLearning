@@ -1,6 +1,7 @@
 import React from 'react';
 import {QuizDTO} from '@dti-isin/backend-api-client';
 import {QuizRow} from './QuizRow';
+import {useQuiz} from "../../hooks/useQuiz.ts";
 
 interface QuizListProps {
     quizzes: QuizDTO[];
@@ -8,14 +9,12 @@ interface QuizListProps {
     folderId: string;
 }
 
-export const QuizList: React.FC<QuizListProps> = ({
-                                                      quizzes,
-                                                      courseId,
-                                                      folderId
-                                                  }) => {
-    if (quizzes.length === 0) {
+export const QuizList: React.FC<QuizListProps> = ({courseId, folderId}) => {
+    const { quizzes } = useQuiz();
+
+    if (!quizzes?.length) {
         return (
-            <p className="text-center text-base-content/70">
+            <p className="text-center text-base-content/70 py-4">
                 No quizzes in this folder
             </p>
         );
@@ -28,7 +27,8 @@ export const QuizList: React.FC<QuizListProps> = ({
                     key={quiz.id}
                     quiz={quiz}
                     courseId={courseId}
-                    folderId={folderId}/>
+                    folderId={folderId}
+                />
             ))}
         </div>
     );

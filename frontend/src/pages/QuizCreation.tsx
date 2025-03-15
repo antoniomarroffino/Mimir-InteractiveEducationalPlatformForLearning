@@ -5,14 +5,14 @@ import { questionService } from '../services/questionService';
 import { QuestionTypeSelector } from '../components/question/QuestionTypeSelector';
 import { QuestionEditor } from '../components/question/QuestionEditor';
 import { QuestionsList } from '../components/question/QuestionList';
-import { useCourseContext } from '../contexts/CourseContext.tsx';
 import { Breadcrumb } from "../components/common/Breadcrumb.tsx";
 import CreateQuestionForm from '../components/question/CreateQuestionForm';
+import {useCourse} from "../hooks/useCourse.ts";
 
 export const QuizCreation: React.FC = () => {
     const { courseId, folderId, quizId } = useParams();
     const navigate = useNavigate();
-    const { courses } = useCourseContext();
+    const { courses } = useCourse();
 
     const [questions, setQuestions] = useState<QuestionDTO[]>([]);
     const [isCreatingQuestion, setIsCreatingQuestion] = useState(false);

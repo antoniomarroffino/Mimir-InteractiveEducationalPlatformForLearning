@@ -1,48 +1,32 @@
-import { useQuiz } from '../../hooks/useQuiz';
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { FolderDTO } from "@dti-isin/backend-api-client";
-import { BsChevronDown, BsChevronUp, BsFolder2 } from "react-icons/bs";
-import { QuizList } from "../quiz/QuizList.tsx";
+import React, {useState} from "react";
+import {FolderDTO} from "@dti-isin/backend-api-client";
+import {BsChevronDown, BsChevronUp, BsFolder2, BsPlus} from "react-icons/bs";
+import {QuizList} from "../quiz/QuizList";
+import {useQuiz} from "../../hooks/useQuiz.ts";
 
 interface FolderRowProps {
     folder: FolderDTO;
     courseId: string;
 }
 
-export const FolderRow = ({ folder, courseId }: FolderRowProps) => {
+export const FolderRow = ({folder, courseId}: FolderRowProps) => {
     const [isExpanded, setIsExpanded] = useState(false);
-    const [newQuizName, setNewQuizName] = useState('');
-    const navigate = useNavigate();
-
-    const {
-        quizzes,
-        isLoading,
-        error,
-        createQuiz,
-        fetchQuizzes
-    } = useQuiz();
-
-    const quizCount = quizzes.length;
-
-    useEffect(() => {
-        if (isExpanded && folder.id) {
-            fetchQuizzes();
-        }
-    }, [isExpanded, fetchQuizzes, folder.id]);
+    const [showCreateForm, setShowCreateForm] = useState(false);
+    const [quizName, setQuizName] = useState("");
+    const {createQuiz, isCreatingQuiz} = useQuiz();
 
     const handleCreateQuiz = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!newQuizName.trim() || !folder.id) return;
+
+        if (!quizName.trim()) return;
 
         try {
-            const newQuiz = await createQuiz(newQuizName.trim());
-            if (newQuiz?.id) {
-                navigate(`/courses/${courseId}/folders/${folder.id}/quizzes/${newQuiz.id}/edit`);
-                setNewQuizName('');
-            }
+            await createQuiz(quizName.trim());
+
+            setQuizName("");
+            setShowCreateForm(false);
         } catch (error) {
-            console.error('Failed to create quiz:', error);
+            console.error("Failed to create quiz", error);
         }
     };
 
@@ -53,62 +37,66 @@ export const FolderRow = ({ folder, courseId }: FolderRowProps) => {
                 onClick={() => setIsExpanded(!isExpanded)}
             >
                 <div className="flex items-center gap-3">
-                    <BsFolder2 className="text-xl text-primary" />
+                    <BsFolder2 className="text-xl text-primary"/>
                     <h3 className="font-semibold">{folder.name}</h3>
                 </div>
                 <div className="flex items-center gap-4">
                     <span className="text-base-content/70">
-                        {quizCount} quizzes
+                        {folder.quizzes?.length || 0} quizzes
                     </span>
-                    {isExpanded ? <BsChevronUp /> : <BsChevronDown />}
+                    {isExpanded ? <BsChevronUp/> : <BsChevronDown/>}
                 </div>
             </div>
 
             {isExpanded && (
                 <div className="border-t border-base-200 p-4">
-                    {error && (
-                        <div className="alert alert-error mb-4">
-                            {error.message}
-                        </div>
-                    )}
+                    <QuizList
+                        quizzes={folder.quizzes || []}
+                        courseId={courseId}
+                        folderId={folder.id!}
+                    />
 
-                    {isLoading ? (
-                        <div className="flex justify-center py-4">
-                            <span className="loading loading-spinner"></span>
-                        </div>
-                    ) : (
-                        <div className="space-y-4">
-                            <QuizList
-                                quizzes={quizzes}
-                                courseId={courseId}
-                                folderId={folder.id || ""}
-                            />
-
-                            <form onSubmit={handleCreateQuiz} className="mt-4">
-                                <div className="join w-full">
-                                    <input
-                                        type="text"
-                                        value={newQuizName}
-                                        onChange={(e) => setNewQuizName(e.target.value)}
-                                        placeholder="Enter quiz name"
-                                        className="input input-bordered join-item flex-1"
-                                        disabled={isLoading}
-                                    />
+                    <div className="mt-4">
+                        {!showCreateForm ? (
+                            <button
+                                onClick={() => setShowCreateForm(true)}
+                                className="btn btn-primary w-full"
+                            >
+                                <BsPlus className="text-xl mr-2"/>
+                                Add New Quiz
+                            </button>
+                        ) : (
+                            <form onSubmit={handleCreateQuiz} className="space-y-2">
+                                <input
+                                    type="text"
+                                    value={quizName}
+                                    onChange={(e) => setQuizName(e.target.value)}
+                                    placeholder="Enter quiz name"
+                                    className="input input-bordered w-full"
+                                    disabled={isCreatingQuiz}
+                                />
+                                <div className="flex gap-2">
                                     <button
                                         type="submit"
-                                        className="btn btn-primary join-item"
-                                        disabled={!newQuizName.trim() || isLoading}
+                                        className="btn btn-primary flex-1"
+                                        disabled={isCreatingQuiz || !quizName.trim()}
                                     >
-                                        {isLoading ? (
-                                            <span className="loading loading-spinner"></span>
-                                        ) : (
-                                            'Create Quiz'
-                                        )}
+                                        {isCreatingQuiz ? "Creating..." : "Create Quiz"}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setShowCreateForm(false);
+                                            setQuizName("");
+                                        }}
+                                        className="btn btn-ghost"
+                                    >
+                                        Cancel
                                     </button>
                                 </div>
                             </form>
-                        </div>
-                    )}
+                        )}
+                    </div>
                 </div>
             )}
         </div>

@@ -1,59 +1,88 @@
 import React from "react";
-import { useQuery, useMutation, useQueryClient } from "react-query";
-import { FolderContext } from "../contexts/FolderContext.tsx";
-import { FolderDTO } from "@dti-isin/backend-api-client";
-import { folderApi } from "../../config/config.ts";
-import { useCourse } from "../hooks/useCourse";
+import {useMutation, useQuery, useQueryClient} from "react-query";
+import {FolderContext} from "../contexts/FolderContext";
+import {FolderDTO} from "@dti-isin/backend-api-client";
+import {folderApi} from "../../config/config";
+import {useCourse} from "../hooks/useCourse";
 
-export const FolderProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const FolderProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const queryClient = useQueryClient();
-    const { selectedCourseId } = useCourse();
+    const {selectedCourseId, courses} = useCourse();
+
+    // Verifica che il corso selezionato esista realmente
+    const isValidCourse = courses.some(c => c.id === selectedCourseId);
     const [selectedFolderId, setSelectedFolderId] = React.useState<string | null>(null);
 
-    const { data: folders = [], isLoading, error: queryError } = useQuery<FolderDTO[], Error>({
+    // Query per le folder
+    const {
+        data: folders = [],
+        isLoading: isFetchingFolders,
+        error: fetchError,
+        refetch: refetchFolders
+    } = useQuery<FolderDTO[], Error>({
         queryKey: ["folders", selectedCourseId],
         queryFn: async () => {
-            if (!selectedCourseId) return [];
-            const response = await folderApi.apiCoursesCourseIdFoldersGet({ courseId: selectedCourseId });
+            if (!selectedCourseId || !isValidCourse) return [];
+            const response = await folderApi.apiCoursesCourseIdFoldersGet({courseId: selectedCourseId});
             return response.data;
         },
-        enabled: !!selectedCourseId,
+        enabled: !!selectedCourseId && isValidCourse,
     });
 
-    const createFolderMutation = useMutation<FolderDTO, Error, string>({
+    const {
+        mutateAsync: createFolderMutation,
+        isLoading: isCreatingFolder,
+        error: createError
+    } = useMutation<FolderDTO, Error, string>({
         mutationFn: async (name: string) => {
             if (!selectedCourseId) throw new Error("No course selected");
             const response = await folderApi.apiCoursesCourseIdFoldersPost({
                 courseId: selectedCourseId,
-                folderDTO: { name }
+                folderDTO: {name}
             });
             return response.data;
         },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["folders", selectedCourseId] });
+        onSuccess: (newFolder) => {
+            queryClient.setQueryData(
+                ["folders", selectedCourseId],
+                (oldData: FolderDTO[] | undefined) => {
+                    return oldData ? [...oldData, newFolder] : [newFolder];
+                }
+            );
+
+            queryClient.invalidateQueries({
+                queryKey: ["folders", selectedCourseId],
+            });
         },
     });
 
     const createFolder = async (name: string) => {
-        await createFolderMutation.mutateAsync(name);
+        try {
+            await createFolderMutation(name);
+        } catch (err) {
+            console.error("Folder creation failed:", err);
+            throw err; // Rilancia l'errore per gestione nei componenti
+        }
     };
 
     const fetchFolders = async () => {
-        await queryClient.invalidateQueries({ queryKey: ["folders", selectedCourseId] });
+        await refetchFolders();
     };
 
+    const value = {
+        folders,
+        isFetchingFolders,
+        fetchError,
+        isCreatingFolder,
+        createError,
+        selectedFolderId,
+        setSelectedFolderId,
+        createFolder,
+        fetchFolders
+    }
+
     return (
-        <FolderContext.Provider
-            value={{
-                folders,
-                isLoading: isLoading || createFolderMutation.isLoading,
-                error: queryError ?? createFolderMutation.error ?? null,
-                createFolder,
-                selectedFolderId,
-                setSelectedFolderId,
-                fetchFolders,
-            }}
-        >
+        <FolderContext.Provider value={value}>
             {children}
         </FolderContext.Provider>
     );

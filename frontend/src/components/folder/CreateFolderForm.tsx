@@ -4,7 +4,7 @@ import { useCourse } from "../../hooks/useCourse";
 
 const CreateFolderForm = () => {
     const [name, setName] = useState('');
-    const { createFolder, isLoading } = useFolder();
+    const { createFolder, isCreatingFolder } = useFolder();
     const { fetchCourses } = useCourse();
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -30,14 +30,14 @@ const CreateFolderForm = () => {
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Enter folder name"
                     className="input input-bordered join-item flex-1"
-                    disabled={isLoading}
+                    disabled={isCreatingFolder}
                 />
                 <button
                     type="submit"
                     className="btn btn-primary join-item"
-                    disabled={isLoading || !name.trim()}
+                    disabled={isCreatingFolder || !name.trim()}
                 >
-                    {isLoading ? (
+                    {isCreatingFolder ? (
                         <span className="loading loading-spinner"></span>
                     ) : (
                         'Create Folder'
