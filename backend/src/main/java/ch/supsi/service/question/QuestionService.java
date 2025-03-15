@@ -49,11 +49,6 @@ public class QuestionService implements IQuestionService {
         questions.forEach(q -> {
             System.out.println("Question class: " + q.getClass().getSimpleName());
             System.out.println("Question type: " + q.getType());
-
-            // Esempio di accesso a campi specifici
-            if (q instanceof TrueFalseQuestionDTO trueFalseQuestion) {
-                System.out.println("Correct Answer: " + trueFalseQuestion.getCorrectAnswer());
-            }
         });
 
         return questions;

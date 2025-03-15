@@ -1,7 +1,9 @@
 package ch.supsi.mapper;
 
+import ch.supsi.model.api.question.MultipleChoiceQuestion;
 import ch.supsi.model.api.question.Question;
 import ch.supsi.model.api.question.TrueFalseQuestion;
+import ch.supsi.model.dto.api.question.MultipleChoiceQuestionDTO;
 import ch.supsi.model.dto.api.question.QuestionDTO;
 import ch.supsi.model.dto.api.question.TrueFalseQuestionDTO;
 import ch.supsi.service.question.QuestionFactory;
@@ -34,6 +36,17 @@ public class QuestionMapper implements BaseMapper<Question, QuestionDTO> {
                 dto.setCorrectAnswer(tfQuestion.isCorrectAnswer());
 
                 logger.debug("Converted TrueFalseQuestion to DTO: {}", dto);
+                return dto;
+            }
+
+            if (question instanceof MultipleChoiceQuestion mcQuestion) {
+                MultipleChoiceQuestionDTO dto = new MultipleChoiceQuestionDTO();
+                dto.setId(question.getId().toString());
+                dto.setQuestionText(question.getQuestionText());
+                dto.setChoices(mcQuestion.getChoices());
+                dto.setCorrectAnswerIndexes(mcQuestion.getCorrectAnswerIndexes());
+
+                logger.debug("Converted MultipleChoiceQuestion to DTO: {}", dto);
                 return dto;
             }
 
@@ -74,6 +87,12 @@ public class QuestionMapper implements BaseMapper<Question, QuestionDTO> {
             if (question instanceof TrueFalseQuestion tfQuestion && dto instanceof TrueFalseQuestionDTO trueFalseDTO) {
                 tfQuestion.setCorrectAnswer(trueFalseDTO.getCorrectAnswer());
                 logger.debug("Set correct answer for TrueFalseQuestion: {}", trueFalseDTO.getCorrectAnswer());
+            }
+
+            if (question instanceof MultipleChoiceQuestion mcQuestion && dto instanceof MultipleChoiceQuestionDTO multipleChoiceDTO) {
+                mcQuestion.setChoices(multipleChoiceDTO.getChoices());
+                mcQuestion.setCorrectAnswerIndexes(multipleChoiceDTO.getCorrectAnswerIndexes());
+                logger.debug("Set choices and correct answer indexes for MultipleChoiceQuestion");
             }
 
             logger.debug("Converted DTO to Question entity: {}", question);

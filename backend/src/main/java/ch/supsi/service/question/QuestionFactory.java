@@ -15,6 +15,7 @@ public class QuestionFactory {
     public QuestionFactory() {
         strategies = new EnumMap<>(QuestionType.class);
         strategies.put(QuestionType.TRUE_FALSE, new TrueFalseQuestionStrategy());
+        strategies.put(QuestionType.MULTIPLE_CHOICE, new MultipleChoiceQuestionStrategy());
     }
 
     public Question createQuestion(QuestionType type) {
