@@ -67,14 +67,37 @@ export const QuizCreationContent: React.FC = () => {
             setError(null);
             await addQuestionToQuiz(questionData);
 
-            setIsCreatingQuestion(false);
+            // Resetta tutto tranne il fatto che stiamo creando una domanda
             setSelectedQuestionType(null);
             setQuestionTemplate(null);
+            setDraftQuestion({ questionText: '' });
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Failed to save question');
         }
     };
 
+    const handleQuestionTextChange = (text: string) => {
+        setDraftQuestion(prev => ({
+            ...prev,
+            questionText: text
+        }));
+    };
+
+    const handleTypeSelection = async (type: QuestionType) => {
+        try {
+            const template = await createQuestionTemplate(type);
+            setSelectedQuestionType(type);
+            setQuestionTemplate(template);
+
+            // Mantieni il testo della domanda se già presente
+            setDraftQuestion(prev => ({
+                ...prev,
+                type
+            }));
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Failed to create question template');
+        }
+    };
     return (
         <div className="container mx-auto px-4 py-8">
             {/* Breadcrumb */}
@@ -142,7 +165,7 @@ export const QuizCreationContent: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Editor della domanda - Ora al centro */}
+                {/* Editor della domanda */}
                 <div className="col-span-6">
                     <QuestionEditor
                         questionType={selectedQuestionType || QuestionType.TrueFalse}
@@ -159,34 +182,18 @@ export const QuizCreationContent: React.FC = () => {
                             setDraftQuestion({});
                         }}
                         isLoading={false}
-                        onQuestionTextChange={(text) => {
-                            setDraftQuestion(prev => ({
-                                ...prev,
-                                questionText: text
-                            }));
-                        }}
+                        onQuestionTextChange={handleQuestionTextChange}
                         disabled={!isCreatingQuestion || !selectedQuestionType}
                     />
                 </div>
 
-                {/* Selettore di tipo domanda - Ora a destra */}
+                {/* Selettore di tipo domanda */}
                 <div className="col-span-3">
-                    {isCreatingQuestion && !selectedQuestionType ? (
+                    {isCreatingQuestion ? (
                         <QuestionTypeSelector
-                            onSelectType={async (type) => {
-                                try {
-                                    const template = await createQuestionTemplate(type);
-                                    setSelectedQuestionType(type);
-                                    setQuestionTemplate(template);
-                                    setDraftQuestion(prev => ({
-                                        ...prev,
-                                        type
-                                    }));
-                                } catch (err) {
-                                    setError(err instanceof Error ? err.message : 'Failed to create question template');
-                                }
-                            }}
+                            onSelectType={handleTypeSelection}
                             isLoading={false}
+                            disabled={!!selectedQuestionType}
                         />
                     ) : (
                         <div className="bg-base-100 rounded-lg p-4 shadow opacity-50">

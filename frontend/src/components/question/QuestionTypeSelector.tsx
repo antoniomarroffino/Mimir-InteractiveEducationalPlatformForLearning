@@ -1,25 +1,26 @@
 import { QuestionType } from '@dti-isin/backend-api-client';
 import React from "react";
-import { questionService } from '../../services/questionService';
+import { useQuestion } from '../../hooks/useQuestion';
 
 interface QuestionTypeSelectorProps {
     onSelectType: (type: QuestionType) => void;
     isLoading?: boolean;
+    disabled?: boolean;
 }
 
 export const QuestionTypeSelector: React.FC<QuestionTypeSelectorProps> = ({
                                                                               onSelectType,
-                                                                              isLoading = false
+                                                                              isLoading = false,
+                                                                              disabled = false
                                                                           }) => {
+    const { createQuestionTemplate } = useQuestion();
+
     const handleTypeSelection = async (type: QuestionType) => {
         try {
-            // Chiama il servizio per creare il template
-            await questionService.createQuestionTemplate(type);
-// Passa il tipo e il template
+            await createQuestionTemplate(type);
             onSelectType(type);
         } catch (error) {
             console.error('Failed to create question template', error);
-            // Gestisci l'errore (potresti voler passare un metodo di gestione errori)
         }
     };
 
@@ -32,7 +33,7 @@ export const QuestionTypeSelector: React.FC<QuestionTypeSelectorProps> = ({
                         key={type}
                         className="btn btn-outline btn-block"
                         onClick={() => handleTypeSelection(type)}
-                        disabled={isLoading}
+                        disabled={isLoading || disabled}
                     >
                         {isLoading ? <span className="loading loading-spinner"></span> : type}
                     </button>
