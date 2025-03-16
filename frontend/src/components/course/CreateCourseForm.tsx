@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { useCourseContext } from '../../contexts/CourseContext';
+import { useCourse } from '../../hooks/useCourse';
 
 const CreateCourseForm = () => {
     const [name, setName] = useState('');
-    const { createCourse, isLoading } = useCourseContext();
+    const { createCourse, isCreatingCourse } = useCourse();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -27,14 +27,14 @@ const CreateCourseForm = () => {
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Enter course name"
                     className="input input-bordered join-item flex-1"
-                    disabled={isLoading}
+                    disabled={isCreatingCourse}
                 />
                 <button
                     type="submit"
                     className="btn btn-primary join-item"
-                    disabled={isLoading || !name.trim()}
+                    disabled={isCreatingCourse || !name.trim()}
                 >
-                    {isLoading ? (
+                    {isCreatingCourse ? (
                         <span className="loading loading-spinner"></span>
                     ) : (
                         'Create Course'

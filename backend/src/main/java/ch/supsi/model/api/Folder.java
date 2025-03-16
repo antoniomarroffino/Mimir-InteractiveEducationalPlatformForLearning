@@ -1,6 +1,7 @@
 package ch.supsi.model.api;
 
 import org.bson.codecs.pojo.annotations.BsonId;
+import jakarta.validation.constraints.NotBlank;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
@@ -9,9 +10,10 @@ import java.util.List;
 
 @Schema(description = "Folder model", name = "Folder")
 public class Folder {
-    @BsonId
+
     private ObjectId id;
 
+    @NotBlank(message = "Folder name cannot be null or empty")
     private String name;
 
     private List<Quiz> quizzes = new ArrayList<>();
@@ -21,12 +23,12 @@ public class Folder {
     }
 
     public Folder(String name) {
-        this.id = new ObjectId();
+        this();
         this.name = name;
     }
 
     public ObjectId getId() {
-        return id;
+        return this.id;
     }
 
     public void setId(ObjectId id) {
@@ -46,6 +48,6 @@ public class Folder {
     }
 
     public void setQuizzes(List<Quiz> quizzes) {
-        this.quizzes = quizzes;
+        this.quizzes = quizzes != null ? quizzes : new ArrayList<>();
     }
 }

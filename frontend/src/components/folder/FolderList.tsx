@@ -1,35 +1,45 @@
-import { useFolderContext } from '../../contexts/FolderContext';
-import { FolderRow } from './FolderRow';
-import CreateFolderForm from './CreateFolderForm';
+import {FolderDTO} from '@dti-isin/backend-api-client';
+import {FolderRow} from './FolderRow';
+import React from "react";
+import { QuizProvider } from '../../provider/QuizProvider';
 
-export const FolderList = () => {
-    const { folders, isLoading, error } = useFolderContext();
+interface FolderListProps {
+    folders: FolderDTO[];
+    courseId: string;
+}
 
-    if (isLoading) {
-        return <div className="loading loading-spinner loading-lg"></div>;
+export const FolderList: React.FC<FolderListProps> = ({folders, courseId}) => {
+    if (!folders?.length) {
+        return (
+            <div className="text-center text-base-content/70 py-8">
+                No folders yet. Create your first folder!
+            </div>
+        );
     }
-
-    if (error) {
-        return <div className="alert alert-error">Error: {error.message}</div>;
+    if (!courseId) {
+        return (
+            <div className="text-center text-base-content/70 py-8">
+                Invalid course ID
+            </div>
+        );
     }
 
     return (
         <div className="space-y-4">
-            <CreateFolderForm />
-            {!folders.length ? (
-                <div className="text-center text-base-content/70 py-8">
-                    No folders yet. Create your first folder!
-                </div>
-            ) : (
-                <div className="space-y-2">
-                    {folders.map(folder => (
+            {folders.map((folder: FolderDTO) => (
+                folder.id && (
+                    <QuizProvider
+                        key={folder.id}
+                        courseId={courseId}
+                        folderId={folder.id}
+                    >
                         <FolderRow
-                            key={folder.id}
                             folder={folder}
+                            courseId={courseId}
                         />
-                    ))}
-                </div>
-            )}
+                    </QuizProvider>
+                )
+            ))}
         </div>
     );
 };

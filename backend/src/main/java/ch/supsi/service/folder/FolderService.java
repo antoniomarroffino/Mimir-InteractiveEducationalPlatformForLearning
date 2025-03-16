@@ -1,5 +1,7 @@
 package ch.supsi.service.folder;
 
+import ch.supsi.mapper.CourseMapper;
+import ch.supsi.mapper.FolderMapper;
 import ch.supsi.model.api.Course;
 import ch.supsi.model.api.Folder;
 import ch.supsi.model.dto.api.FolderDTO;
@@ -13,11 +15,16 @@ import org.bson.types.ObjectId;
 import java.util.List;
 import java.util.Optional;
 
+import java.util.stream.Collectors;
+
 @ApplicationScoped
 public class FolderService implements IFolderService {
 
     @Inject
     CourseRepository courseRepository;
+
+    @Inject
+    FolderMapper folderMapper;
 
     @Override
     public List<FolderDTO> getFoldersInCourse(ObjectId courseId) {
@@ -25,7 +32,9 @@ public class FolderService implements IFolderService {
         if (courseOpt.isEmpty()) {
             throw new NotFoundException("Course " + courseId + " not found");
         }
-        return courseOpt.get().getFolders().stream().map(new FolderDTO()::fromEntity).toList();
+        return course.getFolders().stream()
+                .map(folderMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -35,9 +44,9 @@ public class FolderService implements IFolderService {
             throw new NotFoundException("Course " + courseId + " not found");
         }
 
-        return courseOpt.get().getFolders().stream()
-                .filter(f -> f.getId().toString().equals(folderId))
-                .map(new FolderDTO()::fromEntity)
+        return course.getFolders().stream()
+                .filter(f -> f.getId().equals(folderId))
+                .map(folderMapper::toDTO)
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("Folder " + folderId + " not found in course: " + courseId));
     }
@@ -53,11 +62,12 @@ public class FolderService implements IFolderService {
 
         this.verifyFolderIsValid(course, folderDTO);
 
-        Folder folder = folderDTO.toEntity();
+        Folder folder = folderMapper.toEntity(folderDTO);
+
         course.getFolders().add(folder);
         this.courseRepository.update(course);
 
-        return folderDTO.fromEntity(folder);
+        return folderMapper.toDTO(folder);
     }
 
     private void verifyFolderIsValid(Course course, FolderDTO folderDTO) {

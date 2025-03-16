@@ -1,42 +1,80 @@
 package ch.supsi.model.api;
 
-import io.quarkus.mongodb.panache.common.MongoEntity;
-import jakarta.validation.constraints.NotBlank;
-import org.bson.codecs.pojo.annotations.BsonId;
+import ch.supsi.model.api.question.Question;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
-@MongoEntity(collection = "quizzes")
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 @Schema(description = "Quiz model", name = "Quiz")
 public class Quiz {
-
-    @BsonId
     private ObjectId id;
 
-    @NotBlank(message = "Quiz name cannot be null or empty")
     private String name;
 
-    public Quiz() {
+    private String description;
+    private List<Question> questions = new ArrayList<>();
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
+    public Quiz() {
+        this.id = new ObjectId();
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
     public Quiz(String name) {
+        this();
         this.name = name;
     }
 
     public ObjectId getId() {
-        return this.id;
+        return id;
     }
 
-    public void setId(ObjectId objectId) {
-        this.id = objectId;
+    public void setId(ObjectId id) {
+        this.id = id;
     }
 
     public String getName() {
-        return this.name;
+        return name;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public List<Question> getQuestions() {
+        return questions;
+    }
+
+    public void setQuestions(List<Question> questions) {
+        this.questions = questions;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

@@ -4,8 +4,6 @@ import ch.supsi.model.api.Folder;
 import ch.supsi.model.api.Quiz;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.validation.constraints.NotBlank;
-import org.bson.types.ObjectId;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,33 +14,13 @@ public class FolderDTO {
     @NotBlank(message = "Folder name cannot be null or empty")
     private String name;
 
-    private List<Quiz> quizzes = new ArrayList<>();
+    private List<QuizDTO> quizzes = new ArrayList<>();
 
     public FolderDTO() {
     }
 
     public FolderDTO(String name) {
         this.name = name;
-    }
-
-    public FolderDTO fromEntity(Folder folder) {
-        if (folder == null) return null;
-
-        FolderDTO dto = new FolderDTO();
-        dto.setId(folder.getId() != null ? folder.getId().toString() : null);
-        dto.setName(folder.getName());
-        dto.setQuizzes(folder.getQuizzes());
-        return dto;
-    }
-
-    public Folder toEntity() {
-        Folder folder = new Folder();
-        if (this.id != null) {
-            folder.setId(new ObjectId(this.id));
-        }
-        folder.setName(this.name);
-        folder.setQuizzes(this.quizzes);
-        return folder;
     }
 
     public String getId() {
@@ -61,11 +39,11 @@ public class FolderDTO {
         this.name = name;
     }
 
-    public List<Quiz> getQuizzes() {
+    public List<QuizDTO> getQuizzes() {
         return this.quizzes;
     }
 
-    public void setQuizzes(List<Quiz> quizzes) {
-        this.quizzes = this.quizzes != null ? this.quizzes : new ArrayList<>();
+    public void setQuizzes(List<QuizDTO> quizzes) {
+        this.quizzes = quizzes != null ? quizzes : new ArrayList<>();
     }
 }

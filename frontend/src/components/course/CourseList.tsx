@@ -1,13 +1,17 @@
-import { useCourseContext } from '../../contexts/CourseContext';
-import { CourseCard } from './CourseCard';
+import {CourseCard} from './CourseCard';
+import {useCourse} from "../../hooks/useCourse.ts";
 
 export const CourseList = () => {
-    const { courses, error } = useCourseContext();
+    const {courses, isLoadingCourses, errorCourses} = useCourse();
 
+    if (isLoadingCourses) {
+        return <div className="text-center py-8">
+            <span className="loading loading-spinner text-primary"></span>
+        </div>;
+    }
 
-
-    if (error) {
-        return <div className="alert alert-error">Error: {error.message}</div>;
+    if (errorCourses) {
+        return <div className="alert alert-error">Error: {errorCourses.message}</div>;
     }
 
     return (

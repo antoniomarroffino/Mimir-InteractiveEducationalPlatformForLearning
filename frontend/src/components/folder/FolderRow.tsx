@@ -1,55 +1,102 @@
-import { useState } from 'react';
-import { FolderDTO } from '@dti-isin/backend-api-client';
-import { BsFolder2, BsChevronDown, BsChevronUp } from 'react-icons/bs';
+import React, {useState} from "react";
+import {FolderDTO} from "@dti-isin/backend-api-client";
+import {BsChevronDown, BsChevronUp, BsFolder2, BsPlus} from "react-icons/bs";
+import {QuizList} from "../quiz/QuizList";
+import {useQuiz} from "../../hooks/useQuiz.ts";
 
 interface FolderRowProps {
     folder: FolderDTO;
+    courseId: string;
 }
 
-export const FolderRow = ({ folder }: FolderRowProps) => {
+export const FolderRow = ({folder, courseId}: FolderRowProps) => {
     const [isExpanded, setIsExpanded] = useState(false);
+    const [showCreateForm, setShowCreateForm] = useState(false);
+    const [quizName, setQuizName] = useState("");
+    const {createQuiz, isCreatingQuiz} = useQuiz();
+
+    const handleCreateQuiz = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (!quizName.trim()) return;
+
+        try {
+            await createQuiz(quizName.trim());
+
+            setQuizName("");
+            setShowCreateForm(false);
+        } catch (error) {
+            console.error("Failed to create quiz", error);
+        }
+    };
 
     return (
         <div className="bg-base-100 shadow-sm hover:shadow-md transition-all">
-            {/* Header Row - Always visible */}
             <div
                 className="p-4 flex items-center justify-between cursor-pointer"
                 onClick={() => setIsExpanded(!isExpanded)}
             >
                 <div className="flex items-center gap-3">
-                    <BsFolder2 className="text-xl text-primary" />
+                    <BsFolder2 className="text-xl text-primary"/>
                     <h3 className="font-semibold">{folder.name}</h3>
                 </div>
                 <div className="flex items-center gap-4">
                     <span className="text-base-content/70">
                         {folder.quizzes?.length || 0} quizzes
                     </span>
-                    {isExpanded ? <BsChevronUp /> : <BsChevronDown />}
+                    {isExpanded ? <BsChevronUp/> : <BsChevronDown/>}
                 </div>
             </div>
 
-            {/* Expanded Content */}
             {isExpanded && (
                 <div className="border-t border-base-200 p-4">
-                    {folder.quizzes && folder.quizzes.length > 0 ? (
-                        <div className="space-y-2">
-                            {folder.quizzes.map(quiz => (
-                                <div
-                                    key={quiz.id}
-                                    className="p-2 bg-base-200 rounded-lg flex justify-between items-center"
-                                >
-                                    <span>{quiz.name}</span>
-                                    <button className="btn btn-sm btn-primary">
-                                        View Quiz
+                    <QuizList
+                        quizzes={folder.quizzes || []}
+                        courseId={courseId}
+                        folderId={folder.id!}
+                    />
+
+                    <div className="mt-4">
+                        {!showCreateForm ? (
+                            <button
+                                onClick={() => setShowCreateForm(true)}
+                                className="btn btn-primary w-full"
+                            >
+                                <BsPlus className="text-xl mr-2"/>
+                                Add New Quiz
+                            </button>
+                        ) : (
+                            <form onSubmit={handleCreateQuiz} className="space-y-2">
+                                <input
+                                    type="text"
+                                    value={quizName}
+                                    onChange={(e) => setQuizName(e.target.value)}
+                                    placeholder="Enter quiz name"
+                                    className="input input-bordered w-full"
+                                    disabled={isCreatingQuiz}
+                                />
+                                <div className="flex gap-2">
+                                    <button
+                                        type="submit"
+                                        className="btn btn-primary flex-1"
+                                        disabled={isCreatingQuiz || !quizName.trim()}
+                                    >
+                                        {isCreatingQuiz ? "Creating..." : "Create Quiz"}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setShowCreateForm(false);
+                                            setQuizName("");
+                                        }}
+                                        className="btn btn-ghost"
+                                    >
+                                        Cancel
                                     </button>
                                 </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="text-base-content/70 text-center py-4">
-                            No quizzes in this folder yet
-                        </div>
-                    )}
+                            </form>
+                        )}
+                    </div>
                 </div>
             )}
         </div>

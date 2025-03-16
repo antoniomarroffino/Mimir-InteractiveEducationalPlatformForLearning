@@ -1,22 +1,16 @@
-import { createContext, useContext } from 'react';
-import { CourseDTO } from '@dti-isin/backend-api-client';
+import { createContext } from "react";
+import { CourseDTO } from "@dti-isin/backend-api-client";
 
-interface CourseContextType {
+export type CourseContextType = {
     courses: CourseDTO[];
-    isLoading: boolean;
-    error: Error | null;
-    createCourse: (name: string) => Promise<void>;
+    isLoadingCourses: boolean;
+    errorCourses: Error | null;
     selectedCourseId: string | null;
     setSelectedCourseId: (id: string | null) => void;
-    fetchCourses: () => Promise<void>;
-}
+    createCourse: (name: string) => Promise<void>;
+    fetchCourses: () => void;
+    isCreatingCourse: boolean;
+    errorCreateCourse: Error | null;
+};
 
 export const CourseContext = createContext<CourseContextType | undefined>(undefined);
-
-export const useCourseContext = () => {
-    const context = useContext(CourseContext);
-    if (!context) {
-        throw new Error('useCourseContext must be used within a CourseProvider');
-    }
-    return context;
-};

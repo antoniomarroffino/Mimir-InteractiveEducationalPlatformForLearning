@@ -55,7 +55,10 @@ public class FolderController {
     public Response getFolder(
             @PathParam("courseId") String courseId,
             @PathParam("folderId") String folderId) {
-        FolderDTO folderDTO = this.folderService.getFolderInCourse(new ObjectId(courseId), folderId);
+        FolderDTO folderDTO = folderService.getFolderInCourse(
+                new ObjectId(courseId),
+                new ObjectId(folderId)
+        );
         return Response.ok(folderDTO).build();
     }
 

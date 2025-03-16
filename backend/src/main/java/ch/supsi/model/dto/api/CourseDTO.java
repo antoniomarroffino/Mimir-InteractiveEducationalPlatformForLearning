@@ -1,10 +1,7 @@
 package ch.supsi.model.dto.api;
 
-import ch.supsi.model.api.Course;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.validation.constraints.NotBlank;
-import org.bson.types.ObjectId;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,26 +19,6 @@ public class CourseDTO {
 
     public CourseDTO(String name) {
         this.name = name;
-    }
-
-    public CourseDTO fromEntity(Course course) {
-        if (course == null) return null;
-
-        CourseDTO dto = new CourseDTO();
-        dto.setId(course.getId() != null ? course.getId().toString() : null);
-        dto.setName(course.getName());
-        dto.setFolders(course.getFolders().stream().map(new FolderDTO()::fromEntity).toList());
-        return dto;
-    }
-
-    public Course toEntity() {
-        Course course = new Course();
-        if (this.id != null) {
-            course.setId(new ObjectId(this.id));
-        }
-        course.setName(this.name);
-        course.setFolders(this.folders.stream().map(FolderDTO::toEntity).toList());
-        return course;
     }
 
     public String getId() {

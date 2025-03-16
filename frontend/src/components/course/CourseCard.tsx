@@ -15,8 +15,13 @@ export const CourseCard = ({ course }: CourseCardProps) => {
                         <BsFolder2 className="text-2xl text-primary" />
                         <h3 className="card-title">{course.name}</h3>
                     </div>
-                    <div className="text-base-content/70">
-                        {course.folders?.length || 0} folders
+                    <div
+                        className="tooltip"
+                        data-tip={`${course.folders?.length || 0} folders in this course`}
+                    >
+                        <span className="text-base-content/70">
+                            {course.folders?.length || 0} folders
+                        </span>
                     </div>
                 </div>
                 <div className="card-actions justify-end mt-4">
