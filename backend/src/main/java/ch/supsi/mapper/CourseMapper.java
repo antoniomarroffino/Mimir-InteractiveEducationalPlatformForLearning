@@ -10,7 +10,7 @@ import org.bson.types.ObjectId;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
-public class CourseMapper implements BaseMapper<Course, CourseDTO> {
+public class CourseMapper implements IBaseMapper<Course, CourseDTO> {
 
     @Inject
     FolderMapper folderMapper;

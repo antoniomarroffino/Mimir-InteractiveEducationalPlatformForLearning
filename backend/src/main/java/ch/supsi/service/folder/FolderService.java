@@ -1,6 +1,5 @@
 package ch.supsi.service.folder;
 
-import ch.supsi.mapper.CourseMapper;
 import ch.supsi.mapper.FolderMapper;
 import ch.supsi.model.api.Course;
 import ch.supsi.model.api.Folder;
@@ -32,21 +31,21 @@ public class FolderService implements IFolderService {
         if (courseOpt.isEmpty()) {
             throw new NotFoundException("Course " + courseId + " not found");
         }
-        return course.getFolders().stream()
-                .map(folderMapper::toDTO)
+        return courseOpt.get().getFolders().stream()
+                .map(this.folderMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public FolderDTO getFolderInCourse(ObjectId courseId, String folderId) {
+    public FolderDTO getFolderInCourse(ObjectId courseId, ObjectId folderId) {
         Optional<Course> courseOpt = this.courseRepository.findByIdOptional(courseId);
         if (courseOpt.isEmpty()) {
             throw new NotFoundException("Course " + courseId + " not found");
         }
 
-        return course.getFolders().stream()
+        return courseOpt.get().getFolders().stream()
                 .filter(f -> f.getId().equals(folderId))
-                .map(folderMapper::toDTO)
+                .map(this.folderMapper::toDTO)
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("Folder " + folderId + " not found in course: " + courseId));
     }
@@ -62,12 +61,12 @@ public class FolderService implements IFolderService {
 
         this.verifyFolderIsValid(course, folderDTO);
 
-        Folder folder = folderMapper.toEntity(folderDTO);
+        Folder folder = this.folderMapper.toEntity(folderDTO);
 
         course.getFolders().add(folder);
         this.courseRepository.update(course);
 
-        return folderMapper.toDTO(folder);
+        return this.folderMapper.toDTO(folder);
     }
 
     private void verifyFolderIsValid(Course course, FolderDTO folderDTO) {

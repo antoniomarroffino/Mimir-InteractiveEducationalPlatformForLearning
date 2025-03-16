@@ -17,7 +17,6 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 
 import java.util.List;
-import java.util.Map;
 
 @Path("/courses")
 @RolesAllowed("TEACHER")

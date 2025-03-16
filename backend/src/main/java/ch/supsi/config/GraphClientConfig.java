@@ -1,4 +1,4 @@
-package ch.supsi.auth;
+package ch.supsi.config;
 
 import com.azure.identity.ClientSecretCredential;
 import com.azure.identity.ClientSecretCredentialBuilder;

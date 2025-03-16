@@ -1,6 +1,6 @@
 package ch.supsi.service.user.admin;
 
-import ch.supsi.auth.AdminConfig;
+import ch.supsi.config.AdminConfig;
 import ch.supsi.model.api.user.Role;
 import ch.supsi.model.api.user.User;
 import ch.supsi.repository.UserRepository;

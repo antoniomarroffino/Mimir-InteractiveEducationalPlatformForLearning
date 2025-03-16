@@ -10,7 +10,7 @@ import org.bson.types.ObjectId;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
-public class FolderMapper implements BaseMapper<Folder, FolderDTO> {
+public class FolderMapper implements IBaseMapper<Folder, FolderDTO> {
 
     @Inject
     QuizMapper quizMapper;

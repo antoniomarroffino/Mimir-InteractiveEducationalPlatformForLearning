@@ -1,6 +1,6 @@
 package ch.supsi.mapper;
 
-public interface BaseMapper<E, D> {
+public interface IBaseMapper<E, D> {
     D toDTO(E entity);
     E toEntity(D dto);
 }

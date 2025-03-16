@@ -1,4 +1,4 @@
-package ch.supsi.auth;
+package ch.supsi.config;
 
 
 import jakarta.inject.Singleton;

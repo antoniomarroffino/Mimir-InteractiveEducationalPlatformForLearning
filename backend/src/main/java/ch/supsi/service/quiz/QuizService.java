@@ -1,6 +1,5 @@
 package ch.supsi.service.quiz;
 
-import ch.supsi.mapper.CourseMapper;
 import ch.supsi.mapper.QuizMapper;
 import ch.supsi.model.api.Course;
 import ch.supsi.model.api.Folder;
@@ -14,6 +13,7 @@ import org.bson.types.ObjectId;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -24,64 +24,54 @@ public class QuizService implements IQuizService {
 
     @Inject
     QuizMapper quizMapper;
+
     @Override
     public List<QuizDTO> getQuizzesInFolder(ObjectId courseId, ObjectId folderId) {
         Folder folder = getFolderFromCourse(courseId, folderId);
         return folder.getQuizzes().stream()
-                .map(quizMapper::toDTO)
+                .map(this.quizMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
     public QuizDTO getQuizInFolder(ObjectId courseId, ObjectId folderId, ObjectId quizId) {
-        Folder folder = getFolderFromCourse(courseId, folderId);
+        Folder folder = this.getFolderFromCourse(courseId, folderId);
 
         return folder.getQuizzes().stream()
                 .filter(q -> q.getId().equals(quizId))
-                .map(quizMapper::toDTO)
+                .map(this.quizMapper::toDTO)
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("Quiz not found in folder"));
     }
 
     @Override
     public QuizDTO addQuizToFolder(ObjectId courseId, ObjectId folderId, QuizDTO quizDTO) {
-        System.out.println("Starting quiz creation with data: " + quizDTO.getName());
-
-        Course course = courseRepository.findById(courseId);
-        System.out.println("Course found: " + (course != null ? course.getName() : "null"));
-
-        if (course == null) {
-            System.out.println("Course not found for ID: " + courseId);
+        Optional<Course> courseOpt = this.courseRepository.findByIdOptional(courseId);
+        if (courseOpt.isEmpty()) {
             throw new NotFoundException("Course not found");
         }
 
-        Folder folder = course.getFolders().stream()
+        Folder folder = courseOpt.get().getFolders().stream()
                 .filter(f -> f.getId().equals(folderId))
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("Folder not found in course"));
-        System.out.println("Folder found: " + folder.getName());
 
-        Quiz quiz = quizMapper.toEntity(quizDTO);
-        System.out.println("Quiz entity created with ID: " + quiz.getId());
+        Quiz quiz = this.quizMapper.toEntity(quizDTO);
 
         folder.getQuizzes().add(quiz);
-        courseRepository.update(course);
-        System.out.println("Quiz added to folder and course updated");
+        this.courseRepository.update(courseOpt.get());
 
-        QuizDTO createdQuizDTO = quizMapper.toDTO(quiz);
-        System.out.println("Returning created quiz DTO with ID: " + createdQuizDTO.getId());
-
-        return createdQuizDTO;
+        return this.quizMapper.toDTO(quiz);
     }
 
     @Override
     public QuizDTO updateQuizInFolder(ObjectId courseId, ObjectId folderId, ObjectId quizId, QuizDTO quizDTO) {
-        Course course = courseRepository.findById(courseId);
-        if (course == null) {
+        Optional<Course> courseOpt = this.courseRepository.findByIdOptional(courseId);
+        if (courseOpt.isEmpty()) {
             throw new NotFoundException("Course not found");
         }
 
-        Folder folder = course.getFolders().stream()
+        Folder folder = courseOpt.get().getFolders().stream()
                 .filter(f -> f.getId().equals(folderId))
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("Folder not found in course"));
@@ -91,7 +81,7 @@ public class QuizService implements IQuizService {
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("Quiz not found in folder"));
 
-        Quiz updatedQuiz = quizMapper.toEntity(quizDTO);
+        Quiz updatedQuiz = this.quizMapper.toEntity(quizDTO);
         updatedQuiz.setId(existingQuiz.getId());
         updatedQuiz.setCreatedAt(existingQuiz.getCreatedAt());
         updatedQuiz.setUpdatedAt(LocalDateTime.now());
@@ -99,19 +89,19 @@ public class QuizService implements IQuizService {
         int index = folder.getQuizzes().indexOf(existingQuiz);
         folder.getQuizzes().set(index, updatedQuiz);
 
-        courseRepository.update(course);
+        this.courseRepository.update(courseOpt.get());
 
-        return quizMapper.toDTO(updatedQuiz);
+        return this.quizMapper.toDTO(updatedQuiz);
     }
 
     @Override
     public void removeQuizFromFolder(ObjectId courseId, ObjectId folderId, ObjectId quizId) {
-        Course course = courseRepository.findById(courseId);
-        if (course == null) {
+        Optional<Course> courseOpt = this.courseRepository.findByIdOptional(courseId);
+        if (courseOpt.isEmpty()) {
             throw new NotFoundException("Course not found");
         }
 
-        Folder folder = course.getFolders().stream()
+        Folder folder = courseOpt.get().getFolders().stream()
                 .filter(f -> f.getId().equals(folderId))
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("Folder not found in course"));
@@ -121,16 +111,16 @@ public class QuizService implements IQuizService {
             throw new NotFoundException("Quiz not found in folder");
         }
 
-        courseRepository.update(course);
+        this.courseRepository.update(courseOpt.get());
     }
 
     private Folder getFolderFromCourse(ObjectId courseId, ObjectId folderId) {
-        Course course = courseRepository.findById(courseId);
-        if (course == null) {
+        Optional<Course> courseOpt = this.courseRepository.findByIdOptional(courseId);
+        if (courseOpt.isEmpty()) {
             throw new NotFoundException("Course not found");
         }
 
-        return course.getFolders().stream()
+        return courseOpt.get().getFolders().stream()
                 .filter(f -> f.getId().equals(folderId))
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("Folder not found in course"));

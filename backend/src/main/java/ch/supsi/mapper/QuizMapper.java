@@ -1,5 +1,6 @@
 package ch.supsi.mapper;
 
+import ch.supsi.mapper.question.QuestionMapper;
 import ch.supsi.model.api.Quiz;
 import ch.supsi.model.dto.api.QuizDTO;
 import ch.supsi.model.dto.api.question.QuestionDTO;
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
-public class QuizMapper implements BaseMapper<Quiz, QuizDTO> {
+public class QuizMapper implements IBaseMapper<Quiz, QuizDTO> {
     @Inject
     QuestionMapper questionMapper;
 

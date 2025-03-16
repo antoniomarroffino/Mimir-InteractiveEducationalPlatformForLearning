@@ -37,17 +37,17 @@ public class CourseService implements ICourseService {
         return user.coursesId.stream()
                 .map(courseId -> this.courseRepository.findByIdOptional(new ObjectId(courseId)))
                 .map(Optional::orElseThrow)
-                .map(new CourseDTO()::fromEntity)
+                .map(this.courseMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
     public CourseDTO getCourseById(ObjectId id) {
-        Optional<Course> course = this.courseRepository.findByIdOptional(id);
-        if (course.isEmpty()) {
+        Optional<Course> courseOpt = this.courseRepository.findByIdOptional(id);
+        if (courseOpt.isEmpty()) {
             throw new NotFoundException("Course " + id + " not found");
         }
-        return courseMapper.toDTO(course);
+        return this.courseMapper.toDTO(courseOpt.get());
     }
 
     @Override
@@ -57,12 +57,12 @@ public class CourseService implements ICourseService {
 
         this.verifyCourseIsValid(courseDTO);
 
-        Course course = courseDTO.toEntity();
+        Course course = this.courseMapper.toEntity(courseDTO);
         this.courseRepository.persist(course);
 
         this.userRepository.addCourseToUser(course.getId().toString(), currentUser.azureOid);
 
-        return courseDTO.fromEntity(course);
+        return this.courseMapper.toDTO(course);
     }
 
     @Override
@@ -70,11 +70,11 @@ public class CourseService implements ICourseService {
         if (currentUser == null)
             throw new InternalServerErrorException();
 
-        Optional<Course> course = this.courseRepository.findByIdOptional(id);
-        if (course.isEmpty())
+        Optional<Course> courseOpt = this.courseRepository.findByIdOptional(id);
+        if (courseOpt.isEmpty())
             throw new NotFoundException("Course " + id + " not found");
 
-        this.userRepository.addCourseToUser(course.get().getId().toString(), currentUser.azureOid);
+        this.userRepository.addCourseToUser(courseOpt.get().getId().toString(), currentUser.azureOid);
     }
 
     private void verifyCourseIsValid(CourseDTO courseDTO) {

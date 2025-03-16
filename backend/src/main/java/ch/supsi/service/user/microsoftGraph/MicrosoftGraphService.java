@@ -1,6 +1,6 @@
 package ch.supsi.service.user.microsoftGraph;
 
-import ch.supsi.auth.GraphClientConfig;
+import ch.supsi.config.GraphClientConfig;
 import com.microsoft.graph.models.User;
 import com.microsoft.graph.requests.GraphServiceClient;
 import com.microsoft.graph.requests.UserCollectionPage;

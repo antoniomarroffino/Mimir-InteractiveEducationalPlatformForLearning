@@ -1,6 +1,6 @@
 package ch.supsi.auth.admin;
 
-import ch.supsi.auth.AdminConfig;
+import ch.supsi.config.AdminConfig;
 import ch.supsi.service.user.admin.IAdminService;
 import ch.supsi.service.user.microsoftGraph.IMicrosoftGraphService;
 import io.quarkus.runtime.ShutdownEvent;

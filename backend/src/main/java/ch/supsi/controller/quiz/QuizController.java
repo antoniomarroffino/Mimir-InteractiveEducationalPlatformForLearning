@@ -2,6 +2,7 @@ package ch.supsi.controller.quiz;
 
 import ch.supsi.model.dto.api.QuizDTO;
 import ch.supsi.service.quiz.IQuizService;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
@@ -17,6 +18,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import java.util.List;
 
 @Path("/courses/{courseId}/folders/{folderId}/quizzes")
+@RolesAllowed("TEACHER")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class QuizController {
@@ -37,7 +39,7 @@ public class QuizController {
     public Response getQuizzes(
             @PathParam("courseId") String courseId,
             @PathParam("folderId") String folderId) {
-        List<QuizDTO> quizzesDTO = quizService.getQuizzesInFolder(
+        List<QuizDTO> quizzesDTO = this.quizService.getQuizzesInFolder(
                 new ObjectId(courseId),
                 new ObjectId(folderId)
         );
@@ -59,7 +61,7 @@ public class QuizController {
             @PathParam("courseId") String courseId,
             @PathParam("folderId") String folderId,
             @PathParam("quizId") String quizId) {
-        QuizDTO quizDTO = quizService.getQuizInFolder(
+        QuizDTO quizDTO = this.quizService.getQuizInFolder(
                 new ObjectId(courseId),
                 new ObjectId(folderId),
                 new ObjectId(quizId)
@@ -82,12 +84,7 @@ public class QuizController {
             @PathParam("folderId") String folderId,
             @Valid QuizDTO quizDTO) {
 
-        System.out.println("Received request to create quiz in controller");
-        System.out.println("CourseId: " + courseId);
-        System.out.println("FolderId: " + folderId);
-        System.out.println("Quiz name: " + quizDTO.getName());
-
-        QuizDTO createdQuizDTO = quizService.addQuizToFolder(
+        QuizDTO createdQuizDTO = this.quizService.addQuizToFolder(
                 new ObjectId(courseId),
                 new ObjectId(folderId),
                 quizDTO
@@ -113,7 +110,7 @@ public class QuizController {
             @PathParam("folderId") String folderId,
             @PathParam("quizId") String quizId,
             @Valid QuizDTO quizDTO) {
-        QuizDTO updatedQuizDTO = quizService.updateQuizInFolder(
+        QuizDTO updatedQuizDTO = this.quizService.updateQuizInFolder(
                 new ObjectId(courseId),
                 new ObjectId(folderId),
                 new ObjectId(quizId),
@@ -133,7 +130,7 @@ public class QuizController {
             @PathParam("courseId") String courseId,
             @PathParam("folderId") String folderId,
             @PathParam("quizId") String quizId) {
-        quizService.removeQuizFromFolder(
+        this.quizService.removeQuizFromFolder(
                 new ObjectId(courseId),
                 new ObjectId(folderId),
                 new ObjectId(quizId)
