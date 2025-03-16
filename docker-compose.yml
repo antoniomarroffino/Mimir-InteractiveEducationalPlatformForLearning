@@ -12,6 +12,9 @@ services:
       - mongo
     networks:
       - internal
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
 
   nginx:
     build:
@@ -43,7 +46,6 @@ volumes:
 networks:
   internal:
     driver: bridge
-    internal: true
   external:
     driver: bridge
     internal: false
