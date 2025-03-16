@@ -97,16 +97,16 @@ export const AuthProvider = ({children}: { children: React.ReactNode }) => {
     useEffect(() => {
         const initializeAuth = async () => {
             try {
-                /*const storedToken = localStorage.getItem('authToken');
-                if (storedToken) {
-                    handleTokenUpdate(storedToken);
-                    return;
-                }
 
+                // Se MSAL ha degli account attivi, prova a ottenere un token silenzioso
                 if (accounts.length > 0) {
-                    const response = await instance.acquireTokenSilent(loginRequest);
-                    handleTokenUpdate(response.accessToken);
-                }*/
+                    const tokenResponse = await instance.acquireTokenSilent({
+                        ...loginRequest,
+                        account: accounts[0]
+                    });
+
+                    await handleTokenUpdate(tokenResponse.accessToken);
+                }
             } catch (error) {
                 console.error("Auth initialization error:", error);
             } finally {
@@ -115,7 +115,7 @@ export const AuthProvider = ({children}: { children: React.ReactNode }) => {
         };
 
         initializeAuth();
-    }, [accounts]);
+    }, [accounts, handleTokenUpdate, instance]);
 
     return (
         <AuthContext.Provider
