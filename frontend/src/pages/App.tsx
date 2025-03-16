@@ -8,6 +8,7 @@ import {FolderProvider} from "../provider/FolderProvider.tsx";
 import '../App.css';
 import {CourseProvider} from "../provider/CourseProvider.tsx";
 import {QuizCreation} from "./QuizCreation.tsx";
+import {AuthProvider} from "../provider/AuthProvider.tsx";
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -24,8 +25,9 @@ const queryClient = new QueryClient({
 const App = () => {
     return (
         <QueryClientProvider client={queryClient}>
-            <CourseProvider>
-                <FolderProvider>
+            <AuthProvider>
+                <CourseProvider>
+                    <FolderProvider>
                         <div>
                             <Header/>
                             <Routes>
@@ -36,8 +38,9 @@ const App = () => {
                             </Routes>
                             <Footer/>
                         </div>
-                </FolderProvider>
-            </CourseProvider>
+                    </FolderProvider>
+                </CourseProvider>
+            </AuthProvider>
         </QueryClientProvider>
     );
 };

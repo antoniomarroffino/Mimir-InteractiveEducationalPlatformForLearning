@@ -34,11 +34,6 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public List<User> getAllUsers() {
-        return this.userRepository.findNonAdminUsers();
-    }
-
-    @Override
     public void changeRole(com.microsoft.graph.models.User microsoftUser, Role newRole) {
         if (microsoftUser == null)
             throw new InternalServerErrorException("Microsoft user is null");

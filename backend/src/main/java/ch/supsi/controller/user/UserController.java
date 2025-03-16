@@ -1,7 +1,6 @@
 package ch.supsi.controller.user;
 
 
-import ch.supsi.model.api.user.User;
 import ch.supsi.model.dto.api.PromotionRequestDTO;
 import ch.supsi.model.dto.api.UserWithoutCoursesDTO;
 import ch.supsi.service.user.IUserService;
@@ -13,9 +12,9 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
-
-import java.util.List;
 
 @Path("/users")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -27,18 +26,6 @@ public class UserController {
 
     @Inject
     IMicrosoftGraphService microsoftGraphService;
-
-    @GET
-    @RolesAllowed("ADMIN")
-    @Operation(summary = "Get all Users (no admins)")
-    @APIResponse(
-            responseCode = "200",
-            description = "Return all users which are not admin"
-    )
-    public Response getAllUsers() {
-        List<User> users = this.userService.getAllUsers();
-        return Response.ok(users).build();
-    }
 
     @PUT
     @Path("/promote")
@@ -63,7 +50,11 @@ public class UserController {
     @Operation(summary = "Get user by azure oid")
     @APIResponse(
             responseCode = "200",
-            description = "Return user given oid"
+            description = "Return user given oid",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = UserWithoutCoursesDTO.class)
+            )
     )
     public Response getUser() {
         String oid = this.userService.getOidFromJWT();

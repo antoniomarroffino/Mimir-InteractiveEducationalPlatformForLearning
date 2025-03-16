@@ -1,25 +1,18 @@
 import React from "react";
-import {useMsal} from "@azure/msal-react";
-import {loginRequest} from "./authConfig";
-import {BsPersonCircle} from 'react-icons/bs';
+import { BsPersonCircle } from 'react-icons/bs';
+import {useAuth} from "../hooks/useAuth.ts";
 
 const LoginButton: React.FC = () => {
-    const {instance} = useMsal();
-
-    const handleLogin = () => {
-        instance.loginPopup(loginRequest).catch(e => {
-            console.error(e);
-        });
-
-    };
+    const { login, isLoading } = useAuth();
 
     return (
         <button
-            onClick={handleLogin}
+            onClick={() => login()}
             className="btn btn-ghost normal-case"
+            disabled={isLoading}
         >
             <BsPersonCircle className="w-5 h-5 mr-2"/>
-            Login
+            {isLoading ? 'Loading...' : 'Login'}
         </button>
     );
 };

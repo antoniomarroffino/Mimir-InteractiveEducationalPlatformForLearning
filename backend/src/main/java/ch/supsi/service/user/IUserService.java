@@ -10,8 +10,6 @@ import java.util.List;
 public interface IUserService {
     User getUserByAzureOid(String oid);
 
-    List<User> getAllUsers();
-
     void changeRole(com.microsoft.graph.models.User microsoftUser, Role role);
 
     User getCurrentLoggedUser();
