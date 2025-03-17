@@ -1,70 +1,104 @@
-import '../../App.css';
+import {Link} from 'react-router-dom';
+import {FiHome, FiMenu, FiX} from 'react-icons/fi';
 import LoginButton from "../../auth/LoginButton.tsx";
-import {AuthenticatedTemplate, UnauthenticatedTemplate} from "@azure/msal-react";
 import LogoutButton from "../../auth/LogoutButton.tsx";
-import { useState } from "react";
+import {useState} from "react";
+import '../../App.css';
+import {useAuth} from "../../hooks/useAuth.ts";
+import {Role} from "@dti-isin/backend-api-client";
 
 const Header = () => {
     const [isOpen, setIsOpen] = useState(false);
+    const {user} = useAuth();
+
+    const navigationLinks = [
+        {name: 'Home', path: '/', icon: <FiHome/>, roles: [Role.Admin, Role.Teacher, Role.Student]},
+        {name: 'Admin', path: '/admin', roles: [Role.Admin]},
+        {name: 'Corsi', path: '/courses', roles: [Role.Teacher]},
+        {name: 'Dashboard', path: '/dashboard', roles: [Role.Student]},
+    ];
+
+    const filteredLinks = navigationLinks.filter(link =>
+        !link.roles || (user?.role && link.roles.includes(user.role))
+    );
 
     return (
-        <div className="navbar bg-gradient-to-r from-primary to-secondary text-primary-content shadow-lg">
-            {/* Logo e Brand */}
+        <header
+            className="navbar bg-gradient-to-r from-primary to-secondary text-primary-content shadow-lg px-4 lg:px-8">
+            {/* Logo */}
             <div className="navbar-start">
-                <a href="/frontend/public" className="px-2">
+                <Link to="/" className="flex items-center gap-2">
                     <img
                         src="/supsi-logo.png"
                         alt="SUPSI logo"
-                        className="h-8 w-auto"
+                        className="h-10 w-auto"
                     />
-                </a>
+                    <span className="text-xl font-bold hidden md:block">Mimir</span>
+                </Link>
             </div>
 
-            {/* Menu centrale */}
-            <div className="navbar-center">
-                {/* Menu mobile */}
-                <div className="lg:hidden">
-                    <button
-                        className="btn btn-ghost"
-                        onClick={() => setIsOpen(!isOpen)}
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" />
-                        </svg>
-                    </button>
-                    {isOpen && (
-                        <ul className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52 absolute top-full left-0">
-                            <li><a href="/frontend/public" className="text-base-content">Home</a></li>
-                            <li className="lg:hidden">
-                                <UnauthenticatedTemplate>
-                                    <LoginButton />
-                                </UnauthenticatedTemplate>
-                                <AuthenticatedTemplate>
-                                    <LogoutButton />
-                                </AuthenticatedTemplate>
+            {/* Mobile Menu */}
+            <div className="navbar-center lg:hidden">
+                <button
+                    className="btn btn-ghost text-xl"
+                    onClick={() => setIsOpen(!isOpen)}
+                >
+                    {isOpen ? <FiX/> : <FiMenu/>}
+                </button>
+
+                {isOpen && (
+                    <div className="absolute top-full left-0 right-0 bg-base-100 z-50 shadow-xl">
+                        <ul className="menu py-4 px-2">
+                            {filteredLinks.map((link) => (
+                                <li key={link.name}>
+                                    <Link
+                                        to={link.path}
+                                        className="text-base-content hover:bg-primary/10"
+                                        onClick={() => setIsOpen(false)}
+                                    >
+                                        {link.icon}
+                                        {link.name}
+                                    </Link>
+                                </li>
+                            ))}
+                            <li className="mt-4">
+                                {user ? (
+                                    <LogoutButton className="btn btn-primary w-full"/>
+                                ) : (
+                                    <LoginButton className="btn btn-outline w-full"/>
+                                )}
                             </li>
                         </ul>
-                    )}
-                </div>
+                    </div>
+                )}
+            </div>
 
-                {/* Menu desktop */}
-                <ul className="menu menu-horizontal px-1 hidden lg:flex">
-                    <li><a href="/frontend/public" className="text-primary-content hover:bg-primary/20">Home</a></li>
+            {/* Desktop Navigation */}
+            <div className="navbar-center hidden lg:flex">
+                <ul className="menu menu-horizontal gap-2 px-1">
+                    {filteredLinks.map((link) => (
+                        <li key={link.name}>
+                            <Link
+                                to={link.path}
+                                className="text-lg font-medium hover:bg-primary/20 rounded-btn"
+                            >
+                                {link.icon}
+                                {link.name}
+                            </Link>
+                        </li>
+                    ))}
                 </ul>
             </div>
 
-            {/* Auth buttons (desktop) */}
-            <div className="navbar-end">
-                <div className="hidden lg:block">
-                    <UnauthenticatedTemplate>
-                        <LoginButton />
-                    </UnauthenticatedTemplate>
-                    <AuthenticatedTemplate>
-                        <LogoutButton />
-                    </AuthenticatedTemplate>
-                </div>
+            {/* Desktop Auth */}
+            <div className="navbar-end hidden lg:flex gap-2">
+                {user ? (
+                    <LogoutButton className="btn btn-ghost hover:bg-primary/20"/>
+                ) : (
+                    <LoginButton className="btn btn-outline"/>
+                )}
             </div>
-        </div>
+        </header>
     );
 };
 

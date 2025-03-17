@@ -1,18 +1,25 @@
 import React from "react";
-import { BsPersonCircle } from 'react-icons/bs';
-import {useAuth} from "../hooks/useAuth.ts";
+import { FiLogIn } from 'react-icons/fi';
+import { useAuth } from "../hooks/useAuth.ts";
+import {Spinner} from "../components/common/Spinner.tsx";
 
-const LoginButton: React.FC = () => {
+const LoginButton: React.FC<{ className?: string }> = ({ className }) => {
     const { login, isLoading } = useAuth();
 
     return (
         <button
-            onClick={() => login()}
-            className="btn btn-ghost normal-case"
+            onClick={login}
+            className={`btn btn-outline gap-2 ${className}`}
             disabled={isLoading}
         >
-            <BsPersonCircle className="w-5 h-5 mr-2"/>
-            {isLoading ? 'Loading...' : 'Login'}
+            {isLoading ? (
+                <Spinner size="sm" />
+            ) : (
+                <>
+                    <FiLogIn className="w-4 h-4" />
+                    <span className="hidden sm:inline">Accedi</span>
+                </>
+            )}
         </button>
     );
 };
