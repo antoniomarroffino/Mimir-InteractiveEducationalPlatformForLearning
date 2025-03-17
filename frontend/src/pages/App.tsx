@@ -1,17 +1,17 @@
-import { Route, Routes } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import {Outlet, Route, Routes} from 'react-router-dom';
+import {QueryClient, QueryClientProvider} from 'react-query';
 import CourseDetails from './CourseDetails';
 import Header from "../components/common/Header.tsx";
 import Footer from "../components/common/Footer.tsx";
-import { FolderProvider } from "../provider/FolderProvider.tsx";
+import {FolderProvider} from "../provider/FolderProvider.tsx";
 import '../App.css';
-import { CourseProvider } from "../provider/CourseProvider.tsx";
-import { QuizCreation } from "./QuizCreation.tsx";
-import { AuthProvider } from "../provider/AuthProvider.tsx";
+import {CourseProvider} from "../provider/CourseProvider.tsx";
+import {QuizCreation} from "./QuizCreation.tsx";
+import {AuthProvider} from "../provider/AuthProvider.tsx";
 import AdminDashboard from "./admin/AdminDashboard.tsx";
 import ProtectedRoute from "../routes/ProtectedRoute.tsx";
-import { Role } from "@dti-isin/backend-api-client";
-import { TeacherDashboard } from "./teacher/TeacherDashboard.tsx";
+import {Role} from "@dti-isin/backend-api-client";
+import {TeacherDashboard} from "./teacher/TeacherDashboard.tsx";
 import StudentDashboard from "./student/StudentDashboard.tsx";
 import PublicHome from "./no-logged/PublicHome.tsx";
 
@@ -31,17 +31,17 @@ const App = () => {
     return (
         <QueryClientProvider client={queryClient}>
             <AuthProvider>
-                <Header />
+                <Header/>
                 <Routes>
                     {/* Public Route */}
-                    <Route path="/" element={<PublicHome />} />
+                    <Route path="/" element={<PublicHome/>}/>
 
                     {/* Admin Routes */}
                     <Route
                         path="/admin"
                         element={
                             <ProtectedRoute allowedRoles={[Role.Admin]}>
-                                <AdminDashboard />
+                                <AdminDashboard/>
                             </ProtectedRoute>
                         }
                     />
@@ -53,19 +53,17 @@ const App = () => {
                             <ProtectedRoute allowedRoles={[Role.Teacher]}>
                                 <CourseProvider>
                                     <FolderProvider>
-                                        <TeacherDashboard />
+                                        <Outlet/>
                                     </FolderProvider>
                                 </CourseProvider>
                             </ProtectedRoute>
                         }
                     >
-                        <Route
-                            path=":courseId"
-                            element={<CourseDetails />}
-                        />
+                        <Route index element={<TeacherDashboard/>}/>
+                        <Route path=":courseId" element={<CourseDetails/>}/>
                         <Route
                             path=":courseId/folders/:folderId/quizzes/:quizId/edit"
-                            element={<QuizCreation />}
+                            element={<QuizCreation/>}
                         />
                     </Route>
 
@@ -74,12 +72,12 @@ const App = () => {
                         path="/student"
                         element={
                             <ProtectedRoute allowedRoles={[Role.Student]}>
-                                <StudentDashboard />
+                                <StudentDashboard/>
                             </ProtectedRoute>
                         }
                     />
                 </Routes>
-                <Footer />
+                <Footer/>
             </AuthProvider>
         </QueryClientProvider>
     );
