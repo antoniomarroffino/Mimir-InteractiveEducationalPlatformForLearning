@@ -12,7 +12,6 @@ const axiosInstance = axios.create({
 // Funzione per impostare il token nell'istanza Axios
 export const setAuthToken = (token: string | null) => {
     if (token) {
-        console.log(token);
         axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     } else {
         delete axiosInstance.defaults.headers.common['Authorization'];

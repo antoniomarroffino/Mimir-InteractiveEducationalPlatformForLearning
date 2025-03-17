@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {useMsal} from "@azure/msal-react";
 import {UserWithoutCoursesDTO} from "@dti-isin/backend-api-client";
 import {loginRequest} from "../auth/authConfig.ts";
@@ -8,10 +8,10 @@ import {useQueryClient} from "react-query";
 
 export const AuthProvider = ({children}: { children: React.ReactNode }) => {
     const queryClient = useQueryClient();
-    const {instance, accounts} = useMsal();
+    const {instance} = useMsal();
     const [user, setUser] = useState<UserWithoutCoursesDTO | null>(null);
     const [token, setToken] = useState<string | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
 
     const login = async () => {
         setIsLoading(true);
@@ -59,8 +59,11 @@ export const AuthProvider = ({children}: { children: React.ReactNode }) => {
         const activeAccount = instance.getActiveAccount();
         if (!activeAccount) return;
 
+        instance.setActiveAccount(null);
+        sessionStorage.clear();
+        window.location.href = import.meta.env.VITE_LOGOUT_REDIRECT_URI!;
         // 7. Configurazione corretta del logout
-        const logoutRequest = {
+        /*const logoutRequest = {
             account: activeAccount,
             postLogoutRedirectUri: import.meta.env.VITE_LOGOUT_REDIRECT_URI,
             mainWindowRedirectUri: import.meta.env.VITE_LOGOUT_REDIRECT_URI
@@ -76,7 +79,7 @@ export const AuthProvider = ({children}: { children: React.ReactNode }) => {
             })
             .catch(e => {
                 console.error("Logout error:", e);
-            });
+            });*/
     };
 
     const loadUserData = async () => {
@@ -93,29 +96,6 @@ export const AuthProvider = ({children}: { children: React.ReactNode }) => {
     const hasRole = (role: string) => {
         return user?.role?.toUpperCase() === role.toUpperCase();
     };
-
-    useEffect(() => {
-        const initializeAuth = async () => {
-            try {
-
-                // Se MSAL ha degli account attivi, prova a ottenere un token silenzioso
-                if (accounts.length > 0) {
-                    const tokenResponse = await instance.acquireTokenSilent({
-                        ...loginRequest,
-                        account: accounts[0]
-                    });
-
-                    await handleTokenUpdate(tokenResponse.accessToken);
-                }
-            } catch (error) {
-                console.error("Auth initialization error:", error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        initializeAuth();
-    }, [accounts, handleTokenUpdate, instance]);
 
     return (
         <AuthContext.Provider
