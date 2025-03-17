@@ -4,6 +4,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    restart: always
     env_file:
       - backend/.env
     expose:
@@ -17,7 +18,6 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    image: nginx:1.27.4-alpine
     ports:
       - "80:80"
     depends_on:
@@ -29,6 +29,7 @@ services:
   mongo:
     image: mongo:8.0.4
     container_name: mongoProd
+    restart: always
     expose:
       - "27017"
     volumes:
