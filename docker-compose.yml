@@ -18,7 +18,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    ports:
+    expose:
       - "80:80"
     depends_on:
       - backend
@@ -36,6 +36,23 @@ services:
       - mongo_data:/data/db
     networks:
       - internal
+
+  ngrok:
+    image: ngrok/ngrok:3.21.0-alpine
+    container_name: ngrok-container
+    restart: unless-stopped
+    environment:
+      - NGROK_AUTHTOKEN=${NGROK_AUTHTOKEN}
+      - NGROK_REGION=eu
+    ports:
+      - "4040:4040"
+    command:
+      - http
+      - nginx:80
+    networks:
+      - external
+    depends_on:
+      - nginx
 
 volumes:
   mongo_data:
