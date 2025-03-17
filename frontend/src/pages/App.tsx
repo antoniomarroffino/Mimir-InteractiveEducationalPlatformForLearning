@@ -1,6 +1,5 @@
 import { Route, Routes } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import Home from './Home';
 import CourseDetails from './CourseDetails';
 import Header from "../components/common/Header.tsx";
 import Footer from "../components/common/Footer.tsx";
@@ -14,6 +13,7 @@ import ProtectedRoute from "../routes/ProtectedRoute.tsx";
 import { Role } from "@dti-isin/backend-api-client";
 import { TeacherDashboard } from "./teacher/TeacherDashboard.tsx";
 import StudentDashboard from "./student/StudentDashboard.tsx";
+import PublicHome from "./no-logged/PublicHome.tsx";
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -34,7 +34,7 @@ const App = () => {
                 <Header />
                 <Routes>
                     {/* Public Route */}
-                    <Route path="/" element={<Home />} />
+                    <Route path="/" element={<PublicHome />} />
 
                     {/* Admin Routes */}
                     <Route

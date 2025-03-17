@@ -1,4 +1,5 @@
 import { useAuth } from "../../hooks/useAuth.ts";
+import QuizSessionComponent from "../../components/common/QuizSessionComponent.tsx";
 
 const StudentDashboard = () => {
     const { user } = useAuth();
@@ -19,27 +20,7 @@ const StudentDashboard = () => {
             <div className="container mx-auto px-4 py-8">
 
                 {/* Sezione Partecipa a Quiz */}
-                <section className="mb-16">
-                    <div className="card bg-primary/10 border border-primary/20 shadow-xl">
-                        <div className="card-body items-center text-center">
-                            <h2 className="card-title text-3xl text-primary mb-4">
-                                Partecipa a un Quiz
-                            </h2>
-                            <div className="w-full max-w-md">
-                                <div className="join w-full">
-                                    <input
-                                        type="text"
-                                        placeholder="Inserisci codice sessione"
-                                        className="input input-bordered join-item flex-1"
-                                    />
-                                    <button className="btn btn-primary join-item">
-                                        Unisciti
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
+                <QuizSessionComponent />
 
                 {/* Sezione Ultimi Risultati */}
                 <section>
