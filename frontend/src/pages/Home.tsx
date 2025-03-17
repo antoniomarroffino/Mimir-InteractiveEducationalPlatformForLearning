@@ -1,7 +1,9 @@
-import { CourseList } from "../components/course/CourseList.tsx";
+import {CourseList} from "../components/course/CourseList.tsx";
 import CreateCourseForm from "../components/course/CreateCourseForm.tsx";
+import {useAuth} from "../hooks/useAuth.ts";
 
 const Home = () => {
+    const {user} = useAuth();
 
     return (
         <div className="min-h-screen bg-base-200">
@@ -10,7 +12,7 @@ const Home = () => {
                 <div className="hero-content text-center text-neutral-content">
                     <div>
                         <h1 className="text-5xl font-bold mb-2">Benvenuto alla Home!</h1>
-                        <p className="text-xl">Nome Cognome</p>
+                        <p className="text-xl">{user?.name}</p>
                     </div>
                 </div>
             </div>
@@ -61,13 +63,13 @@ const Home = () => {
 
                     <div className="card bg-base-100 shadow-xl">
                         <div className="card-body">
-                            <CreateCourseForm />
+                            <CreateCourseForm/>
                         </div>
                     </div>
                     {/* Lista dei corsi */}
                     <div className="card bg-base-100 shadow-xl">
                         <div className="card-body">
-                            <CourseList />
+                            <CourseList/>
                         </div>
                     </div>
                 </div>
@@ -80,7 +82,8 @@ const Home = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         {[1, 2, 3].map((item) => (
-                            <div key={item} className="card bg-base-100 shadow-xl hover:scale-105 transition-transform duration-300">
+                            <div key={item}
+                                 className="card bg-base-100 shadow-xl hover:scale-105 transition-transform duration-300">
                                 <div className="card-body">
                                     <p className="text-base-content">"Lorem ipsum"</p>
                                     <div className="text-sm opacity-70 mt-2">Lorem ipsum</div>

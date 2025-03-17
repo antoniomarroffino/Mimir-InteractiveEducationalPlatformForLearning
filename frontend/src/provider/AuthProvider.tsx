@@ -1,6 +1,6 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useMsal} from "@azure/msal-react";
-import {UserWithoutCoursesDTO} from "@dti-isin/backend-api-client";
+import {Role, UserWithoutCoursesDTO} from "@dti-isin/backend-api-client";
 import {loginRequest} from "../auth/authConfig.ts";
 import {setAuthToken, userApi} from "../../config/config";
 import {AuthContext} from "../contexts/AuthContext";
@@ -8,27 +8,45 @@ import {useQueryClient} from "react-query";
 
 export const AuthProvider = ({children}: { children: React.ReactNode }) => {
     const queryClient = useQueryClient();
-    const {instance} = useMsal();
+    const {instance, accounts, inProgress} = useMsal();
     const [user, setUser] = useState<UserWithoutCoursesDTO | null>(null);
-    const [token, setToken] = useState<string | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const checkExistingSession = async () => {
+            if (inProgress !== "none") return;
+
+            try {
+                if (accounts.length > 0) {
+                    const tokenResponse = await instance.acquireTokenSilent({
+                        ...loginRequest,
+                        account: accounts[0],
+                    });
+                    await handleTokenUpdate(tokenResponse.accessToken);
+                } else {
+                    setIsLoading(false);
+                }
+            } catch (error) {
+                console.error("Session check error:", error);
+                setIsLoading(false);
+            }
+        };
+
+        checkExistingSession();
+    }, [inProgress, accounts]);
 
     const login = async () => {
         setIsLoading(true);
         try {
-            // 1. Effettua il login e ottieni l'account
             const loginResponse = await instance.loginPopup(loginRequest);
 
-            // 2. Imposta l'account attivo
             instance.setActiveAccount(loginResponse.account);
 
-            // 3. Ottieni il token usando l'account dal loginResponse
             const tokenResponse = await instance.acquireTokenSilent({
                 ...loginRequest,
                 account: loginResponse.account
             });
-            console.log(tokenResponse.accessToken);
-            // 4. Aggiorna lo stato con il nuovo token
+
             await handleTokenUpdate(tokenResponse.accessToken);
 
         } catch (error) {
@@ -41,27 +59,24 @@ export const AuthProvider = ({children}: { children: React.ReactNode }) => {
     const handleTokenUpdate = async (newToken: string) => {
         try {
             setAuthToken(newToken);
-            setToken(newToken);
 
-            console.log("CIAO");
-            // 5. Carica i dati utente dopo aver impostato il token
             await loadUserData();
-            console.log("CIAO");
-            // 6. Invalida le query cache
-            queryClient.invalidateQueries();
+
+            await queryClient.invalidateQueries();
 
         } finally {
             setIsLoading(false);
         }
     };
 
-    const logout = () => {
-        const activeAccount = instance.getActiveAccount();
-        if (!activeAccount) return;
-
-        instance.setActiveAccount(null);
-        sessionStorage.clear();
-        window.location.href = import.meta.env.VITE_LOGOUT_REDIRECT_URI!;
+    const logout = async () => {
+        if (accounts.length > 0) {
+            await instance.logoutPopup({
+                account: accounts[0],
+                postLogoutRedirectUri: import.meta.env.VITE_LOGOUT_REDIRECT_URI,
+                mainWindowRedirectUri: import.meta.env.VITE_LOGOUT_REDIRECT_URI
+            });
+        }
         // 7. Configurazione corretta del logout
         /*const logoutRequest = {
             account: activeAccount,
@@ -93,15 +108,14 @@ export const AuthProvider = ({children}: { children: React.ReactNode }) => {
         }
     };
 
-    const hasRole = (role: string) => {
-        return user?.role?.toUpperCase() === role.toUpperCase();
+    const hasRole = (role: Role) => {
+        return user?.role === role;
     };
 
     return (
         <AuthContext.Provider
             value={{
                 user,
-                token,
                 isLoading,
                 login,
                 logout,

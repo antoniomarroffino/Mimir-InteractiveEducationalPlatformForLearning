@@ -18,8 +18,6 @@ export const setAuthToken = (token: string | null) => {
     }
 };
 
-
-
 // Configurare il client API con le opzioni dell'istanza Axios
 const config = new Configuration({
     basePath: import.meta.env.VITE_BACKEND_URL,

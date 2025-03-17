@@ -26,20 +26,18 @@ const App = () => {
     return (
         <QueryClientProvider client={queryClient}>
             <AuthProvider>
+                <Header/>
                 <CourseProvider>
                     <FolderProvider>
-                        <div>
-                            <Header/>
-                            <Routes>
-                                <Route path="/" element={<Home/>}/>
-                                <Route path="/courses/:courseId" element={<CourseDetails/>}/>
-                                <Route path="/courses/:courseId/folders/:folderId/quizzes/:quizId/edit"
-                                       element={<QuizCreation/>}/>
-                            </Routes>
-                            <Footer/>
-                        </div>
+                        <Routes>
+                            <Route path="/" element={<Home/>}/>
+                            <Route path="/courses/:courseId" element={<CourseDetails/>}/>
+                            <Route path="/courses/:courseId/folders/:folderId/quizzes/:quizId/edit"
+                                   element={<QuizCreation/>}/>
+                        </Routes>
                     </FolderProvider>
                 </CourseProvider>
+                <Footer/>
             </AuthProvider>
         </QueryClientProvider>
     );
