@@ -1,7 +1,6 @@
 package ch.supsi.controller.quizpublication;
 
 import ch.supsi.model.api.QuizPublication;
-import ch.supsi.service.IPublicationService;
 import ch.supsi.service.quizpublication.IQuizPublicationService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;

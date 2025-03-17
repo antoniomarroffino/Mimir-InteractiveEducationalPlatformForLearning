@@ -1,8 +1,6 @@
 package ch.supsi.service.quizpublication;
 
 import ch.supsi.model.api.QuizPublication;
-import ch.supsi.model.api.user.User;
-import ch.supsi.repository.CourseRepository;
 import ch.supsi.repository.QuizPublicationRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -20,7 +18,7 @@ public class QuizPublicationService implements IQuizPublicationService {
     private static final int CODE_LENGTH = 6;
 
     @Override
-    public QuizPublication publishQuiz(ObjectId courseId, ObjectId folderId, ObjectId quizId, User user) {
+    public QuizPublication publishQuiz(ObjectId courseId, ObjectId folderId, ObjectId quizId) {
         QuizPublication publication = new QuizPublication();
         publication.setCourseId(courseId);
         publication.setFolderId(folderId);
