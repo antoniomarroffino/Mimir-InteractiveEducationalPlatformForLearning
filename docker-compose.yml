@@ -48,6 +48,7 @@ services:
       - "4040:4040"
     command:
       - http
+      - --hostname=integral-hedgehog-capital.ngrok-free.app
       - nginx:80
     networks:
       - external
