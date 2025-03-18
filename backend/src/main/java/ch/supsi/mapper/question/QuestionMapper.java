@@ -1,13 +1,14 @@
 package ch.supsi.mapper.question;
 
 import ch.supsi.mapper.IBaseMapper;
+import ch.supsi.mapper.question.builder.IQuestionDTOMapperBuilder;
 import ch.supsi.model.api.question.MultipleChoiceQuestion;
 import ch.supsi.model.api.question.Question;
 import ch.supsi.model.api.question.TrueFalseQuestion;
 import ch.supsi.model.dto.api.question.MultipleChoiceQuestionDTO;
 import ch.supsi.model.dto.api.question.QuestionDTO;
 import ch.supsi.model.dto.api.question.TrueFalseQuestionDTO;
-import ch.supsi.service.question.builder.QuestionFactory;
+import ch.supsi.service.question.builder.IQuestionFactory;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.bson.types.ObjectId;
@@ -16,7 +17,10 @@ import org.bson.types.ObjectId;
 public class QuestionMapper implements IBaseMapper<Question, QuestionDTO> {
 
     @Inject
-    QuestionFactory questionFactory;
+    IQuestionDTOMapperBuilder questionDTOBuilder;
+
+    @Inject
+    IQuestionFactory questionFactory;
 
     @Override
     public QuestionDTO toDTO(Question question) {

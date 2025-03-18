@@ -26,6 +26,10 @@ public class ChangeRoleStrategyBuilder implements IChangeRoleStrategyBuilder {
 
     @Override
     public ChangeRoleStrategy buildChangeRoleStrategy(Role role) {
-        return this.changeRoleStrategyMap.get(role);
+        ChangeRoleStrategy changeRoleStrategy = this.changeRoleStrategyMap.get(role);
+        if(changeRoleStrategy == null) {
+            throw new UnsupportedOperationException("Role not supported: " + role);
+        }
+        return changeRoleStrategy;
     }
 }
