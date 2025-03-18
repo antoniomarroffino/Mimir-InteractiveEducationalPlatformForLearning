@@ -25,8 +25,8 @@ Thumbs.db
 
 # Docker
 /docker-compose.override.yml
-!.env.template
 *.env*
+!.env.template
 
 # NGINX
 frontend/nginx/access.log
