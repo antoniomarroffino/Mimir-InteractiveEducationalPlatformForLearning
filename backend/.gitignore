@@ -37,6 +37,7 @@ nb-configuration.xml
 *.rej
 
 # Local environment
+!.env.template
 .env
 
 # Plugin directory
