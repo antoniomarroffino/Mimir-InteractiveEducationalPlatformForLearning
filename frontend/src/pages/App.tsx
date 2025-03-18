@@ -14,6 +14,8 @@ import {Role} from "@dti-isin/backend-api-client";
 import {TeacherDashboard} from "./teacher/TeacherDashboard.tsx";
 import StudentDashboard from "./student/StudentDashboard.tsx";
 import PublicHome from "./no-logged/PublicHome.tsx";
+import {QuizStatsPage} from "./QuizStatsPage.tsx";
+import {QuizPublicationProvider} from "../provider/QuizPublicationProvider.tsx";
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -53,7 +55,9 @@ const App = () => {
                             <ProtectedRoute allowedRoles={[Role.Teacher]}>
                                 <CourseProvider>
                                     <FolderProvider>
-                                        <Outlet/>
+                                        <QuizPublicationProvider>
+                                            <Outlet/>
+                                        </QuizPublicationProvider>
                                     </FolderProvider>
                                 </CourseProvider>
                             </ProtectedRoute>
@@ -64,6 +68,10 @@ const App = () => {
                         <Route
                             path=":courseId/folders/:folderId/quizzes/:quizId/edit"
                             element={<QuizCreation/>}
+                        />
+                        <Route
+                            path=":courseId/publications/:publicationId/stats"
+                            element={<QuizStatsPage/>}
                         />
                     </Route>
 

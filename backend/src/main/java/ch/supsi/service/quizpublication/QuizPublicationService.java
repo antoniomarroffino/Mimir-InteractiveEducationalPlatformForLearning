@@ -8,6 +8,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.bson.types.ObjectId;
 
+import java.util.List;
 import java.util.Random;
 
 @ApplicationScoped
@@ -27,7 +28,22 @@ public class QuizPublicationService implements IQuizPublicationService {
         QuizPublication quizPublication= new QuizPublication(new ObjectId(quizPublicationDTO.getCourseId()),new ObjectId(quizPublicationDTO.getFolderId()),new ObjectId(quizPublicationDTO.getQuizId()),generateUniqueCode());
         quizPublication.setPublished(true);
         this.quizPublicationRepository.persist(quizPublication);
-        return quizPublicationMapper.toDTO(quizPublication);
+        return this.quizPublicationMapper.toDTO(quizPublication);
+    }
+
+    @Override
+    public QuizPublication getPublicationByReferences(ObjectId courseId, ObjectId folderId, ObjectId quizId) {
+        return this.quizPublicationRepository.find(
+                "courseId = ?1 and folderId = ?2 and quizId = ?3",
+                courseId,
+                folderId,
+                quizId
+        ).firstResult();
+    }
+
+    @Override
+    public List<QuizPublication> getAllPublications() {
+        return this.quizPublicationRepository.listAll();
     }
 
     private String generateUniqueCode() {

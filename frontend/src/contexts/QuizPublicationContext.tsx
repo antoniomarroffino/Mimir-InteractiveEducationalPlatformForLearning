@@ -5,8 +5,9 @@ export type QuizPublicationContextType = {
     publications: QuizPublicationDTO[];
     isLoadingPublications: boolean;
     errorPublications: Error | null;
-    createPublication: (dto: Omit<QuizPublicationDTO, 'id' | 'publicationCode'>) => Promise<void>;
-    fetchPublications: () => void;
+    createPublication: (dto: Omit<QuizPublicationDTO, 'id' | 'publicationCode'>) => Promise<QuizPublicationDTO>;
+    fetchPublications: () => Promise<void>;
+    getPublicationByReferences: (courseId: string, folderId: string, quizId: string) => Promise<QuizPublicationDTO | null>;
     isCreatingPublication: boolean;
     errorCreatePublication: Error | null;
 };

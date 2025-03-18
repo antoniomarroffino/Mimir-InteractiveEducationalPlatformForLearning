@@ -4,27 +4,34 @@ import { QuizPublicationContext } from "../contexts/QuizPublicationContext";
 import { QuizPublicationDTO } from "@dti-isin/backend-api-client";
 import { quizPublicationApi } from "../../config/config";
 
+// Tipo per la creazione senza campi generati dal backend
+type CreateQuizPublicationDTO = Omit<QuizPublicationDTO, 'id' | 'publicationCode'>;
+
 export const QuizPublicationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const queryClient = useQueryClient();
 
+    // Query per tutte le pubblicazioni
     const {
         data: publications = [],
         isLoading: isLoadingPublications,
         error: errorPublications,
-        refetch: fetchPublications,
     } = useQuery<QuizPublicationDTO[], Error>({
         queryKey: ["publications"],
-        //queryFn: async () => (await quizPublicationApi.apiPublicationsGet()).data,
+        queryFn: async () => (await quizPublicationApi.apiPublicationsGet()).data,
     });
 
+    // Mutation per creare una pubblicazione
     const {
         mutateAsync: createPublicationMutation,
         isLoading: isCreatingPublication,
         error: errorCreatePublication,
-    } = useMutation<QuizPublicationDTO, Error, Omit<QuizPublicationDTO, 'id' | 'publicationCode'>>({
+    } = useMutation<QuizPublicationDTO, Error, CreateQuizPublicationDTO>({
         mutationFn: async (dto) => {
             const response = await quizPublicationApi.apiPublicationsPost({
-                quizPublicationDTO: dto
+                quizPublicationDTO: {
+                    ...dto,
+                    published: true
+                }
             });
             return response.data;
         },
@@ -33,12 +40,19 @@ export const QuizPublicationProvider: React.FC<{ children: React.ReactNode }> = 
         },
     });
 
-    const createPublication = async (dto: Omit<QuizPublicationDTO, 'id' | 'publicationCode'>) => {
+    const getPublicationByReferences = async (courseId: string, folderId: string, quizId: string) => {
         try {
-            await createPublicationMutation(dto);
-        } catch (err) {
-            console.error("Publication creation failed:", err);
-            throw err;
+            const response = await quizPublicationApi.apiPublicationsByReferencesCourseIdFolderIdQuizIdGet(
+                {
+                    courseId: courseId,
+                    folderId: folderId,
+                    quizId: quizId
+                }
+            );
+            return response.data;
+        } catch (error) {
+            console.error("Error fetching publication:", error);
+            return null;
         }
     };
 
@@ -46,8 +60,11 @@ export const QuizPublicationProvider: React.FC<{ children: React.ReactNode }> = 
         publications,
         isLoadingPublications,
         errorPublications,
-        createPublication,
-        fetchPublications,
+        createPublication: createPublicationMutation,
+        fetchPublications: async () => {
+            await queryClient.invalidateQueries(["publications"]);
+        },
+        getPublicationByReferences,
         isCreatingPublication,
         errorCreatePublication,
     };
