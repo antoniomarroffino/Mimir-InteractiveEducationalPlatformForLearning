@@ -39,41 +39,46 @@ export const QuizRow: React.FC<QuizRowProps> = ({
         }
     };
 
+
+
     return (
         <>
             <div className="p-3 bg-base-200 rounded flex justify-between items-center">
                 <span>{quiz.name}</span>
                 <div className="flex gap-2">
+
                     <button
                         onClick={handleUpdateQuiz}
                         className="btn btn-sm btn-ghost"
-                        title="Edit quiz"
+                        title="Modifica quiz"
                     >
                         <BsPencil className="text-primary" />
                     </button>
                     <button
                         onClick={() => setShowDeleteModal(true)}
                         className="btn btn-sm btn-ghost"
-                        title="Delete quiz"
+                        title="Elimina quiz"
                     >
                         <BsTrash className="text-error" />
                     </button>
                 </div>
             </div>
 
+
+
             {/* Delete Confirmation Modal */}
             {showDeleteModal && (
                 <div className="modal modal-open">
                     <div className="modal-box">
-                        <h3 className="font-bold text-lg">Delete Quiz</h3>
+                        <h3 className="font-bold text-lg">Conferma eliminazione</h3>
                         {error && (
                             <div className="alert alert-error mt-4">
                                 {error}
                             </div>
                         )}
                         <p className="py-4">
-                            Are you sure you want to delete "{quiz.name}"?
-                            This action cannot be undone.
+                            Sei sicuro di voler eliminare "{quiz.name}"?
+                            Questa azione è irreversibile.
                         </p>
                         <div className="modal-action">
                             <button
@@ -84,7 +89,7 @@ export const QuizRow: React.FC<QuizRowProps> = ({
                                 {isDeleting ? (
                                     <span className="loading loading-spinner"></span>
                                 ) : (
-                                    'Delete'
+                                    'Elimina'
                                 )}
                             </button>
                             <button
@@ -92,7 +97,7 @@ export const QuizRow: React.FC<QuizRowProps> = ({
                                 onClick={() => setShowDeleteModal(false)}
                                 disabled={isDeleting}
                             >
-                                Cancel
+                                Annulla
                             </button>
                         </div>
                     </div>

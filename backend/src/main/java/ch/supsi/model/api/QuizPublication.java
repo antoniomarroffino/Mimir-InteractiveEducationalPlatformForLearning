@@ -27,6 +27,12 @@ public class QuizPublication {
     public QuizPublication() {
 
     }
+    public QuizPublication(ObjectId courseId, ObjectId folderId, ObjectId quizId, String publicationCode) {
+        this.courseId = courseId;
+        this.folderId = folderId;
+        this.quizId = quizId;
+        this.publicationCode = publicationCode;
+    }
 
     public QuizPublication(ObjectId id, ObjectId courseId, ObjectId folderId, ObjectId quizId, String publicationCode) {
         this.id = id;

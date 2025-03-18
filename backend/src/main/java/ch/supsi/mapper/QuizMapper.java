@@ -28,18 +28,11 @@ public class QuizMapper implements IBaseMapper<Quiz, QuizDTO> {
             dto.setId(quiz.getId().toString());
             dto.setName(quiz.getName());
             dto.setDescription(quiz.getDescription());
-
-            System.out.println("Converting quiz: " + quiz.getName());
-            System.out.println("Questions count: " + (quiz.getQuestions() != null ? quiz.getQuestions().size() : "null"));
-
             if (quiz.getQuestions() != null) {
                 dto.setQuestions(quiz.getQuestions().stream()
                         .map(question -> {
                             try {
-                                QuestionDTO questionDTO = questionMapper.toDTO(question);
-                                System.out.println("  Converted question: " + question.getQuestionText());
-                                System.out.println("  Question type: " + question.getType());
-                                return questionDTO;
+                                return questionMapper.toDTO(question);
                             } catch (Exception e) {
                                 System.err.println("Error converting question: " + question.getQuestionText());
                                 e.printStackTrace();
@@ -71,7 +64,6 @@ public class QuizMapper implements IBaseMapper<Quiz, QuizDTO> {
 
         quiz.setDescription(dto.getDescription());
 
-        // Usa il questionMapper che ha già l'injection del factory
         quiz.setQuestions(dto.getQuestions().stream()
                 .map(questionMapper::toEntity)
                 .collect(Collectors.toList()).reversed());

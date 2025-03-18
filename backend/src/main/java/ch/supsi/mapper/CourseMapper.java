@@ -27,17 +27,11 @@ public class CourseMapper implements IBaseMapper<Course, CourseDTO> {
             dto.setId(course.getId().toString());
             dto.setName(course.getName());
 
-            System.out.println("Converting course: " + course.getName());
-            System.out.println("Folders count: " + (course.getFolders() != null ? course.getFolders().size() : "null"));
-
             if (course.getFolders() != null) {
                 dto.setFolders(course.getFolders().stream()
                         .map(folder -> {
                             try {
-                                FolderDTO folderDTO = folderMapper.toDTO(folder);
-                                System.out.println("  Converted folder: " + folder.getName());
-                                System.out.println("  Quizzes count: " + (folder.getQuizzes() != null ? folder.getQuizzes().size() : "null"));
-                                return folderDTO;
+                                return folderMapper.toDTO(folder);
                             } catch (Exception e) {
                                 System.err.println("Error converting folder: " + folder.getName());
                                 e.printStackTrace();

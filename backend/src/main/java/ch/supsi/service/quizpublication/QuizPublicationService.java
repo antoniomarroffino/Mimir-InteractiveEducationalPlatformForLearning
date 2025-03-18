@@ -1,6 +1,8 @@
 package ch.supsi.service.quizpublication;
 
+import ch.supsi.mapper.QuizPublicationMapper;
 import ch.supsi.model.api.QuizPublication;
+import ch.supsi.model.dto.api.QuizPublicationDTO;
 import ch.supsi.repository.QuizPublicationRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -14,19 +16,18 @@ public class QuizPublicationService implements IQuizPublicationService {
     @Inject
     QuizPublicationRepository quizPublicationRepository;
 
+    @Inject
+    QuizPublicationMapper quizPublicationMapper;
+
     private static final String CODE_CHARACTERS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
     private static final int CODE_LENGTH = 6;
 
     @Override
-    public QuizPublication publishQuiz(ObjectId courseId, ObjectId folderId, ObjectId quizId) {
-        QuizPublication publication = new QuizPublication();
-        publication.setCourseId(courseId);
-        publication.setFolderId(folderId);
-        publication.setQuizId(quizId);
-        publication.setPublicationCode(generateUniqueCode());
+    public QuizPublicationDTO publishQuiz(QuizPublicationDTO quizPublicationDTO) {
+        QuizPublication quizPublication= new QuizPublication(new ObjectId(quizPublicationDTO.getCourseId()),new ObjectId(quizPublicationDTO.getFolderId()),new ObjectId(quizPublicationDTO.getQuizId()),generateUniqueCode());
 
-        this.quizPublicationRepository.persist(publication);
-        return publication;
+        this.quizPublicationRepository.persist(quizPublication);
+        return quizPublicationMapper.toDTO(quizPublication);
     }
 
     private String generateUniqueCode() {

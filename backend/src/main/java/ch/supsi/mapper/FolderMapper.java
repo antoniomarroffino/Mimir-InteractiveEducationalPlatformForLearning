@@ -27,17 +27,11 @@ public class FolderMapper implements IBaseMapper<Folder, FolderDTO> {
             dto.setId(folder.getId().toString());
             dto.setName(folder.getName());
 
-            System.out.println("Converting folder: " + folder.getName());
-            System.out.println("Quizzes count: " + (folder.getQuizzes() != null ? folder.getQuizzes().size() : "null"));
-
             if (folder.getQuizzes() != null) {
                 dto.setQuizzes(folder.getQuizzes().stream()
                         .map(quiz -> {
                             try {
-                                QuizDTO quizDTO = quizMapper.toDTO(quiz);
-                                System.out.println("  Converted quiz: " + quiz.getName());
-                                System.out.println("  Questions count: " + (quiz.getQuestions() != null ? quiz.getQuestions().size() : "null"));
-                                return quizDTO;
+                                return quizMapper.toDTO(quiz);
                             } catch (Exception e) {
                                 System.err.println("Error converting quiz: " + quiz.getName());
                                 e.printStackTrace();
