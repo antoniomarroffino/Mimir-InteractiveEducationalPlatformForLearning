@@ -1,4 +1,4 @@
-import { Configuration, CourseControllerApi, FolderControllerApi, QuizControllerApi, QuestionControllerApi, UserControllerApi } from '@dti-isin/backend-api-client';
+import { Configuration, CourseControllerApi, FolderControllerApi, QuizControllerApi, QuestionControllerApi, UserControllerApi, QuizPublicationControllerApi } from '@dti-isin/backend-api-client';
 import axios from 'axios';
 
 // Creare un'istanza Axios correttamente configurata
@@ -29,3 +29,4 @@ export const folderApi = new FolderControllerApi(config);
 export const quizApi = new QuizControllerApi(config);
 export const questionApi = new QuestionControllerApi(config);
 export const userApi = new UserControllerApi(config);
+export const quizPublicationApi = new QuizPublicationControllerApi(config);

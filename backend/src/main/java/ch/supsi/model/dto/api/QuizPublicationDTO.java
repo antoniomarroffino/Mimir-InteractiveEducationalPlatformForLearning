@@ -25,10 +25,14 @@ public class QuizPublicationDTO {
     @Schema(description = "Codice di pubblicazione generato dal backend", readOnly = true)
     private String publicationCode;
 
+    private boolean published;
+
     public QuizPublicationDTO() {
+        this.published = false;
     }
 
     public QuizPublicationDTO(String id, String courseId, String folderId, String quizId, String publicationCode) {
+        this();
         this.id = id;
         this.courseId = courseId;
         this.folderId = folderId;
@@ -74,5 +78,13 @@ public class QuizPublicationDTO {
 
     public void setPublicationCode(String publicationCode) {
         this.publicationCode = publicationCode;
+    }
+
+    public boolean isPublished() {
+        return published;
+    }
+
+    public void setPublished(boolean published) {
+        this.published = published;
     }
 }

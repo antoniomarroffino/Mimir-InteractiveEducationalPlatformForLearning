@@ -25,7 +25,7 @@ public class QuizPublicationService implements IQuizPublicationService {
     @Override
     public QuizPublicationDTO publishQuiz(QuizPublicationDTO quizPublicationDTO) {
         QuizPublication quizPublication= new QuizPublication(new ObjectId(quizPublicationDTO.getCourseId()),new ObjectId(quizPublicationDTO.getFolderId()),new ObjectId(quizPublicationDTO.getQuizId()),generateUniqueCode());
-
+        quizPublication.setPublished(true);
         this.quizPublicationRepository.persist(quizPublication);
         return quizPublicationMapper.toDTO(quizPublication);
     }

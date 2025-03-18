@@ -24,6 +24,8 @@ public class QuizPublication {
     @Schema(required = true)
     private String publicationCode;
 
+    private boolean published;
+
     public QuizPublication() {
 
     }
@@ -80,5 +82,13 @@ public class QuizPublication {
 
     public void setPublicationCode(String publicationCode) {
         this.publicationCode = publicationCode;
+    }
+
+    public boolean isPublished() {
+        return published;
+    }
+
+    public void setPublished(boolean published) {
+        this.published = published;
     }
 }
