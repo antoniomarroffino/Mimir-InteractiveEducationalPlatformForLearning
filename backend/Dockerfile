@@ -5,12 +5,13 @@ WORKDIR /app
 COPY --chown=quarkus:quarkus --chmod=0755 mvnw ./mvnw
 COPY --chown=quarkus:quarkus .mvn ./.mvn
 COPY --chown=quarkus:quarkus pom.xml .
-COPY --chown=quarkus:quarkus src ./src
+COPY src ./src
 
 RUN ./mvnw clean package \
     -Pnative \
     -DskipTests \
     -Dquarkus.native.additional-build-args="--initialize-at-run-time=com.microsoft.aad.msal4jextensions.persistence.linux.ISecurityLibrary"
+
 
 # Stage 2: Create minimal runtime image
 FROM quay.io/quarkus/quarkus-micro-image:2.0

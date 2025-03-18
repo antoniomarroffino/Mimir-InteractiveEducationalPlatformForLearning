@@ -33,7 +33,9 @@ public class AdminInitializer {
         for (String mail : this.adminConfig.getAdminEmails()) {
             try {
                 this.adminService.createAdmin(this.microsoftGraphService.getUserByEmail(mail));
-            } catch (Exception ignored) {
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                e.printStackTrace();
             }
         }
     }

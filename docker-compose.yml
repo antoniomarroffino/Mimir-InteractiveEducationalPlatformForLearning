@@ -4,6 +4,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    restart: always
     env_file:
       - backend/.env
     expose:
@@ -12,16 +13,12 @@ services:
       - mongo
     networks:
       - internal
-    dns:
-      - 8.8.8.8
-      - 1.1.1.1
 
   nginx:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    image: nginx:1.27.4-alpine
-    ports:
+    expose:
       - "80:80"
     depends_on:
       - backend
@@ -32,12 +29,31 @@ services:
   mongo:
     image: mongo:8.0.4
     container_name: mongoProd
+    restart: always
     expose:
       - "27017"
     volumes:
       - mongo_data:/data/db
     networks:
       - internal
+
+  ngrok:
+    image: ngrok/ngrok:3.21.0-alpine
+    container_name: ngrok-container
+    restart: unless-stopped
+    environment:
+      - NGROK_AUTHTOKEN=${NGROK_AUTHTOKEN}
+      - NGROK_REGION=eu
+    ports:
+      - "4040:4040"
+    command:
+      - http
+      - --hostname=integral-hedgehog-capital.ngrok-free.app
+      - nginx:80
+    networks:
+      - external
+    depends_on:
+      - nginx
 
 volumes:
   mongo_data:
