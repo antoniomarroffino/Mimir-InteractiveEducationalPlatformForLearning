@@ -1,7 +1,5 @@
 package ch.supsi.controller.quizpublication;
 
-import ch.supsi.mapper.QuizPublicationMapper;
-import ch.supsi.model.api.QuizPublication;
 import ch.supsi.model.dto.api.QuizPublicationDTO;
 import ch.supsi.service.quizpublication.IQuizPublicationService;
 import jakarta.annotation.security.RolesAllowed;
@@ -35,8 +33,7 @@ public class QuizPublicationController {
     @APIResponse(responseCode = "400", description = "Invalid input data")
     @APIResponse(responseCode = "404", description = "Resource not found")
     public Response publishQuiz(@Valid QuizPublicationDTO quizPublicationDTO) {
-        QuizPublication createdPublication = quizPublicationService.publishQuiz(quizPublicationDTO);
-        QuizPublicationDTO responseDto = quizPublicationMapper.toDTO(createdPublication);
-        return Response.status(Response.Status.CREATED).entity(responseDto).build();
+        QuizPublicationDTO responseDTO = quizPublicationService.publishQuiz(quizPublicationDTO);
+        return Response.status(Response.Status.CREATED).entity(responseDTO).build();
     }
 }
