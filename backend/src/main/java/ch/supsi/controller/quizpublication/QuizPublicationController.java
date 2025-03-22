@@ -86,4 +86,23 @@ public class QuizPublicationController {
         return Response.ok(dtos).build();
     }
 
+
+    @GET
+    @Path("/byCode/{code}")
+    @Operation(summary = "Get publication by access code")
+    @APIResponse(responseCode = "200", description = "Publication found", content = @Content(
+            mediaType = MediaType.APPLICATION_JSON,
+            schema = @Schema(implementation = QuizPublicationDTO.class)
+    ))
+    @APIResponse(responseCode = "404", description = "Publication not found")
+    public Response getPublicationByCode(@PathParam("code") String code) {
+        QuizPublication publication = this.quizPublicationService.getPublicationByCode(code);
+
+        if (publication == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        return Response.ok(this.quizPublicationMapper.toDTO(publication)).build();
+    }
+
 }

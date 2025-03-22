@@ -66,7 +66,7 @@ const App = () => {
                         <Route index element={<TeacherDashboard/>}/>
                         <Route path=":courseId" element={<CourseDetails/>}/>
                         <Route
-                            path=":courseId/folders/:folderId/quizzes/:quizId/edit"
+                            path=":courseId/folders/:folderId/quizzes/new"
                             element={<QuizCreation/>}
                         />
                         <Route

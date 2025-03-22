@@ -10,4 +10,5 @@ public interface IQuizPublicationService {
     QuizPublicationDTO publishQuiz(QuizPublicationDTO quizPublicationDTO);
     QuizPublication getPublicationByReferences(ObjectId courseId, ObjectId folderId, ObjectId quizId);
     List<QuizPublication> getAllPublications();
+    QuizPublication getPublicationByCode(String code);
 }

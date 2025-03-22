@@ -4,13 +4,11 @@ import { QuizPublicationContext } from "../contexts/QuizPublicationContext";
 import { QuizPublicationDTO } from "@dti-isin/backend-api-client";
 import { quizPublicationApi } from "../../config/config";
 
-// Tipo per la creazione senza campi generati dal backend
 type CreateQuizPublicationDTO = Omit<QuizPublicationDTO, 'id' | 'publicationCode'>;
 
 export const QuizPublicationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const queryClient = useQueryClient();
 
-    // Query per tutte le pubblicazioni
     const {
         data: publications = [],
         isLoading: isLoadingPublications,
@@ -20,7 +18,6 @@ export const QuizPublicationProvider: React.FC<{ children: React.ReactNode }> = 
         queryFn: async () => (await quizPublicationApi.apiPublicationsGet()).data,
     });
 
-    // Mutation per creare una pubblicazione
     const {
         mutateAsync: createPublicationMutation,
         isLoading: isCreatingPublication,

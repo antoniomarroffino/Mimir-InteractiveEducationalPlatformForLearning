@@ -8,7 +8,7 @@ import java.util.Optional;
 
 @ApplicationScoped
 public class QuizPublicationRepository implements PanacheMongoRepository<QuizPublication> {
-    public Optional<QuizPublication> findByCode(String code) {
-        return find("publicationCode", code).firstResultOptional();
+    public QuizPublication findByCode(String code) {
+        return find("publicationCode", code).firstResult();
     }
 }

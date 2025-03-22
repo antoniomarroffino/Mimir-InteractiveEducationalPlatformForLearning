@@ -1,33 +1,20 @@
-import React, {useState} from "react";
-import {FolderDTO} from "@dti-isin/backend-api-client";
-import {BsChevronDown, BsChevronUp, BsFolder2, BsPlus} from "react-icons/bs";
-import {QuizList} from "../quiz/QuizList";
-import {useQuiz} from "../../hooks/useQuiz.ts";
+import { useState } from "react";
+import { FolderDTO } from "@dti-isin/backend-api-client";
+import { BsChevronDown, BsChevronUp, BsFolder2, BsPlus } from "react-icons/bs";
+import { QuizList } from "../quiz/QuizList";
+import { useNavigate } from "react-router-dom";
 
 interface FolderRowProps {
     folder: FolderDTO;
     courseId: string;
 }
 
-export const FolderRow = ({folder, courseId}: FolderRowProps) => {
+export const FolderRow = ({ folder, courseId }: FolderRowProps) => {
     const [isExpanded, setIsExpanded] = useState(false);
-    const [showCreateForm, setShowCreateForm] = useState(false);
-    const [quizName, setQuizName] = useState("");
-    const {createQuiz, isCreatingQuiz} = useQuiz();
+    const navigate = useNavigate();
 
-    const handleCreateQuiz = async (e: React.FormEvent) => {
-        e.preventDefault();
-
-        if (!quizName.trim()) return;
-
-        try {
-            await createQuiz(quizName.trim());
-
-            setQuizName("");
-            setShowCreateForm(false);
-        } catch (error) {
-            console.error("Failed to create quiz", error);
-        }
+    const handleCreateQuiz = () => {
+        navigate(`/courses/${courseId}/folders/${folder.id}/quizzes/new`);
     };
 
     return (
@@ -37,14 +24,14 @@ export const FolderRow = ({folder, courseId}: FolderRowProps) => {
                 onClick={() => setIsExpanded(!isExpanded)}
             >
                 <div className="flex items-center gap-3">
-                    <BsFolder2 className="text-xl text-primary"/>
+                    <BsFolder2 className="text-xl text-primary" />
                     <h3 className="font-semibold">{folder.name}</h3>
                 </div>
                 <div className="flex items-center gap-4">
                     <span className="text-base-content/70">
                         {folder.quizzes?.length || 0} quizzes
                     </span>
-                    {isExpanded ? <BsChevronUp/> : <BsChevronDown/>}
+                    {isExpanded ? <BsChevronUp /> : <BsChevronDown />}
                 </div>
             </div>
 
@@ -57,45 +44,13 @@ export const FolderRow = ({folder, courseId}: FolderRowProps) => {
                     />
 
                     <div className="mt-4">
-                        {!showCreateForm ? (
-                            <button
-                                onClick={() => setShowCreateForm(true)}
-                                className="btn btn-primary w-full"
-                            >
-                                <BsPlus className="text-xl mr-2"/>
-                                Add New Quiz
-                            </button>
-                        ) : (
-                            <form onSubmit={handleCreateQuiz} className="space-y-2">
-                                <input
-                                    type="text"
-                                    value={quizName}
-                                    onChange={(e) => setQuizName(e.target.value)}
-                                    placeholder="Enter quiz name"
-                                    className="input input-bordered w-full"
-                                    disabled={isCreatingQuiz}
-                                />
-                                <div className="flex gap-2">
-                                    <button
-                                        type="submit"
-                                        className="btn btn-primary flex-1"
-                                        disabled={isCreatingQuiz || !quizName.trim()}
-                                    >
-                                        {isCreatingQuiz ? "Creating..." : "Create Quiz"}
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            setShowCreateForm(false);
-                                            setQuizName("");
-                                        }}
-                                        className="btn btn-ghost"
-                                    >
-                                        Cancel
-                                    </button>
-                                </div>
-                            </form>
-                        )}
+                        <button
+                            onClick={handleCreateQuiz}
+                            className="btn btn-primary w-full"
+                        >
+                            <BsPlus className="text-xl mr-2" />
+                            Add New Quiz
+                        </button>
                     </div>
                 </div>
             )}

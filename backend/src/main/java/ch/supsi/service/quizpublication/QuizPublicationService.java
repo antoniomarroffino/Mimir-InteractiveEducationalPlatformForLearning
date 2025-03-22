@@ -25,7 +25,12 @@ public class QuizPublicationService implements IQuizPublicationService {
 
     @Override
     public QuizPublicationDTO publishQuiz(QuizPublicationDTO quizPublicationDTO) {
-        QuizPublication quizPublication= new QuizPublication(new ObjectId(quizPublicationDTO.getCourseId()),new ObjectId(quizPublicationDTO.getFolderId()),new ObjectId(quizPublicationDTO.getQuizId()),generateUniqueCode());
+        QuizPublication quizPublication = new QuizPublication(
+                new ObjectId(quizPublicationDTO.getCourseId()),
+                new ObjectId(quizPublicationDTO.getFolderId()),
+                new ObjectId(quizPublicationDTO.getQuizId()),
+                generateUniqueCode()
+        );
         quizPublication.setPublished(true);
         this.quizPublicationRepository.persist(quizPublication);
         return this.quizPublicationMapper.toDTO(quizPublication);
@@ -46,6 +51,11 @@ public class QuizPublicationService implements IQuizPublicationService {
         return this.quizPublicationRepository.listAll();
     }
 
+    @Override
+    public QuizPublication getPublicationByCode(String code) {
+        return quizPublicationRepository.findByCode(code);
+    }
+
     private String generateUniqueCode() {
         Random random = new Random();
         String code;
@@ -55,7 +65,7 @@ public class QuizPublicationService implements IQuizPublicationService {
                 sb.append(CODE_CHARACTERS.charAt(random.nextInt(CODE_CHARACTERS.length())));
             }
             code = sb.toString();
-        } while (this.quizPublicationRepository.findByCode(code).isPresent());
+        } while (this.quizPublicationRepository.findByCode(code) != null);
 
         return code;
     }

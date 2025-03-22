@@ -5,13 +5,10 @@ export type QuizContextType = {
     quizzes: QuizDTO[];
     isLoadingQuizzes: boolean;
     errorQuizzes: Error | null;
-    selectedQuizId: string | null;
-    setSelectedQuizId: (id: string | null) => void;
-    createQuiz: (name: string) => Promise<QuizDTO>;
-    fetchQuizzes: () => Promise<void>;
+    createQuiz: (courseId: string, folderId: string, name: string) => Promise<QuizDTO>;
+    deleteQuiz: (courseId: string, folderId: string, quizId: string) => Promise<void>;
     isCreatingQuiz: boolean;
     errorCreateQuiz: Error | null;
-    deleteQuiz: (quizId: string) => Promise<void>;
     isDeletingQuiz: boolean;
     errorDeleteQuiz: Error | null;
 };

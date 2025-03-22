@@ -21,7 +21,6 @@ export const QuizProvider: React.FC<QuizProviderProps> = React.memo(({
     const { selectedCourseId: contextCourseId } = useCourse();
     const { selectedFolderId: contextFolderId } = useFolder();
 
-    // Usa useMemo per stabilizzare i valori
     const courseId = useMemo(() => propCourseId || contextCourseId, [propCourseId, contextCourseId]);
     const folderId = useMemo(() => propFolderId || contextFolderId, [propFolderId, contextFolderId]);
 
