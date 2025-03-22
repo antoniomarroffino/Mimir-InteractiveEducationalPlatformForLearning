@@ -15,9 +15,9 @@ import {TeacherDashboard} from "./teacher/TeacherDashboard.tsx";
 import StudentDashboard from "./student/StudentDashboard.tsx";
 import PublicHome from "./no-logged/PublicHome.tsx";
 import {QuizStatsPage} from "./QuizStatsPage.tsx";
-import QuizScreen from "./QuizScreen.tsx";
 import {QuizRetrieveProvider} from '../provider/QuizRetrieveProvider.tsx';
 import {QuizPublicationProviders} from "../contexts/quizPublication/QuizPublicationProviders.tsx";
+import {QuizAccessRoute} from "../components/common/QuizAccessRoute.tsx";
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -90,11 +90,7 @@ const App = () => {
                             {/* Quiz Screen Route */}
                             <Route
                                 path="/quiz/:accessCode"
-                                element={
-                                    <ProtectedRoute allowedRoles={[Role.Student, Role.Teacher]}>
-                                        <QuizScreen/>
-                                    </ProtectedRoute>
-                                }
+                                element={<QuizAccessRoute />}
                             />
                         </Routes>
                         <Footer/>

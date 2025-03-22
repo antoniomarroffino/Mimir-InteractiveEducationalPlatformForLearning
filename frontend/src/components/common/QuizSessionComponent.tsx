@@ -1,23 +1,19 @@
-import React, { useState } from 'react';
-import { useAuth } from "../../hooks/useAuth.ts";
-import { FiHash } from "react-icons/fi";
-import { useNavigate } from 'react-router-dom';
-import { useQuizPublicationVerification } from '../../hooks/useQuizPublicationVerification';
+import React, {useState} from 'react';
+import {useAuth} from "../../hooks/useAuth.ts";
+import {FiHash} from "react-icons/fi";
+import {useNavigate} from 'react-router-dom';
+import {useQuizPublicationVerification} from '../../hooks/useQuizPublicationVerification';
 
 const QuizSessionComponent = () => {
-    const { user } = useAuth();
+    const {user} = useAuth();
     const navigate = useNavigate();
-    const { getPublicationByCode } = useQuizPublicationVerification();
+    const {getPublicationByCode} = useQuizPublicationVerification();
     const [code, setCode] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
     const handleJoin = async () => {
         setErrorMessage('');
-        if (!user) {
-            setErrorMessage('Effettua il login per partecipare al quiz');
-            return;
-        }
 
         const trimmedCode = code.trim();
         if (trimmedCode === '') {
@@ -29,18 +25,22 @@ const QuizSessionComponent = () => {
             setIsLoading(true);
             const publication = await getPublicationByCode(trimmedCode);
 
-            if (publication) {
-                navigate(`/quiz/${trimmedCode}`);
-            } else {
+            if (!publication) {
                 handleInvalidCode();
+                return;
             }
+            if (publication.anonymous && !user) {
+                setErrorMessage('Questo quiz richiede il login. Effettua l\'accesso.');
+                return;
+            }
+
+            navigate(`/quiz/${trimmedCode}`);
         } catch (error) {
             handleVerificationError(error);
         } finally {
             setIsLoading(false);
         }
     };
-
     const handleInvalidCode = () => {
         setCode('');
         setErrorMessage('Codice non valido. Riprova.');
@@ -68,7 +68,7 @@ const QuizSessionComponent = () => {
             <div className="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow">
                 <div className="card-body items-center text-center">
                     <div className="p-4 bg-primary/10 rounded-full mb-4">
-                        <FiHash className="text-4xl text-primary" />
+                        <FiHash className="text-4xl text-primary"/>
                     </div>
 
                     <h2 className="card-title text-2xl text-center">Partecipa a un quiz</h2>
