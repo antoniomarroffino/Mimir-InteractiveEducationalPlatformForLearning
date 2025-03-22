@@ -1,9 +1,67 @@
+import React, { useState } from 'react';
 import { useAuth } from "../../hooks/useAuth.ts";
 import { FiHash } from "react-icons/fi";
-
+import { useNavigate } from 'react-router-dom';
+import { useQuizPublicationVerification } from '../../hooks/useQuizPublicationVerification';
 
 const QuizSessionComponent = () => {
     const { user } = useAuth();
+    const navigate = useNavigate();
+    const { getPublicationByCode } = useQuizPublicationVerification();
+    const [code, setCode] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleJoin = async () => {
+        setErrorMessage('');
+        if (!user) {
+            setErrorMessage('Effettua il login per partecipare al quiz');
+            return;
+        }
+
+        const trimmedCode = code.trim();
+        if (trimmedCode === '') {
+            setErrorMessage('Inserisci un codice valido');
+            return;
+        }
+
+        try {
+            setIsLoading(true);
+            const publication = await getPublicationByCode(trimmedCode);
+
+            if (publication) {
+                navigate(`/quiz/${trimmedCode}`);
+            } else {
+                handleInvalidCode();
+            }
+        } catch (error) {
+            handleVerificationError(error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleInvalidCode = () => {
+        setCode('');
+        setErrorMessage('Codice non valido. Riprova.');
+    };
+
+    const handleVerificationError = (error: unknown) => {
+        setCode('');
+        setErrorMessage('Errore durante la verifica del codice. Riprova.');
+        console.error('Error verifying code:', error);
+    };
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setCode(e.target.value);
+        setErrorMessage('');
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter' && !isLoading) {
+            handleJoin();
+        }
+    };
 
     return (
         <section className="w-full max-w-md mx-auto">
@@ -22,14 +80,26 @@ const QuizSessionComponent = () => {
                                 type="text"
                                 placeholder="Codice sessione"
                                 className="input input-bordered join-item flex-1"
+                                value={code}
+                                onChange={handleInputChange}
+                                onKeyDown={handleKeyDown}
+                                disabled={isLoading}
                             />
                             <button
                                 className="btn btn-primary join-item"
+                                onClick={handleJoin}
+                                disabled={isLoading}
                             >
-                                {user ? "Unisciti" : "Accedi"}
+                                {isLoading ? (
+                                    <span className="loading loading-spinner"></span>
+                                ) : user ? "Unisciti" : "Accedi"}
                             </button>
                         </div>
                     </div>
+
+                    {errorMessage && (
+                        <p className="text-sm text-error mt-4">{errorMessage}</p>
+                    )}
 
                     {!user && (
                         <p className="text-sm text-base-content/70 mt-4">

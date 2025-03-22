@@ -42,7 +42,7 @@ public class QuizPublicationController {
     @APIResponse(responseCode = "400", description = "Invalid input data")
     @APIResponse(responseCode = "404", description = "Resource not found")
     public Response publishQuiz(@Valid QuizPublicationDTO quizPublicationDTO) {
-        QuizPublicationDTO responseDTO = quizPublicationService.publishQuiz(quizPublicationDTO);
+        QuizPublicationDTO responseDTO = this.quizPublicationService.publishQuiz(quizPublicationDTO);
         return Response.status(Response.Status.CREATED).entity(responseDTO).build();
     }
 
@@ -59,7 +59,7 @@ public class QuizPublicationController {
             @PathParam("folderId") String folderId,
             @PathParam("quizId") String quizId) {
 
-        QuizPublication publication = quizPublicationService.getPublicationByReferences(
+        QuizPublication publication = this.quizPublicationService.getPublicationByReferences(
                 new ObjectId(courseId),
                 new ObjectId(folderId),
                 new ObjectId(quizId)
@@ -69,7 +69,7 @@ public class QuizPublicationController {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        return Response.ok(quizPublicationMapper.toDTO(publication)).build();
+        return Response.ok(this.quizPublicationMapper.toDTO(publication)).build();
     }
 
     @GET
@@ -79,9 +79,9 @@ public class QuizPublicationController {
             schema = @Schema(type = SchemaType.ARRAY, implementation = QuizPublicationDTO.class)
     ))
     public Response getAllPublications() {
-        List<QuizPublication> publications = quizPublicationService.getAllPublications();
+        List<QuizPublication> publications = this.quizPublicationService.getAllPublications();
         List<QuizPublicationDTO> dtos = publications.stream()
-                .map(quizPublicationMapper::toDTO)
+                .map(this.quizPublicationMapper::toDTO)
                 .collect(Collectors.toList());
         return Response.ok(dtos).build();
     }
@@ -105,4 +105,42 @@ public class QuizPublicationController {
         return Response.ok(this.quizPublicationMapper.toDTO(publication)).build();
     }
 
+
+    @PUT
+    @Path("/{id}")
+    @Operation(summary = "Update a quiz publication")
+    @APIResponse(responseCode = "200", description = "Quiz publication updated successfully", content = @Content(
+            mediaType = MediaType.APPLICATION_JSON,
+            schema = @Schema(type = SchemaType.OBJECT, implementation = QuizPublicationDTO.class)
+    ))
+    @APIResponse(responseCode = "404", description = "Publication not found")
+    public Response updateQuizPublication(
+            @PathParam("id") String id,
+            @Valid QuizPublicationDTO quizPublicationDTO) {
+        quizPublicationDTO.setId(id);
+        QuizPublicationDTO updatedDTO = this.quizPublicationService.updateQuizPublication(quizPublicationDTO);
+
+        if (updatedDTO == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        return Response.ok(updatedDTO).build();
+    }
+
+    @DELETE
+    @Path("/{id}")
+    @Operation(summary = "Delete a quiz publication")
+    @APIResponse(responseCode = "204", description = "Quiz publication deleted successfully")
+    @APIResponse(responseCode = "404", description = "Publication not found")
+    public Response deleteQuizPublication(@PathParam("id") String id) {
+        boolean deleted = this.quizPublicationService.deleteQuizPublication(id);
+
+        if (!deleted) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        return Response.noContent().build();
+    }
+
 }
+

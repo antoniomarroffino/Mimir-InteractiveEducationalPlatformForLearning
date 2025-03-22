@@ -3,7 +3,9 @@ import { QuizDTO } from '@dti-isin/backend-api-client';
 import { BsTrash, BsPencil, BsRocket } from 'react-icons/bs';
 import { useNavigate } from 'react-router-dom';
 import { useQuiz } from '../../hooks/useQuiz';
-import { useQuizPublication } from "../../hooks/useQuizPublication";
+import { useQuizPublicationList } from '../../hooks/useQuizPublicationList';
+import { useQuizPublicationCRUD } from '../../hooks/useQuizPublicationCRUD';
+import { useQuizPublicationVerification } from '../../hooks/useQuizPublicationVerification';
 
 interface QuizRowProps {
     quiz: QuizDTO;
@@ -18,18 +20,14 @@ export const QuizRow: React.FC<QuizRowProps> = ({
                                                 }) => {
     const { deleteQuiz } = useQuiz();
     const navigate = useNavigate();
-    const {
-        publications,
-        createPublication,
-        getPublicationByReferences,
-        isCreatingPublication: isPublishing
-    } = useQuizPublication();
 
-    // State modals
+    const { publications } = useQuizPublicationList();
+    const { createPublication, isCreatingPublication: isPublishing } = useQuizPublicationCRUD();
+    const { getPublicationByReferences } = useQuizPublicationVerification();
+
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showPublishModal, setShowPublishModal] = useState(false);
 
-    // Error states
     const [error, setError] = useState<string | null>(null);
     const [publishError, setPublishError] = useState<string | null>(null);
 
@@ -43,7 +41,6 @@ export const QuizRow: React.FC<QuizRowProps> = ({
         try {
             setPublishError(null);
 
-            // Verifica esistenza pubblicazione
             const existing = await getPublicationByReferences(
                 courseId,
                 folderId,
@@ -58,8 +55,7 @@ export const QuizRow: React.FC<QuizRowProps> = ({
             setShowPublishModal(true);
 
         } catch (error) {
-            console.error('Errore nel recupero pubblicazione:', error);
-            setPublishError(error instanceof Error ? error.message : 'Errore di rete');
+            handlePublishError(error);
         }
     };
 
@@ -81,25 +77,39 @@ export const QuizRow: React.FC<QuizRowProps> = ({
             navigate(`/courses/${courseId}/publications/${publication.id}/stats`);
 
         } catch (error) {
-            console.error('Pubblicazione fallita:', error);
-            setPublishError(error instanceof Error ? error.message : 'Errore sconosciuto');
+            handlePublishError(error);
         } finally {
             setShowPublishModal(false);
         }
     };
 
+    const handlePublishError = (error: unknown) => {
+        console.error('Errore nella pubblicazione:', error);
+        setPublishError(
+            error instanceof Error
+                ? error.message
+                : 'Errore sconosciuto durante la pubblicazione'
+        );
+    };
+
+    // Naviga alla pagina di modifica del quiz
     const handleUpdateQuiz = () => {
         navigate(`/courses/${courseId}/folders/${folderId}/quizzes/${quiz.id}/edit`);
     };
 
+    // Elimina il quiz
     const handleDeleteQuiz = async () => {
         try {
             setError(null);
             await deleteQuiz(quiz.id!);
             setShowDeleteModal(false);
         } catch (error) {
-            console.error('Failed to delete quiz:', error);
-            setError(error instanceof Error ? error.message : 'Failed to delete quiz');
+            console.error('Eliminazione quiz fallita:', error);
+            setError(
+                error instanceof Error
+                    ? error.message
+                    : 'Impossibile eliminare il quiz'
+            );
         }
     };
 

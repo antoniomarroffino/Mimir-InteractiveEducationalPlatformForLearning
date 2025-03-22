@@ -56,6 +56,40 @@ public class QuizPublicationService implements IQuizPublicationService {
         return quizPublicationRepository.findByCode(code);
     }
 
+    @Override
+    public QuizPublicationDTO updateQuizPublication(QuizPublicationDTO quizPublicationDTO) {
+        ObjectId objectId = new ObjectId(quizPublicationDTO.getId());
+        QuizPublication existingPublication = quizPublicationRepository.findById(objectId);
+        if (existingPublication == null) {
+            return null;
+        }
+        existingPublication.setCourseId(new ObjectId(quizPublicationDTO.getCourseId()));
+        existingPublication.setFolderId(new ObjectId(quizPublicationDTO.getFolderId()));
+        existingPublication.setQuizId(new ObjectId(quizPublicationDTO.getQuizId()));
+        existingPublication.setPublished(quizPublicationDTO.isPublished());
+        quizPublicationRepository.update(existingPublication);
+        return quizPublicationMapper.toDTO(existingPublication);
+    }
+
+    @Override
+    public boolean deleteQuizPublication(String id) {
+        try {
+            ObjectId objectId = new ObjectId(id);
+
+            QuizPublication publication = quizPublicationRepository.findById(objectId);
+
+            if (publication == null) {
+                return false;
+            }
+
+            quizPublicationRepository.delete(publication);
+            return true;
+        } catch (Exception e) {
+            System.err.println("Errore durante l'eliminazione della pubblicazione: " + e.getMessage());
+            return false;
+        }
+    }
+
     private String generateUniqueCode() {
         Random random = new Random();
         String code;
