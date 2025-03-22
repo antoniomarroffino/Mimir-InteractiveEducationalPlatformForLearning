@@ -27,8 +27,11 @@ public class QuizPublicationDTO {
 
     private boolean published;
 
+    private boolean anonymous;
+
     public QuizPublicationDTO() {
         this.published = false;
+        this.anonymous = true;
     }
 
     public QuizPublicationDTO(String id, String courseId, String folderId, String quizId, String publicationCode) {
@@ -41,7 +44,7 @@ public class QuizPublicationDTO {
     }
 
     public String getId() {
-        return id;
+        return this.id;
     }
 
     public void setId(String id) {
@@ -49,7 +52,7 @@ public class QuizPublicationDTO {
     }
 
     public String getCourseId() {
-        return courseId;
+        return this.courseId;
     }
 
     public void setCourseId(String courseId) {
@@ -57,7 +60,7 @@ public class QuizPublicationDTO {
     }
 
     public String getFolderId() {
-        return folderId;
+        return this.folderId;
     }
 
     public void setFolderId(String folderId) {
@@ -65,7 +68,7 @@ public class QuizPublicationDTO {
     }
 
     public String getQuizId() {
-        return quizId;
+        return this.quizId;
     }
 
     public void setQuizId(String quizId) {
@@ -73,7 +76,7 @@ public class QuizPublicationDTO {
     }
 
     public String getPublicationCode() {
-        return publicationCode;
+        return this.publicationCode;
     }
 
     public void setPublicationCode(String publicationCode) {
@@ -81,10 +84,18 @@ public class QuizPublicationDTO {
     }
 
     public boolean isPublished() {
-        return published;
+        return this.published;
     }
 
     public void setPublished(boolean published) {
         this.published = published;
+    }
+
+    public boolean isAnonymous() {
+        return this.anonymous;
+    }
+
+    public void setAnonymous(boolean anonymous) {
+        this.anonymous = anonymous;
     }
 }
