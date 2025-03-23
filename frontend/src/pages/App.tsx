@@ -15,6 +15,7 @@ import {TeacherDashboard} from "./teacher/TeacherDashboard.tsx";
 import StudentDashboard from "./student/StudentDashboard.tsx";
 import PublicHome from "./no-logged/PublicHome.tsx";
 import {AdminProvider} from "../provider/AdminProvider.tsx";
+import UserProfile from "../components/user/UserProfile.tsx";
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -76,6 +77,15 @@ const App = () => {
                         element={
                             <ProtectedRoute allowedRoles={[Role.Student]}>
                                 <StudentDashboard/>
+                            </ProtectedRoute>
+                        }
+                    />
+
+                    <Route
+                        path="/profile"
+                        element={
+                            <ProtectedRoute allowedRoles={[Role.Admin, Role.Student, Role.Teacher]}>
+                                <UserProfile/>
                             </ProtectedRoute>
                         }
                     />

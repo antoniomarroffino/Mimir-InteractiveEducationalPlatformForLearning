@@ -9,15 +9,15 @@ const LogoutButton: React.FC<{ className?: string }> = ({ className }) => {
     return (
         <button
             onClick={logout}
-            className={`btn btn-ghost gap-2 ${className}`}
+            className={`btn btn-ghost gap-3 justify-start !min-h-0 h-auto px-3 py-2 ${className || ''}`}
             disabled={isLoading}
         >
             {isLoading ? (
                 <Spinner size="sm" />
             ) : (
                 <>
-                    <FiLogOut className="w-4 h-4" />
-                    <span className="hidden sm:inline">Esci</span>
+                    <FiLogOut className="w-4 h-4 shrink-0" />
+                    <span className="text-sm">Esci</span>
                 </>
             )}
         </button>
