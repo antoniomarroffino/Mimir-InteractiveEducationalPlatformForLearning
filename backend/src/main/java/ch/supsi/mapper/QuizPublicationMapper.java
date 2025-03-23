@@ -4,6 +4,7 @@ import ch.supsi.model.api.QuizPublication;
 import ch.supsi.model.dto.api.QuizPublicationDTO;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.bson.types.ObjectId;
+import org.jetbrains.annotations.NotNull;
 
 @ApplicationScoped
 public class QuizPublicationMapper implements IBaseMapper<QuizPublication, QuizPublicationDTO> {
@@ -11,45 +12,40 @@ public class QuizPublicationMapper implements IBaseMapper<QuizPublication, QuizP
     @Override
     public QuizPublicationDTO toDTO(QuizPublication quizPublication) {
         if (quizPublication == null) {
-            System.err.println("Received null QuizPublication");
             return null;
         }
+        return getQuizPublicationDTO(quizPublication);
+    }
 
-        try {
-            QuizPublicationDTO dto = new QuizPublicationDTO();
-            dto.setId(quizPublication.getId().toString());
-            dto.setCourseId(quizPublication.getCourseId().toString());
-            dto.setFolderId(quizPublication.getFolderId().toString());
-            dto.setQuizId(quizPublication.getQuizId().toString());
-            dto.setPublicationCode(quizPublication.getPublicationCode());
-            return dto;
-
-        } catch (Exception e) {
-            System.err.println("Error converting QuizPublication to DTO for ID: " + quizPublication.getId());
-            e.printStackTrace();
-            throw new RuntimeException("Failed to convert QuizPublication to DTO", e);
-        }
+    private static @NotNull QuizPublicationDTO getQuizPublicationDTO(QuizPublication quizPublication) {
+        QuizPublicationDTO dto = new QuizPublicationDTO();
+        dto.setId(quizPublication.getId().toString());
+        dto.setCourseId(quizPublication.getCourseId().toString());
+        dto.setFolderId(quizPublication.getFolderId().toString());
+        dto.setQuizId(quizPublication.getQuizId().toString());
+        dto.setPublicationCode(quizPublication.getPublicationCode());
+        dto.setAnonymous(quizPublication.isAnonymous());
+        dto.setPublished(quizPublication.isPublished());
+        return dto;
     }
 
     @Override
     public QuizPublication toEntity(QuizPublicationDTO dto) {
         if (dto == null) {
-            System.err.println("Received null QuizPublicationDTO");
             return null;
         }
+        return getQuizPublication(dto);
+    }
 
-        try {
-            QuizPublication quizPublication = new QuizPublication();
-            quizPublication.setId(new ObjectId(dto.getId()));
-            quizPublication.setCourseId(new ObjectId(dto.getCourseId()));
-            quizPublication.setFolderId(new ObjectId(dto.getFolderId()));
-            quizPublication.setQuizId(new ObjectId(dto.getQuizId()));
-            return quizPublication;
-
-        } catch (Exception e) {
-            System.err.println("Error converting DTO to QuizPublication for course: " + dto.getCourseId());
-            e.printStackTrace();
-            throw new RuntimeException("Failed to convert DTO to QuizPublication", e);
-        }
+    private static @NotNull QuizPublication getQuizPublication(QuizPublicationDTO dto) {
+        QuizPublication quizPublication = new QuizPublication();
+        quizPublication.setId(new ObjectId(dto.getId()));
+        quizPublication.setCourseId(new ObjectId(dto.getCourseId()));
+        quizPublication.setFolderId(new ObjectId(dto.getFolderId()));
+        quizPublication.setQuizId(new ObjectId(dto.getQuizId()));
+        quizPublication.setPublicationCode(dto.getPublicationCode());
+        quizPublication.setAnonymous(dto.isAnonymous());
+        quizPublication.setPublished(dto.isPublished());
+        return quizPublication;
     }
 }

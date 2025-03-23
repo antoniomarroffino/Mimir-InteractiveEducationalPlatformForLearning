@@ -73,7 +73,7 @@ const App = () => {
                                 />
                                 <Route
                                     path=":courseId/publications/:publicationId/stats"
-                                    element={<QuizStatsPage/>}
+                                    element={<QuizStatsPage />}
                                 />
                             </Route>
 
@@ -90,7 +90,7 @@ const App = () => {
                             {/* Quiz Screen Route */}
                             <Route
                                 path="/quiz/:accessCode"
-                                element={<QuizAccessRoute />}
+                                element={<QuizAccessRoute/>}
                             />
                         </Routes>
                         <Footer/>
