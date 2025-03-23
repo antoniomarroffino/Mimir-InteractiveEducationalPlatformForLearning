@@ -9,10 +9,4 @@ type AuthContextType = {
     hasRole: (role: Role) => boolean;
 };
 
-export const AuthContext = createContext<AuthContextType>({
-    user: null,
-    isLoading: false,
-    login: () => {},
-    logout: () => {},
-    hasRole: () => false,
-});
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);

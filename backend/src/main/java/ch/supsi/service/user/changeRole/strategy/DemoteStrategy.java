@@ -7,6 +7,8 @@ import jakarta.enterprise.context.Dependent;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.ForbiddenException;
 
+import java.util.Optional;
+
 @Dependent
 public class DemoteStrategy implements ChangeRoleStrategy {
     @Inject
@@ -14,8 +16,12 @@ public class DemoteStrategy implements ChangeRoleStrategy {
 
     @Override
     public void changeRole(com.microsoft.graph.models.User microsoftUser) {
-        User userToDelete = this.userRepository.findByAzureOidOptional(microsoftUser.id).orElseThrow();
+        Optional<User> userToDeleteOpt = this.userRepository.findByAzureOidOptional(microsoftUser.id);
 
+        if(userToDeleteOpt.isEmpty())
+            return;
+
+        User userToDelete = userToDeleteOpt.get();
         if (userToDelete.role == Role.ADMIN)
             throw new ForbiddenException("Cannot change role of admin");
 

@@ -19,7 +19,7 @@ public class PromoteStrategy implements ChangeRoleStrategy {
         Optional<User> userOpt = this.userRepository.findByAzureOidOptional(microsoftUser.id);
 
         if (userOpt.isPresent())
-            throw new RuntimeException("User already exists and have teacher role");
+            return;
 
         User newTeacher = new User();
         newTeacher.azureOid = microsoftUser.id;

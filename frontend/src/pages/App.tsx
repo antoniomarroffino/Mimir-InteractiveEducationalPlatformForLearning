@@ -14,6 +14,7 @@ import {Role} from "@dti-isin/backend-api-client";
 import {TeacherDashboard} from "./teacher/TeacherDashboard.tsx";
 import StudentDashboard from "./student/StudentDashboard.tsx";
 import PublicHome from "./no-logged/PublicHome.tsx";
+import {AdminProvider} from "../provider/AdminProvider.tsx";
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -41,7 +42,9 @@ const App = () => {
                         path="/admin"
                         element={
                             <ProtectedRoute allowedRoles={[Role.Admin]}>
-                                <AdminDashboard/>
+                                <AdminProvider>
+                                    <AdminDashboard/>
+                                </AdminProvider>
                             </ProtectedRoute>
                         }
                     />
