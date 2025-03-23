@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
-import { QuizDTO } from '@dti-isin/backend-api-client';
-import { BsTrash, BsPencil, BsRocket } from 'react-icons/bs';
-import { useNavigate } from 'react-router-dom';
-import { useQuiz } from '../../hooks/useQuiz';
-import { useQuizPublicationList } from '../../hooks/useQuizPublicationList';
-import { useQuizPublicationCRUD } from '../../hooks/useQuizPublicationCRUD';
-import { useQuizPublicationVerification } from '../../hooks/useQuizPublicationVerification';
+import React, {useState} from 'react';
+import {QuizDTO} from '@dti-isin/backend-api-client';
+import {BsPencil, BsRocket, BsTrash} from 'react-icons/bs';
+import {useNavigate} from 'react-router-dom';
+import {useQuiz} from '../../hooks/useQuiz';
+import {useQuizPublicationCRUD} from '../../hooks/useQuizPublicationCRUD';
+import {useQuizPublicationVerification} from '../../hooks/useQuizPublicationVerification';
 
 interface QuizRowProps {
     quiz: QuizDTO;
@@ -18,12 +17,11 @@ export const QuizRow: React.FC<QuizRowProps> = ({
                                                     courseId,
                                                     folderId,
                                                 }) => {
-    const { deleteQuiz } = useQuiz();
+    const {deleteQuiz} = useQuiz();
     const navigate = useNavigate();
 
-    const { publications } = useQuizPublicationList();
-    const { createPublication, isCreatingPublication: isPublishing } = useQuizPublicationCRUD();
-    const { getPublicationByReferences } = useQuizPublicationVerification();
+    const {createPublication, isCreatingPublication: isPublishing} = useQuizPublicationCRUD();
+    const {getPublicationByReferences} = useQuizPublicationVerification();
 
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showPublishModal, setShowPublishModal] = useState(false);
@@ -31,11 +29,6 @@ export const QuizRow: React.FC<QuizRowProps> = ({
     const [error, setError] = useState<string | null>(null);
     const [publishError, setPublishError] = useState<string | null>(null);
 
-    const existingPublication = publications.find(p =>
-        p.quizId === quiz.id &&
-        p.courseId === courseId &&
-        p.folderId === folderId
-    );
 
     const handlePublishQuiz = async () => {
         try {
@@ -118,11 +111,7 @@ export const QuizRow: React.FC<QuizRowProps> = ({
             <div className="p-3 bg-base-200 rounded flex justify-between items-center">
                 <div className="flex items-center gap-2">
                     <span>{quiz.name}</span>
-                    {existingPublication && (
-                        <span className={`badge badge-sm ${existingPublication.published ? 'badge-success' : 'badge-warning'}`}>
-                            {existingPublication.published ? 'Pubblicato' : 'Bozza'}
-                        </span>
-                    )}
+
                 </div>
                 <div className="flex gap-2">
                     <button
@@ -130,21 +119,21 @@ export const QuizRow: React.FC<QuizRowProps> = ({
                         className="btn btn-sm btn-ghost"
                         title="Pubblica quiz"
                     >
-                        <BsRocket className="text-success" />
+                        <BsRocket className="text-success"/>
                     </button>
                     <button
                         onClick={handleUpdateQuiz}
                         className="btn btn-sm btn-ghost"
                         title="Modifica quiz"
                     >
-                        <BsPencil className="text-primary" />
+                        <BsPencil className="text-primary"/>
                     </button>
                     <button
                         onClick={() => setShowDeleteModal(true)}
                         className="btn btn-sm btn-ghost"
                         title="Elimina quiz"
                     >
-                        <BsTrash className="text-error" />
+                        <BsTrash className="text-error"/>
                     </button>
                 </div>
             </div>

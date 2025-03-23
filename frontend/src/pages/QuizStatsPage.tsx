@@ -1,50 +1,12 @@
-import {useParams} from 'react-router-dom';
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import {QuizPublicationDTO} from '@dti-isin/backend-api-client';
-import {useQuizPublicationList} from "../hooks/useQuizPublicationList.ts";
-import {useQuizPublicationVerification} from "../hooks/useQuizPublicationVerification.ts";
 
 export const QuizStatsPage = () => {
-    const {publicationId} = useParams<{ publicationId: string }>();
-    const {publications} = useQuizPublicationList();
-    const {getPublicationByCode} = useQuizPublicationVerification();
 
-    const [publication, setPublication] = useState<QuizPublicationDTO | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const [publication] = useState<QuizPublicationDTO | null>(null);
+    const [isLoading] = useState(true);
+    const [error] = useState<string | null>(null);
 
-    useEffect(() => {
-        const fetchPublication = async () => {
-            try {
-                const foundPublication = publications.find(p => p.id === publicationId);
-
-                if (foundPublication) {
-                    setPublication(foundPublication);
-                    setIsLoading(false);
-                    return;
-                }
-
-                if (foundPublication!.publicationCode) {
-                    const fetchedPublication = await getPublicationByCode(foundPublication!.publicationCode);
-
-                    if (fetchedPublication) {
-                        setPublication(fetchedPublication);
-                    } else {
-                        setError('Pubblicazione non trovata');
-                    }
-                } else {
-                    setError('ID pubblicazione non valido');
-                }
-            } catch (err) {
-                console.error('Errore nel recupero della pubblicazione:', err);
-                setError('Impossibile recuperare i dettagli della pubblicazione');
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchPublication();
-    }, [publicationId, publications, getPublicationByCode]);
 
     if (isLoading) {
         return (
