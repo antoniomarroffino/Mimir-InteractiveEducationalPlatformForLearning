@@ -3,16 +3,14 @@ import {useParams} from 'react-router-dom';
 import {useAuth} from "../../hooks/useAuth.ts";
 import {useQuizPublicationVerification} from "../../hooks/useQuizPublicationVerification.ts";
 import QuizScreen from "../../pages/QuizScreen.tsx";
-import {QuizPublicationDTO} from "@dti-isin/backend-api-client"
 import {useQuizRetrieve} from "../../hooks/useQuizRetrieve.ts";
 
 export const QuizAccessRoute: React.FC = () => {
     const {accessCode} = useParams<{ accessCode: string }>();
     const {user} = useAuth();
     const {getPublicationByCode} = useQuizPublicationVerification();
-    const {quiz, retrieveQuiz} = useQuizRetrieve();
+    const {retrieveQuiz} = useQuizRetrieve();
 
-    const [publication, setPublication] = useState<QuizPublicationDTO | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -32,10 +30,7 @@ export const QuizAccessRoute: React.FC = () => {
                     setIsLoading(false);
                     return;
                 }
-                setPublication(fetchedPublication);
-
-                await retrieveQuiz(publication!);
-                console.log(quiz);
+                await retrieveQuiz(fetchedPublication);
 
             } catch (err) {
                 console.error('Errore nel recupero della pubblicazione:', err);
