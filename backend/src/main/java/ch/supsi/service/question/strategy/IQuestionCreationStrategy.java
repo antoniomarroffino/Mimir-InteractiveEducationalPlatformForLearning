@@ -6,5 +6,4 @@ import ch.supsi.model.dto.api.question.QuestionDTO;
 
 public interface IQuestionCreationStrategy {
     Question createQuestion();
-    QuestionDTO createQuestionTemplate();
 }

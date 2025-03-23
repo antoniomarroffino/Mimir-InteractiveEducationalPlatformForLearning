@@ -13,9 +13,4 @@ public class MultipleChoiceQuestionStrategy implements IQuestionCreationStrategy
     public Question createQuestion() {
         return new MultipleChoiceQuestion();
     }
-
-    @Override
-    public QuestionDTO createQuestionTemplate() {
-        return new MultipleChoiceQuestionDTO();
-    }
 }

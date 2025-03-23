@@ -23,16 +23,7 @@ public class QuestionFactory implements IQuestionFactory {
 
     @Override
     public Question createQuestion(QuestionType type) {
-        IQuestionCreationStrategy strategy = this.strategies.get(type);
-        if (strategy == null) {
-            throw new UnsupportedOperationException("Question type not supported: " + type);
-        }
-        return strategy.createQuestion();
-    }
-
-    @Override
-    public QuestionDTO createQuestionTemplate(QuestionType type) {
-        return this.getStrategy(type).createQuestionTemplate();
+        return this.getStrategy(type).createQuestion();
     }
 
     private IQuestionCreationStrategy getStrategy(QuestionType type) {

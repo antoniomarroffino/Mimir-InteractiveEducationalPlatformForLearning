@@ -13,9 +13,4 @@ public class TrueFalseQuestionStrategy implements IQuestionCreationStrategy {
     public Question createQuestion() {
         return new TrueFalseQuestion();
     }
-
-    @Override
-    public QuestionDTO createQuestionTemplate() {
-        return new TrueFalseQuestionDTO();
-    }
 }

@@ -1,7 +1,6 @@
 package ch.supsi.mapper.question;
 
 import ch.supsi.mapper.IBaseMapper;
-import ch.supsi.mapper.question.builder.IQuestionDTOMapperBuilder;
 import ch.supsi.model.api.question.MultipleChoiceQuestion;
 import ch.supsi.model.api.question.Question;
 import ch.supsi.model.api.question.TrueFalseQuestion;
@@ -9,16 +8,14 @@ import ch.supsi.model.dto.api.question.MultipleChoiceQuestionDTO;
 import ch.supsi.model.dto.api.question.QuestionDTO;
 import ch.supsi.model.dto.api.question.TrueFalseQuestionDTO;
 import ch.supsi.service.question.builder.IQuestionFactory;
+import com.oracle.svm.core.annotate.Delete;
+import jakarta.decorator.Delegate;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.bson.types.ObjectId;
 
 @ApplicationScoped
-public class QuestionMapper implements IBaseMapper<Question, QuestionDTO> {
-
-    @Inject
-    IQuestionDTOMapperBuilder questionDTOBuilder;
-
+public class QuestionMapper extends AbstractQuestionMapper<Question, QuestionDTO> {
     @Inject
     IQuestionFactory questionFactory;
 
@@ -28,35 +25,9 @@ public class QuestionMapper implements IBaseMapper<Question, QuestionDTO> {
             return null;
         }
 
-        try {
-            if (question instanceof TrueFalseQuestion tfQuestion) {
-                TrueFalseQuestionDTO dto = new TrueFalseQuestionDTO();
-                dto.setId(question.getId().toString());
-                dto.setQuestionText(question.getQuestionText());
-                dto.setCorrectAnswer(tfQuestion.isCorrectAnswer());
-
-                return dto;
-            }
-
-            if (question instanceof MultipleChoiceQuestion mcQuestion) {
-                MultipleChoiceQuestionDTO dto = new MultipleChoiceQuestionDTO();
-                dto.setId(question.getId().toString());
-                dto.setQuestionText(question.getQuestionText());
-                dto.setChoices(mcQuestion.getChoices());
-                dto.setCorrectAnswerIndexes(mcQuestion.getCorrectAnswerIndexes());
-
-                return dto;
-            }
-
-            QuestionDTO dto = new QuestionDTO();
-            dto.setId(question.getId().toString());
-            dto.setQuestionText(question.getQuestionText());
-            dto.setType(question.getType());
-
-            return dto;
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to convert Question to DTO", e);
-        }
+        QuestionDTO dto = new QuestionDTO();
+        super.mapCommonFieldsQuestionToQuestionDTO(question, dto);
+        return dto;
     }
 
     @Override
@@ -64,32 +35,27 @@ public class QuestionMapper implements IBaseMapper<Question, QuestionDTO> {
         if (dto == null) {
             return null;
         }
+        Question question = questionFactory.createQuestion(dto.getType());
 
-        try {
-            Question question = questionFactory.createQuestion(dto.getType());
-
-            if (dto.getId() != null) {
-                try {
-                    question.setId(new ObjectId(dto.getId()));
-                } catch (IllegalArgumentException e) {
-                    throw new IllegalArgumentException("Invalid ID format", e);
-                }
+        if (dto.getId() != null) {
+            try {
+                question.setId(new ObjectId(dto.getId()));
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Invalid ID format", e);
             }
-
-            question.setQuestionText(dto.getQuestionText());
-
-            if (question instanceof TrueFalseQuestion tfQuestion && dto instanceof TrueFalseQuestionDTO trueFalseDTO) {
-                tfQuestion.setCorrectAnswer(trueFalseDTO.getCorrectAnswer());
-            }
-
-            if (question instanceof MultipleChoiceQuestion mcQuestion && dto instanceof MultipleChoiceQuestionDTO multipleChoiceDTO) {
-                mcQuestion.setChoices(multipleChoiceDTO.getChoices());
-                mcQuestion.setCorrectAnswerIndexes(multipleChoiceDTO.getCorrectAnswerIndexes());
-            }
-
-            return question;
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to convert DTO to Question entity", e);
         }
+
+        question.setQuestionText(dto.getQuestionText());
+
+        if (question instanceof TrueFalseQuestion tfQuestion && dto instanceof TrueFalseQuestionDTO trueFalseDTO) {
+            tfQuestion.setCorrectAnswer(trueFalseDTO.getCorrectAnswer());
+        }
+
+        if (question instanceof MultipleChoiceQuestion mcQuestion && dto instanceof MultipleChoiceQuestionDTO multipleChoiceDTO) {
+            mcQuestion.setChoices(multipleChoiceDTO.getChoices());
+            mcQuestion.setCorrectAnswerIndexes(multipleChoiceDTO.getCorrectAnswerIndexes());
+        }
+
+        return question;
     }
 }
