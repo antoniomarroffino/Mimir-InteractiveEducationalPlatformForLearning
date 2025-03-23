@@ -128,10 +128,6 @@ public class QuizPublicationController {
         quizPublicationDTO.setId(id);
         QuizPublicationDTO updatedDTO = this.quizPublicationService.updateQuizPublication(quizPublicationDTO);
 
-        if (updatedDTO == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-
         return Response.ok(updatedDTO).build();
     }
 

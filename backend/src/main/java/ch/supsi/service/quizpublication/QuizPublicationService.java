@@ -74,15 +74,17 @@ public class QuizPublicationService implements IQuizPublicationService {
 
     @Override
     public QuizPublicationDTO updateQuizPublication(QuizPublicationDTO quizPublicationDTO) {
-        ObjectId objectId = new ObjectId(quizPublicationDTO.getId());
-        QuizPublication existingPublication = quizPublicationRepository.findById(objectId);
-        if (existingPublication == null) {
-            return null;
+        Optional<QuizPublication> quizPublicationOpt = this.quizPublicationRepository.findByIdOptional(new ObjectId(quizPublicationDTO.getId()));
+        if (quizPublicationOpt.isEmpty()) {
+            throw new NotFoundException("Quiz publication with id " + quizPublicationDTO.getId() + " not found");
         }
+
+        QuizPublication existingPublication = quizPublicationOpt.get();
         existingPublication.setCourseId(new ObjectId(quizPublicationDTO.getCourseId()));
         existingPublication.setFolderId(new ObjectId(quizPublicationDTO.getFolderId()));
         existingPublication.setQuizId(new ObjectId(quizPublicationDTO.getQuizId()));
         existingPublication.setPublished(quizPublicationDTO.isPublished());
+        existingPublication.setAnonymous(quizPublicationDTO.isAnonymous());
         quizPublicationRepository.update(existingPublication);
         return quizPublicationMapper.toDTO(existingPublication);
     }

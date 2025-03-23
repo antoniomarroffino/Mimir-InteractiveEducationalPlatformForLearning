@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
+    QuestionDTO,
     MultipleChoiceQuestionDTO,
     QuestionType,
     TrueFalseQuestionDTO
@@ -7,7 +8,10 @@ import {
 import { TrueFalseQuestionTemplate } from './TrueFalseQuestionTemplate';
 import { MultipleChoiceQuestionTemplate } from './MultipleChoiceQuestionTemplate';
 
-type SpecificQuestionDTO = TrueFalseQuestionDTO | MultipleChoiceQuestionDTO;
+type SpecificQuestionDTO =
+    | QuestionDTO
+    | TrueFalseQuestionDTO
+    | MultipleChoiceQuestionDTO;
 
 interface QuestionEditorProps {
     questionType: QuestionType;

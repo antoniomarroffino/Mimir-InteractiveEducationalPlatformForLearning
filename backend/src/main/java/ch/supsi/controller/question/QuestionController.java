@@ -41,7 +41,7 @@ public class QuestionController {
             @PathParam("courseId") String courseId,
             @PathParam("folderId") String folderId,
             @PathParam("quizId") String quizId) {
-        List<QuestionDTO> questionsDTO = questionService.getQuestionsInQuiz(
+        List<QuestionDTO> questionsDTO = this.questionService.getQuestionsInQuiz(
                 new ObjectId(courseId),
                 new ObjectId(folderId),
                 new ObjectId(quizId)
@@ -70,7 +70,7 @@ public class QuestionController {
     public Response createQuestionTemplate(
             @QueryParam("type") QuestionType type) {
 
-        QuestionDTO questionDTO = questionService.createQuestionTemplate(type);
+        QuestionDTO questionDTO = this.questionService.createQuestionTemplate(type);
         return Response.status(Response.Status.CREATED)
                 .entity(questionDTO)
                 .build();
@@ -92,7 +92,7 @@ public class QuestionController {
             @PathParam("quizId") String quizId,
             @Valid QuestionDTO questionDTO) {
 
-        QuestionDTO savedQuestionDTO = questionService.addQuestionToQuiz(
+        QuestionDTO savedQuestionDTO = this.questionService.addQuestionToQuiz(
                 new ObjectId(courseId),
                 new ObjectId(folderId),
                 new ObjectId(quizId),
