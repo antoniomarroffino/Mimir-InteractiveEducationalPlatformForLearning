@@ -30,6 +30,11 @@ const QuizSessionComponent = () => {
                 return;
             }
 
+            if(!publication.published){
+                handleDeactivatedPublication()
+                return;
+            }
+
             navigate(`/quiz/${trimmedCode}`);
         } catch (error) {
             handleVerificationError(error);
@@ -40,6 +45,11 @@ const QuizSessionComponent = () => {
     const handleInvalidCode = () => {
         setCode('');
         setErrorMessage('Codice non valido. Riprova.');
+    };
+
+    const handleDeactivatedPublication = () => {
+        setCode('');
+        setErrorMessage('Pubblicazione non attiva.');
     };
 
     const handleVerificationError = (error: unknown) => {
