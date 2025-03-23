@@ -1,25 +1,26 @@
-import React, { useState } from 'react';
-import { quizApi } from "../../config/config";
-import { QuizDTO } from "@dti-isin/backend-api-client";
-import { QuizRetrieveContext, QuizRetrieveContextType } from '../contexts/QuizRetrieveContext';
+import React, {useState} from 'react';
+import {quizApi} from "../../config/config";
+import {QuizDTO, QuizPublicationDTO} from "@dti-isin/backend-api-client";
+import {QuizRetrieveContext, QuizRetrieveContextType} from '../contexts/QuizRetrieveContext';
 
 interface QuizRetrieveProviderProps {
     children: React.ReactNode;
 }
 
-export const QuizRetrieveProvider: React.FC<QuizRetrieveProviderProps> = ({ children }) => {
+export const QuizRetrieveProvider: React.FC<QuizRetrieveProviderProps> = ({children}) => {
     const [quiz, setQuiz] = useState<QuizDTO | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<Error | null>(null);
 
-    const retrieveQuiz = async (courseId: string, folderId: string, quizId: string) => {
+    const retrieveQuiz = async (quizPublication: QuizPublicationDTO) => {
+        if (quizPublication == null) return;
         setIsLoading(true);
         setError(null);
         try {
             const response = await quizApi.apiCoursesCourseIdFoldersFolderIdQuizzesQuizIdGet({
-                courseId,
-                folderId,
-                quizId
+                courseId: quizPublication.courseId,
+                folderId: quizPublication.folderId,
+                quizId: quizPublication.quizId
             });
             setQuiz(response.data);
         } catch (err) {

@@ -18,7 +18,6 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import java.util.List;
 
 @Path("/courses/{courseId}/folders/{folderId}/quizzes")
-@RolesAllowed("TEACHER")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class QuizController {
@@ -27,6 +26,7 @@ public class QuizController {
     IQuizService quizService;
 
     @GET
+    @RolesAllowed("TEACHER")
     @Operation(summary = "Get all quizzes in a folder")
     @APIResponse(
             responseCode = "200",
@@ -70,6 +70,7 @@ public class QuizController {
     }
 
     @POST
+    @RolesAllowed("TEACHER")
     @Operation(summary = "Create quiz in folder")
     @APIResponse(
             responseCode = "201",
@@ -95,6 +96,7 @@ public class QuizController {
     }
 
     @PUT
+    @RolesAllowed("TEACHER")
     @Path("/{quizId}")
     @Operation(summary = "Update quiz in folder")
     @APIResponse(
@@ -120,6 +122,7 @@ public class QuizController {
     }
 
     @DELETE
+    @RolesAllowed("TEACHER")
     @Path("/{quizId}")
     @Operation(summary = "Delete quiz from folder")
     @APIResponse(

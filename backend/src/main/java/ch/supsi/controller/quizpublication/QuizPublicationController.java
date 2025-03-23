@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Path("/publications")
-@RolesAllowed("TEACHER")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class QuizPublicationController {
@@ -34,6 +33,7 @@ public class QuizPublicationController {
 
 
     @POST
+    @RolesAllowed("TEACHER")
     @Operation(summary = "Publish a quiz")
     @APIResponse(responseCode = "201", description = "Quiz published successfully", content = @Content(
             mediaType = MediaType.APPLICATION_JSON,
@@ -47,6 +47,7 @@ public class QuizPublicationController {
     }
 
     @GET
+    @RolesAllowed("TEACHER")
     @Path("/byReferences/{courseId}/{folderId}/{quizId}")
     @Operation(summary = "Get publication by references")
     @APIResponse(responseCode = "200", description = "Publication found", content = @Content(
@@ -64,15 +65,11 @@ public class QuizPublicationController {
                 new ObjectId(folderId),
                 new ObjectId(quizId)
         );
-
-        if (publication == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-
         return Response.ok(this.quizPublicationMapper.toDTO(publication)).build();
     }
 
     @GET
+    @RolesAllowed("TEACHER")
     @Operation(summary = "Get all publications")
     @APIResponse(responseCode = "200", description = "List of all publications", content = @Content(
             mediaType = MediaType.APPLICATION_JSON,
@@ -97,16 +94,12 @@ public class QuizPublicationController {
     @APIResponse(responseCode = "404", description = "Publication not found")
     public Response getPublicationByCode(@PathParam("code") String code) {
         QuizPublication publication = this.quizPublicationService.getPublicationByCode(code);
-
-        if (publication == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-
         return Response.ok(this.quizPublicationMapper.toDTO(publication)).build();
     }
 
 
     @PUT
+    @RolesAllowed("TEACHER")
     @Path("/{id}")
     @Operation(summary = "Update a quiz publication")
     @APIResponse(responseCode = "200", description = "Quiz publication updated successfully", content = @Content(
@@ -128,6 +121,7 @@ public class QuizPublicationController {
     }
 
     @DELETE
+    @RolesAllowed("TEACHER")
     @Path("/{id}")
     @Operation(summary = "Delete a quiz publication")
     @APIResponse(responseCode = "204", description = "Quiz publication deleted successfully")

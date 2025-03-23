@@ -1,9 +1,9 @@
-import {  useState } from 'react';
+import {useState} from 'react';
 
 import {useQuizRetrieve} from "../hooks/useQuizRetrieve.ts";
 
 const QuizScreen = () => {
-     const { quiz, error: errorQuiz } = useQuizRetrieve();
+    const {quiz, error: errorQuiz} = useQuizRetrieve();
     const [isQuizStarted, setIsQuizStarted] = useState<boolean>(false);
 
 

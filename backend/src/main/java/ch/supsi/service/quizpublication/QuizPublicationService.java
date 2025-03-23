@@ -6,9 +6,11 @@ import ch.supsi.model.dto.api.QuizPublicationDTO;
 import ch.supsi.repository.QuizPublicationRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.NotFoundException;
 import org.bson.types.ObjectId;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 @ApplicationScoped
@@ -53,7 +55,11 @@ public class QuizPublicationService implements IQuizPublicationService {
 
     @Override
     public QuizPublication getPublicationByCode(String code) {
-        return quizPublicationRepository.findByCode(code);
+        Optional<QuizPublication> quizPublicationOpt = this.quizPublicationRepository.findByCodeOptional(code);
+        if (quizPublicationOpt.isEmpty()) {
+            throw new NotFoundException("Quiz publication with code " + code + " not found");
+        }
+        return quizPublicationOpt.get();
     }
 
     @Override
@@ -99,7 +105,7 @@ public class QuizPublicationService implements IQuizPublicationService {
                 sb.append(CODE_CHARACTERS.charAt(random.nextInt(CODE_CHARACTERS.length())));
             }
             code = sb.toString();
-        } while (this.quizPublicationRepository.findByCode(code) != null);
+        } while (this.quizPublicationRepository.findByCodeOptional(code).isPresent());
 
         return code;
     }

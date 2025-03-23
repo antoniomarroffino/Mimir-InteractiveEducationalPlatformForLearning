@@ -29,10 +29,6 @@ const QuizSessionComponent = () => {
                 handleInvalidCode();
                 return;
             }
-            if (publication.anonymous && !user) {
-                setErrorMessage('Questo quiz richiede il login. Effettua l\'accesso.');
-                return;
-            }
 
             navigate(`/quiz/${trimmedCode}`);
         } catch (error) {
