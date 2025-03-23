@@ -74,22 +74,34 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
             return;
         }
 
-        const finalQuestion: SpecificQuestionDTO = {
-            ...template,
-            questionText,
-            type: questionType
-        };
+        let finalQuestion: SpecificQuestionDTO;
 
         switch (questionType) {
             case QuestionType.TrueFalse:
-                (finalQuestion as TrueFalseQuestionDTO).correctAnswer = correctAnswer;
+                finalQuestion = {
+                    ...template,
+                    questionText,
+                    type: QuestionType.TrueFalse,
+                    correctAnswer: correctAnswer
+                } as TrueFalseQuestionDTO;
                 break;
-            case QuestionType.MultipleChoice: {
-                const mcQuestion = finalQuestion as MultipleChoiceQuestionDTO;
-                mcQuestion.choices = choices;
-                mcQuestion.correctAnswerIndexes = correctChoices;
+
+            case QuestionType.MultipleChoice:
+                finalQuestion = {
+                    ...template,
+                    questionText,
+                    type: QuestionType.MultipleChoice,
+                    choices: choices,
+                    correctAnswerIndexes: correctChoices
+                } as MultipleChoiceQuestionDTO;
                 break;
-            }
+
+            default:
+                finalQuestion = {
+                    ...template,
+                    questionText,
+                    type: questionType
+                };
         }
 
         onSave(finalQuestion);

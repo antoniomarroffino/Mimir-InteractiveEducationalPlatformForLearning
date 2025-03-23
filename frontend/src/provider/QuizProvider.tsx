@@ -21,6 +21,7 @@ export const QuizProvider: React.FC<QuizProviderProps> = React.memo(({
     const { selectedCourseId: contextCourseId } = useCourse();
     const { selectedFolderId: contextFolderId } = useFolder();
 
+    // Usa useMemo per stabilizzare i valori
     const courseId = useMemo(() => propCourseId || contextCourseId, [propCourseId, contextCourseId]);
     const folderId = useMemo(() => propFolderId || contextFolderId, [propFolderId, contextFolderId]);
 
@@ -43,8 +44,8 @@ export const QuizProvider: React.FC<QuizProviderProps> = React.memo(({
             return response.data;
         },
         enabled: !!courseId && !!folderId,
-        staleTime: 1000 * 60,
-        cacheTime: 1000 * 60 * 5
+        staleTime: 1000 * 60, // 1 minuto
+        cacheTime: 1000 * 60 * 5 // 5 minuti
     });
 
     const createQuizMutation = useMutation<QuizDTO, Error, string>({
@@ -99,7 +100,6 @@ export const QuizProvider: React.FC<QuizProviderProps> = React.memo(({
             throw err;
         }
     };
-
     const deleteQuiz = async (quizId: string) => {
         try {
             await deleteQuizMutation.mutateAsync(quizId);
@@ -111,20 +111,6 @@ export const QuizProvider: React.FC<QuizProviderProps> = React.memo(({
 
     const fetchQuizzes = async () => {
         await refetchQuizzes();
-    };
-
-    const getQuizById = async (quizId: string): Promise<QuizDTO | null> => {
-        try {
-            const response = await quizApi.apiCoursesCourseIdFoldersFolderIdQuizzesQuizIdGet({
-                courseId: courseId!,
-                folderId: folderId!,
-                quizId: quizId
-            });
-            return response.data;
-        } catch (error) {
-            console.error("Error fetching quiz by id:", error);
-            return null;
-        }
     };
 
     // Memoizza il valore del contesto
@@ -140,8 +126,7 @@ export const QuizProvider: React.FC<QuizProviderProps> = React.memo(({
         errorCreateQuiz: createQuizMutation.error,
         deleteQuiz,
         isDeletingQuiz: deleteQuizMutation.isLoading,
-        errorDeleteQuiz: deleteQuizMutation.error,
-        getQuizById
+        errorDeleteQuiz: deleteQuizMutation.error
     }), [
         quizzes,
         isLoadingQuizzes,
@@ -150,9 +135,7 @@ export const QuizProvider: React.FC<QuizProviderProps> = React.memo(({
         createQuizMutation.isLoading,
         createQuizMutation.error,
         deleteQuizMutation.isLoading,
-        deleteQuizMutation.error,
-        courseId,
-        folderId
+        deleteQuizMutation.error
     ]);
 
     return (

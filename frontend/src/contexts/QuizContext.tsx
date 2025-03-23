@@ -1,4 +1,4 @@
-import React, { createContext } from "react";
+import { createContext } from "react";
 import { QuizDTO } from "@dti-isin/backend-api-client";
 
 export type QuizContextType = {
@@ -6,7 +6,7 @@ export type QuizContextType = {
     isLoadingQuizzes: boolean;
     errorQuizzes: Error | null;
     selectedQuizId: string | null;
-    setSelectedQuizId: React.Dispatch<React.SetStateAction<string | null>>;
+    setSelectedQuizId: (id: string | null) => void;
     createQuiz: (name: string) => Promise<QuizDTO>;
     fetchQuizzes: () => Promise<void>;
     isCreatingQuiz: boolean;
@@ -14,7 +14,6 @@ export type QuizContextType = {
     deleteQuiz: (quizId: string) => Promise<void>;
     isDeletingQuiz: boolean;
     errorDeleteQuiz: Error | null;
-    getQuizById: (quizId: string) => Promise<QuizDTO | null>;
 };
 
 export const QuizContext = createContext<QuizContextType | undefined>(undefined);

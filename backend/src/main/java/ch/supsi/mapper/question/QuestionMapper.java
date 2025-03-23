@@ -74,17 +74,44 @@ public class QuestionMapper implements IBaseMapper<Question, QuestionDTO> {
 
             question.setQuestionText(dto.getQuestionText());
 
-            if (question instanceof TrueFalseQuestion tfQuestion && dto instanceof TrueFalseQuestionDTO trueFalseDTO) {
-                tfQuestion.setCorrectAnswer(trueFalseDTO.getCorrectAnswer());
-            }
+            // Usa instanceof e getClass() per verificare il tipo più accuratamente
+            switch (dto.getType()) {
+                case TRUE_FALSE:
+                    if (question instanceof TrueFalseQuestion && dto instanceof TrueFalseQuestionDTO) {
+                        TrueFalseQuestion tfQuestion = (TrueFalseQuestion) question;
+                        TrueFalseQuestionDTO trueFalseDTO = (TrueFalseQuestionDTO) dto;
+                        tfQuestion.setCorrectAnswer(trueFalseDTO.getCorrectAnswer());
+                    } else {
+                        throw new IllegalArgumentException("Incompatible types for TrueFalse question");
+                    }
+                    break;
 
-            if (question instanceof MultipleChoiceQuestion mcQuestion && dto instanceof MultipleChoiceQuestionDTO multipleChoiceDTO) {
-                mcQuestion.setChoices(multipleChoiceDTO.getChoices());
-                mcQuestion.setCorrectAnswerIndexes(multipleChoiceDTO.getCorrectAnswerIndexes());
+                case MULTIPLE_CHOICE:
+                    if (question instanceof MultipleChoiceQuestion && dto instanceof MultipleChoiceQuestionDTO) {
+                        MultipleChoiceQuestion mcQuestion = (MultipleChoiceQuestion) question;
+                        MultipleChoiceQuestionDTO multipleChoiceDTO = (MultipleChoiceQuestionDTO) dto;
+
+                        // Aggiungi log o debug per verificare i valori
+                        System.out.println("Choices: " + multipleChoiceDTO.getChoices());
+                        System.out.println("Correct Indexes: " + multipleChoiceDTO.getCorrectAnswerIndexes());
+
+                        mcQuestion.setChoices(multipleChoiceDTO.getChoices());
+                        mcQuestion.setCorrectAnswerIndexes(multipleChoiceDTO.getCorrectAnswerIndexes());
+                    } else {
+                        throw new IllegalArgumentException("Incompatible types for Multiple Choice question");
+                    }
+                    break;
+
+                default:
+                    // Gestisci altri tipi di domande se necessario
+                    break;
             }
 
             return question;
         } catch (Exception e) {
+            // Log dettagliato dell'errore
+            System.err.println("Failed to convert DTO to Question entity");
+            e.printStackTrace();
             throw new RuntimeException("Failed to convert DTO to Question entity", e);
         }
     }

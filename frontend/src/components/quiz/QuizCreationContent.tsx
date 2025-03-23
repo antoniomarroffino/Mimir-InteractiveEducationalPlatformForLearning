@@ -89,7 +89,7 @@ export const QuizCreationContent: React.FC = () => {
             setSelectedQuestionType(type);
             setQuestionTemplate(template);
 
-            // Mantieni il testo della domanda se già presente
+            // Mantieni il testo della domanda se giÃ  presente
             setDraftQuestion(prev => ({
                 ...prev,
                 type
