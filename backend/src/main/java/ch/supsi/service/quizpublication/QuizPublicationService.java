@@ -39,6 +39,16 @@ public class QuizPublicationService implements IQuizPublicationService {
     }
 
     @Override
+    public QuizPublicationDTO getQuizPublicationById(ObjectId publicationID) {
+        Optional<QuizPublication> quizPublicationOpt = this.quizPublicationRepository.findByIdOptional(publicationID);
+        if (quizPublicationOpt.isEmpty()) {
+            throw new NotFoundException("Quiz publication with id " + publicationID + " not found");
+        }
+
+        return this.quizPublicationMapper.toDTO(quizPublicationOpt.get());
+    }
+
+    @Override
     public QuizPublication getPublicationByReferences(ObjectId courseId, ObjectId folderId, ObjectId quizId) {
         return this.quizPublicationRepository.find(
                 "courseId = ?1 and folderId = ?2 and quizId = ?3",
@@ -75,6 +85,19 @@ public class QuizPublicationService implements IQuizPublicationService {
         existingPublication.setPublished(quizPublicationDTO.isPublished());
         quizPublicationRepository.update(existingPublication);
         return quizPublicationMapper.toDTO(existingPublication);
+    }
+
+    @Override
+    public QuizPublicationDTO deactivateQuizPublication(ObjectId publicationID) {
+        Optional<QuizPublication> quizPublicationOpt = this.quizPublicationRepository.findByIdOptional(publicationID);
+        if (quizPublicationOpt.isEmpty()) {
+            throw new NotFoundException("Quiz publication with id " + publicationID + " not found");
+        }
+
+        QuizPublication quizPublication = quizPublicationOpt.get();
+        quizPublication.setPublished(false);
+        this.quizPublicationRepository.update(quizPublication);
+        return this.quizPublicationMapper.toDTO(quizPublication);
     }
 
     @Override

@@ -66,7 +66,6 @@ export const QuizRow: React.FC<QuizRowProps> = ({
             if (!publication?.id) {
                 throw new Error('Pubblicazione creata senza ID valido');
             }
-
             navigate(`/courses/${courseId}/publications/${publication.id}/stats`);
 
         } catch (error) {
