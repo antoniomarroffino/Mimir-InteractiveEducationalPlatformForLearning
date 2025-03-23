@@ -2,7 +2,6 @@ package ch.supsi.mapper.question.builder;
 
 import ch.supsi.mapper.IBaseMapper;
 import ch.supsi.mapper.question.MultipleChoiceQuestionMapper;
-import ch.supsi.mapper.question.QuestionMapper;
 import ch.supsi.mapper.question.QuestionMapperHolder;
 import ch.supsi.mapper.question.TrueFalseQuestionMapper;
 import ch.supsi.model.api.question.Question;
@@ -25,11 +24,7 @@ public class QuestionMapperBuilder implements IQuestionMapperBuilder {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <E extends Question, D extends QuestionDTO> IBaseMapper<E, D> getQuestionDTOMapper(QuestionType questionType) {
-        QuestionMapperHolder<?, ?> holder = this.mapperMap.get(questionType);
-        if(holder != null) {
-            return (IBaseMapper<E, D>) holder.mapper();
-        }
-        return (IBaseMapper<E, D>) new QuestionMapper();
+    public IBaseMapper<? extends Question, ? extends QuestionDTO> getQuestionDTOMapper(QuestionType questionType) {
+        return this.mapperMap.get(questionType).mapper();
     }
 }

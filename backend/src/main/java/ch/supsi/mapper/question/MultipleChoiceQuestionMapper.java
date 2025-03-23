@@ -15,8 +15,8 @@ public class MultipleChoiceQuestionMapper extends AbstractQuestionMapper<Multipl
 
         MultipleChoiceQuestionDTO multipleChoiceQuestionDTO = new MultipleChoiceQuestionDTO();
         super.mapCommonFieldsQuestionToQuestionDTO(multipleChoiceQuestion, multipleChoiceQuestionDTO);
-        multipleChoiceQuestionDTO.setChoices(multipleChoiceQuestion.getChoices());
-        multipleChoiceQuestionDTO.setCorrectAnswerIndexes(multipleChoiceQuestion.getCorrectAnswerIndexes());
+        multipleChoiceQuestionDTO.setChoices(multipleChoiceQuestion.choices);
+        multipleChoiceQuestionDTO.setCorrectAnswerIndexes(multipleChoiceQuestion.correctAnswerIndexes);
         return multipleChoiceQuestionDTO;
     }
 
@@ -27,8 +27,8 @@ public class MultipleChoiceQuestionMapper extends AbstractQuestionMapper<Multipl
         }
         MultipleChoiceQuestion multipleChoiceQuestion = new MultipleChoiceQuestion();
         super.mapCommonFieldsQuestionDTOToQuestion(multipleChoiceQuestionDTO, multipleChoiceQuestion);
-        multipleChoiceQuestion.setChoices(multipleChoiceQuestionDTO.getChoices());
-        multipleChoiceQuestion.setCorrectAnswerIndexes(multipleChoiceQuestionDTO.getCorrectAnswerIndexes());
+        multipleChoiceQuestion.choices = multipleChoiceQuestionDTO.getChoices();
+        multipleChoiceQuestion.correctAnswerIndexes = multipleChoiceQuestionDTO.getCorrectAnswerIndexes();
         return multipleChoiceQuestion;
     }
 }

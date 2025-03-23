@@ -14,11 +14,11 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
         @JsonSubTypes.Type(value = MultipleChoiceQuestion.class, name = "MULTIPLE_CHOICE")
 })
 public abstract class Question {
-    private ObjectId id;
+    public ObjectId id;
 
-    private String questionText;
+    public String questionText;
 
-    private QuestionType type;
+    public QuestionType type;
 
     protected Question() {
         this.id = new ObjectId();
@@ -32,25 +32,5 @@ public abstract class Question {
     protected Question(QuestionType type, String questionText) {
         this(type);
         this.questionText = questionText;
-    }
-
-    public ObjectId getId() {
-        return id;
-    }
-
-    public void setId(ObjectId id) {
-        this.id = id;
-    }
-
-    public String getQuestionText() {
-        return questionText;
-    }
-
-    public void setQuestionText(String questionText) {
-        this.questionText = questionText;
-    }
-
-    public QuestionType getType() {
-        return type;
     }
 }

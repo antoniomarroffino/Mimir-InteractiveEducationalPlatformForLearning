@@ -7,8 +7,18 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.validation.constraints.NotNull;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "type",
+        visible = true
+)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = TrueFalseQuestionDTO.class, name = "TRUE_FALSE"),
+        @JsonSubTypes.Type(value = MultipleChoiceQuestionDTO.class, name = "MULTIPLE_CHOICE")
+})
 @RegisterForReflection
-public class QuestionDTO {
+public abstract class QuestionDTO {
     private String id;
     private String questionText;
 

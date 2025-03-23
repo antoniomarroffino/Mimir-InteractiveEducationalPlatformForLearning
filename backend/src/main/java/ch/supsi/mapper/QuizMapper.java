@@ -28,7 +28,7 @@ public class QuizMapper implements IBaseMapper<Quiz, QuizDTO> {
 
         if (quiz.getQuestions() != null) {
             dto.setQuestions(quiz.getQuestions().stream()
-                    .map(question -> this.questionMapperBuilder.getQuestionDTOMapper(question.getType()).toDTO(question))
+                    .map(question -> this.questionMapperBuilder.getQuestionDTOMapper(question.type).toDTO(question))
                     .collect(Collectors.toList()));
         }
         return dto;

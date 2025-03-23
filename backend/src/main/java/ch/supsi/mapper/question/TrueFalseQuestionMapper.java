@@ -13,7 +13,7 @@ public class TrueFalseQuestionMapper extends AbstractQuestionMapper<TrueFalseQue
 
         TrueFalseQuestionDTO trueFalseQuestionDTO = new TrueFalseQuestionDTO();
         super.mapCommonFieldsQuestionToQuestionDTO(trueFalseQuestion, trueFalseQuestionDTO);
-        trueFalseQuestionDTO.setCorrectAnswer(trueFalseQuestion.isCorrectAnswer());
+        trueFalseQuestionDTO.setCorrectAnswer(trueFalseQuestion.correctAnswer);
         return trueFalseQuestionDTO;
     }
 
@@ -25,7 +25,7 @@ public class TrueFalseQuestionMapper extends AbstractQuestionMapper<TrueFalseQue
 
         TrueFalseQuestion trueFalseQuestion = new TrueFalseQuestion();
         super.mapCommonFieldsQuestionDTOToQuestion(trueFalseQuestionDTO, trueFalseQuestion);
-        trueFalseQuestion.setCorrectAnswer(trueFalseQuestionDTO.getCorrectAnswer());
+        trueFalseQuestion.correctAnswer = trueFalseQuestionDTO.getCorrectAnswer();
         return trueFalseQuestion;
     }
 }

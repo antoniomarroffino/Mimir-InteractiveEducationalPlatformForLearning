@@ -6,7 +6,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 @Schema(description = "True/False Question model", name = "TrueFalseQuestion")
 @BsonDiscriminator(key = "type", value = "TRUE_FALSE")
 public class TrueFalseQuestion extends Question {
-    private boolean correctAnswer;
+    public boolean correctAnswer;
 
     public TrueFalseQuestion() {
         super(QuestionType.TRUE_FALSE);
@@ -14,15 +14,7 @@ public class TrueFalseQuestion extends Question {
 
     public TrueFalseQuestion(String questionText, boolean correctAnswer) {
         super(QuestionType.TRUE_FALSE);
-        setQuestionText(questionText);
-        this.correctAnswer = correctAnswer;
-    }
-
-    public boolean isCorrectAnswer() {
-        return correctAnswer;
-    }
-
-    public void setCorrectAnswer(boolean correctAnswer) {
+         this.questionText = questionText;
         this.correctAnswer = correctAnswer;
     }
 }
