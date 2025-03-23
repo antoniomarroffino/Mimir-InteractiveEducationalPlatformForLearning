@@ -8,20 +8,9 @@ import ch.supsi.model.dto.api.question.QuestionDTO;
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-public class MultipleChoiceQuestionStrategy implements QuestionCreationStrategy {
-
-    @Override
-    public QuestionType getType() {
-        return QuestionType.MULTIPLE_CHOICE;
-    }
-
+public class MultipleChoiceQuestionStrategy implements IQuestionCreationStrategy {
     @Override
     public Question createQuestion() {
         return new MultipleChoiceQuestion();
-    }
-
-    @Override
-    public QuestionDTO createQuestionTemplate() {
-        return new MultipleChoiceQuestionDTO();
     }
 }

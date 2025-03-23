@@ -35,7 +35,7 @@ public class AdminService implements IAdminService {
     @Override
     public void deleteAdmins() {
         for (User admin : this.userRepository.findAdminUsers())
-            this.userRepository.delete(admin);
+            this.userRepository.deleteByAzureOid(admin.azureOid);
     }
 
     private boolean isNotAnAdmin(com.microsoft.graph.models.User microsoftUser) {

@@ -4,7 +4,7 @@ import axios from 'axios';
 // Creare un'istanza Axios correttamente configurata
 const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_BACKEND_URL,
-    headers: {
+    headers:{
         'Content-Type': 'application/json'
     }
 });

@@ -4,7 +4,7 @@ import ch.supsi.model.api.question.Question;
 import ch.supsi.model.api.question.QuestionType;
 import ch.supsi.model.dto.api.question.QuestionDTO;
 import ch.supsi.service.question.strategy.MultipleChoiceQuestionStrategy;
-import ch.supsi.service.question.strategy.QuestionCreationStrategy;
+import ch.supsi.service.question.strategy.IQuestionCreationStrategy;
 import ch.supsi.service.question.strategy.TrueFalseQuestionStrategy;
 import jakarta.enterprise.context.ApplicationScoped;
 
@@ -13,7 +13,7 @@ import java.util.Map;
 
 @ApplicationScoped
 public class QuestionFactory implements IQuestionFactory {
-    private final Map<QuestionType, QuestionCreationStrategy> strategies;
+    private final Map<QuestionType, IQuestionCreationStrategy> strategies;
 
     public QuestionFactory() {
         this.strategies = new EnumMap<>(QuestionType.class);
@@ -23,20 +23,11 @@ public class QuestionFactory implements IQuestionFactory {
 
     @Override
     public Question createQuestion(QuestionType type) {
-        QuestionCreationStrategy strategy = this.strategies.get(type);
-        if (strategy == null) {
-            throw new UnsupportedOperationException("Question type not supported: " + type);
-        }
-        return strategy.createQuestion();
+        return this.getStrategy(type).createQuestion();
     }
 
-    @Override
-    public QuestionDTO createQuestionTemplate(QuestionType type) {
-        return this.getStrategy(type).createQuestionTemplate();
-    }
-
-    private QuestionCreationStrategy getStrategy(QuestionType type) {
-        QuestionCreationStrategy strategy = this.strategies.get(type);
+    private IQuestionCreationStrategy getStrategy(QuestionType type) {
+        IQuestionCreationStrategy strategy = this.strategies.get(type);
         if (strategy == null) {
             throw new UnsupportedOperationException("Question type not supported: " + type);
         }

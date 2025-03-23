@@ -67,6 +67,7 @@ export const QuestionProvider: React.FC<QuestionProviderProps> = ({
             if (!courseId || !folderId || !quizId) {
                 throw new Error("No course, folder, or quiz selected");
             }
+            console.log(questionDTO);
             const response = await questionApi.apiCoursesCourseIdFoldersFolderIdQuizzesQuizIdQuestionsPost({
                 courseId,
                 folderId,

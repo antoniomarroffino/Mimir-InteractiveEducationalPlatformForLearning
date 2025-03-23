@@ -4,6 +4,7 @@ import com.azure.identity.ClientSecretCredential;
 import com.azure.identity.ClientSecretCredentialBuilder;
 import com.microsoft.graph.authentication.TokenCredentialAuthProvider;
 import com.microsoft.graph.requests.GraphServiceClient;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.inject.Singleton;
 import okhttp3.Request;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -11,6 +12,16 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import java.util.Collections;
 
 @Singleton
+@RegisterForReflection(
+        targets = {
+                com.microsoft.graph.requests.UserCollectionRequest.class,
+                com.microsoft.graph.requests.UserCollectionPage.class,
+                com.microsoft.graph.requests.UserCollectionResponse.class,
+                com.microsoft.graph.options.Option.class,
+                com.microsoft.graph.models.User.class
+        },
+        registerFullHierarchy = true
+)
 public class GraphClientConfig {
     @ConfigProperty(name = "app.azure.tenant-id")
     String tenantId;
@@ -45,6 +56,5 @@ public class GraphClientConfig {
                 .builder()
                 .authenticationProvider(authProvider)
                 .buildClient();
-
     }
 }
