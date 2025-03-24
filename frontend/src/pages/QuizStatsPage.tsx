@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {QRCodeSVG} from 'qrcode.react';
-import {useQuizPublicationCRUD} from "../hooks/useQuizPublicationCRUD.ts";
+import {useQuizPublicationCRUD} from "../hooks/quizPublication/useQuizPublicationCRUD.ts";
 import {QuizPublicationDTO} from "@dti-isin/backend-api-client";
 import {useParams} from "react-router-dom";
 import {FaInfoCircle, FaPowerOff, FaQrcode} from 'react-icons/fa';

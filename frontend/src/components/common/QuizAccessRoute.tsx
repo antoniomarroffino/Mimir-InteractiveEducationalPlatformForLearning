@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useParams} from 'react-router-dom';
 import {useAuth} from "../../hooks/useAuth.ts";
-import {useQuizPublicationVerification} from "../../hooks/useQuizPublicationVerification.ts";
+import {useQuizPublicationVerification} from "../../hooks/quizPublication/useQuizPublicationVerification.ts";
 import QuizScreen from "../../pages/QuizScreen.tsx";
 import {useQuizRetrieve} from "../../hooks/useQuizRetrieve.ts";
 
