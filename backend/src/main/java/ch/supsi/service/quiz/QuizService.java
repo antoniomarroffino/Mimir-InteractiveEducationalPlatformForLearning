@@ -28,7 +28,7 @@ public class QuizService implements IQuizService {
     @Override
     public List<QuizDTO> getQuizzesInFolder(ObjectId courseId, ObjectId folderId) {
         Folder folder = getFolderFromCourse(courseId, folderId);
-        return folder.getQuizzes().stream()
+        return folder.quizzes.stream()
                 .map(this.quizMapper::toDTO)
                 .collect(Collectors.toList());
     }
@@ -37,7 +37,7 @@ public class QuizService implements IQuizService {
     public QuizDTO getQuizInFolder(ObjectId courseId, ObjectId folderId, ObjectId quizId) {
         Folder folder = this.getFolderFromCourse(courseId, folderId);
 
-        return folder.getQuizzes().stream()
+        return folder.quizzes.stream()
                 .filter(q -> q.getId().equals(quizId))
                 .map(this.quizMapper::toDTO)
                 .findFirst()
@@ -52,13 +52,13 @@ public class QuizService implements IQuizService {
         }
 
         Folder folder = courseOpt.get().folders.stream()
-                .filter(f -> f.getId().equals(folderId))
+                .filter(f -> f.id.equals(folderId))
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("Folder not found in course"));
 
         Quiz quiz = this.quizMapper.toEntity(quizDTO);
 
-        folder.getQuizzes().add(quiz);
+        folder.quizzes.add(quiz);
         this.courseRepository.update(courseOpt.get());
 
         return this.quizMapper.toDTO(quiz);
@@ -72,11 +72,11 @@ public class QuizService implements IQuizService {
         }
 
         Folder folder = courseOpt.get().folders.stream()
-                .filter(f -> f.getId().equals(folderId))
+                .filter(f -> f.id.equals(folderId))
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("Folder not found in course"));
 
-        Quiz existingQuiz = folder.getQuizzes().stream()
+        Quiz existingQuiz = folder.quizzes.stream()
                 .filter(q -> q.getId().equals(quizId))
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("Quiz not found in folder"));
@@ -86,8 +86,8 @@ public class QuizService implements IQuizService {
         updatedQuiz.setCreatedAt(existingQuiz.getCreatedAt());
         updatedQuiz.setUpdatedAt(LocalDateTime.now());
 
-        int index = folder.getQuizzes().indexOf(existingQuiz);
-        folder.getQuizzes().set(index, updatedQuiz);
+        int index = folder.quizzes.indexOf(existingQuiz);
+        folder.quizzes.set(index, updatedQuiz);
 
         this.courseRepository.update(courseOpt.get());
 
@@ -102,11 +102,11 @@ public class QuizService implements IQuizService {
         }
 
         Folder folder = courseOpt.get().folders.stream()
-                .filter(f -> f.getId().equals(folderId))
+                .filter(f -> f.id.equals(folderId))
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("Folder not found in course"));
 
-        boolean removed = folder.getQuizzes().removeIf(q -> q.getId().equals(quizId));
+        boolean removed = folder.quizzes.removeIf(q -> q.getId().equals(quizId));
         if (!removed) {
             throw new NotFoundException("Quiz not found in folder");
         }
@@ -121,7 +121,7 @@ public class QuizService implements IQuizService {
         }
 
         return courseOpt.get().folders.stream()
-                .filter(f -> f.getId().equals(folderId))
+                .filter(f -> f.id.equals(folderId))
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("Folder not found in course"));
     }

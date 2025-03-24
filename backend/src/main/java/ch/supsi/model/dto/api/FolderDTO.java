@@ -1,9 +1,8 @@
 package ch.supsi.model.dto.api;
 
-import ch.supsi.model.api.Folder;
-import ch.supsi.model.api.Quiz;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.validation.constraints.NotBlank;
+
 import java.util.ArrayList;
 import java.util.List;
 
