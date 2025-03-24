@@ -92,9 +92,11 @@ public class CourseService implements ICourseService {
 
         Course existingCourse = courseOpt.get();
 
-        if (!existingCourse.name.equalsIgnoreCase(courseDTO.getName())
-                && this.isCourseNameDuplicated(courseDTO.getName())) {
-            throw new BadRequestException("Course name " + courseDTO.getName() + " already exists");
+        String newName = courseDTO.getName().trim();
+        if (!existingCourse.name.equalsIgnoreCase(newName)) {
+            if (this.isCourseNameDuplicated(newName, id)) {
+                throw new BadRequestException("Course name '" + newName + "' already exists");
+            }
         }
 
         existingCourse.name = courseDTO.getName();
@@ -117,25 +119,31 @@ public class CourseService implements ICourseService {
         if (!currentUser.coursesId.contains(id.toString()))
             throw new ForbiddenException("You are not authorized to delete this course");
 
+
         this.userRepository.removeCourseFromUser(id.toString(), currentUser.azureOid);
         this.courseRepository.delete(courseOpt.get());
     }
 
     private void verifyCourseIsValid(CourseDTO courseDTO) {
-        if (courseDTO == null)
-            throw new BadRequestException("Course is null");
+        if (courseDTO == null) {
+            throw new BadRequestException("Course data cannot be null");
+        }
 
-        String courseName = courseDTO.getName();
+        String courseName = courseDTO.getName().trim();
+        if (courseName.isEmpty()) {
+            throw new BadRequestException("Course name cannot be empty");
+        }
 
-        if (this.isCourseNameDuplicated(courseName))
-            throw new BadRequestException("Course name " + courseName + " already existing");
+        if (courseRepository.find("LOWER(name)", courseName.toLowerCase()).count() > 0) {
+            throw new BadRequestException("Course name '" + courseName + "' already exists");
+        }
     }
 
-    private boolean isCourseNameDuplicated(String courseName) {
-        for (Course course : this.courseRepository.listAll())
-            if (course.name.equals(courseName))
-                return true;
-
-        return false;
+    private boolean isCourseNameDuplicated(String courseName, ObjectId excludeCourseId) {
+        return courseRepository.find(
+                "LOWER(name) = LOWER(?1) and id != ?2",
+                courseName.trim(),
+                excludeCourseId
+        ).count() > 0;
     }
 }

@@ -17,6 +17,9 @@ export const CourseCRUDProvider: React.FC<{ children: React.ReactNode }> = ({chi
                 );
                 queryClient.invalidateQueries(["courses"]);
             },
+            onError: (error: Error) => {
+                console.error("Course creation error:", error);
+            }
         }
     );
 
@@ -32,6 +35,9 @@ export const CourseCRUDProvider: React.FC<{ children: React.ReactNode }> = ({chi
                 );
                 queryClient.invalidateQueries(["courses"]);
             },
+            onError: (error: Error) => {
+                console.error("Course update error:", error);
+            }
         }
     );
 
@@ -41,6 +47,9 @@ export const CourseCRUDProvider: React.FC<{ children: React.ReactNode }> = ({chi
             onSuccess: () => {
                 queryClient.invalidateQueries(["courses"]);
             },
+            onError: (error: Error) => {
+                console.error("Course delete error:", error);
+            }
         }
     );
 
