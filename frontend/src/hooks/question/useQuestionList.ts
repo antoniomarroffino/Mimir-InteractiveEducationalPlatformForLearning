@@ -4,7 +4,7 @@ import {QuestionListContext} from "../../contexts/question/QuestionListContext.t
 export const useQuestionList = () => {
     const context = useContext(QuestionListContext);
     if(context === undefined) {
-        throw new Error('useCourseList must be used within a CourseListProvider');
+        throw new Error('useQuestionList must be used within a QuestionListProvider');
     }
     return context;
 }

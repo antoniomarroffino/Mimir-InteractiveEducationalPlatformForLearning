@@ -4,7 +4,7 @@ import {QuestionCRUDContext} from "../../contexts/question/QuestionCRUDContext.t
 export const useQuestionCRUD = () => {
     const context = useContext(QuestionCRUDContext);
     if (context === undefined) {
-        throw new Error('useQuestionCRUD must be used within a QUestionCRUDProvider');
+        throw new Error('useQuestionCRUD must be used within a QuestionCRUDProvider');
     }
     return context;
 };
