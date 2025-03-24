@@ -13,7 +13,6 @@ import org.bson.types.ObjectId;
 
 import java.util.List;
 import java.util.Optional;
-
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -31,7 +30,7 @@ public class FolderService implements IFolderService {
         if (courseOpt.isEmpty()) {
             throw new NotFoundException("Course " + courseId + " not found");
         }
-        return courseOpt.get().getFolders().stream()
+        return courseOpt.get().folders.stream()
                 .map(this.folderMapper::toDTO)
                 .collect(Collectors.toList());
     }
@@ -43,7 +42,7 @@ public class FolderService implements IFolderService {
             throw new NotFoundException("Course " + courseId + " not found");
         }
 
-        return courseOpt.get().getFolders().stream()
+        return courseOpt.get().folders.stream()
                 .filter(f -> f.getId().equals(folderId))
                 .map(this.folderMapper::toDTO)
                 .findFirst()
@@ -63,7 +62,7 @@ public class FolderService implements IFolderService {
 
         Folder folder = this.folderMapper.toEntity(folderDTO);
 
-        course.getFolders().add(folder);
+        course.folders.add(folder);
         this.courseRepository.update(course);
 
         return this.folderMapper.toDTO(folder);
@@ -76,11 +75,11 @@ public class FolderService implements IFolderService {
         String folderName = folderDTO.getName();
 
         if (this.isFolderNameDuplicated(course, folderName))
-            throw new BadRequestException("Folder name " + folderName + " already existing in course " + course.getId());
+            throw new BadRequestException("Folder name " + folderName + " already existing in course " + course.id);
     }
 
     private boolean isFolderNameDuplicated(Course course, String folderName) {
-        for (Folder folder : course.getFolders())
+        for (Folder folder : course.folders)
             if (folder.getName().equals(folderName))
                 return true;
 
