@@ -2,7 +2,7 @@ import React from "react";
 import { useMutation, useQueryClient } from "react-query";
 import { QuizPublicationDTO } from "@dti-isin/backend-api-client";
 import { quizPublicationApi } from "../../../config/config.ts";
-import { QuizPublicationCRUDContext } from "./QuizPublicationCRUDContext.ts";
+import { QuizPublicationCRUDContext } from "../../contexts/quizPublication/QuizPublicationCRUDContext.ts";
 
 type CreateQuizPublicationDTO = Omit<QuizPublicationDTO, 'id' | 'publicationCode'>;
 

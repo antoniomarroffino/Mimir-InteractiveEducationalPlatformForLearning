@@ -3,11 +3,10 @@ import {createContext} from "react";
 
 export type QuestionSelectionContextType = {
     selectedQuestionId: string | null;
-    setSelectedQuestionId: (id: string | null) => void;
     selectedQuestion: QuestionDTO | null;
-    setSelectedQuestion: (question: QuestionDTO | null) => void;
-    selectQuestion: (question: QuestionDTO) => void;
+    selectQuestion: (id: string) => void;
     deselectQuestion: () => void;
+    validateSelection: () => void;
 }
 
 export const QuestionSelectionContext = createContext<QuestionSelectionContextType | undefined>(undefined);

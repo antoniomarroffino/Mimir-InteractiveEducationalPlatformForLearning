@@ -1,16 +1,14 @@
 import React from 'react';
-import {QuizDTO} from '@dti-isin/backend-api-client';
 import {QuizRow} from './QuizRow';
-import {useQuiz} from "../../hooks/useQuiz.ts";
+import {useQuizList} from "../../hooks/quiz/useQuizList.ts";
 
 interface QuizListProps {
-    quizzes: QuizDTO[];
     courseId: string;
     folderId: string;
 }
 
 export const QuizList: React.FC<QuizListProps> = ({courseId, folderId}) => {
-    const {quizzes} = useQuiz();
+    const {quizzes} = useQuizList();
 
     if (!quizzes?.length) {
         return (

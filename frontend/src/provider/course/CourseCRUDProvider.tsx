@@ -1,8 +1,8 @@
 import React, {useMemo} from "react";
 import {useMutation, useQueryClient} from "react-query";
 import {CourseDTO} from "@dti-isin/backend-api-client";
-import {courseApi} from "../../../config/config";
-import {CourseCRUDContext} from "./CourseCRUDContext";
+import {courseApi} from "../../../config/config.ts";
+import {CourseCRUDContext} from "../../contexts/course/CourseCRUDContext.ts";
 
 export const CourseCRUDProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const queryClient = useQueryClient();

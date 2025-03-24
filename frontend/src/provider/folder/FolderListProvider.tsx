@@ -1,9 +1,9 @@
 import React, { useMemo } from "react";
 import { useQuery } from "react-query";
 import { FolderDTO } from "@dti-isin/backend-api-client";
-import { folderApi } from "../../../config/config";
+import { folderApi } from "../../../config/config.ts";
 import {useCourseSelection} from "../../hooks/course/useCourseSelection.ts";
-import { FolderListContext } from "./FolderListContext.ts";
+import { FolderListContext } from "../../contexts/folder/FolderListContext.ts";
 
 export const FolderListProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const { selectedCourseId } = useCourseSelection();

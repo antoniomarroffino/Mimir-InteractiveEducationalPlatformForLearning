@@ -1,25 +1,21 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { QuestionDTO, QuestionType } from '@dti-isin/backend-api-client';
-import {useQuestion} from "../../hooks/useQuestion.ts";
 import {Breadcrumb} from "../common/Breadcrumb.tsx";
 import {QuestionsList} from "../question/QuestionList.tsx";
 import CreateQuestionForm from "../question/CreateQuestionForm.tsx";
 import {QuestionTypeSelector} from "../question/QuestionTypeSelector.tsx";
 import {QuestionEditor} from "../question/QuestionEditor.tsx";
 import {useCourseList} from "../../hooks/course/useCourseList.ts";
+import {useQuestionList} from "../../hooks/question/useQuestionList.ts";
+import {useQuestionCRUD} from "../../hooks/question/useQuestionCRUD.ts";
 
 export const QuizCreationContent: React.FC = () => {
     const { courseId, folderId, quizId } = useParams();
     const navigate = useNavigate();
     const { courses } = useCourseList();
-    const {
-        questions,
-        createQuestionTemplate,
-        addQuestionToQuiz,
-        isLoadingQuestions,
-        errorQuestions
-    } = useQuestion();
+    const {questions, isLoadingQuestions, errorQuestions} = useQuestionList();
+    const {createQuestion, createQuestionTemplate} = useQuestionCRUD();
 
     const [isCreatingQuestion, setIsCreatingQuestion] = useState(false);
     const [selectedQuestionType, setSelectedQuestionType] = useState<QuestionType | null>(null);
@@ -65,7 +61,7 @@ export const QuizCreationContent: React.FC = () => {
 
         try {
             setError(null);
-            await addQuestionToQuiz(questionData);
+            await createQuestion(questionData);
 
             // Resetta tutto tranne il fatto che stiamo creando una domanda
             setSelectedQuestionType(null);

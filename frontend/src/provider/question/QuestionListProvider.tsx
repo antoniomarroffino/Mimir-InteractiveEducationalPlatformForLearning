@@ -1,40 +1,41 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { useQuery } from "react-query";
 import { QuestionDTO } from "@dti-isin/backend-api-client";
 import { QuestionListContext } from "../../contexts/question/QuestionListContext";
 import { questionApi } from "../../../config/config";
+import {useCourseSelection} from "../../hooks/course/useCourseSelection.ts";
+import {useFolderSelection} from "../../hooks/folder/useFolderSelection.ts";
+import {useQuizSelection} from "../../hooks/quiz/useQuizSelection.ts";
 
 export const QuestionListProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [params, setParams] = useState<{ courseId?: string; folderId?: string; quizId?: string }>({});
+    const {selectedCourseId} = useCourseSelection();
+    const {selectedFolderId} = useFolderSelection();
+    const {selectedQuizId} = useQuizSelection();
 
     const questionsQuery = useQuery<QuestionDTO[], Error>(
-        ["questions", params.courseId, params.folderId, params.quizId],
+        ["questions", selectedCourseId, selectedFolderId, selectedQuizId],
         async () => {
-            if (!params.courseId || !params.folderId || !params.quizId) return [];
-            return (await questionApi.apiCoursesCourseIdFoldersFolderIdQuizzesQuizIdQuestionsGet({
-                courseId: params.courseId,
-                folderId: params.folderId,
-                quizId: params.quizId}))
-                .data;
+            if (!selectedCourseId || !selectedFolderId || !selectedQuizId) return [];
+            const response = await questionApi.apiCoursesCourseIdFoldersFolderIdQuizzesQuizIdQuestionsGet({
+                courseId: selectedCourseId,
+                folderId: selectedFolderId,
+                quizId: selectedQuizId});
+            return response.data;
         },
         {
-            enabled: Boolean(params.courseId && params.folderId && params.quizId),
+            enabled: !!selectedCourseId && !!selectedFolderId && !!selectedQuizId,
         }
     );
 
-    const fetchQuestions = useCallback(async (courseId: string, folderId: string, quizId: string) => {
-        setParams({ courseId, folderId, quizId });
-        await questionsQuery.refetch();
-    }, [questionsQuery]);
-
-    const value = useMemo(
-        () => ({
+    const value = useMemo(() => ({
             questions: questionsQuery.data || [],
             isLoadingQuestions: questionsQuery.isLoading,
-            errorQuestions: questionsQuery.error,
-            fetchQuestions,
+            errorQuestions: questionsQuery.error || null,
+            fetchQuestions: async () => {
+                await questionsQuery.refetch();
+            },
         }),
-        [questionsQuery.data, questionsQuery.isLoading, questionsQuery.error, fetchQuestions]
+        [questionsQuery]
     );
 
     return <QuestionListContext.Provider value={value}>{children}</QuestionListContext.Provider>;

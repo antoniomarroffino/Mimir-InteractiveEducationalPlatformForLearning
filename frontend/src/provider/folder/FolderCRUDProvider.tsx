@@ -1,9 +1,9 @@
 import React, { useMemo } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import { FolderDTO } from "@dti-isin/backend-api-client";
-import { folderApi } from "../../../config/config";
+import { folderApi } from "../../../config/config.ts";
 import {useCourseSelection} from "../../hooks/course/useCourseSelection.ts";
-import { FolderCRUDContext } from "./FolderCRUDContext.ts";
+import { FolderCRUDContext } from "../../contexts/folder/FolderCRUDContext.ts";
 import {useFolderSelection} from "../../hooks/folder/useFolderSelection.ts";
 
 export const FolderCRUDProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {

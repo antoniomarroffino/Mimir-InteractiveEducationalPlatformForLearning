@@ -3,9 +3,9 @@ import {createContext} from "react";
 
 
 export type QuestionCRUDContextType = {
-    createQuestion: (courseId:string, folderId: string, quizId: string, questionDTO: QuestionDTO) => Promise<QuestionDTO>;
-    updateQuestion: (courseId:string, folderId: string, quizId: string, questionId: string, data: QuestionDTO) => Promise<QuestionDTO>;
-    deleteQuestion: (courseId:string, folderId: string, quizId: string, questionId: string) => Promise<void>;
+    createQuestion: (questionDTO: QuestionDTO) => Promise<QuestionDTO>;
+    updateQuestion: (questionId: string, questionDTO: QuestionDTO) => Promise<QuestionDTO>;
+    deleteQuestion: (questionId: string) => Promise<void>;
     createQuestionTemplate: (questionType: QuestionType) => Promise<QuestionDTO>;
 
     isCreatingQuestion: boolean;

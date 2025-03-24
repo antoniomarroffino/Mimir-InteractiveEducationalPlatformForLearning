@@ -8,7 +8,7 @@ export type QuestionListContextType = {
 
     errorQuestions: Error | null;
 
-    fetchQuestions: (courseId: string, folderId: string, quizId: string) => Promise<void>;
+    fetchQuestions: () => Promise<void>;
 }
 
 export const QuestionListContext = createContext<QuestionListContextType | undefined>(undefined);

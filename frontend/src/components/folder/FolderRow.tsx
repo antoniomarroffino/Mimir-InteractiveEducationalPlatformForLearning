@@ -1,9 +1,10 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {FolderDTO} from "@dti-isin/backend-api-client";
 import {BsChevronDown, BsChevronUp, BsFolder2, BsPlus} from "react-icons/bs";
 import {QuizList} from "../quiz/QuizList";
-import {useQuiz} from "../../hooks/useQuiz.ts";
 import {useQueryClient} from "react-query";
+import {useQuizCRUD} from "../../hooks/quiz/useQuizCRUD.ts";
+import {useFolderSelection} from "../../hooks/folder/useFolderSelection.ts";
 
 interface FolderRowProps {
     folder: FolderDTO;
@@ -15,7 +16,8 @@ export const FolderRow = ({folder, courseId}: FolderRowProps) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [quizName, setQuizName] = useState("");
-    const {createQuiz, isCreatingQuiz} = useQuiz();
+    const {createQuiz, isCreatingQuiz} = useQuizCRUD();
+    const {setSelectedFolderId, setSelectedFolder, selectedFolder} = useFolderSelection();
 
     const handleCreateQuiz = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -58,7 +60,6 @@ export const FolderRow = ({folder, courseId}: FolderRowProps) => {
             {isExpanded && (
                 <div className="border-t border-base-200 p-4">
                     <QuizList
-                        quizzes={folder.quizzes || []}
                         courseId={courseId}
                         folderId={folder.id!}
                     />

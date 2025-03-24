@@ -14,10 +14,12 @@ import StudentDashboard from "./student/StudentDashboard.tsx";
 import PublicHome from "./no-logged/PublicHome.tsx";
 import {QuizStatsPage} from "./QuizStatsPage.tsx";
 import {QuizRetrieveProvider} from '../provider/QuizRetrieveProvider.tsx';
-import {QuizPublicationProviders} from "../contexts/quizPublication/QuizPublicationProviders.tsx";
+import {QuizPublicationProviders} from "../provider/quizPublication/QuizPublicationProviders.tsx";
 import {QuizAccessRoute} from "../components/common/QuizAccessRoute.tsx";
-import {CourseProviders} from "../contexts/course/CourseProviders.tsx";
-import {FolderProviders} from "../contexts/folder/FolderProviders.tsx";
+import {CourseProviders} from "../provider/course/CourseProviders.tsx";
+import {FolderProviders} from "../provider/folder/FolderProviders.tsx";
+import {QuizProviders} from "../provider/quiz/QuizProviders.tsx";
+import {QuestionProviders} from "../provider/question/QuestionProviders.tsx";
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -59,7 +61,9 @@ const App = () => {
                                     <ProtectedRoute allowedRoles={[Role.Teacher]}>
                                         <CourseProviders>
                                             <FolderProviders>
-                                                <Outlet/>
+                                                <QuizProviders>
+                                                    <Outlet/>
+                                                </QuizProviders>
                                             </FolderProviders>
                                         </CourseProviders>
                                     </ProtectedRoute>
@@ -69,7 +73,11 @@ const App = () => {
                                 <Route path=":courseId" element={<CourseDetails/>}/>
                                 <Route
                                     path=":courseId/folders/:folderId/quizzes/:quizId/edit"
-                                    element={<QuizCreation/>}
+                                    element={
+                                        <QuestionProviders>
+                                            <QuizCreation/>
+                                        </QuestionProviders>
+                                    }
                                 />
                                 <Route
                                     path=":courseId/publications/:publicationId/stats"

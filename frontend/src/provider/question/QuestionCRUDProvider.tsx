@@ -1,175 +1,162 @@
 import React from "react";
-import { useMutation, useQueryClient } from "react-query";
-import { QuestionDTO, QuestionType } from "@dti-isin/backend-api-client";
-import { QuestionCRUDContext } from "../../contexts/question/QuestionCRUDContext.ts";
-import { questionApi } from "../../../config/config.ts";
+import {useMutation, useQueryClient} from "react-query";
+import {QuestionDTO, QuestionType} from "@dti-isin/backend-api-client";
+import {QuestionCRUDContext} from "../../contexts/question/QuestionCRUDContext.ts";
+import {questionApi} from "../../../config/config.ts";
+import {useCourseSelection} from "../../hooks/course/useCourseSelection.ts";
+import {useFolderSelection} from "../../hooks/folder/useFolderSelection.ts";
+import {useQuestionSelection} from "../../hooks/question/useQuestionSelection.ts";
+import {useQuizSelection} from "../../hooks/quiz/useQuizSelection.ts";
 
-export const QuestionCRUDProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const QuestionCRUDProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const queryClient = useQueryClient();
+    const {selectedCourseId} = useCourseSelection();
+    const {selectedFolderId} = useFolderSelection();
+    const {selectedQuizId} = useQuizSelection();
+    const {deselectQuestion} = useQuestionSelection();
 
-    const {
-        mutateAsync: createQuestionMutation,
-        isLoading: isCreatingQuestion,
-        error: errorCreateQuestion,
-    } = useMutation<
-        QuestionDTO,
-        Error,
-        { courseId: string; folderId: string; quizId: string; questionDTO: QuestionDTO }
-    >({
-        mutationFn: async ({ courseId, folderId, quizId, questionDTO }) => {
-            if (!courseId || !folderId || !quizId) {
+    const createQuestionMutation = useMutation(
+        async (questionDTO: QuestionDTO) => {
+            if (!selectedCourseId || !selectedFolderId || !selectedQuizId) {
                 throw new Error("No course, folder, or quiz selected");
             }
             const response = await questionApi.apiCoursesCourseIdFoldersFolderIdQuizzesQuizIdQuestionsPost({
-                courseId,
-                folderId,
-                quizId,
+                courseId: selectedCourseId,
+                folderId: selectedFolderId,
+                quizId: selectedQuizId,
                 questionDTO,
             });
             return response.data;
         },
-        onSuccess: (newQuestion, { courseId, folderId, quizId }) => {
-            queryClient.setQueryData(
-                ["questions", courseId, folderId, quizId],
-                (oldData: QuestionDTO[] | undefined) => (oldData ? [...oldData, newQuestion] : [newQuestion])
-            );
-            queryClient.invalidateQueries({
-                queryKey: ["questions", courseId, folderId, quizId],
-            });
-        },
-    });
+        {
+            onSuccess: (newQuestion) => {
+                queryClient.setQueryData(
+                    ["questions", selectedCourseId, selectedFolderId, selectedQuizId],
+                    (oldData: QuestionDTO[] | undefined) => (oldData ? [...oldData, newQuestion] : [newQuestion])
+                );
+            }, onError: (error: Error) => {
+                console.error("Question creation error:", error);
+            }
+        }
+    );
 
-    const {
-        mutateAsync: updateQuestionMutation,
-        isLoading: isUpdatingQuestion,
-        error: errorUpdateQuestion,
-    } = useMutation<
-        QuestionDTO,
-        Error,
-        { courseId: string; folderId: string; quizId: string; questionId: string; questionDTO: QuestionDTO }
-    >({
-        mutationFn: async ({ courseId, folderId, quizId, questionId, questionDTO }) => {
-            if (!courseId || !folderId || !quizId || !questionId) {
+    const updateQuestionMutation = useMutation(
+        async ({questionId, questionDTO}: { questionId: string, questionDTO: QuestionDTO }) => {
+            if (!selectedCourseId || !selectedFolderId || !selectedQuizId || !questionId) {
                 throw new Error("Missing required parameters");
             }
             const response = await questionApi.apiCoursesCourseIdFoldersFolderIdQuizzesQuizIdQuestionsQuestionIdPut({
-                courseId,
-                folderId,
-                quizId,
+                courseId: selectedCourseId,
+                folderId: selectedFolderId,
+                quizId: selectedQuizId,
                 questionId,
                 questionDTO,
             });
             return response.data;
         },
-        onSuccess: (updatedQuestion, variables) => {
-            queryClient.setQueryData(
-                ["questions", variables.courseId, variables.folderId, variables.quizId],
-                (oldData: QuestionDTO[] | undefined) => {
-                    if (!oldData) return [updatedQuestion];
-                    return oldData.map((question) =>
-                        question.id === updatedQuestion.id ? updatedQuestion : question
-                    );
-                }
-            );
-            queryClient.invalidateQueries({
-                queryKey: ["questions", variables.courseId, variables.folderId, variables.quizId],
-            });
-        },
-    });
+        {
+            onSuccess: (updatedQuestion) => {
+                queryClient.setQueryData(
+                    ["questions", selectedCourseId, selectedFolderId, selectedQuizId],
+                    (oldData: QuestionDTO[] | undefined) => {
+                        if (!oldData) return [updatedQuestion];
+                        return oldData.map((question) =>
+                            question.id === updatedQuestion.id ? updatedQuestion : question
+                        );
+                    }
+                );
+            }, onError: (error: Error) => {
+                console.error("Question updating error:", error);
+            }
+        }
+    );
 
-    const {
-        mutateAsync: deleteQuestionMutation,
-        isLoading: isDeletingQuestion,
-        error: errorDeleteQuestion,
-    } = useMutation<
-        void,
-        Error,
-        { courseId: string; folderId: string; quizId: string; questionId: string }
-    >({
-        mutationFn: async ({ courseId, folderId, quizId, questionId }) => {
-            if (!courseId || !folderId || !quizId || !questionId) {
+    const deleteQuestionMutation = useMutation(
+        async (questionId: string) => {
+            if (!selectedCourseId || !selectedFolderId || !selectedQuizId || !questionId) {
                 throw new Error("Missing required parameters");
             }
-            const response = await questionApi.apiCoursesCourseIdFoldersFolderIdQuizzesQuizIdQuestionsQuestionIdDelete({
-                courseId,
-                folderId,
-                quizId,
+            return questionApi.apiCoursesCourseIdFoldersFolderIdQuizzesQuizIdQuestionsQuestionIdDelete({
+                courseId: selectedCourseId,
+                folderId: selectedFolderId,
+                quizId: selectedQuizId,
                 questionId,
             });
-            return response.data;
         },
-        onSuccess: (_data, variables) => {
-            queryClient.setQueryData(
-                ["questions", variables.courseId, variables.folderId, variables.quizId],
-                (oldData: QuestionDTO[] | undefined) => {
-                    if (!oldData) return [];
-                    return oldData.filter((question) => question.id !== variables.questionId);
-                }
-            );
-            queryClient.invalidateQueries({
-                queryKey: ["questions", variables.courseId, variables.folderId, variables.quizId],
-            });
-        },
-    });
+        {
+            onSuccess: (_, questionId) => {
+                queryClient.setQueryData<QuestionDTO[]>(
+                    ["questions", selectedCourseId, selectedFolderId, selectedQuizId],
+                    (old) => old?.filter(q => q.id !== questionId) || []
+                );
+                deselectQuestion();
+            }, onError: (error: Error) => {
+                console.error("Question delete error:", error);
+            }
+        }
+    );
 
-    const {
-        mutateAsync: createQuestionTemplateMutation,
-        isLoading: isCreatingQuestionTemplate,
-        error: errorCreateQuestionTemplate,
-    } = useMutation<
-        QuestionDTO,
-        Error,
-        QuestionType
-    >({
-        mutationFn: async (questionType: QuestionType) => {
+    const createQuestionTemplateMutation = useMutation(
+        async (questionType: QuestionType) => {
             if (!questionType) {
                 throw new Error("question type is null");
             }
             const response = await questionApi.apiCoursesCourseIdFoldersFolderIdQuizzesQuizIdQuestionsTypePost({type: questionType});
             return response.data;
+        }, {
+            onError: (error: Error) => {
+                console.error("Question creation template error:", error);
+            }
         }
-    });
-
-
-    const createQuestion = (
-        courseId: string,
-        folderId: string,
-        quizId: string,
-        questionDTO: QuestionDTO
-    ): Promise<QuestionDTO> =>
-        createQuestionMutation({ courseId, folderId, quizId, questionDTO });
-
-    const updateQuestion = (
-        courseId: string,
-        folderId: string,
-        quizId: string,
-        questionId: string,
-        data: QuestionDTO
-    ): Promise<QuestionDTO> =>
-        updateQuestionMutation({ courseId, folderId, quizId, questionId, questionDTO: data });
-
-    const deleteQuestion = (
-        courseId: string,
-        folderId: string,
-        quizId: string,
-        questionId: string
-    ): Promise<void> => deleteQuestionMutation({ courseId, folderId, quizId, questionId });
+    );
 
     const value = {
-        createQuestion,
-        updateQuestion,
-        deleteQuestion,
-        createQuestionTemplate: createQuestionTemplateMutation,
+        createQuestion: async (questionDTO: QuestionDTO) => {
+            try {
+                return await createQuestionMutation.mutateAsync(questionDTO);
+            } catch (err) {
+                console.error("Question creation failed:", err);
+                throw err;
+            }
+        },
 
-        isCreatingQuestion,
-        isUpdatingQuestion,
-        isDeletingQuestion,
-        isCreatingQuestionTemplate,
+        updateQuestion: async (questionId: string, questionDTO: QuestionDTO) => {
+            try {
+                return await updateQuestionMutation.mutateAsync({questionId, questionDTO});
+            } catch (err) {
+                console.error("Question updating failed:", err);
+                throw err;
+            }
+        },
 
-        errorCreateQuestion,
-        errorUpdateQuestion,
-        errorDeleteQuestion,
-        errorCreateQuestionTemplate,
+
+        deleteQuestion: async (questionId: string) => {
+            try {
+                await deleteQuestionMutation.mutateAsync(questionId);
+            } catch (err) {
+                console.error("Question deleted failed:", err);
+                throw err;
+            }
+        },
+
+        createQuestionTemplate: async (questionType: QuestionType) => {
+            try {
+                return await createQuestionTemplateMutation.mutateAsync(questionType);
+            } catch (err) {
+                console.error("Question deleted failed:", err);
+                throw err;
+            }
+        },
+
+        isCreatingQuestion: createQuestionMutation.isLoading,
+        isUpdatingQuestion: updateQuestionMutation.isLoading,
+        isDeletingQuestion: deleteQuestionMutation.isLoading,
+        isCreatingQuestionTemplate: createQuestionTemplateMutation.isLoading,
+
+        errorCreateQuestion: createQuestionMutation.error,
+        errorUpdateQuestion: updateQuestionMutation.error,
+        errorDeleteQuestion: deleteQuestionMutation.error,
+        errorCreateQuestionTemplate: createQuestionTemplateMutation.error,
     };
 
     return (

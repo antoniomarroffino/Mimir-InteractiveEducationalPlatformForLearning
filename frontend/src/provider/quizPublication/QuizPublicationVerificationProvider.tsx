@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { QuizPublicationDTO } from "@dti-isin/backend-api-client";
 import { quizPublicationApi } from "../../../config/config.ts";
-import { QuizPublicationVerificationContext } from "./QuizPublicationVerificationContext.ts";
+import { QuizPublicationVerificationContext } from "../../contexts/quizPublication/QuizPublicationVerificationContext.ts";
 
 export const QuizPublicationVerificationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [currentPublication, setCurrentPublication] = useState<QuizPublicationDTO | null>(null);
