@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {useAuth} from "../../hooks/useAuth.ts";
 import {FiHash} from "react-icons/fi";
 import {useNavigate} from 'react-router-dom';
-import {useQuizPublicationVerification} from '../../hooks/useQuizPublicationVerification';
+import {useQuizPublicationVerification} from '../../hooks/useQuizPublicationVerification.ts';
 
 const QuizSessionComponent = () => {
     const {user} = useAuth();

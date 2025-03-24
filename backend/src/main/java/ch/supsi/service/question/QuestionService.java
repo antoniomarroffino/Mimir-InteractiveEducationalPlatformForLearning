@@ -113,6 +113,33 @@ public class QuestionService implements IQuestionService {
         return this.questionMapperBuilder.getQuestionDTOMapper(questionDTO.getType()).toDTO(question);
     }
 
+    @Override
+    public void deleteQuestion(ObjectId courseId, ObjectId folderId, ObjectId quizId, ObjectId questionId) {
+        Optional<Course> courseOpt = this.courseRepository.findByIdOptional(courseId);
+
+        if (courseOpt.isEmpty()) {
+            throw new NotFoundException("Course not found");
+        }
+
+        Folder folder = courseOpt.get().getFolders().stream()
+                .filter(f -> f.getId().equals(folderId))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("Folder not found"));
+
+        Quiz quiz = folder.getQuizzes().stream()
+                .filter(q -> q.getId().equals(quizId))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("Quiz not found"));
+
+
+        boolean removed = quiz.getQuestions().removeIf(q -> q.id.equals(questionId));
+        if (!removed) {
+            throw new NotFoundException("Question not found in Quiz");
+        }
+
+        this.courseRepository.update(courseOpt.get());
+    }
+
     private Quiz getQuizFromCourse(ObjectId courseId, ObjectId folderId, ObjectId quizId) {
         Optional<Course> courseOpt = this.courseRepository.findByIdOptional(courseId);
         if (courseOpt.isEmpty()) {
