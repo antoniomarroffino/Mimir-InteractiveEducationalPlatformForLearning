@@ -8,9 +8,9 @@ export type CourseCRUDContextType = {
     isCreatingCourse: boolean;
     isUpdatingCourse: boolean;
     isDeletingCourse: boolean;
-    errorCreateCourse: unknown | null;
-    errorUpdateCourse: unknown | null;
-    errorDeleteCourse: unknown | null;
+    errorCreateCourse: Error | null;
+    errorUpdateCourse: Error | null;
+    errorDeleteCourse: Error | null;
 };
 
 export const CourseCRUDContext = createContext<CourseCRUDContextType | undefined>(undefined);

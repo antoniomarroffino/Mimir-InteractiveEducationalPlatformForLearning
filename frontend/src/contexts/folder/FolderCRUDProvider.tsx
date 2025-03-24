@@ -26,6 +26,9 @@ export const FolderCRUDProvider: React.FC<{ children: React.ReactNode }> = ({ ch
                     ["folders", selectedCourseId],
                     (old) => old ? [...old, newFolder] : [newFolder]
                 );
+            },
+            onError: (error: Error) => {
+                console.error("Folder creation error:", error);
             }
         }
     );
@@ -48,6 +51,9 @@ export const FolderCRUDProvider: React.FC<{ children: React.ReactNode }> = ({ ch
                         f.id === updatedFolder.id ? updatedFolder : f
                     ) || [updatedFolder]
                 );
+            },
+            onError: (error: Error) => {
+                console.error("Folder update error:", error);
             }
         }
     );
@@ -67,6 +73,9 @@ export const FolderCRUDProvider: React.FC<{ children: React.ReactNode }> = ({ ch
                     (old) => old?.filter(f => f.id !== id) || []
                 );
                 deselectFolder();
+            },
+            onError: (error: Error) => {
+                console.error("Folder delete error:", error);
             }
         }
     );

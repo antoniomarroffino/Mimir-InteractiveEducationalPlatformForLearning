@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react';
 import {Link, useNavigate, useParams} from 'react-router-dom';
 import {BsChevronRight, BsPencil, BsTrash} from 'react-icons/bs';
 import {FolderList} from "../components/folder/FolderList.tsx";
-import CreateFolderForm from "../components/folder/CreateFolderForm.tsx";
+import {CreateFolderForm} from "../components/folder/CreateFolderForm.tsx";
 import {useCourseList} from "../hooks/course/useCourseList.ts";
 import {useCourseSelection} from "../hooks/course/useCourseSelection.ts";
 import {useCourseCRUD} from "../hooks/course/useCourseCRUD.ts";
@@ -13,7 +13,6 @@ const CourseDetails = () => {
     const {courses} = useCourseList();
     const {setSelectedCourseId, setSelectedCourse, selectedCourse} = useCourseSelection();
     const {updateCourse, deleteCourse} = useCourseCRUD();
-
     const [isEditing, setIsEditing] = useState(false);
     const [editedName, setEditedName] = useState("");
     const [editedDescription, setEditedDescription] = useState("");
@@ -46,7 +45,6 @@ const CourseDetails = () => {
     };
 
     const handleDeleteCourse = () => {
-        // Mostra modal di conferma
         const modal = document.getElementById('delete_course_modal') as HTMLDialogElement;
         if (modal) modal.showModal();
     };
@@ -55,7 +53,7 @@ const CourseDetails = () => {
         if (selectedCourse) {
             try {
                 await deleteCourse(selectedCourse.id!);
-                navigate('/teacher-dashboard');
+                navigate('/courses');
             } catch (error) {
                 console.error('Failed to delete course', error);
             }
@@ -156,10 +154,8 @@ const CourseDetails = () => {
             {/* Folders Section */}
             <div className="bg-base-100 rounded-lg p-6 shadow-lg">
                 <h2 className="text-2xl font-semibold mb-4">Folders</h2>
-                <FolderList
-                    folders={selectedCourse.folders || []}
-                    courseId={courseId}
-                />
+
+                <FolderList courseId={courseId}/>
             </div>
 
             {/* Delete Confirmation Modal */}

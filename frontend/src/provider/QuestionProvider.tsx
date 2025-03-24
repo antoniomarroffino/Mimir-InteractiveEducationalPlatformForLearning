@@ -3,8 +3,8 @@ import { useQuery, useMutation, useQueryClient } from "react-query";
 import { QuestionContext } from "../contexts/QuestionContext";
 import { QuestionDTO, QuestionType } from "@dti-isin/backend-api-client";
 import { questionApi } from "../../config/config";
-import { useFolder } from "../hooks/useFolder";
 import {useCourseSelection} from "../hooks/course/useCourseSelection.ts";
+import {useFolderSelection} from "../hooks/folder/useFolderSelection.ts";
 
 interface QuestionProviderProps {
     children: React.ReactNode;
@@ -21,7 +21,7 @@ export const QuestionProvider: React.FC<QuestionProviderProps> = ({
                                                                   }) => {
     const queryClient = useQueryClient();
     const { selectedCourseId: contextCourseId } = useCourseSelection();
-    const { selectedFolderId: contextFolderId } = useFolder();
+    const { selectedFolderId: contextFolderId } = useFolderSelection();
 
     const courseId = propCourseId || contextCourseId;
     const folderId = propFolderId || contextFolderId;

@@ -8,9 +8,9 @@ export type FolderCRUDContextType = {
     isCreatingFolder: boolean;
     isUpdatingFolder: boolean;
     isDeletingFolder: boolean;
-    errorCreateFolder: unknown | null;
-    errorUpdateFolder: unknown | null;
-    errorDeleteFolder: unknown | null;
+    errorCreateFolder: Error | null;
+    errorUpdateFolder: Error | null;
+    errorDeleteFolder: Error | null;
 };
 
 export const FolderCRUDContext = createContext<FolderCRUDContextType | undefined>(undefined);
