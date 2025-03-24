@@ -10,4 +10,5 @@ public interface IQuestionService {
     QuestionDTO createQuestionTemplate(QuestionType type);
     List<QuestionDTO> getQuestionsInQuiz(ObjectId courseId, ObjectId folderId, ObjectId quizId);
     QuestionDTO addQuestionToQuiz(ObjectId courseId, ObjectId folderId, ObjectId quizId, QuestionDTO questionDTO);
+    QuestionDTO updateQuestion(ObjectId courseId, ObjectId folderId, ObjectId quizId, ObjectId questionId, QuestionDTO questionDTO);
 }

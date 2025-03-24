@@ -46,13 +46,6 @@ public class QuestionController {
                 new ObjectId(folderId),
                 new ObjectId(quizId)
         );
-
-        questionsDTO.forEach(q -> {
-            System.out.println("Returning question: " +
-                    q.getClass().getSimpleName() +
-                    " with type " + q.getType()
-            );
-        });
         return Response.ok(questionsDTO).build();
     }
 
@@ -102,6 +95,25 @@ public class QuestionController {
         return Response.status(Response.Status.CREATED)
                 .entity(savedQuestionDTO)
                 .build();
+
+    }
+
+    @PUT
+    @RolesAllowed("TEACHER")
+    @Path("/{quizId}")
+    @Operation(summary = "Update question")
+    @APIResponse(
+            responseCode = "200",
+            description = "Question updated successfully",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = QuestionDTO.class)
+            )
+    )
+    public QuestionDTO updateQuestion(@PathParam("courseId") String courseId,
+                                      @PathParam("folderId") String folderId,
+                                      @PathParam("quizId") String quizId,
+                                      @Valid QuestionDTO questionDTO) {
 
     }
 }

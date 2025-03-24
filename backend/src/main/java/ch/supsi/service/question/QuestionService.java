@@ -9,6 +9,7 @@ import ch.supsi.model.api.question.QuestionType;
 import ch.supsi.model.dto.api.question.QuestionDTO;
 import ch.supsi.repository.CourseRepository;
 import ch.supsi.service.question.builder.IQuestionFactory;
+import ch.supsi.service.question.strategy.IQuestionCreationStrategy;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.NotFoundException;
@@ -36,7 +37,7 @@ public class QuestionService implements IQuestionService {
 
     @Override
     public QuestionDTO createQuestionTemplate(QuestionType type) {
-        return this.questionMapperBuilder.getQuestionDTOMapper(type).toDTO(this.questionFactory.createQuestion(type));
+        return this.questionMapperBuilder.getQuestionDTOMapper(type).toDTO(this.questionFactory.getStrategy(type).createQuestion());
     }
 
     @Override
@@ -82,6 +83,34 @@ public class QuestionService implements IQuestionService {
                 .orElseThrow(() -> new RuntimeException("Question not saved"));
 
         return this.questionMapperBuilder.getQuestionDTOMapper(questionDTO.getType()).toDTO(savedQuestion);
+    }
+
+    @Override
+    public QuestionDTO updateQuestion(ObjectId courseId, ObjectId folderId, ObjectId quizId, ObjectId questionId, QuestionDTO questionDTO) {
+        Optional<Course> courseOpt = this.courseRepository.findByIdOptional(courseId);
+
+        if (courseOpt.isEmpty()) {
+            throw new NotFoundException("Course not found");
+        }
+
+        Folder folder = courseOpt.get().getFolders().stream()
+                .filter(f -> f.getId().equals(folderId))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("Folder not found"));
+
+        Quiz quiz = folder.getQuizzes().stream()
+                .filter(q -> q.getId().equals(quizId))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("Quiz not found"));
+
+        Question question = quiz.getQuestions().stream()
+                .filter(q -> q.id.equals(questionId))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("Question not found"));
+
+        this.questionFactory.getStrategy(question.type).updateQuestion(question, questionDTO);
+        this.courseRepository.update(courseOpt.get());
+        return this.questionMapperBuilder.getQuestionDTOMapper(questionDTO.getType()).toDTO(question);
     }
 
     private Quiz getQuizFromCourse(ObjectId courseId, ObjectId folderId, ObjectId quizId) {
