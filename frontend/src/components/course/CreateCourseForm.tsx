@@ -1,17 +1,19 @@
-import React, { useState } from 'react';
-import { useCourse } from '../../hooks/useCourse';
-import { FiPlus } from 'react-icons/fi';
+import React, {useState} from 'react';
+import {FiPlus} from 'react-icons/fi';
+import {useCourseCRUD} from "../../hooks/course/useCourseCRUD.ts";
 
-const CreateCourseForm = () => {
+export const CreateCourseForm = () => {
     const [name, setName] = useState('');
-    const { createCourse, isCreatingCourse } = useCourse();
+    const [description, setDescription] = useState('');
+    const {createCourse, isCreatingCourse} = useCourseCRUD();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (name.trim()) {
             try {
-                await createCourse(name);
+                await createCourse(name, description.trim() || undefined);
                 setName('');
+                setDescription('');
             } catch (error) {
                 console.error('Failed to create course:', error);
             }
@@ -19,37 +21,44 @@ const CreateCourseForm = () => {
     };
 
     return (
-        <div className="bg-base-100 rounded-xl p-6 shadow-sm border border-dashed border-base-300 hover:border-primary/30 transition-colors">
-            <h3 className="font-semibold text-lg mb-4">Create New Course</h3>
-            <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="form-control">
-                    <input
-                        type="text"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        placeholder="Course Title"
-                        className="input input-bordered w-full focus:ring-2 ring-primary/50"
-                        disabled={isCreatingCourse}
-                    />
-                </div>
+        <form onSubmit={handleSubmit} className="space-y-3">
+            <div className="form-control">
+                <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Course Title"
+                    className="input input-bordered input-sm w-full focus:ring-1 ring-primary/50"
+                    disabled={isCreatingCourse}
+                    required
+                />
+            </div>
 
-                <button
-                    type="submit"
-                    className="btn btn-primary w-full"
-                    disabled={isCreatingCourse || !name.trim()}
-                >
-                    {isCreatingCourse ? (
-                        <span className="loading loading-spinner"></span>
-                    ) : (
-                        <>
-                            <FiPlus className="text-xl mr-2" />
-                            Create Course
-                        </>
-                    )}
-                </button>
-            </form>
-        </div>
+            <div className="form-control">
+                <textarea
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    placeholder="Course Description (Optional)"
+                    className="textarea textarea-bordered textarea-xs w-full focus:ring-1 ring-primary/50"
+                    disabled={isCreatingCourse}
+                    rows={2}
+                />
+            </div>
+
+            <button
+                type="submit"
+                className="btn btn-primary btn-sm w-full"
+                disabled={isCreatingCourse || !name.trim()}
+            >
+                {isCreatingCourse ? (
+                    <span className="loading loading-spinner loading-xs"></span>
+                ) : (
+                    <>
+                        <FiPlus className="text-lg mr-1"/>
+                        Create
+                    </>
+                )}
+            </button>
+        </form>
     );
 };
-
-export default CreateCourseForm;

@@ -1,18 +1,15 @@
 import React, {useState} from 'react';
-import { useFolder } from '../../hooks/useFolder';
-import { useCourse } from "../../hooks/useCourse";
+import {useFolder} from '../../hooks/useFolder';
 
 const CreateFolderForm = () => {
     const [name, setName] = useState('');
-    const { createFolder, isCreatingFolder } = useFolder();
-    const { fetchCourses } = useCourse();
+    const {createFolder, isCreatingFolder} = useFolder();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (name.trim()) {
             try {
                 await createFolder(name);
-                await fetchCourses();
                 setName('');
             } catch (error) {
                 console.error('Failed to create folder:', error);

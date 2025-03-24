@@ -62,7 +62,7 @@ public class QuestionService implements IQuestionService {
             throw new NotFoundException("Course not found");
         }
 
-        Folder folder = courseOpt.get().getFolders().stream()
+        Folder folder = courseOpt.get().folders.stream()
                 .filter(f -> f.getId().equals(folderId))
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("Folder not found"));
@@ -146,7 +146,7 @@ public class QuestionService implements IQuestionService {
             throw new NotFoundException("Course not found");
         }
 
-        Folder folder = courseOpt.get().getFolders().stream()
+        Folder folder = courseOpt.get().folders.stream()
                 .filter(f -> f.getId().equals(folderId))
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("Folder not found in course"));

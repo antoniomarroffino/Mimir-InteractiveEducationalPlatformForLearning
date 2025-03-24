@@ -2,6 +2,7 @@ package ch.supsi.model.dto.api;
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.validation.constraints.NotBlank;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +12,8 @@ public class CourseDTO {
 
     @NotBlank(message = "Course name cannot be null or empty")
     private String name;
+
+    private String description;
 
     private List<FolderDTO> folders = new ArrayList<>();
 
@@ -35,6 +38,14 @@ public class CourseDTO {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDescription() {
+        return this.description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public List<FolderDTO> getFolders() {

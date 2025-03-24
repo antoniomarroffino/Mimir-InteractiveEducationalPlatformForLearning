@@ -3,17 +3,17 @@ import {useMutation, useQuery, useQueryClient} from "react-query";
 import {FolderContext} from "../contexts/FolderContext";
 import {FolderDTO} from "@dti-isin/backend-api-client";
 import {folderApi} from "../../config/config";
-import {useCourse} from "../hooks/useCourse";
+import {useCourseSelection} from "../hooks/course/useCourseSelection.ts";
+import {useCourseList} from "../hooks/course/useCourseList.ts";
 
 export const FolderProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const queryClient = useQueryClient();
-    const {selectedCourseId, courses} = useCourse();
+    const {selectedCourseId} = useCourseSelection();
+    const {courses} = useCourseList();
 
-    // Verifica che il corso selezionato esista realmente
     const isValidCourse = courses.some(c => c.id === selectedCourseId);
     const [selectedFolderId, setSelectedFolderId] = React.useState<string | null>(null);
 
-    // Query per le folder
     const {
         data: folders = [],
         isLoading: isFetchingFolders,

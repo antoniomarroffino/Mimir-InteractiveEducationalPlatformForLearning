@@ -9,6 +9,7 @@ import ch.supsi.repository.UserRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.InternalServerErrorException;
 import jakarta.ws.rs.NotFoundException;
 import org.bson.types.ObjectId;
@@ -60,7 +61,7 @@ public class CourseService implements ICourseService {
         Course course = this.courseMapper.toEntity(courseDTO);
         this.courseRepository.persist(course);
 
-        this.userRepository.addCourseToUser(course.getId().toString(), currentUser.azureOid);
+        this.userRepository.addCourseToUser(course.id.toString(), currentUser.azureOid);
 
         return this.courseMapper.toDTO(course);
     }
@@ -74,7 +75,50 @@ public class CourseService implements ICourseService {
         if (courseOpt.isEmpty())
             throw new NotFoundException("Course " + id + " not found");
 
-        this.userRepository.addCourseToUser(courseOpt.get().getId().toString(), currentUser.azureOid);
+        this.userRepository.addCourseToUser(courseOpt.get().id.toString(), currentUser.azureOid);
+    }
+
+    @Override
+    public CourseDTO updateCourse(ObjectId id, CourseDTO courseDTO, User currentUser) {
+        if (currentUser == null)
+            throw new InternalServerErrorException();
+
+        Optional<Course> courseOpt = this.courseRepository.findByIdOptional(id);
+        if (courseOpt.isEmpty())
+            throw new NotFoundException("Course " + id + " not found");
+
+        if (!currentUser.coursesId.contains(id.toString()))
+            throw new ForbiddenException("You are not authorized to update this course");
+
+        Course existingCourse = courseOpt.get();
+
+        if (!existingCourse.name.equalsIgnoreCase(courseDTO.getName())
+                && this.isCourseNameDuplicated(courseDTO.getName())) {
+            throw new BadRequestException("Course name " + courseDTO.getName() + " already exists");
+        }
+
+        existingCourse.name = courseDTO.getName();
+        existingCourse.description = courseDTO.getDescription();
+
+        this.courseRepository.persist(existingCourse);
+
+        return this.courseMapper.toDTO(existingCourse);
+    }
+
+    @Override
+    public void deleteCourse(ObjectId id, User currentUser) {
+        if (currentUser == null)
+            throw new InternalServerErrorException();
+
+        Optional<Course> courseOpt = this.courseRepository.findByIdOptional(id);
+        if (courseOpt.isEmpty())
+            throw new NotFoundException("Course " + id + " not found");
+
+        if (!currentUser.coursesId.contains(id.toString()))
+            throw new ForbiddenException("You are not authorized to delete this course");
+
+        this.userRepository.removeCourseFromUser(id.toString(), currentUser.azureOid);
+        this.courseRepository.delete(courseOpt.get());
     }
 
     private void verifyCourseIsValid(CourseDTO courseDTO) {
@@ -89,7 +133,7 @@ public class CourseService implements ICourseService {
 
     private boolean isCourseNameDuplicated(String courseName) {
         for (Course course : this.courseRepository.listAll())
-            if (course.getName().equals(courseName))
+            if (course.name.equals(courseName))
                 return true;
 
         return false;

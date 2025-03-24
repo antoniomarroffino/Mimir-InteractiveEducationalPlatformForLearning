@@ -1,14 +1,16 @@
-import { useEffect } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import { useCourse } from '../hooks/useCourse';
-import { BsChevronRight } from 'react-icons/bs';
-import { FolderList } from "../components/folder/FolderList.tsx";
+import {useEffect} from 'react';
+import {Link, useNavigate, useParams} from 'react-router-dom';
+import {BsChevronRight} from 'react-icons/bs';
+import {FolderList} from "../components/folder/FolderList.tsx";
 import CreateFolderForm from "../components/folder/CreateFolderForm.tsx";
+import {useCourseList} from "../hooks/course/useCourseList.ts";
+import {useCourseSelection} from "../hooks/course/useCourseSelection.ts";
 
 const CourseDetails = () => {
-    const { courseId } = useParams();
+    const {courseId} = useParams();
     const navigate = useNavigate();
-    const { courses, setSelectedCourseId } = useCourse();
+    const {courses} = useCourseList();
+    const {setSelectedCourseId} = useCourseSelection();
 
     useEffect(() => {
         if (courseId) {

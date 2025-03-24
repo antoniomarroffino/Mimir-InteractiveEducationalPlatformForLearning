@@ -5,7 +5,6 @@ import Header from "../components/common/Header.tsx";
 import Footer from "../components/common/Footer.tsx";
 import {FolderProvider} from "../provider/FolderProvider.tsx";
 import '../App.css';
-import {CourseProvider} from "../provider/CourseProvider.tsx";
 import {QuizCreation} from "./QuizCreation.tsx";
 import {AuthProvider} from "../provider/AuthProvider.tsx";
 import AdminDashboard from "./admin/AdminDashboard.tsx";
@@ -18,11 +17,12 @@ import {QuizStatsPage} from "./QuizStatsPage.tsx";
 import {QuizRetrieveProvider} from '../provider/QuizRetrieveProvider.tsx';
 import {QuizPublicationProviders} from "../contexts/quizPublication/QuizPublicationProviders.tsx";
 import {QuizAccessRoute} from "../components/common/QuizAccessRoute.tsx";
+import {CourseProviders} from "../contexts/course/CourseProviders.tsx";
 
 const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
-            staleTime: 0,
+            staleTime: 1000 * 60,
             cacheTime: 1000 * 60 * 5,
             refetchOnWindowFocus: true,
             refetchOnReconnect: true,
@@ -57,11 +57,11 @@ const App = () => {
                                 path="/courses"
                                 element={
                                     <ProtectedRoute allowedRoles={[Role.Teacher]}>
-                                        <CourseProvider>
+                                        <CourseProviders>
                                             <FolderProvider>
                                                 <Outlet/>
                                             </FolderProvider>
-                                        </CourseProvider>
+                                        </CourseProviders>
                                     </ProtectedRoute>
                                 }
                             >
@@ -73,7 +73,7 @@ const App = () => {
                                 />
                                 <Route
                                     path=":courseId/publications/:publicationId/stats"
-                                    element={<QuizStatsPage />}
+                                    element={<QuizStatsPage/>}
                                 />
                             </Route>
 

@@ -51,7 +51,7 @@ public class QuizService implements IQuizService {
             throw new NotFoundException("Course not found");
         }
 
-        Folder folder = courseOpt.get().getFolders().stream()
+        Folder folder = courseOpt.get().folders.stream()
                 .filter(f -> f.getId().equals(folderId))
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("Folder not found in course"));
@@ -71,7 +71,7 @@ public class QuizService implements IQuizService {
             throw new NotFoundException("Course not found");
         }
 
-        Folder folder = courseOpt.get().getFolders().stream()
+        Folder folder = courseOpt.get().folders.stream()
                 .filter(f -> f.getId().equals(folderId))
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("Folder not found in course"));
@@ -101,7 +101,7 @@ public class QuizService implements IQuizService {
             throw new NotFoundException("Course not found");
         }
 
-        Folder folder = courseOpt.get().getFolders().stream()
+        Folder folder = courseOpt.get().folders.stream()
                 .filter(f -> f.getId().equals(folderId))
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("Folder not found in course"));
@@ -120,7 +120,7 @@ public class QuizService implements IQuizService {
             throw new NotFoundException("Course not found");
         }
 
-        return courseOpt.get().getFolders().stream()
+        return courseOpt.get().folders.stream()
                 .filter(f -> f.getId().equals(folderId))
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("Folder not found in course"));
