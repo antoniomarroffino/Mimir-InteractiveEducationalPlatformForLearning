@@ -2,7 +2,7 @@ import React, {useCallback, useMemo, useState} from "react";
 import {QuestionSelectionContext} from "../../contexts/question/QuestionSelectionContext.ts";
 import {useQuestionList} from "../../hooks/question/useQuestionList.ts";
 
-export const QuestionSelectionProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
+export const QuestionSelectionProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const [selectedQuestionId, setSelectedQuestionId] = useState<string | null>(null);
     const [currentQuizId, setCurrentQuizId] = useState<string | null>(null);
     const {questions} = useQuestionList();
@@ -13,7 +13,7 @@ export const QuestionSelectionProvider: React.FC<{children: React.ReactNode}> = 
     );
 
     const validateSelection = useCallback(() => {
-        if(selectedQuestionId && !questions.some(q => q.id === selectedQuestionId)) {
+        if (selectedQuestionId && !questions.some(q => q.id === selectedQuestionId)) {
             setSelectedQuestionId(null);
         }
     }, [questions, selectedQuestionId]);
@@ -23,7 +23,7 @@ export const QuestionSelectionProvider: React.FC<{children: React.ReactNode}> = 
         selectedQuestion,
         currentQuizId,
         selectQuestion: (id: string) => {
-            if(questions.some(q => q.id === id)) {
+            if (questions.some(q => q.id === id)) {
                 setSelectedQuestionId(id);
             }
         },

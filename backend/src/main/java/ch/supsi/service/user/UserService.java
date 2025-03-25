@@ -12,7 +12,6 @@ import jakarta.ws.rs.InternalServerErrorException;
 import jakarta.ws.rs.NotFoundException;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
-import java.util.List;
 import java.util.Optional;
 
 @ApplicationScoped

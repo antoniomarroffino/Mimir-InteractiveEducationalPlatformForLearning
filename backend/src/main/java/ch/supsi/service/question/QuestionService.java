@@ -9,7 +9,6 @@ import ch.supsi.model.api.question.QuestionType;
 import ch.supsi.model.dto.api.question.QuestionDTO;
 import ch.supsi.repository.CourseRepository;
 import ch.supsi.service.question.builder.IQuestionFactory;
-import ch.supsi.service.question.strategy.IQuestionCreationStrategy;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.NotFoundException;

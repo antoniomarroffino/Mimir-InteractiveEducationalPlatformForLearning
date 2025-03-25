@@ -30,7 +30,7 @@ const QuizSessionComponent = () => {
                 return;
             }
 
-            if(!publication.published){
+            if (!publication.published) {
                 handleDeactivatedPublication()
                 return;
             }

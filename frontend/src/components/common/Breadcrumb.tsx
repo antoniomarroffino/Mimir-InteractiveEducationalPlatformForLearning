@@ -1,7 +1,7 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { BsChevronRight } from 'react-icons/bs';
-import { CourseDTO, FolderDTO, QuizDTO } from '@dti-isin/backend-api-client';
+import {Link} from 'react-router-dom';
+import {BsChevronRight} from 'react-icons/bs';
+import {CourseDTO, FolderDTO, QuizDTO} from '@dti-isin/backend-api-client';
 
 interface BreadcrumbProps {
     course: CourseDTO;
@@ -25,7 +25,7 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
                         Home
                     </Link>
                 </li>
-                <BsChevronRight className="text-gray-400" />
+                <BsChevronRight className="text-gray-400"/>
                 <li>
                     <Link
                         to={`/courses/${course.id}`}
@@ -36,7 +36,7 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
                 </li>
                 {folder && (
                     <>
-                        <BsChevronRight className="text-gray-400" />
+                        <BsChevronRight className="text-gray-400"/>
                         <li>
                             <Link
                                 to={`/courses/${course.id}`}
@@ -49,7 +49,7 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
                 )}
                 {quiz && (
                     <>
-                        <BsChevronRight className="text-gray-400" />
+                        <BsChevronRight className="text-gray-400"/>
                         <li>
                             <span className="font-semibold">{quiz.name}</span>
                         </li>

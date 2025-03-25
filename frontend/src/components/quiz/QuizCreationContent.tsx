@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { QuestionDTO, QuestionType } from '@dti-isin/backend-api-client';
+import React, {useState} from 'react';
+import {useNavigate, useParams} from 'react-router-dom';
+import {QuestionDTO, QuestionType} from '@dti-isin/backend-api-client';
 import {Breadcrumb} from "../common/Breadcrumb.tsx";
 import {QuestionsList} from "../question/QuestionList.tsx";
 import CreateQuestionForm from "../question/CreateQuestionForm.tsx";
@@ -11,9 +11,9 @@ import {useQuestionList} from "../../hooks/question/useQuestionList.ts";
 import {useQuestionCRUD} from "../../hooks/question/useQuestionCRUD.ts";
 
 export const QuizCreationContent: React.FC = () => {
-    const { courseId, folderId, quizId } = useParams();
+    const {courseId, folderId, quizId} = useParams();
     const navigate = useNavigate();
-    const { courses } = useCourseList();
+    const {courses} = useCourseList();
     const {questions, isLoadingQuestions, errorQuestions} = useQuestionList();
     const {createQuestion, createQuestionTemplate} = useQuestionCRUD();
 
@@ -66,7 +66,7 @@ export const QuizCreationContent: React.FC = () => {
             // Resetta tutto tranne il fatto che stiamo creando una domanda
             setSelectedQuestionType(null);
             setQuestionTemplate(null);
-            setDraftQuestion({ questionText: '' });
+            setDraftQuestion({questionText: ''});
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Failed to save question');
         }
@@ -153,7 +153,7 @@ export const QuizCreationContent: React.FC = () => {
                             <CreateQuestionForm
                                 onStartCreation={() => {
                                     setIsCreatingQuestion(true);
-                                    setDraftQuestion({ questionText: '' });
+                                    setDraftQuestion({questionText: ''});
                                 }}
                                 isDisabled={false}
                             />

@@ -110,10 +110,10 @@ public class QuestionController {
             )
     )
     public Response updateQuestion(@PathParam("courseId") String courseId,
-                                      @PathParam("folderId") String folderId,
-                                      @PathParam("quizId") String quizId,
-                                      @PathParam("questionId") String questionId,
-                                      @Valid QuestionDTO questionDTO) {
+                                   @PathParam("folderId") String folderId,
+                                   @PathParam("quizId") String quizId,
+                                   @PathParam("questionId") String questionId,
+                                   @Valid QuestionDTO questionDTO) {
         QuestionDTO updatedQuestionDTO = this.questionService.updateQuestion(
                 new ObjectId(courseId),
                 new ObjectId(folderId),

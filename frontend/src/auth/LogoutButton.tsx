@@ -1,10 +1,10 @@
 import React from "react";
-import { FiLogOut } from 'react-icons/fi';
-import { useAuth } from "../hooks/useAuth.ts";
+import {FiLogOut} from 'react-icons/fi';
+import {useAuth} from "../hooks/useAuth.ts";
 import {Spinner} from "../components/common/Spinner.tsx";
 
-const LogoutButton: React.FC<{ className?: string }> = ({ className }) => {
-    const { logout, isLoading } = useAuth();
+const LogoutButton: React.FC<{ className?: string }> = ({className}) => {
+    const {logout, isLoading} = useAuth();
 
     return (
         <button
@@ -13,10 +13,10 @@ const LogoutButton: React.FC<{ className?: string }> = ({ className }) => {
             disabled={isLoading}
         >
             {isLoading ? (
-                <Spinner size="sm" />
+                <Spinner size="sm"/>
             ) : (
                 <>
-                    <FiLogOut className="w-4 h-4" />
+                    <FiLogOut className="w-4 h-4"/>
                     <span className="hidden sm:inline">Esci</span>
                 </>
             )}

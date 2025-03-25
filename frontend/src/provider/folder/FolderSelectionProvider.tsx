@@ -1,13 +1,13 @@
-import React, {useState, useMemo, useCallback, useEffect} from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {useFolderList} from "../../hooks/folder/useFolderList.ts";
-import { FolderSelectionContext } from "../../contexts/folder/FolderSelectionContext.ts";
-import { FolderDTO } from "@dti-isin/backend-api-client";
+import {FolderSelectionContext} from "../../contexts/folder/FolderSelectionContext.ts";
+import {FolderDTO} from "@dti-isin/backend-api-client";
 
 
-export const FolderSelectionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const FolderSelectionProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
     const [selectedFolder, setSelectedFolder] = useState<FolderDTO | null>(null);
-    const { folders } = useFolderList();
+    const {folders} = useFolderList();
 
     const validateSelection = useCallback(() => {
         if (selectedFolderId && !folders.some(f => f.id === selectedFolderId)) {

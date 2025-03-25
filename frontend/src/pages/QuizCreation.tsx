@@ -1,27 +1,27 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { QuestionDTO, QuestionType } from '@dti-isin/backend-api-client';
-import { useCourseList } from "../hooks/course/useCourseList.ts";
-import { useQuestionCRUD } from "../hooks/question/useQuestionCRUD.ts";
-import { useCourseSelection } from "../hooks/course/useCourseSelection.ts";
-import { useFolderSelection } from "../hooks/folder/useFolderSelection.ts";
-import { useQuizSelection } from "../hooks/quiz/useQuizSelection.ts";
-import { Breadcrumb } from "../components/common/Breadcrumb.tsx";
-import { QuestionsList } from "../components/question/QuestionList.tsx";
+import React, {useEffect, useMemo, useState} from 'react';
+import {useNavigate, useParams} from 'react-router-dom';
+import {QuestionDTO, QuestionType} from '@dti-isin/backend-api-client';
+import {useCourseList} from "../hooks/course/useCourseList.ts";
+import {useQuestionCRUD} from "../hooks/question/useQuestionCRUD.ts";
+import {useCourseSelection} from "../hooks/course/useCourseSelection.ts";
+import {useFolderSelection} from "../hooks/folder/useFolderSelection.ts";
+import {useQuizSelection} from "../hooks/quiz/useQuizSelection.ts";
+import {Breadcrumb} from "../components/common/Breadcrumb.tsx";
+import {QuestionsList} from "../components/question/QuestionList.tsx";
 import CreateQuestionForm from "../components/question/CreateQuestionForm.tsx";
-import { QuestionEditor } from "../components/question/QuestionEditor.tsx";
-import { QuestionTypeSelector } from "../components/question/QuestionTypeSelector.tsx";
+import {QuestionEditor} from "../components/question/QuestionEditor.tsx";
+import {QuestionTypeSelector} from "../components/question/QuestionTypeSelector.tsx";
 import {useQuizQuestions} from "../hooks/quiz/useQuizQuestions.ts";
 
 export const QuizCreation: React.FC = () => {
-    const { courseId, folderId, quizId } = useParams();
+    const {courseId, folderId, quizId} = useParams();
     const navigate = useNavigate();
 
-    const { setSelectedCourseId } = useCourseSelection();
-    const { setSelectedFolderId } = useFolderSelection();
-    const { setSelectedQuizId } = useQuizSelection();
+    const {setSelectedCourseId} = useCourseSelection();
+    const {setSelectedFolderId} = useFolderSelection();
+    const {setSelectedQuizId} = useQuizSelection();
 
-    const { courses } = useCourseList();
+    const {courses} = useCourseList();
 
     // Usa il nuovo hook per ottenere le domande
     const quizQuestionsQuery = useQuizQuestions(courseId, folderId, quizId);

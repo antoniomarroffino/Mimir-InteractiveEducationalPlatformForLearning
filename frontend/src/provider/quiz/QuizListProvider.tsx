@@ -1,6 +1,6 @@
-import React, { useMemo } from "react";
-import { QuizDTO } from "@dti-isin/backend-api-client";
-import { QuizListContext } from "../../contexts/quiz/QuizListContext.tsx";
+import React, {useMemo} from "react";
+import {QuizDTO} from "@dti-isin/backend-api-client";
+import {QuizListContext} from "../../contexts/quiz/QuizListContext.tsx";
 
 export const QuizListProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const value = useMemo(() => {
@@ -9,7 +9,8 @@ export const QuizListProvider: React.FC<{ children: React.ReactNode }> = ({child
                 quizzes: [] as QuizDTO[],
                 isLoadingQuizzes: false,
                 errorQuizzes: null as Error | null,
-                refetchQuizzes: async () => {}
+                refetchQuizzes: async () => {
+                }
             };
 
             return folderId ? defaultResult : defaultResult;
@@ -19,7 +20,8 @@ export const QuizListProvider: React.FC<{ children: React.ReactNode }> = ({child
             quizzes: [] as QuizDTO[],
             isLoadingQuizzes: false,
             errorQuizzes: null as Error | null,
-            refetchQuizzes: async () => {},
+            refetchQuizzes: async () => {
+            },
             getQuizzesForFolder
         };
     }, []);

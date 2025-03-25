@@ -1,6 +1,5 @@
 package ch.supsi.mapper.question;
 
-import ch.supsi.mapper.IBaseMapper;
 import ch.supsi.model.api.question.MultipleChoiceQuestion;
 import ch.supsi.model.dto.api.question.MultipleChoiceQuestionDTO;
 
@@ -9,7 +8,7 @@ public class MultipleChoiceQuestionMapper extends AbstractQuestionMapper<Multipl
 
     @Override
     public MultipleChoiceQuestionDTO toDTO(MultipleChoiceQuestion multipleChoiceQuestion) {
-        if(multipleChoiceQuestion == null) {
+        if (multipleChoiceQuestion == null) {
             return null;
         }
 
@@ -22,7 +21,7 @@ public class MultipleChoiceQuestionMapper extends AbstractQuestionMapper<Multipl
 
     @Override
     public MultipleChoiceQuestion toEntity(MultipleChoiceQuestionDTO multipleChoiceQuestionDTO) {
-        if(multipleChoiceQuestionDTO == null) {
+        if (multipleChoiceQuestionDTO == null) {
             return null;
         }
         MultipleChoiceQuestion multipleChoiceQuestion = new MultipleChoiceQuestion();

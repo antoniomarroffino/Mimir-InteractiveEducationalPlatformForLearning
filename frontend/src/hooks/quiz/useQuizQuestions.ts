@@ -1,6 +1,6 @@
-import { useQuery } from "react-query";
-import { QuestionDTO } from "@dti-isin/backend-api-client";
-import { questionApi } from "../../../config/config";
+import {useQuery} from "react-query";
+import {QuestionDTO} from "@dti-isin/backend-api-client";
+import {questionApi} from "../../../config/config";
 
 export const useQuizQuestions = (
     courseId?: string,

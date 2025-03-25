@@ -12,7 +12,7 @@ public class MultipleChoiceQuestionStrategy extends AbstractQuestionStrategy<Mul
 
     @Override
     public void updateQuestion(MultipleChoiceQuestion entity, MultipleChoiceQuestionDTO questionDTOUpdated) {
-        if(entity == null || questionDTOUpdated == null)
+        if (entity == null || questionDTOUpdated == null)
             return;
 
         super.updateQuestion(entity, questionDTOUpdated);

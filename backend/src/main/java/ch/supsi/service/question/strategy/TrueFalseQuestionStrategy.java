@@ -12,7 +12,7 @@ public class TrueFalseQuestionStrategy extends AbstractQuestionStrategy<TrueFals
 
     @Override
     public void updateQuestion(TrueFalseQuestion entity, TrueFalseQuestionDTO questionDTOUpdated) {
-        if(entity == null || questionDTOUpdated == null)
+        if (entity == null || questionDTOUpdated == null)
             return;
         super.updateQuestion(entity, questionDTOUpdated);
         entity.correctAnswer = questionDTOUpdated.getCorrectAnswer();

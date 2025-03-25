@@ -1,10 +1,18 @@
-import { Configuration, CourseControllerApi, FolderControllerApi, QuizControllerApi, QuestionControllerApi, UserControllerApi, QuizPublicationControllerApi } from '@dti-isin/backend-api-client';
+import {
+    Configuration,
+    CourseControllerApi,
+    FolderControllerApi,
+    QuestionControllerApi,
+    QuizControllerApi,
+    QuizPublicationControllerApi,
+    UserControllerApi
+} from '@dti-isin/backend-api-client';
 import axios from 'axios';
 
 // Creare un'istanza Axios correttamente configurata
 const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_BACKEND_URL,
-    headers:{
+    headers: {
         'Content-Type': 'application/json'
     }
 });

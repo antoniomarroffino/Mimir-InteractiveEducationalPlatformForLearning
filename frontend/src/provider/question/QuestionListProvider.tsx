@@ -1,11 +1,11 @@
-import React, { useMemo } from "react";
-import { QuestionListContext } from "../../contexts/question/QuestionListContext";
-import { useCourseSelection } from "../../hooks/course/useCourseSelection.ts";
-import { useFolderSelection } from "../../hooks/folder/useFolderSelection.ts";
-import { useQuizSelection } from "../../hooks/quiz/useQuizSelection.ts";
-import { useQuery } from "react-query";
-import { QuestionDTO } from "@dti-isin/backend-api-client";
-import { questionApi } from "../../../config/config";
+import React, {useMemo} from "react";
+import {QuestionListContext} from "../../contexts/question/QuestionListContext";
+import {useCourseSelection} from "../../hooks/course/useCourseSelection.ts";
+import {useFolderSelection} from "../../hooks/folder/useFolderSelection.ts";
+import {useQuizSelection} from "../../hooks/quiz/useQuizSelection.ts";
+import {useQuery} from "react-query";
+import {QuestionDTO} from "@dti-isin/backend-api-client";
+import {questionApi} from "../../../config/config";
 
 export const QuestionListProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const {selectedCourseId} = useCourseSelection();
@@ -41,7 +41,8 @@ export const QuestionListProvider: React.FC<{ children: React.ReactNode }> = ({c
                     questions: [],
                     isLoadingQuestions: false,
                     errorQuestions: null,
-                    refetchQuestions: async () => {}
+                    refetchQuestions: async () => {
+                    }
                 };
             }
 

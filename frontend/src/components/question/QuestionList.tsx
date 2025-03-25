@@ -1,10 +1,6 @@
 import React from "react";
-import {
-    QuestionDTO,
-    TrueFalseQuestionDTO,
-    MultipleChoiceQuestionDTO
-} from '@dti-isin/backend-api-client';
-import { QuestionElement } from './QuestionElement';
+import {MultipleChoiceQuestionDTO, QuestionDTO, TrueFalseQuestionDTO} from '@dti-isin/backend-api-client';
+import {QuestionElement} from './QuestionElement';
 
 type SpecificQuestionDTO =
     | QuestionDTO

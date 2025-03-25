@@ -1,6 +1,6 @@
 import React from 'react';
-import { QuizRow } from './QuizRow';
-import { useQuizList } from "../../hooks/quiz/useQuizList.ts";
+import {QuizRow} from './QuizRow';
+import {useQuizList} from "../../hooks/quiz/useQuizList.ts";
 
 interface QuizListProps {
     courseId: string;
@@ -8,7 +8,7 @@ interface QuizListProps {
 }
 
 export const QuizList: React.FC<QuizListProps> = ({courseId, folderId}) => {
-    const { getQuizzesForFolder } = useQuizList();
+    const {getQuizzesForFolder} = useQuizList();
     const {
         quizzes,
         isLoadingQuizzes,

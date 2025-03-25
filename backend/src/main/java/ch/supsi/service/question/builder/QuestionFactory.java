@@ -3,8 +3,8 @@ package ch.supsi.service.question.builder;
 import ch.supsi.model.api.question.Question;
 import ch.supsi.model.api.question.QuestionType;
 import ch.supsi.model.dto.api.question.QuestionDTO;
-import ch.supsi.service.question.strategy.MultipleChoiceQuestionStrategy;
 import ch.supsi.service.question.strategy.IQuestionCreationStrategy;
+import ch.supsi.service.question.strategy.MultipleChoiceQuestionStrategy;
 import ch.supsi.service.question.strategy.TrueFalseQuestionStrategy;
 import jakarta.enterprise.context.ApplicationScoped;
 
