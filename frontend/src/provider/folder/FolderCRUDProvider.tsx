@@ -14,11 +14,11 @@ export const FolderCRUDProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     const createFolderMutation = useMutation(
         async (name: string) => {
             if (!selectedCourseId) throw new Error("No course selected");
-            const r = await folderApi.apiCoursesCourseIdFoldersPost({
+            const response = await folderApi.apiCoursesCourseIdFoldersPost({
                 courseId: selectedCourseId,
                 folderDTO: {name}
             });
-            return r.data;
+            return response.data;
         },
         {
             onSuccess: (newFolder) => {
@@ -36,12 +36,12 @@ export const FolderCRUDProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     const updateFolderMutation = useMutation(
         async ({id, name}: { id: string; name: string }) => {
             if (!selectedCourseId) throw new Error("No course selected");
-            const r = await folderApi.apiCoursesCourseIdFoldersFolderIdPut({
+            const response = await folderApi.apiCoursesCourseIdFoldersFolderIdPut({
                 courseId: selectedCourseId,
                 folderId: id,
                 folderDTO: {name}
             });
-            return r.data;
+            return response.data;
         },
         {
             onSuccess: (updatedFolder) => {

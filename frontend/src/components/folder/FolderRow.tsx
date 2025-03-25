@@ -21,17 +21,17 @@ export const FolderRow = ({folder, courseId}: FolderRowProps) => {
 
     const handleCreateQuiz = async (e: React.FormEvent) => {
         e.preventDefault();
-        e.stopPropagation(); // Previene il toggle dell'espansione
+        e.stopPropagation();
+
+        console.log("FolderRow - Folder being selected:", folder);
+        console.log("FolderRow - Folder ID:", folder.id);
 
         setSelectedFolderId(folder.id!);
         setSelectedFolder(folder);
 
-        if (!quizName.trim()) return;
-
         try {
-            await createQuiz(
-                quizName.trim()
-            );
+            console.log("Attempting to create quiz with folder:", folder);
+            await createQuiz(folder.id!, quizName.trim());
             setQuizName("");
             setShowCreateForm(false);
         } catch (error) {
