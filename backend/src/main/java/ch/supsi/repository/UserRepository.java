@@ -26,6 +26,10 @@ public class UserRepository implements PanacheMongoRepository<User> {
         update("{$addToSet: {coursesId: ?1}}", courseId).where("azureOid", azureOid);
     }
 
+    public void removeCourseFromUser(String courseId, String azureOid) {
+        update("{$pull: {coursesId: ?1}}", courseId).where("azureOid", azureOid);
+    }
+
     public void deleteByAzureOid(String oid) {
         delete("azureOid", oid);
     }

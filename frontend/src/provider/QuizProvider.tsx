@@ -3,8 +3,8 @@ import {useMutation, useQuery, useQueryClient} from "react-query";
 import {QuizContext} from "../contexts/QuizContext";
 import {QuizDTO} from "@dti-isin/backend-api-client";
 import {quizApi} from "../../config/config";
-import {useCourse} from "../hooks/useCourse";
-import {useFolder} from "../hooks/useFolder";
+import {useCourseSelection} from "../hooks/course/useCourseSelection.ts";
+import {useFolderSelection} from "../hooks/folder/useFolderSelection.ts";
 
 interface QuizProviderProps {
     children: React.ReactNode;
@@ -18,8 +18,8 @@ export const QuizProvider: React.FC<QuizProviderProps> = React.memo(({
                                                                          folderId: propFolderId
                                                                      }) => {
     const queryClient = useQueryClient();
-    const { selectedCourseId: contextCourseId } = useCourse();
-    const { selectedFolderId: contextFolderId } = useFolder();
+    const {selectedCourseId: contextCourseId} = useCourseSelection();
+    const {selectedFolderId: contextFolderId} = useFolderSelection();
 
     // Usa useMemo per stabilizzare i valori
     const courseId = useMemo(() => propCourseId || contextCourseId, [propCourseId, contextCourseId]);
@@ -56,7 +56,7 @@ export const QuizProvider: React.FC<QuizProviderProps> = React.memo(({
             const response = await quizApi.apiCoursesCourseIdFoldersFolderIdQuizzesPost({
                 courseId,
                 folderId,
-                quizDTO: { name }
+                quizDTO: {name}
             });
             return response.data;
         },

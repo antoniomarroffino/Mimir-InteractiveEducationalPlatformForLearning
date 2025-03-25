@@ -11,13 +11,11 @@ import java.util.List;
 @MongoEntity(collection = "courses")
 @Schema(description = "Course model", name = "Course")
 public class Course {
-
     @BsonId
-    private ObjectId id;
-
-    private String name;
-
-    private List<Folder> folders = new ArrayList<>();
+    public ObjectId id;
+    public String name;
+    public String description;
+    public List<Folder> folders = new ArrayList<>();
 
     public Course() {
 
@@ -25,29 +23,5 @@ public class Course {
 
     public Course(String name) {
         this.name = name;
-    }
-
-    public ObjectId getId() {
-        return this.id;
-    }
-
-    public void setId(ObjectId objectId) {
-        this.id = objectId;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public List<Folder> getFolders() {
-        return this.folders;
-    }
-
-    public void setFolders(List<Folder> folders) {
-        this.folders = folders;
     }
 }

@@ -9,6 +9,7 @@ import ch.supsi.repository.UserRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.InternalServerErrorException;
 import jakarta.ws.rs.NotFoundException;
 import org.bson.types.ObjectId;
@@ -60,7 +61,7 @@ public class CourseService implements ICourseService {
         Course course = this.courseMapper.toEntity(courseDTO);
         this.courseRepository.persist(course);
 
-        this.userRepository.addCourseToUser(course.getId().toString(), currentUser.azureOid);
+        this.userRepository.addCourseToUser(course.id.toString(), currentUser.azureOid);
 
         return this.courseMapper.toDTO(course);
     }
@@ -74,24 +75,75 @@ public class CourseService implements ICourseService {
         if (courseOpt.isEmpty())
             throw new NotFoundException("Course " + id + " not found");
 
-        this.userRepository.addCourseToUser(courseOpt.get().getId().toString(), currentUser.azureOid);
+        this.userRepository.addCourseToUser(courseOpt.get().id.toString(), currentUser.azureOid);
+    }
+
+    @Override
+    public CourseDTO updateCourse(ObjectId id, CourseDTO courseDTO, User currentUser) {
+        if (currentUser == null)
+            throw new InternalServerErrorException();
+
+        Optional<Course> courseOpt = this.courseRepository.findByIdOptional(id);
+        if (courseOpt.isEmpty())
+            throw new NotFoundException("Course " + id + " not found");
+
+        if (!currentUser.coursesId.contains(id.toString()))
+            throw new ForbiddenException("You are not authorized to update this course");
+
+        Course existingCourse = courseOpt.get();
+
+        String newName = courseDTO.getName().trim();
+        if (!existingCourse.name.equalsIgnoreCase(newName)) {
+            if (this.isCourseNameDuplicated(newName, id)) {
+                throw new BadRequestException("Course name '" + newName + "' already exists");
+            }
+        }
+
+        existingCourse.name = courseDTO.getName();
+        existingCourse.description = courseDTO.getDescription();
+
+        this.courseRepository.persist(existingCourse);
+
+        return this.courseMapper.toDTO(existingCourse);
+    }
+
+    @Override
+    public void deleteCourse(ObjectId id, User currentUser) {
+        if (currentUser == null)
+            throw new InternalServerErrorException();
+
+        Optional<Course> courseOpt = this.courseRepository.findByIdOptional(id);
+        if (courseOpt.isEmpty())
+            throw new NotFoundException("Course " + id + " not found");
+
+        if (!currentUser.coursesId.contains(id.toString()))
+            throw new ForbiddenException("You are not authorized to delete this course");
+
+
+        this.userRepository.removeCourseFromUser(id.toString(), currentUser.azureOid);
+        this.courseRepository.delete(courseOpt.get());
     }
 
     private void verifyCourseIsValid(CourseDTO courseDTO) {
-        if (courseDTO == null)
-            throw new BadRequestException("Course is null");
+        if (courseDTO == null) {
+            throw new BadRequestException("Course data cannot be null");
+        }
 
-        String courseName = courseDTO.getName();
+        String courseName = courseDTO.getName().trim();
+        if (courseName.isEmpty()) {
+            throw new BadRequestException("Course name cannot be empty");
+        }
 
-        if (this.isCourseNameDuplicated(courseName))
-            throw new BadRequestException("Course name " + courseName + " already existing");
+        if (courseRepository.find("LOWER(name)", courseName.toLowerCase()).count() > 0) {
+            throw new BadRequestException("Course name '" + courseName + "' already exists");
+        }
     }
 
-    private boolean isCourseNameDuplicated(String courseName) {
-        for (Course course : this.courseRepository.listAll())
-            if (course.getName().equals(courseName))
-                return true;
-
-        return false;
+    private boolean isCourseNameDuplicated(String courseName, ObjectId excludeCourseId) {
+        return courseRepository.find(
+                "LOWER(name) = LOWER(?1) and id != ?2",
+                courseName.trim(),
+                excludeCourseId
+        ).count() > 0;
     }
 }

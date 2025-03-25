@@ -13,8 +13,7 @@ public class TrueFalseQuestion extends Question {
     }
 
     public TrueFalseQuestion(String questionText, boolean correctAnswer) {
-        super(QuestionType.TRUE_FALSE);
-         this.questionText = questionText;
+        super(QuestionType.TRUE_FALSE, questionText);
         this.correctAnswer = correctAnswer;
     }
 }

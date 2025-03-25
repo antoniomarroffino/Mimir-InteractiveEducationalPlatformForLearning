@@ -19,8 +19,7 @@ public class MultipleChoiceQuestion extends Question {
     }
 
     public MultipleChoiceQuestion(String questionText, List<String> choices, List<Integer> correctAnswerIndexes) {
-        super(QuestionType.MULTIPLE_CHOICE);
-        this.questionText = questionText;
+        super(QuestionType.MULTIPLE_CHOICE, questionText);
         this.choices = choices;
         this.correctAnswerIndexes = correctAnswerIndexes;
     }

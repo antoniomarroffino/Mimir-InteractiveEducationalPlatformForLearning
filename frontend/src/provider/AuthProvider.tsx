@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {useMsal} from "@azure/msal-react";
 import {Role, UserWithoutCoursesDTO} from "@dti-isin/backend-api-client";
 import {loginRequest} from "../auth/authConfig.ts";
@@ -11,6 +11,19 @@ export const AuthProvider = ({children}: { children: React.ReactNode }) => {
     const {instance, accounts, inProgress} = useMsal();
     const [user, setUser] = useState<UserWithoutCoursesDTO | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+
+    const handleTokenUpdate = useCallback(async (newToken: string) => {
+        try {
+            setAuthToken(newToken);
+
+            await loadUserData();
+
+            await queryClient.invalidateQueries();
+
+        } finally {
+            setIsLoading(false);
+        }
+    }, [queryClient]);
 
     useEffect(() => {
         const checkExistingSession = async () => {
@@ -33,7 +46,7 @@ export const AuthProvider = ({children}: { children: React.ReactNode }) => {
         };
 
         checkExistingSession();
-    }, [inProgress, accounts]);
+    }, [inProgress, accounts, instance, handleTokenUpdate]);
 
     const login = async () => {
         setIsLoading(true);
@@ -56,18 +69,7 @@ export const AuthProvider = ({children}: { children: React.ReactNode }) => {
         }
     };
 
-    const handleTokenUpdate = async (newToken: string) => {
-        try {
-            setAuthToken(newToken);
 
-            await loadUserData();
-
-            await queryClient.invalidateQueries();
-
-        } finally {
-            setIsLoading(false);
-        }
-    };
 
     const logout = async () => {
         if (accounts.length > 0) {

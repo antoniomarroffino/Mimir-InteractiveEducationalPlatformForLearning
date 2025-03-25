@@ -1,22 +1,19 @@
 import React, {useState} from 'react';
-import { useFolder } from '../../hooks/useFolder';
-import { useCourse } from "../../hooks/useCourse";
+import {useFolderCRUD} from "../../hooks/folder/useFolderCRUD.ts";
 
-const CreateFolderForm = () => {
+export const CreateFolderForm = () => {
     const [name, setName] = useState('');
-    const { createFolder, isCreatingFolder } = useFolder();
-    const { fetchCourses } = useCourse();
+    const {createFolder, isCreatingFolder, errorCreateFolder} = useFolderCRUD();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (name.trim()) {
-            try {
-                await createFolder(name);
-                await fetchCourses();
-                setName('');
-            } catch (error) {
-                console.error('Failed to create folder:', error);
-            }
+        if (!name.trim()) return;
+
+        try {
+            await createFolder(name.trim());
+            setName('');
+        } catch (error) {
+            console.error('Failed to create folder:', error);
         }
     };
 
@@ -31,6 +28,7 @@ const CreateFolderForm = () => {
                     placeholder="Enter folder name"
                     className="input input-bordered join-item flex-1"
                     disabled={isCreatingFolder}
+                    maxLength={50} // Aggiungi limitazione caratteri
                 />
                 <button
                     type="submit"
@@ -44,8 +42,12 @@ const CreateFolderForm = () => {
                     )}
                 </button>
             </div>
+
+            {errorCreateFolder && (
+                <div className="text-error mt-2">
+                    Error: {errorCreateFolder.message}
+                </div>
+            )}
         </form>
     );
 };
-
-export default CreateFolderForm;
