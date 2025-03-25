@@ -10,7 +10,7 @@ interface QuizListProps {
 }
 
 export const QuizList: React.FC<QuizListProps> = ({courseId, folderId}) => {
-    const { quizzes } = useQuiz();
+    const {quizzes} = useQuiz();
 
     if (!quizzes?.length) {
         return (

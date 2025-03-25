@@ -3,6 +3,7 @@ import {FolderDTO} from "@dti-isin/backend-api-client";
 import {BsChevronDown, BsChevronUp, BsFolder2, BsPlus} from "react-icons/bs";
 import {QuizList} from "../quiz/QuizList";
 import {useQuiz} from "../../hooks/useQuiz.ts";
+import {useQueryClient} from "react-query";
 
 interface FolderRowProps {
     folder: FolderDTO;
@@ -10,6 +11,7 @@ interface FolderRowProps {
 }
 
 export const FolderRow = ({folder, courseId}: FolderRowProps) => {
+    const queryClient = useQueryClient();
     const [isExpanded, setIsExpanded] = useState(false);
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [quizName, setQuizName] = useState("");
@@ -17,12 +19,17 @@ export const FolderRow = ({folder, courseId}: FolderRowProps) => {
 
     const handleCreateQuiz = async (e: React.FormEvent) => {
         e.preventDefault();
+        e.stopPropagation(); // Previene il toggle dell'espansione
 
         if (!quizName.trim()) return;
 
         try {
-            await createQuiz(quizName.trim());
+            await createQuiz(
+                quizName.trim()
+            );
 
+            // Invalida la cache per forzare il refresh delle folder
+            queryClient.invalidateQueries(["folders", courseId]);
             setQuizName("");
             setShowCreateForm(false);
         } catch (error) {
@@ -56,11 +63,15 @@ export const FolderRow = ({folder, courseId}: FolderRowProps) => {
                         folderId={folder.id!}
                     />
 
-                    <div className="mt-4">
+                    <div className="mt-4" onClick={(e) => e.stopPropagation()}>
                         {!showCreateForm ? (
                             <button
-                                onClick={() => setShowCreateForm(true)}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setShowCreateForm(true);
+                                }}
                                 className="btn btn-primary w-full"
+                                disabled={isCreatingQuiz}
                             >
                                 <BsPlus className="text-xl mr-2"/>
                                 Add New Quiz
@@ -74,6 +85,7 @@ export const FolderRow = ({folder, courseId}: FolderRowProps) => {
                                     placeholder="Enter quiz name"
                                     className="input input-bordered w-full"
                                     disabled={isCreatingQuiz}
+                                    maxLength={50}
                                 />
                                 <div className="flex gap-2">
                                     <button
@@ -85,7 +97,8 @@ export const FolderRow = ({folder, courseId}: FolderRowProps) => {
                                     </button>
                                     <button
                                         type="button"
-                                        onClick={() => {
+                                        onClick={(e) => {
+                                            e.stopPropagation();
                                             setShowCreateForm(false);
                                             setQuizName("");
                                         }}

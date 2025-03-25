@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { QuestionDTO, QuestionType } from '@dti-isin/backend-api-client';
-import {useCourse} from "../../hooks/useCourse.ts";
 import {useQuestion} from "../../hooks/useQuestion.ts";
 import {Breadcrumb} from "../common/Breadcrumb.tsx";
 import {QuestionsList} from "../question/QuestionList.tsx";
 import CreateQuestionForm from "../question/CreateQuestionForm.tsx";
 import {QuestionTypeSelector} from "../question/QuestionTypeSelector.tsx";
 import {QuestionEditor} from "../question/QuestionEditor.tsx";
+import {useCourseList} from "../../hooks/course/useCourseList.ts";
 
 export const QuizCreationContent: React.FC = () => {
     const { courseId, folderId, quizId } = useParams();
     const navigate = useNavigate();
-    const { courses } = useCourse();
+    const { courses } = useCourseList();
     const {
         questions,
         createQuestionTemplate,
@@ -89,7 +89,7 @@ export const QuizCreationContent: React.FC = () => {
             setSelectedQuestionType(type);
             setQuestionTemplate(template);
 
-            // Mantieni il testo della domanda se già presente
+            // Mantieni il testo della domanda se giÃ  presente
             setDraftQuestion(prev => ({
                 ...prev,
                 type

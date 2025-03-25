@@ -24,8 +24,18 @@ public class QuizPublication {
     @Schema(required = true)
     private String publicationCode;
 
+    private boolean published = false;
+
+    private boolean anonymous = true;
+
     public QuizPublication() {
 
+    }
+    public QuizPublication(ObjectId courseId, ObjectId folderId, ObjectId quizId, String publicationCode) {
+        this.courseId = courseId;
+        this.folderId = folderId;
+        this.quizId = quizId;
+        this.publicationCode = publicationCode;
     }
 
     public QuizPublication(ObjectId id, ObjectId courseId, ObjectId folderId, ObjectId quizId, String publicationCode) {
@@ -37,7 +47,7 @@ public class QuizPublication {
     }
 
     public ObjectId getId() {
-        return id;
+        return this.id;
     }
 
     public void setId(ObjectId id) {
@@ -45,7 +55,7 @@ public class QuizPublication {
     }
 
     public ObjectId getCourseId() {
-        return courseId;
+        return this.courseId;
     }
 
     public void setCourseId(ObjectId courseId) {
@@ -53,7 +63,7 @@ public class QuizPublication {
     }
 
     public ObjectId getFolderId() {
-        return folderId;
+        return this.folderId;
     }
 
     public void setFolderId(ObjectId folderId) {
@@ -61,7 +71,7 @@ public class QuizPublication {
     }
 
     public ObjectId getQuizId() {
-        return quizId;
+        return this.quizId;
     }
 
     public void setQuizId(ObjectId quizId) {
@@ -69,10 +79,26 @@ public class QuizPublication {
     }
 
     public String getPublicationCode() {
-        return publicationCode;
+        return this.publicationCode;
     }
 
     public void setPublicationCode(String publicationCode) {
         this.publicationCode = publicationCode;
+    }
+
+    public boolean isPublished() {
+        return this.published;
+    }
+
+    public void setPublished(boolean published) {
+        this.published = published;
+    }
+
+    public boolean isAnonymous() {
+        return this.anonymous;
+    }
+
+    public void setAnonymous(boolean anonymous) {
+        this.anonymous = anonymous;
     }
 }

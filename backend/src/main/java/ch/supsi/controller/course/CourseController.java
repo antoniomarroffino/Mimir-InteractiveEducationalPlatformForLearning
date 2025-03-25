@@ -82,6 +82,55 @@ public class CourseController {
     }
 
     @PUT
+    @Path("/{id}")
+    @Operation(summary = "Update an existing course")
+    @APIResponse(
+            responseCode = "200",
+            description = "Course updated successfully",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = CourseDTO.class)
+            )
+    )
+    @APIResponse(
+            responseCode = "404",
+            description = "Course not found"
+    )
+    public Response updateCourse(
+            @PathParam("id") String id,
+            @Valid CourseDTO courseDTO
+    ) {
+        courseDTO.setId(id);
+        CourseDTO updatedCourseDTO = this.courseService.updateCourse(
+                new ObjectId(id),
+                courseDTO,
+                this.userService.getCurrentLoggedUser()
+        );
+
+        return Response.ok(updatedCourseDTO).build();
+    }
+
+    @DELETE
+    @Path("/{id}")
+    @Operation(summary = "Delete a course")
+    @APIResponse(
+            responseCode = "204",
+            description = "Course deleted successfully"
+    )
+    @APIResponse(
+            responseCode = "404",
+            description = "Course not found"
+    )
+    public Response deleteCourse(@PathParam("id") String id) {
+        this.courseService.deleteCourse(
+                new ObjectId(id),
+                this.userService.getCurrentLoggedUser()
+        );
+
+        return Response.status(Response.Status.NO_CONTENT).build();
+    }
+
+    @PUT
     @Path("/assign/{id}")
     @Operation(summary = "Assign course to logged user given courseID")
     @APIResponse(

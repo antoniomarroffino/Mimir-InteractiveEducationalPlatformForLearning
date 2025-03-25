@@ -55,7 +55,7 @@ public class FolderController {
     public Response getFolder(
             @PathParam("courseId") String courseId,
             @PathParam("folderId") String folderId) {
-        FolderDTO folderDTO = folderService.getFolderInCourse(
+        FolderDTO folderDTO = this.folderService.getFolderInCourse(
                 new ObjectId(courseId),
                 new ObjectId(folderId)
         );
@@ -79,5 +79,44 @@ public class FolderController {
         return Response.status(Response.Status.CREATED)
                 .entity(createdFolderDTO)
                 .build();
+    }
+
+    @PUT
+    @Path("/{folderId}")
+    @Operation(summary = "Update folder in course")
+    @APIResponse(
+            responseCode = "200",
+            description = "Folder updated successfully",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = FolderDTO.class)
+            )
+    )
+    public Response updateFolder(
+            @PathParam("courseId") String courseId,
+            @PathParam("folderId") String folderId,
+            @Valid FolderDTO folderDTO) {
+
+        FolderDTO updatedFolder = this.folderService.updateFolder(
+                new ObjectId(courseId),
+                new ObjectId(folderId),
+                folderDTO
+        );
+        return Response.ok(updatedFolder).build();
+    }
+
+    @DELETE
+    @Path("/{folderId}")
+    @Operation(summary = "Delete folder from course")
+    @APIResponse(responseCode = "204", description = "Folder deleted successfully")
+    public Response deleteFolder(
+            @PathParam("courseId") String courseId,
+            @PathParam("folderId") String folderId) {
+
+        this.folderService.deleteFolder(
+                new ObjectId(courseId),
+                new ObjectId(folderId)
+        );
+        return Response.noContent().build();
     }
 }

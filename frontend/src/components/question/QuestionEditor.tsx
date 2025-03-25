@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
-    MultipleChoiceQuestionDTO,
     QuestionDTO,
+    MultipleChoiceQuestionDTO,
     QuestionType,
     TrueFalseQuestionDTO
 } from '@dti-isin/backend-api-client';
@@ -32,33 +32,33 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
                                                                   isLoading = false,
                                                                   disabled = false
                                                               }) => {
-    const [questionText, setQuestionText] = useState(template.questionText || '');
+    const [questionText, setQuestionText] = useState(template.questionText);
     const [isQuestionValid, setIsQuestionValid] = useState(false);
 
-    // State per True/False
+    // True/False state
     const [correctAnswer, setCorrectAnswer] = useState<boolean>(
-        questionType === QuestionType.TrueFalse
-            ? (template as TrueFalseQuestionDTO).correctAnswer
-            : true
+        (template as TrueFalseQuestionDTO).correctAnswer ?? true
     );
 
-    // State per Multiple Choice
+    // Multiple Choice state
     const [choices, setChoices] = useState<string[]>(
-        questionType === QuestionType.MultipleChoice
-            ? (template as MultipleChoiceQuestionDTO).choices || ['', '', '', '']
-            : []
+        (template as MultipleChoiceQuestionDTO).choices ?? ['', '']
     );
     const [correctChoices, setCorrectChoices] = useState<number[]>(
-        questionType === QuestionType.MultipleChoice
-            ? (template as MultipleChoiceQuestionDTO).correctAnswerIndexes || []
-            : []
+        (template as MultipleChoiceQuestionDTO).correctAnswerIndexes ?? []
     );
 
+    // Sync states when template changes
     useEffect(() => {
+        setQuestionText(template.questionText);
+
         if (questionType === QuestionType.TrueFalse) {
-            (template as TrueFalseQuestionDTO).correctAnswer = correctAnswer;
+            setCorrectAnswer((template as TrueFalseQuestionDTO).correctAnswer);
+        } else if (questionType === QuestionType.MultipleChoice) {
+            setChoices((template as MultipleChoiceQuestionDTO).choices ?? ['', '']);
+            setCorrectChoices((template as MultipleChoiceQuestionDTO).correctAnswerIndexes ?? []);
         }
-    }, [correctAnswer, template, questionType]);
+    }, [template, questionType]);
 
     const handleQuestionTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const text = e.target.value;
@@ -69,27 +69,32 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Validazione aggiuntiva per Multiple Choice
-        if (questionType === QuestionType.MultipleChoice && !isQuestionValid) {
-            return;
-        }
-
-        const finalQuestion: SpecificQuestionDTO = {
-            ...template,
-            questionText,
-            type: questionType
-        };
+        let finalQuestion: SpecificQuestionDTO;
 
         switch (questionType) {
             case QuestionType.TrueFalse:
-                (finalQuestion as TrueFalseQuestionDTO).correctAnswer = correctAnswer;
+                finalQuestion = {
+                    ...template,
+                    questionText: questionText?.trim(),
+                    type: QuestionType.TrueFalse,
+                    correctAnswer
+                };
                 break;
-            case QuestionType.MultipleChoice: {
-                const mcQuestion = finalQuestion as MultipleChoiceQuestionDTO;
-                mcQuestion.choices = choices;
-                mcQuestion.correctAnswerIndexes = correctChoices;
+
+            case QuestionType.MultipleChoice:
+                finalQuestion = {
+                    ...template,
+                    questionText: questionText?.trim(),
+                    type: QuestionType.MultipleChoice,
+                    choices: choices.filter(c => c.trim() !== ''),
+                    correctAnswerIndexes: correctChoices.filter(idx =>
+                        idx < choices.length && choices[idx].trim() !== ''
+                    )
+                };
                 break;
-            }
+
+            default:
+                finalQuestion = template;
         }
 
         onSave(finalQuestion);
@@ -125,8 +130,8 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
 
     return (
         <div className={`bg-base-100 rounded-lg p-6 shadow ${disabled ? 'opacity-50' : ''}`}>
-            <h2 className="text-xl font-semibold mb-4">
-                {questionType} Question
+            <h2 className="text-xl font-semibold mb-4 capitalize">
+                {questionType.toLowerCase()} Question
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="form-control">
@@ -158,13 +163,15 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
                         type="submit"
                         className="btn btn-primary"
                         disabled={
-                            !questionText.trim() ||
+                            !questionText?.trim() ||
                             isLoading ||
                             disabled ||
                             (questionType === QuestionType.MultipleChoice && !isQuestionValid)
                         }
                     >
-                        {isLoading ? <span className="loading loading-spinner"></span> : 'Save Question'}
+                        {isLoading ? (
+                            <span className="loading loading-spinner"></span>
+                        ) : 'Save Question'}
                     </button>
                 </div>
             </form>
