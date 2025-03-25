@@ -1,12 +1,7 @@
-import React, { useState } from 'react';
-import {
-    QuestionDTO,
-    QuestionType,
-    TrueFalseQuestionDTO,
-    MultipleChoiceQuestionDTO
-} from '@dti-isin/backend-api-client';
-import { QuestionEditor } from './QuestionEditor';
-import { BsPencil, BsTrash } from 'react-icons/bs';
+import React, {useState} from 'react';
+import {MultipleChoiceQuestionDTO, QuestionDTO, QuestionType, TrueFalseQuestionDTO} from '@dti-isin/backend-api-client';
+import {QuestionEditor} from './QuestionEditor';
+import {BsPencil, BsTrash} from 'react-icons/bs';
 
 type SpecificQuestionDTO =
     | QuestionDTO
@@ -120,7 +115,7 @@ export const QuestionElement: React.FC<QuestionElementProps> = ({
                         handleEdit();
                     }}
                 >
-                    <BsPencil />
+                    <BsPencil/>
                 </button>
                 <button
                     className="btn btn-xs btn-error opacity-0 group-hover:opacity-100 transition-opacity"
@@ -129,7 +124,7 @@ export const QuestionElement: React.FC<QuestionElementProps> = ({
                         handleDelete();
                     }}
                 >
-                    <BsTrash />
+                    <BsTrash/>
                 </button>
             </div>
         </div>

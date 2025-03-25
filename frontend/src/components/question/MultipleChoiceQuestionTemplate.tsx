@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { BsCheckCircleFill, BsCircle } from 'react-icons/bs';
+import React, {useEffect, useState} from 'react';
+import {BsCheckCircleFill, BsCircle} from 'react-icons/bs';
 
 interface MultipleChoiceTemplateProps {
     choices: string[];
@@ -100,7 +100,7 @@ export const MultipleChoiceQuestionTemplate: React.FC<MultipleChoiceTemplateProp
 
             {/* Griglia delle risposte */}
             <div className="grid grid-cols-2 gap-4">
-                {Array.from({ length: availableChoices }).map((_, index) => (
+                {Array.from({length: availableChoices}).map((_, index) => (
                     <div key={index} className="form-control">
                         <div className="input-group">
                             <input
@@ -120,9 +120,9 @@ export const MultipleChoiceQuestionTemplate: React.FC<MultipleChoiceTemplateProp
                                 disabled={isLoading || disabled}
                             >
                                 {correctChoices.includes(index) ? (
-                                    <BsCheckCircleFill />
+                                    <BsCheckCircleFill/>
                                 ) : (
-                                    <BsCircle />
+                                    <BsCircle/>
                                 )}
                             </button>
                         </div>

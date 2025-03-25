@@ -1,6 +1,6 @@
 import React, {useMemo, useState} from "react";
 import {CourseDTO} from "@dti-isin/backend-api-client";
-import {CourseSelectionContext} from "./CourseSelectionContext";
+import {CourseSelectionContext} from "../../contexts/course/CourseSelectionContext.ts";
 
 export const CourseSelectionProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
@@ -11,10 +11,6 @@ export const CourseSelectionProvider: React.FC<{ children: React.ReactNode }> = 
         setSelectedCourseId,
         selectedCourse,
         setSelectedCourse,
-        selectCourse: (course: CourseDTO) => {
-            setSelectedCourseId(course.id || null);
-            setSelectedCourse(course);
-        },
         deselectCourse: () => {
             setSelectedCourseId(null);
             setSelectedCourse(null);

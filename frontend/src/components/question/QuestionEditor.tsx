@@ -1,12 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import {
-    QuestionDTO,
-    MultipleChoiceQuestionDTO,
-    QuestionType,
-    TrueFalseQuestionDTO
-} from '@dti-isin/backend-api-client';
-import { TrueFalseQuestionTemplate } from './TrueFalseQuestionTemplate';
-import { MultipleChoiceQuestionTemplate } from './MultipleChoiceQuestionTemplate';
+import React, {useEffect, useState} from 'react';
+import {MultipleChoiceQuestionDTO, QuestionDTO, QuestionType, TrueFalseQuestionDTO} from '@dti-isin/backend-api-client';
+import {TrueFalseQuestionTemplate} from './TrueFalseQuestionTemplate';
+import {MultipleChoiceQuestionTemplate} from './MultipleChoiceQuestionTemplate';
 
 type SpecificQuestionDTO =
     | QuestionDTO
@@ -32,7 +27,7 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
                                                                   isLoading = false,
                                                                   disabled = false
                                                               }) => {
-    const [questionText, setQuestionText] = useState(template.questionText);
+    const [questionText, setQuestionText] = useState(template.questionText || '');
     const [isQuestionValid, setIsQuestionValid] = useState(false);
 
     // True/False state
@@ -50,7 +45,7 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
 
     // Sync states when template changes
     useEffect(() => {
-        setQuestionText(template.questionText);
+        setQuestionText(template.questionText || '');
 
         if (questionType === QuestionType.TrueFalse) {
             setCorrectAnswer((template as TrueFalseQuestionDTO).correctAnswer);

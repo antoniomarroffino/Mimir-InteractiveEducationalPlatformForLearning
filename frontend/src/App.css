@@ -4,68 +4,68 @@
 
 /* Stili di base */
 #root {
-  @apply w-full min-h-screen m-0 p-0 text-center;
+    @apply w-full min-h-screen m-0 p-0 text-center;
 }
 
 /* Stili per il logo se necessari */
 .logo {
-  @apply h-24 p-6 transition-all duration-300;
+    @apply h-24 p-6 transition-all duration-300;
 }
 
 .logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+    filter: drop-shadow(0 0 2em #646cffaa);
 }
 
 .logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+    filter: drop-shadow(0 0 2em #61dafbaa);
 }
 
 /* Animazione logo */
 @keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+    a:nth-of-type(2) .logo {
+        animation: logo-spin infinite 20s linear;
+    }
 }
 
 /* Stili personalizzati che vuoi mantenere */
 .custom-icon {
-  @apply w-12 h-12;
+    @apply w-12 h-12;
 }
 
 /* Ombre personalizzate se necessarie */
 .shadow-up {
-  @apply shadow-[0_-4px_8px_rgba(0,0,0,0.3)];
+    @apply shadow-[0_-4px_8px_rgba(0,0,0,0.3)];
 }
 
 .shadow-down {
-  @apply shadow-[0_4px_8px_rgba(0,0,0,0.3)];
+    @apply shadow-[0_4px_8px_rgba(0,0,0,0.3)];
 }
 
 .shadow-both {
-  @apply shadow-[0_-4px_8px_rgba(0,0,0,0.4),0_4px_8px_rgba(0,0,0,0.4)] z-50;
+    @apply shadow-[0_-4px_8px_rgba(0,0,0,0.4),0_4px_8px_rgba(0,0,0,0.4)] z-50;
 }
 
 /* Stili per milestone se li stai usando */
 .milestone-expanded {
-  @apply bg-white/10;
+    @apply bg-white/10;
 }
 
 .milestone-content {
-  @apply transition-[max-height] duration-300 ease-in-out overflow-hidden;
+    @apply transition-[max-height] duration-300 ease-in-out overflow-hidden;
 }
 
 /* Utility classes personalizzate se necessarie */
 @layer utilities {
-  .bg-info-custom {
-    @apply bg-gradient-to-r from-primary to-secondary;
-  }
+    .bg-info-custom {
+        @apply bg-gradient-to-r from-primary to-secondary;
+    }
 }

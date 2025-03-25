@@ -3,6 +3,7 @@ package ch.supsi.model.dto.api;
 import ch.supsi.model.dto.api.question.QuestionDTO;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.validation.constraints.NotBlank;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;

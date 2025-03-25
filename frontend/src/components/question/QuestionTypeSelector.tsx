@@ -1,6 +1,6 @@
-import { QuestionType } from '@dti-isin/backend-api-client';
+import {QuestionType} from '@dti-isin/backend-api-client';
 import React from "react";
-import { useQuestion } from '../../hooks/useQuestion';
+import {useQuestionCRUD} from "../../hooks/question/useQuestionCRUD.ts";
 
 interface QuestionTypeSelectorProps {
     onSelectType: (type: QuestionType) => void;
@@ -13,7 +13,7 @@ export const QuestionTypeSelector: React.FC<QuestionTypeSelectorProps> = ({
                                                                               isLoading = false,
                                                                               disabled = false
                                                                           }) => {
-    const { createQuestionTemplate } = useQuestion();
+    const {createQuestionTemplate} = useQuestionCRUD();
 
     const handleTypeSelection = async (type: QuestionType) => {
         try {

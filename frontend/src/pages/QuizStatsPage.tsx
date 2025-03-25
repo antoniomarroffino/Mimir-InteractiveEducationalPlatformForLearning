@@ -77,7 +77,7 @@ export const QuizStatsPage: React.FC = () => {
         <div className="p-4 max-w-4xl mx-auto">
             <div className="flex justify-between items-start mb-6 gap-4 flex-wrap">
                 <h1 className="text-3xl font-bold flex items-center gap-2">
-                    <FaInfoCircle className="text-primary" />
+                    <FaInfoCircle className="text-primary"/>
                     Statistiche del Quiz
                 </h1>
 
@@ -92,7 +92,7 @@ export const QuizStatsPage: React.FC = () => {
                     {isDeactivatingPublication ? (
                         <span className="loading loading-spinner"></span>
                     ) : (
-                        <FaPowerOff />
+                        <FaPowerOff/>
                     )}
                     {currentPublication.published ? 'Disattiva Pubblicazione' : 'Attiva Pubblicazione'}
                 </button>
@@ -117,7 +117,7 @@ export const QuizStatsPage: React.FC = () => {
                     <div className="card bg-base-100 shadow-lg">
                         <div className="card-body">
                             <h2 className="card-title text-xl flex items-center gap-2 mb-4">
-                                <FaInfoCircle className="text-secondary" />
+                                <FaInfoCircle className="text-secondary"/>
                                 Informazioni Pubblicazione
                             </h2>
 
@@ -142,7 +142,7 @@ export const QuizStatsPage: React.FC = () => {
                 <div className="card bg-base-100 shadow-lg">
                     <div className="card-body">
                         <h2 className="card-title text-xl flex items-center gap-2">
-                            <FaQrcode className="text-accent" />
+                            <FaQrcode className="text-accent"/>
                             Accesso via QR Code
                         </h2>
                         <div className="text-center">

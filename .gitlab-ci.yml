@@ -30,7 +30,7 @@ build_backend:
   stage: build_backend
   image:
     name: quay.io/quarkus/ubi-quarkus-mandrel-builder-image:jdk-21
-    entrypoint: [""]
+    entrypoint: [ "" ]
     docker:
       user: root
   script:

@@ -1,24 +1,24 @@
-import React, { useMemo } from "react";
-import { useMutation, useQueryClient } from "react-query";
-import { FolderDTO } from "@dti-isin/backend-api-client";
-import { folderApi } from "../../../config/config";
+import React, {useMemo} from "react";
+import {useMutation, useQueryClient} from "react-query";
+import {FolderDTO} from "@dti-isin/backend-api-client";
+import {folderApi} from "../../../config/config.ts";
 import {useCourseSelection} from "../../hooks/course/useCourseSelection.ts";
-import { FolderCRUDContext } from "./FolderCRUDContext.ts";
+import {FolderCRUDContext} from "../../contexts/folder/FolderCRUDContext.ts";
 import {useFolderSelection} from "../../hooks/folder/useFolderSelection.ts";
 
-export const FolderCRUDProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const FolderCRUDProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const queryClient = useQueryClient();
-    const { selectedCourseId } = useCourseSelection();
-    const { deselectFolder } = useFolderSelection();
+    const {selectedCourseId} = useCourseSelection();
+    const {deselectFolder} = useFolderSelection();
 
     const createFolderMutation = useMutation(
         async (name: string) => {
             if (!selectedCourseId) throw new Error("No course selected");
-            const r = await folderApi.apiCoursesCourseIdFoldersPost({
+            const response = await folderApi.apiCoursesCourseIdFoldersPost({
                 courseId: selectedCourseId,
                 folderDTO: {name}
             });
-            return r.data;
+            return response.data;
         },
         {
             onSuccess: (newFolder) => {
@@ -36,12 +36,12 @@ export const FolderCRUDProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     const updateFolderMutation = useMutation(
         async ({id, name}: { id: string; name: string }) => {
             if (!selectedCourseId) throw new Error("No course selected");
-            const r = await folderApi.apiCoursesCourseIdFoldersFolderIdPut({
+            const response = await folderApi.apiCoursesCourseIdFoldersFolderIdPut({
                 courseId: selectedCourseId,
                 folderId: id,
                 folderDTO: {name}
             });
-            return r.data;
+            return response.data;
         },
         {
             onSuccess: (updatedFolder) => {
@@ -92,7 +92,7 @@ export const FolderCRUDProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
         updateFolder: async (id: string, name: string) => {
             try {
-                return await updateFolderMutation.mutateAsync({ id, name });
+                return await updateFolderMutation.mutateAsync({id, name});
             } catch (err) {
                 console.error("Folder update failed:", err);
                 throw err;

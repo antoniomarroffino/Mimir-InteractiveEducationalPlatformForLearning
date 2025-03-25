@@ -1,10 +1,11 @@
-import { createContext } from "react";
-import { FolderDTO } from "@dti-isin/backend-api-client";
+import {createContext} from "react";
+import {FolderDTO} from "@dti-isin/backend-api-client";
 
 export type FolderSelectionContextType = {
     selectedFolderId: string | null;
+    setSelectedFolderId: (id: string | null) => void;
     selectedFolder: FolderDTO | null;
-    selectFolder: (id: string) => void;
+    setSelectedFolder: (folder: FolderDTO | null) => void;
     deselectFolder: () => void;
     validateSelection: () => void;
 };
