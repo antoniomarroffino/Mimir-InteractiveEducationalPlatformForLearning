@@ -44,17 +44,17 @@ const App = () => {
                             {/* Public Route */}
                             <Route path="/" element={<PublicHome/>}/>
 
-                    {/* Admin Routes */}
-                    <Route
-                        path="/admin"
-                        element={
-                            <ProtectedRoute allowedRoles={[Role.Admin]}>
-                                <AdminProvider>
-                                    <AdminDashboard/>
-                                </AdminProvider>
-                            </ProtectedRoute>
-                        }
-                    />
+                            {/* Admin Routes */}
+                            <Route
+                                path="/admin"
+                                element={
+                                    <ProtectedRoute allowedRoles={[Role.Admin]}>
+                                        <AdminProvider>
+                                            <AdminDashboard/>
+                                        </AdminProvider>
+                                    </ProtectedRoute>
+                                }
+                            />
 
                             {/* Teacher Routes */}
                             <Route
@@ -81,26 +81,6 @@ const App = () => {
                                 />
                             </Route>
 
-                    {/* Student Routes */}
-                    <Route
-                        path="/student"
-                        element={
-                            <ProtectedRoute allowedRoles={[Role.Student]}>
-                                <StudentDashboard/>
-                            </ProtectedRoute>
-                        }
-                    />
-
-                    <Route
-                        path="/profile"
-                        element={
-                            <ProtectedRoute allowedRoles={[Role.Admin, Role.Student, Role.Teacher]}>
-                                <UserProfile/>
-                            </ProtectedRoute>
-                        }
-                    />
-                </Routes>
-                <Footer/>
                             {/* Student Routes */}
                             <Route
                                 path="/student"
@@ -111,6 +91,14 @@ const App = () => {
                                 }
                             />
 
+                            <Route
+                                path="/profile"
+                                element={
+                                    <ProtectedRoute allowedRoles={[Role.Admin, Role.Student, Role.Teacher]}>
+                                        <UserProfile/>
+                                    </ProtectedRoute>
+                                }
+                            />
                             {/* Quiz Screen Route */}
                             <Route
                                 path="/quiz/:accessCode"
