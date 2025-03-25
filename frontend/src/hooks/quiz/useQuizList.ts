@@ -4,7 +4,7 @@ import {useQuizzesForFolder} from "./useQuizzesForFolder.ts";
 
 export const useQuizList = () => {
     const context = useContext(QuizListContext);
-    if(context === undefined) {
+    if (context === undefined) {
         throw new Error('useQuizList must be used within a QuizListProvider');
     }
 

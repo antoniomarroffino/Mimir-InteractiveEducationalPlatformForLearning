@@ -4,7 +4,7 @@ import {quizApi} from "../../../config/config.ts";
 import {QuizDTO} from "@dti-isin/backend-api-client";
 
 export const useQuizzesForFolder = (folderId: string) => {
-    const { selectedCourseId } = useCourseSelection();
+    const {selectedCourseId} = useCourseSelection();
 
     return useQuery<QuizDTO[], Error>({
         queryKey: ["quizzes", selectedCourseId, folderId],

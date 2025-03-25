@@ -1,9 +1,9 @@
-import { Link } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth.ts';
+import {Link} from 'react-router-dom';
+import {useAuth} from '../../hooks/useAuth.ts';
 import QuizSessionComponent from "../../components/common/QuizSessionComponent.tsx";
 
 const PublicHome = () => {
-    const { user } = useAuth();
+    const {user} = useAuth();
 
     return (
         <div className="min-h-screen bg-base-200">
@@ -23,7 +23,7 @@ const PublicHome = () => {
             </div>
 
             {/* Sezione Partecipa a Quiz */}
-            <QuizSessionComponent />
+            <QuizSessionComponent/>
         </div>
     );
 };

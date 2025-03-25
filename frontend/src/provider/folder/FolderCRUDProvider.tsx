@@ -1,15 +1,15 @@
-import React, { useMemo } from "react";
-import { useMutation, useQueryClient } from "react-query";
-import { FolderDTO } from "@dti-isin/backend-api-client";
-import { folderApi } from "../../../config/config.ts";
+import React, {useMemo} from "react";
+import {useMutation, useQueryClient} from "react-query";
+import {FolderDTO} from "@dti-isin/backend-api-client";
+import {folderApi} from "../../../config/config.ts";
 import {useCourseSelection} from "../../hooks/course/useCourseSelection.ts";
-import { FolderCRUDContext } from "../../contexts/folder/FolderCRUDContext.ts";
+import {FolderCRUDContext} from "../../contexts/folder/FolderCRUDContext.ts";
 import {useFolderSelection} from "../../hooks/folder/useFolderSelection.ts";
 
-export const FolderCRUDProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const FolderCRUDProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const queryClient = useQueryClient();
-    const { selectedCourseId } = useCourseSelection();
-    const { deselectFolder } = useFolderSelection();
+    const {selectedCourseId} = useCourseSelection();
+    const {deselectFolder} = useFolderSelection();
 
     const createFolderMutation = useMutation(
         async (name: string) => {
@@ -92,7 +92,7 @@ export const FolderCRUDProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
         updateFolder: async (id: string, name: string) => {
             try {
-                return await updateFolderMutation.mutateAsync({ id, name });
+                return await updateFolderMutation.mutateAsync({id, name});
             } catch (err) {
                 console.error("Folder update failed:", err);
                 throw err;

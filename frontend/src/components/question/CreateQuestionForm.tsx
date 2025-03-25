@@ -1,5 +1,5 @@
 import React from 'react';
-import { BsPlus } from 'react-icons/bs';
+import {BsPlus} from 'react-icons/bs';
 
 interface CreateQuestionFormProps {
     onStartCreation: () => void;
@@ -21,7 +21,7 @@ const CreateQuestionForm: React.FC<CreateQuestionFormProps> = ({
             onClick={!isDisabled ? onStartCreation : undefined}
         >
             <div className="flex items-center justify-center">
-                <BsPlus className="text-4xl text-base-content/70 group-hover:text-primary" />
+                <BsPlus className="text-4xl text-base-content/70 group-hover:text-primary"/>
             </div>
         </div>
     );

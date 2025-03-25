@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import { QuizPublicationDTO } from "@dti-isin/backend-api-client";
-import { quizPublicationApi } from "../../../config/config.ts";
-import { QuizPublicationVerificationContext } from "../../contexts/quizPublication/QuizPublicationVerificationContext.ts";
+import React, {useState} from "react";
+import {QuizPublicationDTO} from "@dti-isin/backend-api-client";
+import {quizPublicationApi} from "../../../config/config.ts";
+import {QuizPublicationVerificationContext} from "../../contexts/quizPublication/QuizPublicationVerificationContext.ts";
 
-export const QuizPublicationVerificationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const QuizPublicationVerificationProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const [currentPublication, setCurrentPublication] = useState<QuizPublicationDTO | null>(null);
     const [isLoadingCurrentPublication, setIsLoadingCurrentPublication] = useState<boolean>(false);
     const [errorCurrentPublication, setErrorCurrentPublication] = useState<Error | null>(null);
@@ -12,7 +12,7 @@ export const QuizPublicationVerificationProvider: React.FC<{ children: React.Rea
         setIsLoadingCurrentPublication(true);
         setErrorCurrentPublication(null);
         try {
-            const response = await quizPublicationApi.apiPublicationsByCodeCodeGet({ code: accessCode });
+            const response = await quizPublicationApi.apiPublicationsByCodeCodeGet({code: accessCode});
             setCurrentPublication(response.data);
         } catch (error) {
             setErrorCurrentPublication(error as Error);
@@ -38,7 +38,7 @@ export const QuizPublicationVerificationProvider: React.FC<{ children: React.Rea
 
     const getPublicationByCode = async (code: string) => {
         try {
-            const response = await quizPublicationApi.apiPublicationsByCodeCodeGet({ code });
+            const response = await quizPublicationApi.apiPublicationsByCodeCodeGet({code});
             return response.data;
         } catch (error) {
             console.error("Error fetching publication by code:", error);

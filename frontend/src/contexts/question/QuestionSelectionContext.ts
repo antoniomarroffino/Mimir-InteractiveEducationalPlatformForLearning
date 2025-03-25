@@ -1,4 +1,4 @@
-import { QuestionDTO } from "@dti-isin/backend-api-client/dist/models/question-dto";
+import {QuestionDTO} from "@dti-isin/backend-api-client/dist/models/question-dto";
 import {createContext} from "react";
 
 export type QuestionSelectionContextType = {
