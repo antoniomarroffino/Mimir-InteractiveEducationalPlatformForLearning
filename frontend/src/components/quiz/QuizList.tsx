@@ -1,6 +1,6 @@
 import React from 'react';
-import {QuizRow} from './QuizRow';
-import {useQuizList} from "../../hooks/quiz/useQuizList.ts";
+import { QuizRow } from './QuizRow';
+import { useQuizList } from "../../hooks/quiz/useQuizList.ts";
 
 interface QuizListProps {
     courseId: string;
@@ -8,7 +8,28 @@ interface QuizListProps {
 }
 
 export const QuizList: React.FC<QuizListProps> = ({courseId, folderId}) => {
-    const {quizzes} = useQuizList();
+    const { getQuizzes } = useQuizList();
+    const {
+        quizzes,
+        isLoadingQuizzes,
+        errorQuizzes
+    } = getQuizzes(folderId);
+
+    if (isLoadingQuizzes) {
+        return (
+            <p className="text-center text-base-content/70 py-4">
+                Loading quizzes...
+            </p>
+        );
+    }
+
+    if (errorQuizzes) {
+        return (
+            <p className="text-center text-error py-4">
+                Error loading quizzes
+            </p>
+        );
+    }
 
     if (!quizzes?.length) {
         return (
