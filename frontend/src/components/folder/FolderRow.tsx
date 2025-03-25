@@ -51,7 +51,7 @@ export const FolderRow = ({folder, courseId}: FolderRowProps) => {
                 </div>
                 <div className="flex items-center gap-4">
                     <span className="text-base-content/70">
-                        {folder.quizzes?.length || 0} quizzes
+                        open to see quizzes
                     </span>
                     {isExpanded ? <BsChevronUp/> : <BsChevronDown/>}
                 </div>
