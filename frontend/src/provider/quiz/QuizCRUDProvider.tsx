@@ -16,6 +16,8 @@ export const QuizCRUDProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
     const createQuizMutation = useMutation(
         async ({name, description}: { name: string; description?: string }) => {
+            console.log("courseId " + selectedCourseId);
+            console.log("folderId " + selectedFolderId);
             if (!selectedCourseId || !selectedFolderId) {
                 throw new Error("No course or folder selected");
             }
@@ -28,16 +30,10 @@ export const QuizCRUDProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         },
         {
             onSuccess: (newQuiz) => {
-                queryClient.setQueryData(
+                queryClient.setQueryData<QuizDTO[]>(
                     ["quizzes", selectedCourseId, selectedFolderId],
-                    (oldData: QuizDTO[] | undefined) => {
-                        return oldData ? [...oldData, newQuiz] : [newQuiz];
-                    }
+                    (old) => old ? [...old, newQuiz] : [newQuiz]
                 );
-
-                queryClient.invalidateQueries({
-                    queryKey: ["quizzes", selectedCourseId, selectedFolderId],
-                });
             },
             onError: (error: Error) => {
                 console.error("Quiz creation error:", error);
