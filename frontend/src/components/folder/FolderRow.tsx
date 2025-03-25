@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {FolderDTO} from "@dti-isin/backend-api-client";
 import {BsChevronDown, BsChevronUp, BsFolder2, BsPlus} from "react-icons/bs";
 import {QuizList} from "../quiz/QuizList";
@@ -12,16 +12,19 @@ interface FolderRowProps {
 }
 
 export const FolderRow = ({folder, courseId}: FolderRowProps) => {
-    const queryClient = useQueryClient();
+    useQueryClient();
     const [isExpanded, setIsExpanded] = useState(false);
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [quizName, setQuizName] = useState("");
     const {createQuiz, isCreatingQuiz} = useQuizCRUD();
-    const {setSelectedFolderId, setSelectedFolder, selectedFolder} = useFolderSelection();
+    const {setSelectedFolderId, setSelectedFolder} = useFolderSelection();
 
     const handleCreateQuiz = async (e: React.FormEvent) => {
         e.preventDefault();
         e.stopPropagation(); // Previene il toggle dell'espansione
+
+        setSelectedFolderId(folder.id!);
+        setSelectedFolder(folder);
 
         if (!quizName.trim()) return;
 
@@ -29,9 +32,6 @@ export const FolderRow = ({folder, courseId}: FolderRowProps) => {
             await createQuiz(
                 quizName.trim()
             );
-
-            // Invalida la cache per forzare il refresh delle folder
-            queryClient.invalidateQueries(["folders", courseId]);
             setQuizName("");
             setShowCreateForm(false);
         } catch (error) {

@@ -11,10 +11,6 @@ export const CourseSelectionProvider: React.FC<{ children: React.ReactNode }> = 
         setSelectedCourseId,
         selectedCourse,
         setSelectedCourse,
-        selectCourse: (course: CourseDTO) => {
-            setSelectedCourseId(course.id || null);
-            setSelectedCourse(course);
-        },
         deselectCourse: () => {
             setSelectedCourseId(null);
             setSelectedCourse(null);

@@ -5,9 +5,9 @@ export type FolderSelectionContextType = {
     selectedFolderId: string | null;
     setSelectedFolderId: (id: string | null) => void;
     selectedFolder: FolderDTO | null;
-    setSelectedFolder: (folder: FolderDTO) => void;
-    selectFolder: (folder: FolderDTO) => void;
+    setSelectedFolder: (folder: FolderDTO | null) => void;
     deselectFolder: () => void;
+    validateSelection: () => void;
 };
 
 export const FolderSelectionContext = createContext<FolderSelectionContextType | undefined>(undefined);
