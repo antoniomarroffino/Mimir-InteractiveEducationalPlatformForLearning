@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { QuestionDTO, QuestionType } from '@dti-isin/backend-api-client';
+import React, {useState} from 'react';
+import {useNavigate, useParams} from 'react-router-dom';
+import {QuestionDTO, QuestionType} from '@dti-isin/backend-api-client';
 import {useCourseList} from "../hooks/course/useCourseList.ts";
 import {useQuestionList} from "../hooks/question/useQuestionList.ts";
 import {useQuestionCRUD} from "../hooks/question/useQuestionCRUD.ts";
@@ -11,9 +11,10 @@ import {QuestionEditor} from "../components/question/QuestionEditor.tsx";
 import {QuestionTypeSelector} from "../components/question/QuestionTypeSelector.tsx";
 
 export const QuizCreation: React.FC = () => {
-    const { courseId, folderId, quizId } = useParams();
+    const {courseId, folderId, quizId} = useParams();
     const navigate = useNavigate();
-    const { courses } = useCourseList();
+
+    const {courses} = useCourseList();
     const {questions, isLoadingQuestions, errorQuestions} = useQuestionList();
     const {createQuestion, createQuestionTemplate} = useQuestionCRUD();
 
@@ -30,7 +31,6 @@ export const QuizCreation: React.FC = () => {
     const currentFolder = currentCourse?.folders?.find(folder => folder.id === folderId);
     const currentQuiz = currentFolder?.quizzes?.find(quiz => quiz.id === quizId);
 
-    // Validation checks
     if (isLoadingQuestions) {
         return (
             <div className="flex justify-center items-center min-h-screen">
@@ -54,19 +54,18 @@ export const QuizCreation: React.FC = () => {
     }
 
     const handleSaveQuestion = async (questionData: QuestionDTO) => {
-        if (!courseId || !folderId || !quizId) {
-            setError('Missing course, folder, or quiz information');
-            return;
-        }
-
         try {
             setError(null);
-            await createQuestion(questionData);
+            await createQuestion({
+                ...questionData,
+                courseId: courseId,
+                folderId: folderId,
+                quizId: quizId
+            });
 
-            // Resetta tutto tranne il fatto che stiamo creando una domanda
             setSelectedQuestionType(null);
             setQuestionTemplate(null);
-            setDraftQuestion({ questionText: '' });
+            setDraftQuestion({questionText: ''});
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Failed to save question');
         }
@@ -84,26 +83,20 @@ export const QuizCreation: React.FC = () => {
             const template = await createQuestionTemplate(type);
             setSelectedQuestionType(type);
             setQuestionTemplate(template);
-
-            // Mantieni il testo della domanda se giÃ  presente
-            setDraftQuestion(prev => ({
-                ...prev,
-                type
-            }));
+            setDraftQuestion(prev => ({...prev, type}));
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Failed to create question template');
         }
     };
+
     return (
         <div className="container mx-auto px-4 py-8">
-            {/* Breadcrumb */}
             <Breadcrumb
                 course={currentCourse}
                 folder={currentFolder}
                 quiz={currentQuiz}
             />
 
-            {/* Quiz Title and Info */}
             <div className="bg-base-100 rounded-lg p-6 shadow-lg mb-8">
                 <h1 className="text-3xl font-bold mb-2">{currentQuiz.name}</h1>
                 <p className="text-base-content/70">
@@ -124,12 +117,9 @@ export const QuizCreation: React.FC = () => {
             )}
 
             <div className="grid grid-cols-12 gap-6 mt-6">
-                {/* Sidebar con la lista delle domande */}
                 <div className="col-span-3">
                     <div className="bg-base-100 rounded-lg p-4 shadow space-y-4">
-                        <QuestionsList
-                            questions={questions}
-                        />
+                        <QuestionsList questions={questions}/>
 
                         {isCreatingQuestion && (
                             <div className="p-3 bg-base-200 rounded">
@@ -153,7 +143,7 @@ export const QuizCreation: React.FC = () => {
                             <CreateQuestionForm
                                 onStartCreation={() => {
                                     setIsCreatingQuestion(true);
-                                    setDraftQuestion({ questionText: '' });
+                                    setDraftQuestion({questionText: ''});
                                 }}
                                 isDisabled={false}
                             />
@@ -161,7 +151,6 @@ export const QuizCreation: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Editor della domanda */}
                 <div className="col-span-6">
                     <QuestionEditor
                         questionType={selectedQuestionType || QuestionType.TrueFalse}
@@ -183,7 +172,6 @@ export const QuizCreation: React.FC = () => {
                     />
                 </div>
 
-                {/* Selettore di tipo domanda */}
                 <div className="col-span-3">
                     {isCreatingQuestion ? (
                         <QuestionTypeSelector

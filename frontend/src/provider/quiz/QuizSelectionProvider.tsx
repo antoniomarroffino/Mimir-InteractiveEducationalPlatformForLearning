@@ -26,6 +26,7 @@ export const QuizSelectionProvider: React.FC<{ children: React.ReactNode }> = ({
     const value = useMemo(() => ({
         selectedQuizId,
         selectedQuiz,
+        setSelectedQuizId,
         selectQuiz: (id: string) => {
             if (quizzes.some(q => q.id === id)) {
                 setSelectedQuizId(id);
