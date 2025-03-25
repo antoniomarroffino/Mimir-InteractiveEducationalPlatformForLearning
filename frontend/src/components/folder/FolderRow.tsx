@@ -2,9 +2,9 @@ import React, {useState} from "react";
 import {FolderDTO} from "@dti-isin/backend-api-client";
 import {BsChevronDown, BsChevronUp, BsFolder2, BsPlus} from "react-icons/bs";
 import {QuizList} from "../quiz/QuizList";
-import {useQueryClient} from "react-query";
 import {useQuizCRUD} from "../../hooks/quiz/useQuizCRUD.ts";
 import {useFolderSelection} from "../../hooks/folder/useFolderSelection.ts";
+import {useQuizSelection} from "../../hooks/quiz/useQuizSelection.ts";
 
 interface FolderRowProps {
     folder: FolderDTO;
@@ -12,30 +12,39 @@ interface FolderRowProps {
 }
 
 export const FolderRow = ({folder, courseId}: FolderRowProps) => {
-    useQueryClient();
     const [isExpanded, setIsExpanded] = useState(false);
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [quizName, setQuizName] = useState("");
     const {createQuiz, isCreatingQuiz} = useQuizCRUD();
     const {setSelectedFolderId, setSelectedFolder} = useFolderSelection();
+    const {setCurrentFolder} = useQuizSelection();
 
     const handleCreateQuiz = async (e: React.FormEvent) => {
         e.preventDefault();
         e.stopPropagation();
 
-        console.log("FolderRow - Folder being selected:", folder);
-        console.log("FolderRow - Folder ID:", folder.id);
-
+        // Imposta la cartella SOLO quando si sta creando un quiz
+        setCurrentFolder(folder.id!);
         setSelectedFolderId(folder.id!);
         setSelectedFolder(folder);
 
         try {
-            console.log("Attempting to create quiz with folder:", folder);
             await createQuiz(folder.id!, quizName.trim());
             setQuizName("");
             setShowCreateForm(false);
         } catch (error) {
             console.error("Failed to create quiz", error);
+        }
+    };
+
+    const handleAddQuizClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        // Apri il form di creazione
+        setShowCreateForm(true);
+
+        // Espandi la cartella se non è già espansa
+        if (!isExpanded) {
+            setIsExpanded(true);
         }
     };
 
@@ -67,10 +76,7 @@ export const FolderRow = ({folder, courseId}: FolderRowProps) => {
                     <div className="mt-4" onClick={(e) => e.stopPropagation()}>
                         {!showCreateForm ? (
                             <button
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    setShowCreateForm(true);
-                                }}
+                                onClick={handleAddQuizClick}
                                 className="btn btn-primary w-full"
                                 disabled={isCreatingQuiz}
                             >

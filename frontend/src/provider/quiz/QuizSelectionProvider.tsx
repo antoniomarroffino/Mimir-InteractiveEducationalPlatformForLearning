@@ -6,11 +6,7 @@ export const QuizSelectionProvider: React.FC<{ children: React.ReactNode }> = ({
     const [selectedQuizId, setSelectedQuizId] = useState<string | null>(null);
     const [currentFolderId, setCurrentFolderId] = useState<string | null>(null);
 
-    const {getQuizzes} = useQuizList();
-
-    const {quizzes} = currentFolderId
-        ? getQuizzes(currentFolderId)
-        : {quizzes: []};
+    const {quizzes} = useQuizList(); // Cambiato da getQuizzes
 
     const selectedQuiz = useMemo(
         () => quizzes.find(q => q.id === selectedQuizId) || null,
@@ -34,10 +30,8 @@ export const QuizSelectionProvider: React.FC<{ children: React.ReactNode }> = ({
         },
         deselectQuiz: () => setSelectedQuizId(null),
         validateSelection,
-        // Metodo per impostare la cartella corrente
         setCurrentFolder: (folderId: string) => {
             setCurrentFolderId(folderId);
-            // Deseleziona il quiz quando cambia la cartella
             setSelectedQuizId(null);
         },
         currentFolderId

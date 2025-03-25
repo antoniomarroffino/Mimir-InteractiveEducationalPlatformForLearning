@@ -8,12 +8,12 @@ interface QuizListProps {
 }
 
 export const QuizList: React.FC<QuizListProps> = ({courseId, folderId}) => {
-    const { getQuizzes } = useQuizList();
+    const { getQuizzesForFolder } = useQuizList();
     const {
         quizzes,
         isLoadingQuizzes,
         errorQuizzes
-    } = getQuizzes(folderId);
+    } = getQuizzesForFolder(folderId);
 
     if (isLoadingQuizzes) {
         return (

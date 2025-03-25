@@ -7,9 +7,8 @@ export type QuizSelectionContextType = {
     setSelectedQuizId: (id: string | null) => void;
     selectQuiz: (id: string) => void;
     deselectQuiz: () => void;
-    validateSelection: () => void;
-    setCurrentFolder: (folderId: string) => void;
     currentFolderId: string | null;
+    setCurrentFolder: (folderId: string) => void;
 };
 
 export const QuizSelectionContext = createContext<QuizSelectionContextType | undefined>(undefined);
