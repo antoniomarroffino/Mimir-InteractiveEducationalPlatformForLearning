@@ -1,50 +1,74 @@
-import React, {useMemo} from "react";
-import {useQuery} from "react-query";
-import {QuestionDTO} from "@dti-isin/backend-api-client";
-import {QuestionListContext} from "../../contexts/question/QuestionListContext";
-import {questionApi} from "../../../config/config";
+import React, { useMemo } from "react";
+import { QuestionListContext } from "../../contexts/question/QuestionListContext";
+import { useCourseSelection } from "../../hooks/course/useCourseSelection.ts";
+import { useFolderSelection } from "../../hooks/folder/useFolderSelection.ts";
+import { useQuizSelection } from "../../hooks/quiz/useQuizSelection.ts";
+import { useQuery } from "react-query";
+import { QuestionDTO } from "@dti-isin/backend-api-client";
+import { questionApi } from "../../../config/config";
 
 export const QuestionListProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
-    const questionsQuery = useQuery<QuestionDTO[], Error>({
-        queryKey: ["questions"],
-        queryFn: async (context) => {
-            // Estrai gli ID dalla query key
-            const [, courseId, folderId, quizId] = context.queryKey;
+    const {selectedCourseId} = useCourseSelection();
+    const {selectedFolderId} = useFolderSelection();
+    const {selectedQuizId} = useQuizSelection();
 
-            if (!courseId || !folderId || !quizId) return [];
+    const questionsQuery = useQuery<QuestionDTO[], Error>({
+        queryKey: ["questions", selectedCourseId, selectedFolderId, selectedQuizId],
+        queryFn: async () => {
+            if (!selectedCourseId || !selectedFolderId || !selectedQuizId) return [];
 
             const response = await questionApi.apiCoursesCourseIdFoldersFolderIdQuizzesQuizIdQuestionsGet({
-                courseId: courseId as string,
-                folderId: folderId as string,
-                quizId: quizId as string
+                courseId: selectedCourseId,
+                folderId: selectedFolderId,
+                quizId: selectedQuizId
             });
 
             return response.data;
         },
-        // Rimuovi enabled basato sugli ID selezionati
-        enabled: false,
-        keepPreviousData: true
+        enabled: !!selectedCourseId && !!selectedFolderId && !!selectedQuizId
     });
 
-    const value = useMemo(() => ({
-        questions: questionsQuery.data || [],
-        isLoadingQuestions: questionsQuery.isLoading,
-        errorQuestions: questionsQuery.error || null,
-        fetchQuestions: async (
-            courseId: string,
-            folderId: string,
-            quizId: string
+    const value = useMemo(() => {
+        // Funzione helper per gestire il caso in cui non siano forniti tutti gli ID
+        const validateAndGetQuestions = (
+            courseId?: string,
+            folderId?: string,
+            quizId?: string
         ) => {
+            // Se non sono forniti gli ID, restituisci un oggetto con valori di default
             if (!courseId || !folderId || !quizId) {
-                throw new Error("Missing required IDs");
+                return {
+                    questions: [],
+                    isLoadingQuestions: false,
+                    errorQuestions: null,
+                    refetchQuestions: async () => {}
+                };
             }
 
-            return await questionsQuery.refetch({
-                queryKey: ["questions", courseId, folderId, quizId]
-            });
-        },
-        getQuestionCount: () => questionsQuery.data?.length || 0
-    }), [questionsQuery]);
+            // Altrimenti, restituisci un oggetto con i dati correnti
+            return {
+                questions: questionsQuery.data || [],
+                isLoadingQuestions: questionsQuery.isLoading,
+                errorQuestions: questionsQuery.error,
+                refetchQuestions: async () => {
+                    await questionsQuery.refetch();
+                }
+            };
+        };
+
+        return {
+            questions: questionsQuery.data || [],
+            isLoadingQuestions: questionsQuery.isLoading,
+            errorQuestions: questionsQuery.error || null,
+
+            getQuestionsForQuiz: validateAndGetQuestions,
+
+            refetchQuestions: async () => {
+                await questionsQuery.refetch();
+            },
+            getQuestionCount: () => questionsQuery.data?.length || 0
+        };
+    }, [questionsQuery]);
 
     return (
         <QuestionListContext.Provider value={value}>

@@ -3,7 +3,8 @@ import {QuestionSelectionContext} from "../../contexts/question/QuestionSelectio
 import {useQuestionList} from "../../hooks/question/useQuestionList.ts";
 
 export const QuestionSelectionProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
-    const [selectedQuestionId, setSeletedQuestionId] = useState<string | null>(null);
+    const [selectedQuestionId, setSelectedQuestionId] = useState<string | null>(null);
+    const [currentQuizId, setCurrentQuizId] = useState<string | null>(null);
     const {questions} = useQuestionList();
 
     const selectedQuestion = useMemo(
@@ -13,25 +14,36 @@ export const QuestionSelectionProvider: React.FC<{children: React.ReactNode}> = 
 
     const validateSelection = useCallback(() => {
         if(selectedQuestionId && !questions.some(q => q.id === selectedQuestionId)) {
-            setSeletedQuestionId(null);
+            setSelectedQuestionId(null);
         }
     }, [questions, selectedQuestionId]);
 
     const value = useMemo(() => ({
         selectedQuestionId,
         selectedQuestion,
+        currentQuizId,
         selectQuestion: (id: string) => {
             if(questions.some(q => q.id === id)) {
-                setSeletedQuestionId(id);
+                setSelectedQuestionId(id);
             }
         },
-        deselectQuestion: () => setSeletedQuestionId(null),
+        deselectQuestion: () => setSelectedQuestionId(null),
         validateSelection,
-    }), [selectedQuestionId, selectedQuestion, questions, validateSelection]);
+        setCurrentQuiz: (quizId: string) => {
+            setCurrentQuizId(quizId);
+            setSelectedQuestionId(null);
+        }
+    }), [
+        selectedQuestionId,
+        selectedQuestion,
+        questions,
+        validateSelection,
+        currentQuizId
+    ]);
 
     return (
-      <QuestionSelectionContext.Provider value={value}>
-          {children}
-      </QuestionSelectionContext.Provider>
+        <QuestionSelectionContext.Provider value={value}>
+            {children}
+        </QuestionSelectionContext.Provider>
     );
 }

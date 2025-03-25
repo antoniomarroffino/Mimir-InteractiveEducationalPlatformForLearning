@@ -1,22 +1,43 @@
-import React, {useState} from 'react';
-import {useNavigate, useParams} from 'react-router-dom';
-import {QuestionDTO, QuestionType} from '@dti-isin/backend-api-client';
-import {useCourseList} from "../hooks/course/useCourseList.ts";
-import {useQuestionList} from "../hooks/question/useQuestionList.ts";
-import {useQuestionCRUD} from "../hooks/question/useQuestionCRUD.ts";
-import {Breadcrumb} from "../components/common/Breadcrumb.tsx";
-import {QuestionsList} from "../components/question/QuestionList.tsx";
+import React, { useState, useMemo, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { QuestionDTO, QuestionType } from '@dti-isin/backend-api-client';
+import { useCourseList } from "../hooks/course/useCourseList.ts";
+import { useQuestionCRUD } from "../hooks/question/useQuestionCRUD.ts";
+import { useCourseSelection } from "../hooks/course/useCourseSelection.ts";
+import { useFolderSelection } from "../hooks/folder/useFolderSelection.ts";
+import { useQuizSelection } from "../hooks/quiz/useQuizSelection.ts";
+import { Breadcrumb } from "../components/common/Breadcrumb.tsx";
+import { QuestionsList } from "../components/question/QuestionList.tsx";
 import CreateQuestionForm from "../components/question/CreateQuestionForm.tsx";
-import {QuestionEditor} from "../components/question/QuestionEditor.tsx";
-import {QuestionTypeSelector} from "../components/question/QuestionTypeSelector.tsx";
+import { QuestionEditor } from "../components/question/QuestionEditor.tsx";
+import { QuestionTypeSelector } from "../components/question/QuestionTypeSelector.tsx";
+import {useQuizQuestions} from "../hooks/quiz/useQuizQuestions.ts";
 
 export const QuizCreation: React.FC = () => {
-    const {courseId, folderId, quizId} = useParams();
+    const { courseId, folderId, quizId } = useParams();
     const navigate = useNavigate();
 
-    const {courses} = useCourseList();
-    const {questions, isLoadingQuestions, errorQuestions} = useQuestionList();
-    const {createQuestion, createQuestionTemplate} = useQuestionCRUD();
+    const { setSelectedCourseId } = useCourseSelection();
+    const { setSelectedFolderId } = useFolderSelection();
+    const { setSelectedQuizId } = useQuizSelection();
+
+    const { courses } = useCourseList();
+
+    // Usa il nuovo hook per ottenere le domande
+    const quizQuestionsQuery = useQuizQuestions(courseId, folderId, quizId);
+
+    // Impostazione degli ID selezionati
+    useEffect(() => {
+        if (courseId) setSelectedCourseId(courseId);
+        if (folderId) setSelectedFolderId(folderId);
+        if (quizId) setSelectedQuizId(quizId);
+    }, [courseId, folderId, quizId, setSelectedCourseId, setSelectedFolderId, setSelectedQuizId]);
+
+    const {
+        createQuestion,
+        createQuestionTemplate,
+        isCreatingQuestion: isSubmitting
+    } = useQuestionCRUD();
 
     const [isCreatingQuestion, setIsCreatingQuestion] = useState(false);
     const [selectedQuestionType, setSelectedQuestionType] = useState<QuestionType | null>(null);
@@ -27,11 +48,24 @@ export const QuizCreation: React.FC = () => {
         type: selectedQuestionType || undefined
     });
 
-    const currentCourse = courses.find(course => course.id === courseId);
-    const currentFolder = currentCourse?.folders?.find(folder => folder.id === folderId);
-    const currentQuiz = currentFolder?.quizzes?.find(quiz => quiz.id === quizId);
+    // Memoizzazione per migliorare le performance
+    const currentCourse = useMemo(() =>
+            courses.find(course => course.id === courseId),
+        [courses, courseId]
+    );
 
-    if (isLoadingQuestions) {
+    const currentFolder = useMemo(() =>
+            currentCourse?.folders?.find(folder => folder.id === folderId),
+        [currentCourse, folderId]
+    );
+
+    const currentQuiz = useMemo(() =>
+            currentFolder?.quizzes?.find(quiz => quiz.id === quizId),
+        [currentFolder, quizId]
+    );
+
+    // Gestione degli stati di caricamento e errore
+    if (quizQuestionsQuery.isLoading) {
         return (
             <div className="flex justify-center items-center min-h-screen">
                 <div className="loading loading-spinner loading-lg"></div>
@@ -63,9 +97,11 @@ export const QuizCreation: React.FC = () => {
                 quizId: quizId
             });
 
+            // Reset degli stati dopo il salvataggio
             setSelectedQuestionType(null);
             setQuestionTemplate(null);
             setDraftQuestion({questionText: ''});
+            setIsCreatingQuestion(false);
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Failed to save question');
         }
@@ -89,6 +125,13 @@ export const QuizCreation: React.FC = () => {
         }
     };
 
+    const handleCancelCreation = () => {
+        setIsCreatingQuestion(false);
+        setSelectedQuestionType(null);
+        setQuestionTemplate(null);
+        setDraftQuestion({});
+    };
+
     return (
         <div className="container mx-auto px-4 py-8">
             <Breadcrumb
@@ -100,13 +143,13 @@ export const QuizCreation: React.FC = () => {
             <div className="bg-base-100 rounded-lg p-6 shadow-lg mb-8">
                 <h1 className="text-3xl font-bold mb-2">{currentQuiz.name}</h1>
                 <p className="text-base-content/70">
-                    {questions.length} questions
+                    {quizQuestionsQuery.data?.length || 0} questions
                 </p>
             </div>
 
-            {(error || errorQuestions) && (
+            {(error || quizQuestionsQuery.error) && (
                 <div className="alert alert-error mb-4">
-                    {error || errorQuestions?.message}
+                    {error || quizQuestionsQuery.error?.message}
                     <button
                         className="btn btn-sm btn-ghost ml-2"
                         onClick={() => setError(null)}
@@ -116,10 +159,18 @@ export const QuizCreation: React.FC = () => {
                 </div>
             )}
 
+            {quizQuestionsQuery.data?.length === 0 && (
+                <div className="alert alert-info mb-4">
+                    No questions found. Start creating your first question!
+                </div>
+            )}
+
             <div className="grid grid-cols-12 gap-6 mt-6">
                 <div className="col-span-3">
                     <div className="bg-base-100 rounded-lg p-4 shadow space-y-4">
-                        <QuestionsList questions={questions}/>
+                        <QuestionsList
+                            questions={quizQuestionsQuery.data || []}
+                        />
 
                         {isCreatingQuestion && (
                             <div className="p-3 bg-base-200 rounded">
@@ -160,13 +211,8 @@ export const QuizCreation: React.FC = () => {
                             correctAnswer: true
                         }}
                         onSave={handleSaveQuestion}
-                        onCancel={() => {
-                            setIsCreatingQuestion(false);
-                            setSelectedQuestionType(null);
-                            setQuestionTemplate(null);
-                            setDraftQuestion({});
-                        }}
-                        isLoading={false}
+                        onCancel={handleCancelCreation}
+                        isLoading={isSubmitting}
                         onQuestionTextChange={handleQuestionTextChange}
                         disabled={!isCreatingQuestion || !selectedQuestionType}
                     />

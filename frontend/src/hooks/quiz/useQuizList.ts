@@ -1,6 +1,6 @@
 import {useContext} from "react";
 import {QuizListContext} from "../../contexts/quiz/QuizListContext.tsx";
-import {useQuizzesForFolder} from "./useQuizForFolder.ts";
+import {useQuizzesForFolder} from "./useQuizzesForFolder.ts";
 
 export const useQuizList = () => {
     const context = useContext(QuizListContext);
