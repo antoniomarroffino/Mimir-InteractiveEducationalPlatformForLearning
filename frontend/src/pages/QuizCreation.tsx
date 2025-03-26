@@ -21,12 +21,10 @@ export const QuizCreation: React.FC = () => {
     const {setSelectedFolderId} = useFolderSelection();
     const {setSelectedQuizId} = useQuizSelection();
 
-    const {courses} = useCourseList();
+    const {teacherCourses} = useCourseList();
 
-    // Usa il nuovo hook per ottenere le domande
     const quizQuestionsQuery = useQuizQuestions(courseId, folderId, quizId);
 
-    // Impostazione degli ID selezionati
     useEffect(() => {
         if (courseId) setSelectedCourseId(courseId);
         if (folderId) setSelectedFolderId(folderId);
@@ -48,10 +46,9 @@ export const QuizCreation: React.FC = () => {
         type: selectedQuestionType || undefined
     });
 
-    // Memoizzazione per migliorare le performance
     const currentCourse = useMemo(() =>
-            courses.find(course => course.id === courseId),
-        [courses, courseId]
+            teacherCourses.find(course => course.id === courseId),
+        [teacherCourses, courseId]
     );
 
     const currentFolder = useMemo(() =>
@@ -64,7 +61,6 @@ export const QuizCreation: React.FC = () => {
         [currentFolder, quizId]
     );
 
-    // Gestione degli stati di caricamento e errore
     if (quizQuestionsQuery.isLoading) {
         return (
             <div className="flex justify-center items-center min-h-screen">
@@ -97,7 +93,6 @@ export const QuizCreation: React.FC = () => {
                 quizId: quizId
             });
 
-            // Reset degli stati dopo il salvataggio
             setSelectedQuestionType(null);
             setQuestionTemplate(null);
             setDraftQuestion({questionText: ''});

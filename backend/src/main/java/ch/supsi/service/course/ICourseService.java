@@ -7,7 +7,8 @@ import org.bson.types.ObjectId;
 import java.util.List;
 
 public interface ICourseService {
-    List<CourseDTO> getAllCourses(User user);
+    List<CourseDTO> getTeacherCourses(User user);
+    List<CourseDTO> getAllCourses();
 
     CourseDTO getCourseById(ObjectId id);
 

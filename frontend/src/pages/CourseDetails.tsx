@@ -10,7 +10,7 @@ import {useCourseCRUD} from "../hooks/course/useCourseCRUD.ts";
 const CourseDetails = () => {
     const {courseId} = useParams();
     const navigate = useNavigate();
-    const {courses, isLoadingCourses, errorCourses} = useCourseList();
+    const {teacherCourses, isLoadingTeacherCourses, errorTeacherCourses} = useCourseList();
     const {setSelectedCourseId, setSelectedCourse, selectedCourse} = useCourseSelection();
     const {updateCourse, deleteCourse} = useCourseCRUD();
     const [isEditing, setIsEditing] = useState(false);
@@ -19,7 +19,7 @@ const CourseDetails = () => {
 
     useEffect(() => {
         if (courseId) {
-            const course = courses.find(course => course.id === courseId);
+            const course = teacherCourses.find(course => course.id === courseId);
             if (course) {
                 setSelectedCourseId(courseId);
                 setSelectedCourse(course);
@@ -27,7 +27,7 @@ const CourseDetails = () => {
                 setEditedDescription(course.description || '');
             }
         }
-    }, [courseId, courses, setSelectedCourseId, setSelectedCourse]);
+    }, [courseId, teacherCourses, setSelectedCourseId, setSelectedCourse]);
 
     const handleSaveEdit = async () => {
         if (selectedCourse) {
@@ -63,7 +63,7 @@ const CourseDetails = () => {
         }
     };
 
-    if (isLoadingCourses) {
+    if (isLoadingTeacherCourses) {
         return (
             <div className="flex justify-center p-8">
                 <span className="loading loading-spinner loading-lg text-primary"></span>
@@ -71,10 +71,10 @@ const CourseDetails = () => {
         );
     }
 
-    if (errorCourses) {
+    if (errorTeacherCourses) {
         return (
             <div className="alert alert-error flex justify-between items-center">
-                <span>Error loading courses: {errorCourses.message}</span>
+                <span>Error loading courses: {errorTeacherCourses.message}</span>
                 <button
                     className="btn btn-sm btn-outline"
                     onClick={() => navigate('/')}
@@ -165,7 +165,15 @@ const CourseDetails = () => {
                     <>
                         <h1 className="text-3xl font-bold mb-2">{selectedCourse.name}</h1>
                         <p className="text-base-content/70 mb-2">
-                            {selectedCourse.description || 'No description'}
+                            {selectedCourse.description ? (
+                                <div className="text-base-content/70 line-clamp-2">
+                                    {selectedCourse.description}
+                                </div>
+                            ) : (
+                                <p className="italic text-base-content/40">
+                                    No description
+                                </p>
+                            )}
                         </p>
                         <p className="text-base-content/70">
                             {selectedCourse.folders?.length || 0} folders

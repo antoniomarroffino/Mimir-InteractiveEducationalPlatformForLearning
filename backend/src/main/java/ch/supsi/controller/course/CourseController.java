@@ -30,6 +30,22 @@ public class CourseController {
     IUserService userService;
 
     @GET
+    @Path("/teacher")
+    @Operation(summary = "Get all courses of a teacher")
+    @APIResponse(
+            responseCode = "200",
+            description = "List of courses retrieved successfully from authenticated user",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(type = SchemaType.ARRAY, implementation = CourseDTO.class)
+            )
+    )
+    public Response getTeacherCourses() {
+        List<CourseDTO> coursesDTO = this.courseService.getTeacherCourses(this.userService.getCurrentLoggedUser());
+        return Response.ok(coursesDTO).build();
+    }
+
+    @GET
     @Operation(summary = "Get all courses")
     @APIResponse(
             responseCode = "200",
@@ -40,7 +56,7 @@ public class CourseController {
             )
     )
     public Response getCourses() {
-        List<CourseDTO> coursesDTO = this.courseService.getAllCourses(this.userService.getCurrentLoggedUser());
+        List<CourseDTO> coursesDTO = this.courseService.getAllCourses();
         return Response.ok(coursesDTO).build();
     }
 

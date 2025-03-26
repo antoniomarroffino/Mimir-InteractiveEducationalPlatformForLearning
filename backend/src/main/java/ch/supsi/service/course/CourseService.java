@@ -31,7 +31,7 @@ public class CourseService implements ICourseService {
     CourseMapper courseMapper;
 
     @Override
-    public List<CourseDTO> getAllCourses(User user) {
+    public List<CourseDTO> getTeacherCourses(User user) {
         if (user == null)
             throw new InternalServerErrorException();
 
@@ -40,6 +40,13 @@ public class CourseService implements ICourseService {
                 .map(Optional::orElseThrow)
                 .map(this.courseMapper::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<CourseDTO> getAllCourses() {
+        return this.courseRepository.findAll().stream()
+                .map(this.courseMapper::toDTO)
+                .toList();
     }
 
     @Override

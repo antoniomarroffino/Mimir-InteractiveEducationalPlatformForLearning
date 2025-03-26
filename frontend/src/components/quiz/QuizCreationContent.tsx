@@ -13,7 +13,7 @@ import {useQuestionCRUD} from "../../hooks/question/useQuestionCRUD.ts";
 export const QuizCreationContent: React.FC = () => {
     const {courseId, folderId, quizId} = useParams();
     const navigate = useNavigate();
-    const {courses} = useCourseList();
+    const {teacherCourses} = useCourseList();
     const {questions, isLoadingQuestions, errorQuestions} = useQuestionList();
     const {createQuestion, createQuestionTemplate} = useQuestionCRUD();
 
@@ -26,7 +26,7 @@ export const QuizCreationContent: React.FC = () => {
         type: selectedQuestionType || undefined
     });
 
-    const currentCourse = courses.find(course => course.id === courseId);
+    const currentCourse = teacherCourses.find(course => course.id === courseId);
     const currentFolder = currentCourse?.folders?.find(folder => folder.id === folderId);
     const currentQuiz = currentFolder?.quizzes?.find(quiz => quiz.id === quizId);
 

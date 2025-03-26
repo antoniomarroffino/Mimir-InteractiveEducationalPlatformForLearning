@@ -2,10 +2,17 @@ import {CourseDTO} from "@dti-isin/backend-api-client";
 import {createContext} from "react";
 
 export type CourseListContextType = {
-    courses: CourseDTO[];
-    isLoadingCourses: boolean;
-    errorCourses: Error | null;
-    fetchCourses: () => Promise<void>;
+    teacherCourses: CourseDTO[];
+    allCourses: CourseDTO[];
+
+    isLoadingTeacherCourses: boolean;
+    isLoadingAllCourses: boolean;
+
+    errorTeacherCourses: Error | null;
+    errorAllCourses: Error | null;
+
+    fetchTeacherCourses: () => Promise<void>;
+    fetchAllCourses: () => Promise<void>;
 };
 
 export const CourseListContext = createContext<CourseListContextType | undefined>(undefined);
