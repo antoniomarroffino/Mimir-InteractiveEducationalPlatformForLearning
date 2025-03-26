@@ -77,7 +77,7 @@ export const QuizCreation: React.FC = () => {
     }
 
     return (
-        <div className="min-h-screen bg-base-200 my-3">
+        <div className="min-h-screen bg-base-200 py-3">
             <div className="container mx-auto px-4 lg:px-8 xl:px-16">
                 <Breadcrumb
                     course={currentCourse}

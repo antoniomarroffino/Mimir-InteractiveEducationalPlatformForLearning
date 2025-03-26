@@ -86,9 +86,9 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
                     questionText: questionText?.trim(),
                     type: QuestionType.MultipleChoice,
                     choices: choices.filter(c => c.trim() !== ''),
-                    correctAnswerIndexes: correctChoices.filter(idx =>
-                        idx < choices.length && choices[idx].trim() !== ''
-                    )
+                    correctAnswerIndexes: correctChoices
+                        .filter(idx => idx < choices.length && choices[idx].trim() !== '')
+                        .map(idx => choices.indexOf(choices[idx]))
                 };
                 break;
 

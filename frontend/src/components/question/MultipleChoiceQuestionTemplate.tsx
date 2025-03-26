@@ -128,7 +128,11 @@ export const MultipleChoiceQuestionTemplate: React.FC<MultipleChoiceTemplateProp
                                 ? 'bg-green-500 text-white'
                                 : 'bg-base-200 text-base-content/70 hover:bg-base-300'}
                             `}
-                            onClick={() => toggleCorrectChoice(index)}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                toggleCorrectChoice(index);
+                            }}
                             disabled={isLoading || disabled}
                         >
                             {correctChoices.includes(index) ? (
