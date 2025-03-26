@@ -1,7 +1,7 @@
-import React, {useEffect, useState} from 'react';
-import {MultipleChoiceQuestionDTO, QuestionDTO, QuestionType, TrueFalseQuestionDTO} from '@dti-isin/backend-api-client';
-import {TrueFalseQuestionTemplate} from './TrueFalseQuestionTemplate';
-import {MultipleChoiceQuestionTemplate} from './MultipleChoiceQuestionTemplate';
+import React, { useEffect, useState, useMemo } from 'react';
+import { MultipleChoiceQuestionDTO, QuestionDTO, QuestionType, TrueFalseQuestionDTO } from '@dti-isin/backend-api-client';
+import { TrueFalseQuestionTemplate } from './TrueFalseQuestionTemplate';
+import { MultipleChoiceQuestionTemplate } from './MultipleChoiceQuestionTemplate';
 
 type SpecificQuestionDTO =
     | QuestionDTO
@@ -27,15 +27,18 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
                                                                   isLoading = false,
                                                                   disabled = false
                                                               }) => {
+    // Stato per il testo della domanda
     const [questionText, setQuestionText] = useState(template.questionText || '');
+
+    // Stato per la validità della domanda
     const [isQuestionValid, setIsQuestionValid] = useState(false);
 
-    // True/False state
+    // Stato per True/False
     const [correctAnswer, setCorrectAnswer] = useState<boolean>(
         (template as TrueFalseQuestionDTO).correctAnswer ?? true
     );
 
-    // Multiple Choice state
+    // Stato per Multiple Choice
     const [choices, setChoices] = useState<string[]>(
         (template as MultipleChoiceQuestionDTO).choices ?? ['', '']
     );
@@ -43,24 +46,27 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
         (template as MultipleChoiceQuestionDTO).correctAnswerIndexes ?? []
     );
 
-    // Sync states when template changes
+    // Sincronizza gli stati quando cambia il template
     useEffect(() => {
         setQuestionText(template.questionText || '');
 
         if (questionType === QuestionType.TrueFalse) {
-            setCorrectAnswer((template as TrueFalseQuestionDTO).correctAnswer);
+            setCorrectAnswer((template as TrueFalseQuestionDTO).correctAnswer ?? true);
         } else if (questionType === QuestionType.MultipleChoice) {
-            setChoices((template as MultipleChoiceQuestionDTO).choices ?? ['', '']);
-            setCorrectChoices((template as MultipleChoiceQuestionDTO).correctAnswerIndexes ?? []);
+            const mcTemplate = template as MultipleChoiceQuestionDTO;
+            setChoices(mcTemplate.choices ?? ['', '']);
+            setCorrectChoices(mcTemplate.correctAnswerIndexes ?? []);
         }
     }, [template, questionType]);
 
+    // Gestisci il cambio del testo della domanda
     const handleQuestionTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const text = e.target.value;
         setQuestionText(text);
         onQuestionTextChange?.(text);
     };
 
+    // Gestisci il submit del form
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -95,6 +101,16 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
         onSave(finalQuestion);
     };
 
+    // Determina se il pulsante di salvataggio deve essere disabilitato
+    const isSaveDisabled = useMemo(() => {
+        const isTextEmpty = !questionText?.trim();
+        const isMultipleChoiceInvalid =
+            questionType === QuestionType.MultipleChoice && !isQuestionValid;
+
+        return isTextEmpty || isLoading || disabled || isMultipleChoiceInvalid;
+    }, [questionText, questionType, isLoading, disabled, isQuestionValid]);
+
+    // Rendering dei campi specifici per tipo di domanda
     const renderSpecificFields = () => {
         switch (questionType) {
             case QuestionType.TrueFalse:
@@ -157,12 +173,7 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
                     <button
                         type="submit"
                         className="btn btn-primary"
-                        disabled={
-                            !questionText?.trim() ||
-                            isLoading ||
-                            disabled ||
-                            (questionType === QuestionType.MultipleChoice && !isQuestionValid)
-                        }
+                        disabled={isSaveDisabled}
                     >
                         {isLoading ? (
                             <span className="loading loading-spinner"></span>

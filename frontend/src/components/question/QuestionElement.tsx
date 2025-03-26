@@ -1,7 +1,13 @@
-import React, {useState} from 'react';
-import {MultipleChoiceQuestionDTO, QuestionDTO, QuestionType, TrueFalseQuestionDTO} from '@dti-isin/backend-api-client';
-import {QuestionEditor} from './QuestionEditor';
-import {BsPencil, BsTrash} from 'react-icons/bs';
+import React, { useState } from 'react';
+import {
+    MultipleChoiceQuestionDTO,
+    QuestionDTO,
+    QuestionType,
+    TrueFalseQuestionDTO
+} from '@dti-isin/backend-api-client';
+import { QuestionEditor } from './QuestionEditor';
+import { BsPencil, BsTrash } from 'react-icons/bs';
+import { Tooltip } from '../common/Tooltip';
 
 type SpecificQuestionDTO =
     | QuestionDTO
@@ -22,23 +28,32 @@ export const QuestionElement: React.FC<QuestionElementProps> = ({
                                                                     onDelete
                                                                 }) => {
     const [isEditing, setIsEditing] = useState(false);
+    const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
 
     const renderQuestionDetails = () => {
         switch (question.type) {
             case QuestionType.TrueFalse: {
                 const tfQuestion = question as TrueFalseQuestionDTO;
                 return (
-                    <div className="text-sm text-base-content/70 mt-1">
-                        Correct Answer: {tfQuestion.correctAnswer ? 'True' : 'False'}
+                    <div className="text-sm text-base-content/70 mt-1 flex items-center gap-2">
+                        <Tooltip text="Correct Answer">
+                            <span className={`badge ${tfQuestion.correctAnswer ? 'badge-success' : 'badge-error'}`}>
+                                {tfQuestion.correctAnswer ? 'True' : 'False'}
+                            </span>
+                        </Tooltip>
                     </div>
                 );
             }
             case QuestionType.MultipleChoice: {
                 const mcQuestion = question as MultipleChoiceQuestionDTO;
                 return (
-                    <div className="text-sm text-base-content/70 mt-1">
-                        Choices: {mcQuestion.choices.length}
-                        <div className="flex gap-1 mt-1">
+                    <div className="text-sm text-base-content/70 mt-1 flex items-center gap-2">
+                        <Tooltip text="Number of Choices">
+                            <span className="badge badge-primary">
+                                {mcQuestion.choices.length} Choices
+                            </span>
+                        </Tooltip>
+                        <div className="flex gap-1">
                             {mcQuestion.correctAnswerIndexes.map(index => (
                                 <span
                                     key={index}
@@ -56,26 +71,23 @@ export const QuestionElement: React.FC<QuestionElementProps> = ({
         }
     };
 
-    const handleEdit = () => {
-        setIsEditing(true);
-    };
-
-    const handleSave = (editedQuestion: SpecificQuestionDTO) => {
-        onEdit?.(editedQuestion);
-        setIsEditing(false);
-    };
-
-    const handleCancel = () => {
-        setIsEditing(false);
-    };
-
     const handleDelete = () => {
-        // Aggiungi un controllo per assicurarti che l'ID esista
-        if (question.id) {
-            onDelete?.(question.id);
+        if (isConfirmingDelete) {
+            // Conferma eliminazione
+            if (question.id) {
+                onDelete?.(question.id);
+            } else {
+                console.warn('Cannot delete question: no ID found');
+            }
+            setIsConfirmingDelete(false);
         } else {
-            console.warn('Cannot delete question: no ID found');
+            // Mostra conferma
+            setIsConfirmingDelete(true);
         }
+    };
+
+    const cancelDelete = () => {
+        setIsConfirmingDelete(false);
     };
 
     if (isEditing) {
@@ -83,20 +95,22 @@ export const QuestionElement: React.FC<QuestionElementProps> = ({
             <QuestionEditor
                 questionType={question.type}
                 template={question}
-                onSave={handleSave}
-                onCancel={handleCancel}
+                onSave={(editedQuestion) => {
+                    onEdit?.(editedQuestion);
+                    setIsEditing(false);
+                }}
+                onCancel={() => setIsEditing(false)}
             />
         );
     }
 
     return (
         <div
-            className="flex justify-between items-center p-2 bg-base-200 rounded
+            className="relative flex justify-between items-center p-3 bg-base-200 rounded
                        hover:bg-base-300 hover:shadow-md transition-all
                        cursor-pointer group"
-            onClick={handleEdit}
         >
-            <div className="flex flex-col">
+            <div className="flex flex-col flex-grow">
                 <div className="flex items-center gap-2">
                     <span className="font-semibold">{index + 1}. {question.questionText}</span>
                     <span className="badge badge-primary">
@@ -108,24 +122,48 @@ export const QuestionElement: React.FC<QuestionElementProps> = ({
             </div>
 
             <div className="flex items-center gap-2">
-                <button
-                    className="btn btn-xs btn-ghost text-primary opacity-0 group-hover:opacity-100 transition-opacity"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        handleEdit();
-                    }}
-                >
-                    <BsPencil/>
-                </button>
-                <button
-                    className="btn btn-xs btn-error opacity-0 group-hover:opacity-100 transition-opacity"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        handleDelete();
-                    }}
-                >
-                    <BsTrash/>
-                </button>
+                {isConfirmingDelete ? (
+                    <div className="flex items-center gap-2">
+                        <span className="text-sm text-base-content/70">Confirm?</span>
+                        <button
+                            className="btn btn-xs btn-error"
+                            onClick={handleDelete}
+                        >
+                            Yes
+                        </button>
+                        <button
+                            className="btn btn-xs btn-ghost"
+                            onClick={cancelDelete}
+                        >
+                            No
+                        </button>
+                    </div>
+                ) : (
+                    <>
+                        <Tooltip text="Edit Question">
+                            <button
+                                className="btn btn-xs btn-ghost text-primary opacity-0 group-hover:opacity-100 transition-opacity"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setIsEditing(true);
+                                }}
+                            >
+                                <BsPencil/>
+                            </button>
+                        </Tooltip>
+                        <Tooltip text="Delete Question">
+                            <button
+                                className="btn btn-xs btn-error opacity-0 group-hover:opacity-100 transition-opacity"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDelete();
+                                }}
+                            >
+                                <BsTrash/>
+                            </button>
+                        </Tooltip>
+                    </>
+                )}
             </div>
         </div>
     );
