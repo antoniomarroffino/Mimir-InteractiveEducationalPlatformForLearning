@@ -8,7 +8,7 @@ interface CreateQuestionFormProps {
     className?: string;
 }
 
-const CreateQuestionForm: React.FC<CreateQuestionFormProps> = ({
+export const CreateQuestionForm: React.FC<CreateQuestionFormProps> = ({
                                                                    onStartCreation,
                                                                    isDisabled = false,
                                                                    className = ''
@@ -58,5 +58,3 @@ const CreateQuestionForm: React.FC<CreateQuestionFormProps> = ({
 
     return content;
 };
-
-export default CreateQuestionForm;

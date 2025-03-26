@@ -1,5 +1,9 @@
-import React, {useEffect, useState} from 'react';
-import {BsCheckCircleFill, BsCircle} from 'react-icons/bs';
+import React, { useEffect, useState } from 'react';
+import {
+    BsCheckCircleFill,
+    BsCircle,
+    BsDashCircle
+} from 'react-icons/bs';
 
 interface MultipleChoiceTemplateProps {
     choices: string[];
@@ -20,33 +24,28 @@ export const MultipleChoiceQuestionTemplate: React.FC<MultipleChoiceTemplateProp
                                                                                           disabled = false,
                                                                                           onValidationChange
                                                                                       }) => {
-    // Calcola il numero iniziale di scelte basato sulle choices ricevute
     const initialChoicesCount = Math.max(2, Math.min(choices.length || 2, 6));
     const [availableChoices, setAvailableChoices] = useState(initialChoicesCount);
 
-    // Sincronizza availableChoices quando le choices cambiano esternamente
     useEffect(() => {
         const newCount = Math.max(2, Math.min(choices.length, 6));
         if (newCount !== availableChoices) {
             setAvailableChoices(newCount);
         }
-    }, [choices]);
+    }, [availableChoices, choices]);
 
-    // Effetto per gestire le risposte corrette e la validazione
     useEffect(() => {
-        // Filtra le risposte corrette per mantenere solo quelle visibili
         const filteredCorrectChoices = correctChoices.filter(index => index < availableChoices);
 
         if (filteredCorrectChoices.length !== correctChoices.length) {
             onCorrectChoicesChange(filteredCorrectChoices);
         }
 
-        // Validazione
         const isValid = filteredCorrectChoices.length > 0 &&
             choices.slice(0, availableChoices).some(choice => choice.trim() !== '');
 
         onValidationChange?.(isValid);
-    }, [availableChoices, correctChoices, choices]);
+    }, [availableChoices, correctChoices, choices, onValidationChange, onCorrectChoicesChange]);
 
     const handleChoiceChange = (index: number, value: string) => {
         const newChoices = [...choices];
@@ -65,7 +64,6 @@ export const MultipleChoiceQuestionTemplate: React.FC<MultipleChoiceTemplateProp
     const updateChoiceCount = (num: number) => {
         const newChoices = [...choices];
 
-        // Aggiungi o rimuovi elementi mantenendo i valori esistenti
         if (num > newChoices.length) {
             while (newChoices.length < num) {
                 newChoices.push('');
@@ -79,61 +77,74 @@ export const MultipleChoiceQuestionTemplate: React.FC<MultipleChoiceTemplateProp
     };
 
     return (
-        <div className="space-y-4">
-            {/* Selettore numero di risposte */}
-            <div className="flex items-center space-x-2 mb-4">
-                <span>Number of Choices:</span>
-                {[2, 3, 4, 5, 6].map(num => (
-                    <button
-                        key={num}
-                        type="button"
-                        className={`btn btn-xs ${availableChoices === num
-                            ? 'btn-primary'
-                            : 'btn-outline'}`}
-                        onClick={() => updateChoiceCount(num)}
-                        disabled={isLoading || disabled}
-                    >
-                        {num}
-                    </button>
-                ))}
+        <div className="bg-gradient-to-br from-blue-100 to-blue-200 p-4 rounded-lg">
+            <div className="flex flex-col sm:flex-row items-center justify-between mb-4">
+                <span className="text-base font-semibold text-base-content/80 mb-2 sm:mb-0">
+                    Multiple Choice Setup
+                </span>
+                <div className="flex items-center gap-1 flex-wrap justify-center">
+                    {[2, 3, 4, 5, 6].map(num => (
+                        <button
+                            key={num}
+                            type="button"
+                            className={`
+                                btn btn-xs 
+                                ${availableChoices === num
+                                ? 'btn-primary'
+                                : 'btn-ghost'}
+                                m-0.5
+                            `}
+                            onClick={() => updateChoiceCount(num)}
+                            disabled={isLoading || disabled}
+                        >
+                            {num}
+                        </button>
+                    ))}
+                </div>
             </div>
 
-            {/* Griglia delle risposte */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {Array.from({length: availableChoices}).map((_, index) => (
-                    <div key={index} className="form-control">
-                        <div className="input-group">
-                            <input
-                                type="text"
-                                placeholder={`Answer ${index + 1}`}
-                                className="input input-bordered w-full"
-                                value={choices[index] || ''}
-                                onChange={(e) => handleChoiceChange(index, e.target.value)}
-                                disabled={isLoading || disabled}
-                            />
-                            <button
-                                type="button"
-                                className={`btn ${correctChoices.includes(index)
-                                    ? 'btn-primary'
-                                    : 'btn-ghost'}`}
-                                onClick={() => toggleCorrectChoice(index)}
-                                disabled={isLoading || disabled}
-                            >
-                                {correctChoices.includes(index) ? (
-                                    <BsCheckCircleFill/>
-                                ) : (
-                                    <BsCircle/>
-                                )}
-                            </button>
-                        </div>
+                    <div
+                        key={index}
+                        className="bg-white rounded-lg shadow-sm overflow-hidden flex"
+                    >
+                        <input
+                            type="text"
+                            placeholder={`Answer ${index + 1}`}
+                            className="input input-sm w-full px-2 py-1 border-none focus:outline-none"
+                            value={choices[index] || ''}
+                            onChange={(e) => handleChoiceChange(index, e.target.value)}
+                            disabled={isLoading || disabled}
+                        />
+                        <button
+                            className={`
+                                w-10 
+                                flex 
+                                items-center 
+                                justify-center 
+                                transition-all 
+                                ${correctChoices.includes(index)
+                                ? 'bg-green-500 text-white'
+                                : 'bg-base-200 text-base-content/70 hover:bg-base-300'}
+                            `}
+                            onClick={() => toggleCorrectChoice(index)}
+                            disabled={isLoading || disabled}
+                        >
+                            {correctChoices.includes(index) ? (
+                                <BsCheckCircleFill className="text-lg"/>
+                            ) : (
+                                <BsCircle className="text-lg"/>
+                            )}
+                        </button>
                     </div>
                 ))}
             </div>
 
-            {/* Messaggio di validazione */}
             {correctChoices.length === 0 && (
-                <div className="text-error text-sm mt-2">
-                    Please select at least one correct answer
+                <div className="text-error text-xs mt-2 flex items-center gap-1">
+                    <BsDashCircle className="text-sm"/>
+                    Select at least one correct answer
                 </div>
             )}
         </div>
