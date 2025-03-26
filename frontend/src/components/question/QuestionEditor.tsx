@@ -22,6 +22,7 @@ interface QuestionEditorProps {
     onQuestionTextChange?: (text: string) => void;
     isLoading?: boolean;
     disabled?: boolean;
+    isEditingExistingQuestion?: boolean;
 }
 
 export const QuestionEditor: React.FC<QuestionEditorProps> = ({
@@ -31,7 +32,8 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
                                                                   onCancel,
                                                                   onQuestionTextChange,
                                                                   isLoading = false,
-                                                                  disabled = false
+                                                                  disabled = false,
+                                                                  isEditingExistingQuestion = false,
                                                               }) => {
     const [questionText, setQuestionText] = useState(template.questionText || '');
     const [isQuestionValid, setIsQuestionValid] = useState(false);
@@ -140,7 +142,7 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
     return (
         <div className={`bg-base-100 rounded-lg p-6 shadow ${disabled ? 'opacity-50' : ''}`}>
             <h2 className="text-xl font-semibold mb-4 capitalize">
-                {questionType.toLowerCase()} Question
+                {isEditingExistingQuestion ? 'Edit' : 'Create'} {questionType.toLowerCase()} Question
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="form-control">

@@ -22,28 +22,27 @@ export const useQuizQuestionCreation = (
     const [questionTemplate, setQuestionTemplate] = useState<SpecificQuestionDTO | null>(null);
     const [draftQuestion, setDraftQuestion] = useState<Partial<QuestionDTO>>({});
     const [error, setError] = useState<string | null>(null);
+    const [isEditingExistingQuestion, setIsEditingExistingQuestion] = useState(false);
 
-    const { createQuestion, createQuestionTemplate } = useQuestionCRUD();
+    const { createQuestion, updateQuestion, createQuestionTemplate } = useQuestionCRUD();
 
     const startQuestionCreation = () => {
         setIsCreatingQuestion(true);
+        setIsEditingExistingQuestion(false);
         setDraftQuestion({questionText: ''});
-        // Reset altri stati
         setSelectedQuestionType(null);
         setQuestionTemplate(null);
     };
 
     const startQuestionEditing = (question: SpecificQuestionDTO) => {
         setIsCreatingQuestion(true);
+        setIsEditingExistingQuestion(true);
 
-        // Imposta il tipo di domanda
         setSelectedQuestionType(question.type);
-
-        // Imposta il template con l'intera domanda
         setQuestionTemplate(question);
 
-        // Imposta la bozza della domanda
         setDraftQuestion({
+            id: question.id,
             questionText: question.questionText,
             type: question.type
         });
@@ -51,38 +50,39 @@ export const useQuizQuestionCreation = (
 
     const handleTypeSelection = async (type: QuestionType) => {
         try {
-            // Crea un template per il tipo di domanda selezionato
             const template = await createQuestionTemplate(type);
 
-            // Imposta il tipo e il template
             setSelectedQuestionType(type);
             setQuestionTemplate(template);
 
-            // Aggiorna la bozza della domanda con il tipo
             setDraftQuestion(prev => ({
                 ...prev,
                 type: type
             }));
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Failed to create question template');
-            console.error(err);
         }
     };
 
     const handleSaveQuestion = async (questionData: SpecificQuestionDTO) => {
         try {
-            // Resetta eventuali errori precedenti
             setError(null);
 
-            // Salva la domanda con i dettagli del corso, cartella e quiz
-            await createQuestion({
+            const completeQuestionData = {
                 ...questionData,
                 courseId,
                 folderId,
                 quizId
-            });
+            };
 
-            // Resetta tutti gli stati dopo il salvataggio
+            if (isEditingExistingQuestion && questionData.id) {
+                // Aggiornamento di una domanda esistente
+                await updateQuestion(questionData.id, completeQuestionData);
+            } else {
+                // Creazione di una nuova domanda
+                await createQuestion(completeQuestionData);
+            }
+
             resetQuestionCreation();
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Failed to save question');
@@ -92,6 +92,7 @@ export const useQuizQuestionCreation = (
 
     const resetQuestionCreation = () => {
         setIsCreatingQuestion(false);
+        setIsEditingExistingQuestion(false);
         setSelectedQuestionType(null);
         setQuestionTemplate(null);
         setDraftQuestion({});
@@ -103,6 +104,7 @@ export const useQuizQuestionCreation = (
         questionTemplate,
         draftQuestion,
         error,
+        isEditingExistingQuestion,
 
         startQuestionCreation,
         startQuestionEditing,

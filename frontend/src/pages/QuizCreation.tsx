@@ -35,7 +35,8 @@ export const QuizCreation: React.FC = () => {
         setDraftQuestion,
         resetQuestionCreation,
         startQuestionCreation,
-        startQuestionEditing
+        startQuestionEditing,
+        isEditingExistingQuestion
     } = useQuizQuestionCreation(courseId!, folderId!, quizId!);
 
     const currentCourse = useMemo(() =>
@@ -187,6 +188,7 @@ export const QuizCreation: React.FC = () => {
                             isLoading={quizQuestionsQuery.isLoading}
                             onQuestionTextChange={(text) => setDraftQuestion(prev => ({...prev, questionText: text}))}
                             disabled={!isCreatingQuestion || !selectedQuestionType}
+                            isEditingExistingQuestion={isEditingExistingQuestion}
                         />
                     </div>
 
