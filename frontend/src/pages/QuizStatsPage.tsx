@@ -70,8 +70,8 @@ export const QuizStatsPage: React.FC = () => {
             </div>
         );
     }
-
-    const fullUrl = `${import.meta.env.VITE_REDIRECT_URI}/quiz/${currentPublication.publicationCode}`;
+    const baseUrl = import.meta.env.VITE_REDIRECT_URI.replace(/\/+$/, '');
+    const fullUrl = `${baseUrl}/quiz/${currentPublication.publicationCode}`;
 
     return (
         <div className="p-4 max-w-4xl mx-auto">
