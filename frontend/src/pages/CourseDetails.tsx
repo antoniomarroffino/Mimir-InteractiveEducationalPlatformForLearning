@@ -34,8 +34,11 @@ const CourseDetails = () => {
             try {
                 await updateCourse(
                     selectedCourse.id!,
-                    editedName,
-                    editedDescription || undefined
+                    {
+                        ...selectedCourse,
+                        name: editedName,
+                        description: editedDescription || undefined,
+                    }
                 );
                 setIsEditing(false);
             } catch (error) {

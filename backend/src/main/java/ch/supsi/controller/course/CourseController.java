@@ -100,7 +100,6 @@ public class CourseController {
             @PathParam("id") String id,
             @Valid CourseDTO courseDTO
     ) {
-        courseDTO.setId(id);
         CourseDTO updatedCourseDTO = this.courseService.updateCourse(
                 new ObjectId(id),
                 courseDTO,

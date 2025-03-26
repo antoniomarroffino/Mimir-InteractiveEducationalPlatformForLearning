@@ -11,7 +11,7 @@ export const CreateCourseForm = () => {
         e.preventDefault();
         if (name.trim()) {
             try {
-                await createCourse(name, description.trim() || undefined);
+                await createCourse({name, description: description.trim() || undefined});
                 setName('');
                 setDescription('');
             } catch (error) {

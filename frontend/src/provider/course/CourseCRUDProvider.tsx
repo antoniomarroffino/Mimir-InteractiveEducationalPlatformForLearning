@@ -8,8 +8,8 @@ export const CourseCRUDProvider: React.FC<{ children: React.ReactNode }> = ({chi
     const queryClient = useQueryClient();
 
     const createCourseMutation = useMutation(
-        ({name, description}: { name: string; description?: string }) =>
-            courseApi.apiCoursesPost({courseDTO: {name, description}}).then(response => response.data),
+        (courseDTO: CourseDTO) =>
+            courseApi.apiCoursesPost({courseDTO}).then(response => response.data),
         {
             onSuccess: (newCourse) => {
                 queryClient.setQueryData<CourseDTO[]>(["courses"], (oldCourses) =>
@@ -24,8 +24,8 @@ export const CourseCRUDProvider: React.FC<{ children: React.ReactNode }> = ({chi
     );
 
     const updateCourseMutation = useMutation(
-        ({id, name, description}: { id: string; name: string; description?: string }) =>
-            courseApi.apiCoursesIdPut({id, courseDTO: {name, description}}).then(response => response.data),
+        ({id, courseDTO}: { id: string; courseDTO: CourseDTO }) =>
+            courseApi.apiCoursesIdPut({id, courseDTO}).then(response => response.data),
         {
             onSuccess: (updatedCourse) => {
                 queryClient.setQueryData<CourseDTO[]>(["courses"], (oldCourses) =>
@@ -54,18 +54,19 @@ export const CourseCRUDProvider: React.FC<{ children: React.ReactNode }> = ({chi
     );
 
     const value = useMemo(() => ({
-        createCourse: async (name: string, description?: string) => {
+        createCourse: async (courseDTO: CourseDTO) => {
             try {
-                return await createCourseMutation.mutateAsync({name, description});
+                return await createCourseMutation.mutateAsync(courseDTO);
             } catch (err) {
                 console.error("Course creation failed:", err);
                 throw err;
             }
         },
 
-        updateCourse: async (id: string, name: string, description?: string) => {
+        updateCourse: async (id: string, courseDTO: CourseDTO) => {
             try {
-                return await updateCourseMutation.mutateAsync({id, name, description});
+                console.log(courseDTO);
+                return await updateCourseMutation.mutateAsync({id, courseDTO});
             } catch (err) {
                 console.error("Course update failed:", err);
                 throw err;
