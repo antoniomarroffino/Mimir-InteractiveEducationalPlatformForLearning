@@ -34,7 +34,8 @@ export const QuizCreation: React.FC = () => {
         handleSaveQuestion,
         setDraftQuestion,
         resetQuestionCreation,
-        startQuestionCreation
+        startQuestionCreation,
+        startQuestionEditing
     } = useQuizQuestionCreation(courseId!, folderId!, quizId!);
 
     const currentCourse = useMemo(() =>
@@ -153,6 +154,7 @@ export const QuizCreation: React.FC = () => {
                         <div className="bg-base-100 rounded-xl p-6 shadow-xl space-y-6">
                             <QuestionsList
                                 questions={quizQuestionsQuery.data || []}
+                                onStartEditing={startQuestionEditing}
                             />
 
                             {isCreatingQuestion && (

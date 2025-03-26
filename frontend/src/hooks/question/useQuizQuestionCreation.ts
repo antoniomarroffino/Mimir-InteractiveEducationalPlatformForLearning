@@ -1,6 +1,16 @@
 import { useState } from 'react';
-import { QuestionDTO, QuestionType } from '@dti-isin/backend-api-client';
-import {useQuestionCRUD} from "./useQuestionCRUD.ts";
+import {
+    QuestionDTO,
+    QuestionType,
+    TrueFalseQuestionDTO,
+    MultipleChoiceQuestionDTO
+} from '@dti-isin/backend-api-client';
+import { useQuestionCRUD } from "./useQuestionCRUD.ts";
+
+type SpecificQuestionDTO =
+    | QuestionDTO
+    | TrueFalseQuestionDTO
+    | MultipleChoiceQuestionDTO;
 
 export const useQuizQuestionCreation = (
     courseId: string,
@@ -9,7 +19,7 @@ export const useQuizQuestionCreation = (
 ) => {
     const [isCreatingQuestion, setIsCreatingQuestion] = useState(false);
     const [selectedQuestionType, setSelectedQuestionType] = useState<QuestionType | null>(null);
-    const [questionTemplate, setQuestionTemplate] = useState<QuestionDTO | null>(null);
+    const [questionTemplate, setQuestionTemplate] = useState<SpecificQuestionDTO | null>(null);
     const [draftQuestion, setDraftQuestion] = useState<Partial<QuestionDTO>>({});
     const [error, setError] = useState<string | null>(null);
 
@@ -21,6 +31,22 @@ export const useQuizQuestionCreation = (
         // Reset altri stati
         setSelectedQuestionType(null);
         setQuestionTemplate(null);
+    };
+
+    const startQuestionEditing = (question: SpecificQuestionDTO) => {
+        setIsCreatingQuestion(true);
+
+        // Imposta il tipo di domanda
+        setSelectedQuestionType(question.type);
+
+        // Imposta il template con l'intera domanda
+        setQuestionTemplate(question);
+
+        // Imposta la bozza della domanda
+        setDraftQuestion({
+            questionText: question.questionText,
+            type: question.type
+        });
     };
 
     const handleTypeSelection = async (type: QuestionType) => {
@@ -43,7 +69,7 @@ export const useQuizQuestionCreation = (
         }
     };
 
-    const handleSaveQuestion = async (questionData: QuestionDTO) => {
+    const handleSaveQuestion = async (questionData: SpecificQuestionDTO) => {
         try {
             // Resetta eventuali errori precedenti
             setError(null);
@@ -79,6 +105,7 @@ export const useQuizQuestionCreation = (
         error,
 
         startQuestionCreation,
+        startQuestionEditing,
         handleTypeSelection,
         handleSaveQuestion,
         setDraftQuestion,

@@ -10,12 +10,14 @@ type SpecificQuestionDTO =
 interface QuestionsListProps {
     questions: SpecificQuestionDTO[];
     onEditQuestion?: (question: SpecificQuestionDTO) => void;
+    onStartEditing?: (question: SpecificQuestionDTO) => void;
     onDeleteQuestion?: (questionId: string) => void;
 }
 
 export const QuestionsList: React.FC<QuestionsListProps> = ({
                                                                 questions,
                                                                 onEditQuestion,
+                                                                onStartEditing,
                                                                 onDeleteQuestion
                                                             }) => {
     return (
@@ -35,6 +37,7 @@ export const QuestionsList: React.FC<QuestionsListProps> = ({
                             index={index}
                             onEdit={onEditQuestion}
                             onDelete={onDeleteQuestion}
+                            onStartEditing={() => onStartEditing?.(question)}
                         />
                     ))}
                 </div>

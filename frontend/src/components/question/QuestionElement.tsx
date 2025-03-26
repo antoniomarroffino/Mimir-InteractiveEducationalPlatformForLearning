@@ -1,21 +1,7 @@
-import React, { useState } from 'react';
-import {
-    MultipleChoiceQuestionDTO,
-    QuestionDTO,
-    QuestionType,
-    TrueFalseQuestionDTO
-} from '@dti-isin/backend-api-client';
-import { QuestionEditor } from './QuestionEditor';
-import {
-    BsPencil,
-    BsTrash,
-    BsLightbulb,
-    BsCheckCircle,
-    BsXCircle,
-    BsListCheck,
-    BsToggleOn
-} from 'react-icons/bs';
-import { Tooltip } from '../common/Tooltip';
+import React, {useState} from 'react';
+import {MultipleChoiceQuestionDTO, QuestionDTO, QuestionType, TrueFalseQuestionDTO} from '@dti-isin/backend-api-client';
+import {BsCheckCircle, BsLightbulb, BsListCheck, BsPencil, BsToggleOn, BsTrash, BsXCircle} from 'react-icons/bs';
+import {Tooltip} from '../common/Tooltip';
 
 type SpecificQuestionDTO =
     | QuestionDTO
@@ -27,29 +13,29 @@ interface QuestionElementProps {
     index: number;
     onEdit?: (question: SpecificQuestionDTO) => void;
     onDelete?: (questionId: string) => void;
+    onStartEditing?: () => void;
 }
 
 export const QuestionElement: React.FC<QuestionElementProps> = ({
                                                                     question,
                                                                     index,
-                                                                    onEdit,
-                                                                    onDelete
+                                                                    onDelete,
+                                                                    onStartEditing
                                                                 }) => {
-    const [isEditing, setIsEditing] = useState(false);
     const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
 
     const getQuestionTypeStyles = () => {
         switch (question.type) {
             case QuestionType.TrueFalse:
                 return {
-                    icon: <BsToggleOn className="text-green-600" />,
+                    icon: <BsToggleOn className="text-green-600"/>,
                     borderColor: 'border-green-500',
                     bgColor: 'bg-green-200',
                     textColor: 'text-green-700'
                 };
             case QuestionType.MultipleChoice:
                 return {
-                    icon: <BsListCheck className="text-blue-600" />,
+                    icon: <BsListCheck className="text-blue-600"/>,
                     borderColor: 'border-blue-500',
                     bgColor: 'bg-blue-200',
                     textColor: 'text-blue-700'
@@ -71,9 +57,9 @@ export const QuestionElement: React.FC<QuestionElementProps> = ({
                 return (
                     <div className="flex items-center gap-2 text-xs">
                         {tfQuestion.correctAnswer ? (
-                            <BsCheckCircle className="text-success" />
+                            <BsCheckCircle className="text-success"/>
                         ) : (
-                            <BsXCircle className="text-error" />
+                            <BsXCircle className="text-error"/>
                         )}
                         <span className="text-base-content/70">
                             {tfQuestion.correctAnswer ? 'True' : 'False'}
@@ -85,7 +71,7 @@ export const QuestionElement: React.FC<QuestionElementProps> = ({
                 const mcQuestion = question as MultipleChoiceQuestionDTO;
                 return (
                     <div className="flex items-center gap-2 text-xs">
-                        <BsLightbulb className="text-warning" />
+                        <BsLightbulb className="text-warning"/>
                         <span className="text-base-content/70">
                             {mcQuestion.choices.length} Choices
                         </span>
@@ -120,20 +106,6 @@ export const QuestionElement: React.FC<QuestionElementProps> = ({
         }
     };
 
-    if (isEditing) {
-        return (
-            <QuestionEditor
-                questionType={question.type}
-                template={question}
-                onSave={(editedQuestion) => {
-                    onEdit?.(editedQuestion);
-                    setIsEditing(false);
-                }}
-                onCancel={() => setIsEditing(false)}
-            />
-        );
-    }
-
     const typeStyles = getQuestionTypeStyles();
 
     return (
@@ -153,7 +125,7 @@ export const QuestionElement: React.FC<QuestionElementProps> = ({
                 flex
                 items-start
             `}
-            onClick={() => setIsEditing(true)}
+            onClick={() => onStartEditing?.()}
         >
             {/* Indicatore laterale */}
             <div
@@ -194,7 +166,7 @@ export const QuestionElement: React.FC<QuestionElementProps> = ({
                                         handleDelete();
                                     }}
                                 >
-                                    <BsTrash className="text-xs" />
+                                    <BsTrash className="text-xs"/>
                                 </button>
                             </Tooltip>
                             <Tooltip text="Cancel">
@@ -216,10 +188,10 @@ export const QuestionElement: React.FC<QuestionElementProps> = ({
                                     className="btn btn-xs btn-ghost text-base-content/70 hover:text-primary"
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        setIsEditing(true);
+
                                     }}
                                 >
-                                    <BsPencil className="text-xs" />
+                                    <BsPencil className="text-xs"/>
                                 </button>
                             </Tooltip>
                             <Tooltip text="Delete Question">
@@ -230,7 +202,7 @@ export const QuestionElement: React.FC<QuestionElementProps> = ({
                                         setIsConfirmingDelete(true);
                                     }}
                                 >
-                                    <BsTrash className="text-xs" />
+                                    <BsTrash className="text-xs"/>
                                 </button>
                             </Tooltip>
                         </>
