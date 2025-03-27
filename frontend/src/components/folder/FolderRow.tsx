@@ -6,19 +6,34 @@ import {useQuizCRUD} from "../../hooks/quiz/useQuizCRUD.ts";
 import {useFolderSelection} from "../../hooks/folder/useFolderSelection.ts";
 import {useQuizSelection} from "../../hooks/quiz/useQuizSelection.ts";
 import {FiEdit2, FiPlus} from "react-icons/fi";
+import {useFolderCRUD} from "../../hooks/folder/useFolderCRUD.ts";
 
 interface FolderRowProps {
     folder: FolderDTO;
     courseId: string;
+    isSelected: boolean;
+    onToggleSelect: () => void;
 }
 
-export const FolderRow = ({folder, courseId}: FolderRowProps) => {
+export const FolderRow = ({folder, courseId, isSelected, onToggleSelect}: FolderRowProps) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [quizName, setQuizName] = useState("");
     const {createQuiz, isCreatingQuiz} = useQuizCRUD();
     const {setSelectedFolderId, setSelectedFolder} = useFolderSelection();
     const {setCurrentFolder} = useQuizSelection();
+    const [isEditing, setIsEditing] = useState(false);
+    const [editedName, setEditedName] = useState(folder.name);
+    const {updateFolder, isUpdatingFolder, errorUpdateFolder} = useFolderCRUD();
+
+    const handleNameUpdate = async () => {
+        try {
+            await updateFolder(folder.id!, editedName);
+            setIsEditing(false);
+        } catch (error) {
+            console.error("Failed to update folder:", error);
+        }
+    };
 
     const handleCreateQuiz = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -44,31 +59,58 @@ export const FolderRow = ({folder, courseId}: FolderRowProps) => {
     };
 
     return (
-        <div className="group bg-base-100 rounded-xl border border-base-200 hover:border-primary/30 shadow-sm hover:shadow-md transition-all duration-300 ease-out">
-            {/* Header */}
+        <div
+            className="group bg-base-100 rounded-xl border border-base-200 hover:border-primary/30 shadow-sm hover:shadow-md transition-all duration-300 ease-out">
             <div
                 className="p-4 flex items-center justify-between cursor-pointer hover:bg-base-200/20 transition-colors rounded-t-xl"
                 onClick={() => setIsExpanded(!isExpanded)}
             >
-                <div className="flex items-center gap-4">
-                    <div className="p-3 rounded-lg bg-primary/10 text-primary">
-                        <BsFolder2 className="text-2xl"/>
-                    </div>
-                    <div>
-                        <h3 className="font-semibold text-lg">{folder.name}</h3>
-                        <p className="text-sm text-base-content/60 flex items-center gap-2">
-                            <span>{folder.quizzes?.length || 0} quizzes</span>
-                            <span className="text-xs">•</span>
-                        </p>
+                <div className="flex items-center gap-4 flex-1">
+                    <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={onToggleSelect}
+                        className="checkbox checkbox-primary checkbox-sm"
+                        onClick={(e) => e.stopPropagation()}
+                    />
+
+                    <div className="flex items-center gap-4 flex-1"
+                         onDoubleClick={() => setIsEditing(true)}>
+                        <div className="p-3 rounded-lg bg-primary/10 text-primary">
+                            <BsFolder2 className="text-2xl"/>
+                        </div>
+
+                        {isEditing ? (
+                            <input
+                                type="text"
+                                value={editedName}
+                                onChange={(e) => setEditedName(e.target.value)}
+                                onBlur={handleNameUpdate}
+                                onKeyDown={(e) => e.key === 'Enter' && handleNameUpdate()}
+                                className="input input-ghost input-sm w-full max-w-xs"
+                                autoFocus
+                            />
+                        ) : (
+                            <h3 className="font-semibold text-lg">{folder.name}</h3>
+                        )}
                     </div>
                 </div>
 
                 <div className="flex items-center gap-4">
+                    {isUpdatingFolder && (
+                        <span className="loading loading-spinner text-primary"></span>
+                    )}
                     <div className="text-base-content/40 group-hover:text-primary transition-colors">
                         {isExpanded ? <BsChevronUp/> : <BsChevronDown/>}
                     </div>
                 </div>
             </div>
+
+            {errorUpdateFolder && (
+                <div className="alert alert-error mx-4 mb-4">
+                    {errorUpdateFolder.message}
+                </div>
+            )}
 
             {/* Expanded Content */}
             {isExpanded && (
@@ -98,7 +140,8 @@ export const FolderRow = ({folder, courseId}: FolderRowProps) => {
                                             maxLength={50}
                                             autoFocus
                                         />
-                                        <FiEdit2 className="absolute left-4 top-1/2 -translate-y-1/2 text-base-content/40"/>
+                                        <FiEdit2
+                                            className="absolute left-4 top-1/2 -translate-y-1/2 text-base-content/40"/>
                                     </div>
                                     <div className="flex gap-2 sm:w-[200px]">
                                         <button

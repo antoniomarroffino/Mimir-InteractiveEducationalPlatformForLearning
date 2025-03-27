@@ -4,9 +4,11 @@ import {useFolderList} from "../../hooks/folder/useFolderList.ts";
 
 interface FolderListProps {
     courseId: string;
+    selectedFolders: string[];
+    onToggleSelect: (folderId: string) => void;
 }
 
-export const FolderList: React.FC<FolderListProps> = ({courseId}) => {
+export const FolderList: React.FC<FolderListProps> = ({courseId, selectedFolders, onToggleSelect}) => {
     const {folders, isLoadingFolders} = useFolderList();
 
     if (!courseId) return <Error message="Invalid course ID"/>;
@@ -22,6 +24,8 @@ export const FolderList: React.FC<FolderListProps> = ({courseId}) => {
                     key={folder.id}
                     folder={folder}
                     courseId={courseId}
+                    isSelected={selectedFolders.includes(folder.id!)}
+                    onToggleSelect={() => onToggleSelect(folder.id!)}
                 />
             ))}
         </div>

@@ -8,6 +8,7 @@ import {useCourseCRUD} from "../hooks/course/useCourseCRUD.ts";
 import {FiFolder} from "react-icons/fi";
 import {BsBoxArrowRight, BsPencil, BsTrash} from "react-icons/bs";
 import {Breadcrumb} from "../components/common/Breadcrumb.tsx";
+import {useFolderCRUD} from "../hooks/folder/useFolderCRUD.ts";
 
 const CourseDetails = () => {
     const {courseId} = useParams();
@@ -18,6 +19,33 @@ const CourseDetails = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [editedName, setEditedName] = useState("");
     const [editedDescription, setEditedDescription] = useState("");
+    const [selectedFolders, setSelectedFolders] = useState<string[]>([]);
+    const {deleteFolder, isDeletingFolder, errorDeleteFolder} = useFolderCRUD();
+
+    // Aggiungi queste funzioni
+    const toggleSelection = (folderId: string) => {
+        setSelectedFolders(prev =>
+            prev.includes(folderId)
+                ? prev.filter(id => id !== folderId)
+                : [...prev, folderId]
+        );
+    };
+
+    const toggleSelectAll = () => {
+        if (selectedFolders.length === selectedCourse?.folders?.length) {
+            setSelectedFolders([]);
+        } else {
+            setSelectedFolders(selectedCourse?.folders?.map(f => f.id!) || []);
+        }
+    };
+
+    const handleDeleteSelected = async () => {
+        for (const folderId of selectedFolders) {
+            await deleteFolder(folderId);
+        }
+        setSelectedFolders([]);
+    };
+
 
     const handleLeaveCourse = async () => {
         if (selectedCourse) {
@@ -212,11 +240,44 @@ const CourseDetails = () => {
 
 
             <div className="space-y-6 w-full">
-                <h2 className="text-2xl font-semibold flex items-center gap-2">
-                    <FiFolder className="text-primary"/>
-                    Course Folders
-                </h2>
-                <FolderList courseId={courseId}/>
+                <div className="flex justify-between items-center">
+                    <h2 className="text-2xl font-semibold flex items-center gap-2">
+                        <FiFolder className="text-primary"/>
+                        Course Folders
+                    </h2>
+
+                    <div className="flex gap-2 items-center">
+                        {selectedFolders.length > 0 && (
+                            <button
+                                onClick={handleDeleteSelected}
+                                className="btn btn-error btn-sm gap-2"
+                                disabled={isDeletingFolder}
+                            >
+                                <BsTrash/>
+                                Delete ({selectedFolders.length})
+                            </button>
+                        )}
+                        <button
+                            onClick={toggleSelectAll}
+                            className="btn btn-ghost btn-sm"
+                        >
+                            {selectedFolders.length === selectedCourse?.folders?.length ?
+                                'Deselect All' : 'Select All'}
+                        </button>
+                    </div>
+                </div>
+
+                {errorDeleteFolder && (
+                    <div className="alert alert-error">
+                        {errorDeleteFolder.message}
+                    </div>
+                )}
+
+                <FolderList
+                    courseId={courseId}
+                    selectedFolders={selectedFolders}
+                    onToggleSelect={toggleSelection}
+                />
             </div>
 
             {/* Modal delete migliorato */}
