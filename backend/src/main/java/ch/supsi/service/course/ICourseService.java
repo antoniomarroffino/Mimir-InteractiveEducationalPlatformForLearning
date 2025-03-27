@@ -19,4 +19,5 @@ public interface ICourseService {
     void deleteCourse(ObjectId id, User currentUser);
 
     void assignCourse(ObjectId id, User currentUser);
+    void leftCourse(ObjectId id, User currentUser);
 }

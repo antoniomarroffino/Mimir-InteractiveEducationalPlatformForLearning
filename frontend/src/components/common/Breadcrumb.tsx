@@ -2,9 +2,11 @@ import React from 'react';
 import {Link} from 'react-router-dom';
 import {BsChevronRight} from 'react-icons/bs';
 import {CourseDTO, FolderDTO, QuizDTO} from '@dti-isin/backend-api-client';
+import {FiBookOpen, FiChevronRight, FiHome} from "react-icons/fi";
+import {useCourseSelection} from "../../hooks/course/useCourseSelection.ts";
 
 interface BreadcrumbProps {
-    course: CourseDTO;
+    course?: CourseDTO;
     folder?: FolderDTO;
     quiz?: QuizDTO;
 }
@@ -14,32 +16,51 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
                                                           folder,
                                                           quiz
                                                       }) => {
+
+    const {deselectCourse} = useCourseSelection();
+
     return (
         <div className="mb-8">
-            <ul className="flex items-center gap-2 text-sm">
+            <ul className="flex flex-wrap items-center gap-2 text-sm bg-base-200 px-4 py-2 rounded-full">
                 <li>
                     <Link
                         to="/"
-                        className="text-primary hover:text-primary-focus"
+                        className="flex items-center text-primary hover:text-primary-focus transition-colors"
                     >
+                        <FiHome className="mr-1.5"/>
                         Home
                     </Link>
                 </li>
-                <BsChevronRight className="text-gray-400"/>
-                <li>
-                    <Link
-                        to={`/courses/${course.id}`}
-                        className="text-primary hover:text-primary-focus"
-                    >
-                        {course.name}
-                    </Link>
-                </li>
+                {course && (
+                    <>
+                        <FiChevronRight className="text-base-content/40"/>
+                        <li>
+                            <Link
+                                to="/courses"
+                                className="flex items-center text-primary hover:text-primary-focus transition-colors"
+                                onClick={deselectCourse}
+                            >
+                                <FiBookOpen className="mr-1.5"/>
+                                Courses
+                            </Link>
+                        </li>
+                        <FiChevronRight className="text-base-content/40"/>
+                        <li>
+                            <Link
+                                to={`/courses/${course.id}`}
+                                className="text-primary hover:text-primary-focus"
+                            >
+                                {course.name}
+                            </Link>
+                        </li>
+                    </>
+                )}
                 {folder && (
                     <>
                         <BsChevronRight className="text-gray-400"/>
                         <li>
                             <Link
-                                to={`/courses/${course.id}`}
+                                to={`/courses/${course?.id}`}
                                 className="text-primary hover:text-primary-focus"
                             >
                                 {folder.name}

@@ -57,6 +57,21 @@ export const CourseCRUDProvider: React.FC<{ children: React.ReactNode }> = ({chi
         }
     );
 
+    const leftCourseMutation = useMutation(
+        (id: string) =>
+            courseApi.apiCoursesLeftIdPut({id}),
+        {
+            onSuccess: () => {
+                queryClient.invalidateQueries(["teacherCourses"]);
+                queryClient.invalidateQueries(["allCourses"]);
+            },
+            onError: (error: Error) => {
+                console.error("Course left error:", error);
+            }
+        }
+    );
+
+
     const deleteCourseMutation = useMutation(
         (id: string) => courseApi.apiCoursesIdDelete({id}),
         {
@@ -98,6 +113,15 @@ export const CourseCRUDProvider: React.FC<{ children: React.ReactNode }> = ({chi
             }
         },
 
+        leftCourse: async (id: string) => {
+            try {
+                await leftCourseMutation.mutateAsync(id);
+            } catch (err) {
+                console.error("Course left failed:", err);
+                throw err;
+            }
+        },
+
         deleteCourse: async (id: string) => {
             try {
                 await deleteCourseMutation.mutateAsync(id);
@@ -110,12 +134,14 @@ export const CourseCRUDProvider: React.FC<{ children: React.ReactNode }> = ({chi
         isCreatingCourse: createCourseMutation.isLoading,
         isUpdatingCourse: updateCourseMutation.isLoading,
         isAssigningCourse: assignCourseMutation.isLoading,
+        isLeftCourse: leftCourseMutation.isLoading,
         isDeletingCourse: deleteCourseMutation.isLoading,
         errorCreateCourse: createCourseMutation.error,
         errorUpdateCourse: updateCourseMutation.error,
         errorAssignCourse: updateCourseMutation.error,
+        errorLeftCourse: leftCourseMutation.error,
         errorDeleteCourse: deleteCourseMutation.error,
-    }), [createCourseMutation, deleteCourseMutation, updateCourseMutation, assignCourseMutation]);
+    }), [createCourseMutation, deleteCourseMutation, updateCourseMutation, assignCourseMutation, leftCourseMutation]);
 
     return (
         <CourseCRUDContext.Provider value={value}>

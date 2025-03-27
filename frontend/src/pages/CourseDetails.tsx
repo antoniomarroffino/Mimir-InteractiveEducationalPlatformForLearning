@@ -1,22 +1,34 @@
 import {useEffect, useState} from 'react';
-import {Link, useNavigate, useParams} from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import {FolderList} from "../components/folder/FolderList.tsx";
 import {CreateFolderForm} from "../components/folder/CreateFolderForm.tsx";
 import {useCourseList} from "../hooks/course/useCourseList.ts";
 import {useCourseSelection} from "../hooks/course/useCourseSelection.ts";
 import {useCourseCRUD} from "../hooks/course/useCourseCRUD.ts";
-import {FiBookOpen, FiChevronRight, FiFolder, FiHome} from "react-icons/fi";
-import {BsPencil, BsTrash} from "react-icons/bs";
+import {FiFolder} from "react-icons/fi";
+import {BsBoxArrowRight, BsPencil, BsTrash} from "react-icons/bs";
+import {Breadcrumb} from "../components/common/Breadcrumb.tsx";
 
 const CourseDetails = () => {
     const {courseId} = useParams();
     const navigate = useNavigate();
     const {teacherCourses, isLoadingTeacherCourses, errorTeacherCourses} = useCourseList();
     const {setSelectedCourseId, setSelectedCourse, selectedCourse} = useCourseSelection();
-    const {updateCourse, deleteCourse} = useCourseCRUD();
+    const {updateCourse, deleteCourse, leftCourse} = useCourseCRUD();
     const [isEditing, setIsEditing] = useState(false);
     const [editedName, setEditedName] = useState("");
     const [editedDescription, setEditedDescription] = useState("");
+
+    const handleLeaveCourse = async () => {
+        if (selectedCourse) {
+            try {
+                await leftCourse(selectedCourse.id!);
+                navigate('/courses');
+            } catch (error) {
+                console.error('Failed to leave course', error);
+            }
+        }
+    };
 
     useEffect(() => {
         if (courseId) {
@@ -50,6 +62,11 @@ const CourseDetails = () => {
 
     const handleDeleteCourse = () => {
         const modal = document.getElementById('delete_course_modal') as HTMLDialogElement;
+        if (modal) modal.showModal();
+    };
+
+    const handleLeaveConfirmation = () => {
+        const modal = document.getElementById('leave_course_modal') as HTMLDialogElement;
         if (modal) modal.showModal();
     };
 
@@ -101,129 +118,100 @@ const CourseDetails = () => {
     }
 
     return (
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            {/* Breadcrumb migliorato */}
-            <nav className="mb-8">
-                <ol className="flex flex-wrap items-center gap-2 text-sm bg-base-200 px-4 py-2 rounded-full">
-                    <li>
-                        <Link
-                            to="/"
-                            className="flex items-center text-primary hover:text-primary-focus transition-colors"
-                            onClick={() => setSelectedCourseId(null)}
-                        >
-                            <FiHome className="mr-1.5"/>
-                            Home
-                        </Link>
-                    </li>
-                    <FiChevronRight className="text-base-content/40"/>
-                    <li>
-                        <Link
-                            to="/courses"
-                            className="flex items-center text-primary hover:text-primary-focus transition-colors"
-                            onClick={() => setSelectedCourseId(null)}
-                        >
-                            <FiBookOpen className="mr-1.5"/>
-                            Courses
-                        </Link>
-                    </li>
-                    <FiChevronRight className="text-base-content/40"/>
-                    <li className="font-medium text-base-content/70">
-                        {selectedCourse.name}
-                    </li>
-                </ol>
-            </nav>
+        <div className="w-full min-h-screen p-4 sm:p-6 lg:p-8">
+            <Breadcrumb course={selectedCourse}/>
 
-            {/* Header corso con azioni */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-                <div className="space-y-1">
-                    {isEditing ? (
-                        <input
-                            type="text"
-                            value={editedName}
-                            onChange={(e) => setEditedName(e.target.value)}
-                            className="text-3xl font-bold bg-transparent border-b-2 border-primary focus:outline-none"
-                            autoFocus
-                        />
-                    ) : (
-                        <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                            {selectedCourse.name}
-                        </h1>
-                    )}
-                    <div className="flex items-center gap-2 text-base-content/60">
-                        <FiFolder className="inline-block"/>
-                        <span>{selectedCourse.folders?.length || 0} folders</span>
-                    </div>
-                </div>
 
-                <div className="flex gap-2">
-                    <button
-                        className="btn btn-ghost btn-square hover:bg-transparent"
-                        data-tip={isEditing ? "Cancel" : "Edit"}
-                        onClick={() => setIsEditing(!isEditing)}
-                    >
-                        <BsPencil className="text-xl text-primary"/>
-                    </button>
-                    <button
-                        className="btn btn-ghost btn-square hover:bg-transparent text-error"
-                        data-tip="Delete course"
-                        onClick={handleDeleteCourse}
-                    >
-                        <BsTrash className="text-xl"/>
-                    </button>
-                </div>
-            </div>
+            <div className="flex flex-col lg:flex-row gap-8 mb-8">
+                {/* Sezione sinistra - Dettagli corso */}
+                <div className="flex-1 space-y-8">
+                    {/* Header corso con azioni */}
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <div className="space-y-2">
+                            {isEditing ? (
+                                <input
+                                    type="text"
+                                    value={editedName}
+                                    onChange={(e) => setEditedName(e.target.value)}
+                                    className="text-3xl font-bold bg-transparent border-b-2 border-primary focus:outline-none"
+                                    autoFocus
+                                />
+                            ) : (
+                                <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                                    {selectedCourse.name}
+                                </h1>
+                            )}
 
-            {/* Sezione descrizione */}
-            <div className="mb-8">
-                {isEditing ? (
-                    <div
-                        className="space-y-4 bg-base-100 p-6 rounded-xl shadow-sm border-2 border-dashed border-primary/20">
-    <textarea
-        value={editedDescription}
-        onChange={(e) => setEditedDescription(e.target.value)}
-        className="textarea textarea-ghost w-full text-lg p-0 border-none focus:outline-none placeholder:text-base-content/40"
-        placeholder="✍️ Type course description here..."
-        rows={3}
-    />
-                        <div className="flex justify-end gap-2">
+                            {/* Descrizione sotto il titolo */}
+                            {!isEditing && (
+                                <div className="text-base-content/60 prose prose-sm italic text-left w-full">
+                                    {selectedCourse.description || 'No description provided'}
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="flex gap-2">
                             <button
-                                className="btn btn-ghost"
-                                onClick={() => setIsEditing(false)}
+                                className="btn btn-ghost btn-square hover:bg-transparent"
+                                data-tip={isEditing ? "Cancel" : "Edit"}
+                                onClick={() => setIsEditing(!isEditing)}
                             >
-                                Cancel
+                                <BsPencil className="text-xl text-primary"/>
                             </button>
                             <button
-                                className="btn btn-primary gap-2"
-                                onClick={handleSaveEdit}
+                                className="btn btn-ghost btn-square hover:bg-transparent text-error"
+                                data-tip="Delete course"
+                                onClick={handleDeleteCourse}
                             >
-                                <BsPencil/>
-                                Save Changes
+                                <BsTrash className="text-xl"/>
+                            </button>
+                            <button
+                                className="btn btn-outline btn-error"
+                                onClick={handleLeaveConfirmation}
+                            >
+                                Leave Course
                             </button>
                         </div>
                     </div>
-                ) : (
-                    <div
-                        className="group relative bg-base-100 p-6 rounded-xl shadow-sm border border-base-200 hover:border-primary/20 transition-colors">
-                        {selectedCourse.description ? (
-                            <div className="prose max-w-none text-base-content/80">
-                                {selectedCourse.description}
+                    {/* Sezione descrizione */}
+                    <div className="mb-8">
+                        {isEditing && (
+                            <div className="bg-base-100 p-6 rounded-xl shadow-sm border-2 border-dashed border-primary/20">
+              <textarea
+                  value={editedDescription}
+                  onChange={(e) => setEditedDescription(e.target.value)}
+                  className="textarea textarea-ghost w-full text-lg p-0 border-none focus:outline-none placeholder:text-base-content/40"
+                  placeholder="✍️ Type course description here..."
+                  rows={3}
+              />
+                                <div className="flex justify-end gap-2 mt-4">
+                                    <button
+                                        className="btn btn-ghost"
+                                        onClick={() => setIsEditing(false)}
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        className="btn btn-primary gap-2"
+                                        onClick={handleSaveEdit}
+                                    >
+                                        <BsPencil/>
+                                        Save Changes
+                                    </button>
+                                </div>
                             </div>
-                        ) : (
-                            <p className="italic text-base-content/40">
-                                No description provided
-                            </p>
                         )}
                     </div>
-                )}
+                </div>
+                <div className="flex-1">
+                    <div className="sticky top-8 h-fit">
+                        <CreateFolderForm />
+                    </div>
+                </div>
             </div>
 
-            {/* Sezione creazione folder */}
-            <div className="mb-8">
-                <CreateFolderForm/>
-            </div>
 
-            {/* Lista folder */}
-            <div className="space-y-6">
+            <div className="space-y-6 w-full">
                 <h2 className="text-2xl font-semibold flex items-center gap-2">
                     <FiFolder className="text-primary"/>
                     Course Folders
@@ -255,6 +243,35 @@ const CourseDetails = () => {
                             >
                                 <BsTrash/>
                                 Delete Permanently
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </dialog>
+
+            <dialog id="leave_course_modal" className="modal">
+                <div className="modal-box bg-base-100 border border-error/20">
+                    <form method="dialog" className="space-y-6">
+                        <div className="flex items-center gap-3">
+                            <div className="p-2 rounded-full bg-error/10 text-error">
+                                <BsBoxArrowRight className="text-2xl"/>
+                            </div>
+                            <h3 className="font-bold text-lg">Confirm Leave</h3>
+                        </div>
+
+                        <p className="py-4 text-base-content/80">
+                            You're about to leave <strong>{selectedCourse.name}</strong>.
+                            You'll lose access to all course content until you rejoin.
+                        </p>
+
+                        <div className="modal-action flex justify-end gap-3">
+                            <button className="btn btn-ghost">Cancel</button>
+                            <button
+                                className="btn btn-error gap-2"
+                                onClick={handleLeaveCourse}
+                            >
+                                <BsBoxArrowRight />
+                                Confirm Leave
                             </button>
                         </div>
                     </form>

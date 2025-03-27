@@ -157,4 +157,17 @@ public class CourseController {
         return Response.status(Response.Status.NO_CONTENT)
                 .build();
     }
+
+    @PUT
+    @Path("/left/{id}")
+    @Operation(summary = "Remove course to logged user given courseID")
+    @APIResponse(
+            responseCode = "204",
+            description = "Remove course to logged user given courseID"
+    )
+    public Response leftCourse(@PathParam("id") String id) {
+        this.courseService.leftCourse(new ObjectId(id), this.userService.getCurrentLoggedUser());
+        return Response.status(Response.Status.NO_CONTENT)
+                .build();
+    }
 }

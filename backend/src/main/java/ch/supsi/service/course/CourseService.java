@@ -86,6 +86,14 @@ public class CourseService implements ICourseService {
     }
 
     @Override
+    public void leftCourse(ObjectId id, User currentUser) {
+        if (currentUser == null)
+            throw new InternalServerErrorException();
+
+        this.userRepository.removeCourseFromUser(id.toString(), currentUser.azureOid);
+    }
+
+    @Override
     public CourseDTO updateCourse(ObjectId id, CourseDTO courseDTO, User currentUser) {
         if (currentUser == null)
             throw new InternalServerErrorException();
