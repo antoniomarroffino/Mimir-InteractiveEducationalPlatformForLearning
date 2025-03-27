@@ -1,14 +1,6 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import {
-    BsHouseFill,
-    BsChevronRight,
-    BsFolderFill,
-    BsListTask
-} from 'react-icons/bs';
-import { CourseDTO, FolderDTO, QuizDTO } from '@dti-isin/backend-api-client';
 import {Link} from 'react-router-dom';
-import {BsChevronRight} from 'react-icons/bs';
+import {BsChevronRight, BsListTask} from 'react-icons/bs';
 import {CourseDTO, FolderDTO, QuizDTO} from '@dti-isin/backend-api-client';
 import {FiBookOpen, FiChevronRight, FiHome} from "react-icons/fi";
 import {useCourseSelection} from "../../hooks/course/useCourseSelection.ts";
@@ -64,34 +56,15 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
                     </>
                 )}
 
-                <BsChevronRight className="text-base-content/40" />
-
-                <li>
-                    <Link
-                        to={`/courses/${course.id}`}
-                        className="
-                            flex
-                            items-center
-                            gap-2
-                            text-base-content/80
-                            hover:text-primary
-                            transition-colors
-                        "
-                    >
-                        <BsFolderFill className="text-lg text-primary/70" />
-                        {course.name}
-                    </Link>
-                </li>
-
                 {folder && (
                     <>
-                        <BsChevronRight className="text-gray-400"/>
+                        <FiChevronRight className="text-base-content/40"/>
                         <li>
                             <Link
                                 to={`/courses/${course?.id}`}
-                                className="text-primary hover:text-primary-focus"
+                                className="flex items-center text-primary hover:text-primary-focus transition-colors"
                             >
-                                <BsFolderFill className="text-lg text-primary/70" />
+                                <FiBookOpen className="mr-1.5"/>
                                 {folder.name}
                             </Link>
                         </li>
@@ -100,24 +73,18 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
 
                 {quiz && (
                     <>
-                        <BsChevronRight className="text-base-content/40" />
+                        <BsChevronRight className="text-base-content/40"/>
                         <li>
                             <div
-                                className="
-                                    flex
-                                    items-center
-                                    gap-2
-                                    text-base-content/90
-                                    font-semibold
-                                "
+                                className="flex items-center text-primary hover:text-primary-focus transition-colors font-semibold"
                             >
-                                <BsListTask className="text-lg text-primary" />
+                                <BsListTask className="mr-1.5"/>
                                 {quiz.name}
                             </div>
                         </li>
                     </>
                 )}
-            </ol>
-        </nav>
+            </ul>
+        </div>
     );
 };

@@ -22,7 +22,6 @@ const CourseDetails = () => {
     const [selectedFolders, setSelectedFolders] = useState<string[]>([]);
     const {deleteFolder, isDeletingFolder, errorDeleteFolder} = useFolderCRUD();
 
-    // Aggiungi queste funzioni
     const toggleSelection = (folderId: string) => {
         setSelectedFolders(prev =>
             prev.includes(folderId)
@@ -204,7 +203,8 @@ const CourseDetails = () => {
                     {/* Sezione descrizione */}
                     <div className="mb-8">
                         {isEditing && (
-                            <div className="bg-base-100 p-6 rounded-xl shadow-sm border-2 border-dashed border-primary/20">
+                            <div
+                                className="bg-base-100 p-6 rounded-xl shadow-sm border-2 border-dashed border-primary/20">
               <textarea
                   value={editedDescription}
                   onChange={(e) => setEditedDescription(e.target.value)}
@@ -233,7 +233,7 @@ const CourseDetails = () => {
                 </div>
                 <div className="flex-1">
                     <div className="top-8 h-fit">
-                        <CreateFolderForm />
+                        <CreateFolderForm/>
                     </div>
                 </div>
             </div>
@@ -261,7 +261,7 @@ const CourseDetails = () => {
                             onClick={toggleSelectAll}
                             className="btn btn-ghost btn-sm"
                         >
-                            {selectedFolders.length === selectedCourse?.folders?.length ?
+                            {selectedCourse.folders!.length > 0 && selectedFolders.length === selectedCourse?.folders?.length ?
                                 'Deselect All' : 'Select All'}
                         </button>
                     </div>
@@ -331,7 +331,7 @@ const CourseDetails = () => {
                                 className="btn btn-error gap-2"
                                 onClick={handleLeaveCourse}
                             >
-                                <BsBoxArrowRight />
+                                <BsBoxArrowRight/>
                                 Confirm Leave
                             </button>
                         </div>
