@@ -1,7 +1,9 @@
 package ch.supsi.model.dto.api;
 
 import ch.supsi.model.api.user.Role;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 
+@RegisterForReflection
 public class UserWithoutCoursesDTO {
     private String azureOid;
     private String name;

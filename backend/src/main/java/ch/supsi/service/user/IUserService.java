@@ -4,8 +4,12 @@ import ch.supsi.model.api.user.Role;
 import ch.supsi.model.api.user.User;
 import ch.supsi.model.dto.api.UserWithoutCoursesDTO;
 
+import java.util.List;
+
 
 public interface IUserService {
+    List<User> getTeachers();
+
     User getUserByAzureOid(String oid);
 
     void changeRole(com.microsoft.graph.models.User microsoftUser, Role role);

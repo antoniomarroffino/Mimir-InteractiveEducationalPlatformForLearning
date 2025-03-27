@@ -14,8 +14,8 @@ public class UserRepository implements PanacheMongoRepository<User> {
         return find("azureOid", oid).firstResultOptional();
     }
 
-    public List<User> findNonAdminUsers() {
-        return list("role != ?1", Role.ADMIN);
+    public List<User> findTeacherUsers() {
+        return list("role = ?1", Role.TEACHER);
     }
 
     public List<User> findAdminUsers() {
