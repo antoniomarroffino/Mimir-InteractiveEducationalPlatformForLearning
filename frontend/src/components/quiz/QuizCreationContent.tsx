@@ -3,7 +3,7 @@ import {useNavigate, useParams} from 'react-router-dom';
 import {QuestionDTO, QuestionType} from '@dti-isin/backend-api-client';
 import {Breadcrumb} from "../common/Breadcrumb.tsx";
 import {QuestionsList} from "../question/QuestionList.tsx";
-import CreateQuestionForm from "../question/CreateQuestionForm.tsx";
+import {CreateQuestionForm} from "../question/CreateQuestionForm.tsx";
 import {QuestionTypeSelector} from "../question/QuestionTypeSelector.tsx";
 import {QuestionEditor} from "../question/QuestionEditor.tsx";
 import {useCourseList} from "../../hooks/course/useCourseList.ts";
