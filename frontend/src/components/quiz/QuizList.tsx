@@ -17,9 +17,9 @@ export const QuizList: React.FC<QuizListProps> = ({courseId, folderId}) => {
 
     if (isLoadingQuizzes) {
         return (
-            <p className="text-center text-base-content/70 py-4">
-                Loading quizzes...
-            </p>
+            <div className="flex justify-center py-4">
+                <span className="loading loading-spinner loading-md text-primary">Is loading quizzes</span>
+            </div>
         );
     }
 

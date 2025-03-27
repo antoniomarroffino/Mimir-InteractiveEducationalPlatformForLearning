@@ -8,14 +8,15 @@ export const CourseCRUDProvider: React.FC<{ children: React.ReactNode }> = ({chi
     const queryClient = useQueryClient();
 
     const createCourseMutation = useMutation(
-        ({name, description}: { name: string; description?: string }) =>
-            courseApi.apiCoursesPost({courseDTO: {name, description}}).then(response => response.data),
+        (courseDTO: CourseDTO) =>
+            courseApi.apiCoursesPost({courseDTO}).then(response => response.data),
         {
             onSuccess: (newCourse) => {
                 queryClient.setQueryData<CourseDTO[]>(["courses"], (oldCourses) =>
                     oldCourses ? [...oldCourses, newCourse] : [newCourse]
                 );
-                queryClient.invalidateQueries(["courses"]);
+                queryClient.invalidateQueries(["teacherCourses"]);
+                queryClient.invalidateQueries(["allCourses"]);
             },
             onError: (error: Error) => {
                 console.error("Course creation error:", error);
@@ -24,8 +25,8 @@ export const CourseCRUDProvider: React.FC<{ children: React.ReactNode }> = ({chi
     );
 
     const updateCourseMutation = useMutation(
-        ({id, name, description}: { id: string; name: string; description?: string }) =>
-            courseApi.apiCoursesIdPut({id, courseDTO: {name, description}}).then(response => response.data),
+        ({id, courseDTO}: { id: string; courseDTO: CourseDTO }) =>
+            courseApi.apiCoursesIdPut({id, courseDTO}).then(response => response.data),
         {
             onSuccess: (updatedCourse) => {
                 queryClient.setQueryData<CourseDTO[]>(["courses"], (oldCourses) =>
@@ -33,7 +34,8 @@ export const CourseCRUDProvider: React.FC<{ children: React.ReactNode }> = ({chi
                         course.id === updatedCourse.id ? updatedCourse : course
                     ) : [updatedCourse]
                 );
-                queryClient.invalidateQueries(["courses"]);
+                queryClient.invalidateQueries(["teacherCourses"]);
+                queryClient.invalidateQueries(["allCourses"]);
             },
             onError: (error: Error) => {
                 console.error("Course update error:", error);
@@ -41,11 +43,41 @@ export const CourseCRUDProvider: React.FC<{ children: React.ReactNode }> = ({chi
         }
     );
 
+    const assignCourseMutation = useMutation(
+        (id: string) =>
+            courseApi.apiCoursesAssignIdPut({id}),
+        {
+            onSuccess: () => {
+                queryClient.invalidateQueries(["teacherCourses"]);
+                queryClient.invalidateQueries(["allCourses"]);
+            },
+            onError: (error: Error) => {
+                console.error("Course assign error:", error);
+            }
+        }
+    );
+
+    const leftCourseMutation = useMutation(
+        (id: string) =>
+            courseApi.apiCoursesLeftIdPut({id}),
+        {
+            onSuccess: () => {
+                queryClient.invalidateQueries(["teacherCourses"]);
+                queryClient.invalidateQueries(["allCourses"]);
+            },
+            onError: (error: Error) => {
+                console.error("Course left error:", error);
+            }
+        }
+    );
+
+
     const deleteCourseMutation = useMutation(
         (id: string) => courseApi.apiCoursesIdDelete({id}),
         {
             onSuccess: () => {
-                queryClient.invalidateQueries(["courses"]);
+                queryClient.invalidateQueries(["teacherCourses"]);
+                queryClient.invalidateQueries(["allCourses"]);
             },
             onError: (error: Error) => {
                 console.error("Course delete error:", error);
@@ -54,20 +86,38 @@ export const CourseCRUDProvider: React.FC<{ children: React.ReactNode }> = ({chi
     );
 
     const value = useMemo(() => ({
-        createCourse: async (name: string, description?: string) => {
+        createCourse: async (courseDTO: CourseDTO) => {
             try {
-                return await createCourseMutation.mutateAsync({name, description});
+                return await createCourseMutation.mutateAsync(courseDTO);
             } catch (err) {
                 console.error("Course creation failed:", err);
                 throw err;
             }
         },
 
-        updateCourse: async (id: string, name: string, description?: string) => {
+        updateCourse: async (id: string, courseDTO: CourseDTO) => {
             try {
-                return await updateCourseMutation.mutateAsync({id, name, description});
+                return await updateCourseMutation.mutateAsync({id, courseDTO});
             } catch (err) {
                 console.error("Course update failed:", err);
+                throw err;
+            }
+        },
+
+        assignCourse: async (id: string) => {
+            try {
+                await assignCourseMutation.mutateAsync(id);
+            } catch (err) {
+                console.error("Course assign failed:", err);
+                throw err;
+            }
+        },
+
+        leftCourse: async (id: string) => {
+            try {
+                await leftCourseMutation.mutateAsync(id);
+            } catch (err) {
+                console.error("Course left failed:", err);
                 throw err;
             }
         },
@@ -83,11 +133,15 @@ export const CourseCRUDProvider: React.FC<{ children: React.ReactNode }> = ({chi
 
         isCreatingCourse: createCourseMutation.isLoading,
         isUpdatingCourse: updateCourseMutation.isLoading,
+        isAssigningCourse: assignCourseMutation.isLoading,
+        isLeftCourse: leftCourseMutation.isLoading,
         isDeletingCourse: deleteCourseMutation.isLoading,
         errorCreateCourse: createCourseMutation.error,
         errorUpdateCourse: updateCourseMutation.error,
+        errorAssignCourse: updateCourseMutation.error,
+        errorLeftCourse: leftCourseMutation.error,
         errorDeleteCourse: deleteCourseMutation.error,
-    }), [createCourseMutation, deleteCourseMutation, updateCourseMutation]);
+    }), [createCourseMutation, deleteCourseMutation, updateCourseMutation, assignCourseMutation, leftCourseMutation]);
 
     return (
         <CourseCRUDContext.Provider value={value}>

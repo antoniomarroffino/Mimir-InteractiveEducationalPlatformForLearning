@@ -6,14 +6,14 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @ApplicationScoped
 public class CourseRepository implements PanacheMongoRepository<Course> {
     public List<Course> listAll() {
         return mongoCollection().find().into(new ArrayList<>());
     }
-
-    public List<Course> findAllCourses() {
-        return list("{}");
+    public Optional<Course> findByNameOptional(String name) {
+        return find("{'name': ?1}", name).firstResultOptional();
     }
 }

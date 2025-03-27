@@ -1,25 +1,66 @@
 import {useEffect, useState} from 'react';
-import {Link, useNavigate, useParams} from 'react-router-dom';
-import {BsChevronRight, BsPencil, BsTrash} from 'react-icons/bs';
+import {useNavigate, useParams} from 'react-router-dom';
 import {FolderList} from "../components/folder/FolderList.tsx";
 import {CreateFolderForm} from "../components/folder/CreateFolderForm.tsx";
 import {useCourseList} from "../hooks/course/useCourseList.ts";
 import {useCourseSelection} from "../hooks/course/useCourseSelection.ts";
 import {useCourseCRUD} from "../hooks/course/useCourseCRUD.ts";
+import {FiFolder} from "react-icons/fi";
+import {BsBoxArrowRight, BsPencil, BsTrash} from "react-icons/bs";
+import {Breadcrumb} from "../components/common/Breadcrumb.tsx";
+import {useFolderCRUD} from "../hooks/folder/useFolderCRUD.ts";
 
 const CourseDetails = () => {
     const {courseId} = useParams();
     const navigate = useNavigate();
-    const {courses, isLoadingCourses, errorCourses} = useCourseList();
+    const {teacherCourses, isLoadingTeacherCourses, errorTeacherCourses} = useCourseList();
     const {setSelectedCourseId, setSelectedCourse, selectedCourse} = useCourseSelection();
-    const {updateCourse, deleteCourse} = useCourseCRUD();
+    const {updateCourse, deleteCourse, leftCourse} = useCourseCRUD();
     const [isEditing, setIsEditing] = useState(false);
     const [editedName, setEditedName] = useState("");
     const [editedDescription, setEditedDescription] = useState("");
+    const [selectedFolders, setSelectedFolders] = useState<string[]>([]);
+    const {deleteFolder, isDeletingFolder, errorDeleteFolder} = useFolderCRUD();
+
+    // Aggiungi queste funzioni
+    const toggleSelection = (folderId: string) => {
+        setSelectedFolders(prev =>
+            prev.includes(folderId)
+                ? prev.filter(id => id !== folderId)
+                : [...prev, folderId]
+        );
+    };
+
+    const toggleSelectAll = () => {
+        if (selectedFolders.length === selectedCourse?.folders?.length) {
+            setSelectedFolders([]);
+        } else {
+            setSelectedFolders(selectedCourse?.folders?.map(f => f.id!) || []);
+        }
+    };
+
+    const handleDeleteSelected = async () => {
+        for (const folderId of selectedFolders) {
+            await deleteFolder(folderId);
+        }
+        setSelectedFolders([]);
+    };
+
+
+    const handleLeaveCourse = async () => {
+        if (selectedCourse) {
+            try {
+                await leftCourse(selectedCourse.id!);
+                navigate('/courses');
+            } catch (error) {
+                console.error('Failed to leave course', error);
+            }
+        }
+    };
 
     useEffect(() => {
         if (courseId) {
-            const course = courses.find(course => course.id === courseId);
+            const course = teacherCourses.find(course => course.id === courseId);
             if (course) {
                 setSelectedCourseId(courseId);
                 setSelectedCourse(course);
@@ -27,15 +68,18 @@ const CourseDetails = () => {
                 setEditedDescription(course.description || '');
             }
         }
-    }, [courseId, courses, setSelectedCourseId, setSelectedCourse]);
+    }, [courseId, teacherCourses, setSelectedCourseId, setSelectedCourse]);
 
     const handleSaveEdit = async () => {
         if (selectedCourse) {
             try {
                 await updateCourse(
                     selectedCourse.id!,
-                    editedName,
-                    editedDescription || undefined
+                    {
+                        ...selectedCourse,
+                        name: editedName,
+                        description: editedDescription || undefined,
+                    }
                 );
                 setIsEditing(false);
             } catch (error) {
@@ -46,6 +90,11 @@ const CourseDetails = () => {
 
     const handleDeleteCourse = () => {
         const modal = document.getElementById('delete_course_modal') as HTMLDialogElement;
+        if (modal) modal.showModal();
+    };
+
+    const handleLeaveConfirmation = () => {
+        const modal = document.getElementById('leave_course_modal') as HTMLDialogElement;
         if (modal) modal.showModal();
     };
 
@@ -60,7 +109,7 @@ const CourseDetails = () => {
         }
     };
 
-    if (isLoadingCourses) {
+    if (isLoadingTeacherCourses) {
         return (
             <div className="flex justify-center p-8">
                 <span className="loading loading-spinner loading-lg text-primary"></span>
@@ -68,10 +117,10 @@ const CourseDetails = () => {
         );
     }
 
-    if (errorCourses) {
+    if (errorTeacherCourses) {
         return (
             <div className="alert alert-error flex justify-between items-center">
-                <span>Error loading courses: {errorCourses.message}</span>
+                <span>Error loading courses: {errorTeacherCourses.message}</span>
                 <button
                     className="btn btn-sm btn-outline"
                     onClick={() => navigate('/')}
@@ -97,116 +146,196 @@ const CourseDetails = () => {
     }
 
     return (
-        <div className="container mx-auto px-4 py-8">
-            {/* Breadcrumb */}
-            <div className="mb-8 flex justify-between items-center">
-                <ul className="flex items-center gap-2 text-sm">
-                    <li>
-                        <Link
-                            to="/"
-                            className="text-primary hover:text-primary-focus"
-                            onClick={() => setSelectedCourseId(null)}
-                        >
-                            Home
-                        </Link>
-                    </li>
-                    <BsChevronRight className="text-gray-400"/>
-                    <li>
-                        <span className="font-semibold">{selectedCourse.name}</span>
-                    </li>
-                </ul>
-                <div className="flex gap-2">
-                    <button
-                        className="btn btn-ghost btn-sm"
-                        onClick={() => setIsEditing(!isEditing)}
-                    >
-                        {isEditing ? 'Cancel' : <BsPencil/>}
-                    </button>
-                    <button
-                        className="btn btn-ghost btn-sm text-error"
-                        onClick={handleDeleteCourse}
-                    >
-                        <BsTrash/>
-                    </button>
-                </div>
-            </div>
+        <div className="w-full min-h-screen p-4 sm:p-6 lg:p-8">
+            <Breadcrumb course={selectedCourse}/>
 
-            {/* Course Title and Info */}
-            <div className="bg-base-100 rounded-lg p-6 shadow-lg mb-8">
-                {isEditing ? (
-                    <div className="space-y-4">
-                        <input
-                            type="text"
-                            value={editedName}
-                            onChange={(e) => setEditedName(e.target.value)}
-                            className="input input-bordered w-full"
-                            placeholder="Course Name"
-                        />
-                        <textarea
-                            value={editedDescription}
-                            onChange={(e) => setEditedDescription(e.target.value)}
-                            className="textarea textarea-bordered w-full"
-                            placeholder="Course Description (Optional)"
-                            rows={3}
-                        />
-                        <div className="flex justify-end gap-2">
+
+            <div className="flex flex-col lg:flex-row gap-8 mb-8">
+                {/* Sezione sinistra - Dettagli corso */}
+                <div className="flex-1 space-y-8">
+                    {/* Header corso con azioni */}
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <div className="space-y-2">
+                            {isEditing ? (
+                                <input
+                                    type="text"
+                                    value={editedName}
+                                    onChange={(e) => setEditedName(e.target.value)}
+                                    className="text-3xl font-bold bg-transparent border-b-2 border-primary focus:outline-none"
+                                    autoFocus
+                                />
+                            ) : (
+                                <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                                    {selectedCourse.name}
+                                </h1>
+                            )}
+
+                            {/* Descrizione sotto il titolo */}
+                            {!isEditing && (
+                                <div className="text-base-content/60 prose prose-sm italic text-left w-full">
+                                    {selectedCourse.description || 'No description provided'}
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="flex gap-2">
                             <button
-                                className="btn btn-primary"
-                                onClick={handleSaveEdit}
+                                className="btn btn-ghost btn-square hover:bg-transparent"
+                                data-tip={isEditing ? "Cancel" : "Edit"}
+                                onClick={() => setIsEditing(!isEditing)}
                             >
-                                Save Changes
+                                <BsPencil className="text-xl text-primary"/>
+                            </button>
+                            <button
+                                className="btn btn-ghost btn-square hover:bg-transparent text-error"
+                                data-tip="Delete course"
+                                onClick={handleDeleteCourse}
+                            >
+                                <BsTrash className="text-xl"/>
+                            </button>
+                            <button
+                                className="btn btn-outline btn-error"
+                                onClick={handleLeaveConfirmation}
+                            >
+                                Leave Course
                             </button>
                         </div>
                     </div>
-                ) : (
-                    <>
-                        <h1 className="text-3xl font-bold mb-2">{selectedCourse.name}</h1>
-                        <p className="text-base-content/70 mb-2">
-                            {selectedCourse.description || 'No description'}
-                        </p>
-                        <p className="text-base-content/70">
-                            {selectedCourse.folders?.length || 0} folders
-                        </p>
-                    </>
-                )}
+                    {/* Sezione descrizione */}
+                    <div className="mb-8">
+                        {isEditing && (
+                            <div className="bg-base-100 p-6 rounded-xl shadow-sm border-2 border-dashed border-primary/20">
+              <textarea
+                  value={editedDescription}
+                  onChange={(e) => setEditedDescription(e.target.value)}
+                  className="textarea textarea-ghost w-full text-lg p-0 border-none focus:outline-none placeholder:text-base-content/40"
+                  placeholder="✍️ Type course description here..."
+                  rows={3}
+              />
+                                <div className="flex justify-end gap-2 mt-4">
+                                    <button
+                                        className="btn btn-ghost"
+                                        onClick={() => setIsEditing(false)}
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        className="btn btn-primary gap-2"
+                                        onClick={handleSaveEdit}
+                                    >
+                                        <BsPencil/>
+                                        Save Changes
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+                <div className="flex-1">
+                    <div className="top-8 h-fit">
+                        <CreateFolderForm />
+                    </div>
+                </div>
             </div>
 
-            <CreateFolderForm/>
 
-            {/* Folders Section */}
-            <div className="bg-base-100 rounded-lg p-6 shadow-lg">
-                <h2 className="text-2xl font-semibold mb-4">Folders</h2>
+            <div className="space-y-6 w-full">
+                <div className="flex justify-between items-center">
+                    <h2 className="text-2xl font-semibold flex items-center gap-2">
+                        <FiFolder className="text-primary"/>
+                        Course Folders
+                    </h2>
 
-                <FolderList courseId={courseId}/>
-            </div>
-
-            {/* Delete Confirmation Modal */}
-            <dialog id="delete_course_modal" className="modal">
-                <div className="modal-box">
-                    <h3 className="font-bold text-lg">Delete Course</h3>
-                    <p className="py-4">
-                        Are you sure you want to delete this course?
-                        This action cannot be undone and will remove all associated folders and content.
-                    </p>
-                    <div className="modal-action">
-                        <form method="dialog" className="flex gap-2">
+                    <div className="flex gap-2 items-center">
+                        {selectedFolders.length > 0 && (
                             <button
-                                className="btn btn-ghost"
-                                onClick={() => {
-                                    const modal = document.getElementById('delete_course_modal') as HTMLDialogElement;
-                                    if (modal) modal.close();
-                                }}
+                                onClick={handleDeleteSelected}
+                                className="btn btn-error btn-sm gap-2"
+                                disabled={isDeletingFolder}
                             >
-                                Cancel
+                                <BsTrash/>
+                                Delete ({selectedFolders.length})
                             </button>
+                        )}
+                        <button
+                            onClick={toggleSelectAll}
+                            className="btn btn-ghost btn-sm"
+                        >
+                            {selectedFolders.length === selectedCourse?.folders?.length ?
+                                'Deselect All' : 'Select All'}
+                        </button>
+                    </div>
+                </div>
+
+                {errorDeleteFolder && (
+                    <div className="alert alert-error">
+                        {errorDeleteFolder.message}
+                    </div>
+                )}
+
+                <FolderList
+                    courseId={courseId}
+                    selectedFolders={selectedFolders}
+                    onToggleSelect={toggleSelection}
+                />
+            </div>
+
+            {/* Modal delete migliorato */}
+            <dialog id="delete_course_modal" className="modal">
+                <div className="modal-box bg-base-100 border border-error/20">
+                    <form method="dialog" className="space-y-6">
+                        <div className="flex items-center gap-3">
+                            <div className="p-2 rounded-full bg-error/10 text-error">
+                                <BsTrash className="text-2xl"/>
+                            </div>
+                            <h3 className="font-bold text-lg">Confirm Deletion</h3>
+                        </div>
+
+                        <p className="py-4 text-base-content/80">
+                            You're about to permanently delete <strong>{selectedCourse.name}</strong>
+                            and all its contents. This action cannot be undone.
+                        </p>
+
+                        <div className="modal-action flex justify-end gap-3">
+                            <button className="btn btn-ghost">Cancel</button>
                             <button
-                                className="btn btn-error"
+                                className="btn btn-error gap-2"
                                 onClick={confirmDeleteCourse}
                             >
-                                Delete Course
+                                <BsTrash/>
+                                Delete Permanently
                             </button>
-                        </form>
-                    </div>
+                        </div>
+                    </form>
+                </div>
+            </dialog>
+
+            <dialog id="leave_course_modal" className="modal">
+                <div className="modal-box bg-base-100 border border-error/20">
+                    <form method="dialog" className="space-y-6">
+                        <div className="flex items-center gap-3">
+                            <div className="p-2 rounded-full bg-error/10 text-error">
+                                <BsBoxArrowRight className="text-2xl"/>
+                            </div>
+                            <h3 className="font-bold text-lg">Confirm Leave</h3>
+                        </div>
+
+                        <p className="py-4 text-base-content/80">
+                            You're about to leave <strong>{selectedCourse.name}</strong>.
+                            You'll lose access to all course content until you rejoin.
+                        </p>
+
+                        <div className="modal-action flex justify-end gap-3">
+                            <button className="btn btn-ghost">Cancel</button>
+                            <button
+                                className="btn btn-error gap-2"
+                                onClick={handleLeaveCourse}
+                            >
+                                <BsBoxArrowRight />
+                                Confirm Leave
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </dialog>
         </div>

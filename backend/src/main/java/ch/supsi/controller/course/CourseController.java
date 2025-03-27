@@ -30,6 +30,22 @@ public class CourseController {
     IUserService userService;
 
     @GET
+    @Path("/teacher")
+    @Operation(summary = "Get all courses of a teacher")
+    @APIResponse(
+            responseCode = "200",
+            description = "List of courses retrieved successfully from authenticated user",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(type = SchemaType.ARRAY, implementation = CourseDTO.class)
+            )
+    )
+    public Response getTeacherCourses() {
+        List<CourseDTO> coursesDTO = this.courseService.getTeacherCourses(this.userService.getCurrentLoggedUser());
+        return Response.ok(coursesDTO).build();
+    }
+
+    @GET
     @Operation(summary = "Get all courses")
     @APIResponse(
             responseCode = "200",
@@ -40,7 +56,7 @@ public class CourseController {
             )
     )
     public Response getCourses() {
-        List<CourseDTO> coursesDTO = this.courseService.getAllCourses(this.userService.getCurrentLoggedUser());
+        List<CourseDTO> coursesDTO = this.courseService.getAllCourses();
         return Response.ok(coursesDTO).build();
     }
 
@@ -100,7 +116,6 @@ public class CourseController {
             @PathParam("id") String id,
             @Valid CourseDTO courseDTO
     ) {
-        courseDTO.setId(id);
         CourseDTO updatedCourseDTO = this.courseService.updateCourse(
                 new ObjectId(id),
                 courseDTO,
@@ -139,6 +154,19 @@ public class CourseController {
     )
     public Response assignCourse(@PathParam("id") String id) {
         this.courseService.assignCourse(new ObjectId(id), this.userService.getCurrentLoggedUser());
+        return Response.status(Response.Status.NO_CONTENT)
+                .build();
+    }
+
+    @PUT
+    @Path("/left/{id}")
+    @Operation(summary = "Remove course to logged user given courseID")
+    @APIResponse(
+            responseCode = "204",
+            description = "Remove course to logged user given courseID"
+    )
+    public Response leftCourse(@PathParam("id") String id) {
+        this.courseService.leftCourse(new ObjectId(id), this.userService.getCurrentLoggedUser());
         return Response.status(Response.Status.NO_CONTENT)
                 .build();
     }

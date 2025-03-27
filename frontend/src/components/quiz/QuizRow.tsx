@@ -5,6 +5,7 @@ import {useNavigate} from 'react-router-dom';
 import {useQuizPublicationCRUD} from '../../hooks/quizPublication/useQuizPublicationCRUD.ts';
 import {useQuizPublicationVerification} from '../../hooks/quizPublication/useQuizPublicationVerification.ts';
 import {useQuizCRUD} from "../../hooks/quiz/useQuizCRUD.ts";
+import {FiAlertCircle} from "react-icons/fi";
 
 interface QuizRowProps {
     quiz: QuizDTO;
@@ -107,8 +108,7 @@ export const QuizRow: React.FC<QuizRowProps> = ({
 
     return (
         <>
-            <div className="p-3 bg-base-200 rounded flex justify-between items-center">
-                <div className="flex items-center gap-2">
+            <div className="p-4 bg-base-100 rounded-lg flex justify-between items-center border-2 border-base-200 hover:border-primary/30 shadow-sm hover:shadow-xs transition-all duration-200 ease-out">                <div className="flex items-center gap-2">
                     <span>{quiz.name}</span>
 
                 </div>
@@ -176,34 +176,51 @@ export const QuizRow: React.FC<QuizRowProps> = ({
 
             {/* Delete Modal */}
             {showDeleteModal && (
-                <div className="modal modal-open">
-                    <div className="modal-box">
-                        <h3 className="font-bold text-lg">Conferma eliminazione</h3>
-                        {error && (
-                            <div className="alert alert-error mt-4">
-                                {error}
+                <dialog
+                    id="delete_course_modal"
+                    open={showDeleteModal}
+                    className="modal"
+                    onClose={() => setShowDeleteModal(false)}
+                >
+                    <div className="modal-box bg-base-100 border border-error/20">
+                        <form method="dialog" className="space-y-6">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 rounded-full bg-error/10 text-error">
+                                    <BsTrash className="text-2xl"/>
+                                </div>
+                                <h3 className="font-bold text-lg">Confirm Deletion</h3>
                             </div>
-                        )}
-                        <p className="py-4">
-                            Sei sicuro di voler eliminare "{quiz.name}"?
-                            Questa azione è irreversibile.
-                        </p>
-                        <div className="modal-action">
-                            <button
-                                className="btn btn-error"
-                                onClick={handleDeleteQuiz}
-                            >
-                                Elimina
-                            </button>
-                            <button
-                                className="btn"
-                                onClick={() => setShowDeleteModal(false)}
-                            >
-                                Annulla
-                            </button>
-                        </div>
+
+                            {error && (
+                                <div className="alert alert-error">
+                                    <FiAlertCircle className="text-lg"/>
+                                    {error}
+                                </div>
+                            )}
+
+                            <p className="py-4 text-base-content/80">
+                                You're about to permanently delete <strong>{quiz.name}</strong>.
+                                This action cannot be undone.
+                            </p>
+
+                            <div className="modal-action flex justify-end gap-3">
+                                <button
+                                    className="btn btn-ghost"
+                                    onClick={() => setShowDeleteModal(false)}
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    className="btn btn-error gap-2"
+                                    onClick={handleDeleteQuiz}
+                                >
+                                    <BsTrash />
+                                    Delete Permanently
+                                </button>
+                            </div>
+                        </form>
                     </div>
-                </div>
+                </dialog>
             )}
         </>
     );

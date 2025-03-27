@@ -4,9 +4,9 @@ import {useCourseList} from "../../hooks/course/useCourseList.ts";
 import {BookOpenIcon} from "@heroicons/react/24/outline";
 
 export const CourseList = () => {
-    const {courses, isLoadingCourses, errorCourses} = useCourseList();
+    const {teacherCourses, isLoadingTeacherCourses, errorTeacherCourses} = useCourseList();
 
-    if (errorCourses) {
+    if (errorTeacherCourses) {
         return (
             <div className="alert alert-error shadow-lg">
                 <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none"
@@ -16,7 +16,7 @@ export const CourseList = () => {
                 </svg>
                 <div>
                     <h3 className="font-bold">Error Loading Courses</h3>
-                    <div className="text-xs">{errorCourses.message}</div>
+                    <div className="text-xs">{errorTeacherCourses.message}</div>
                 </div>
             </div>
         );
@@ -24,7 +24,7 @@ export const CourseList = () => {
 
     return (
         <div className="space-y-8">
-            {isLoadingCourses ? (
+            {isLoadingTeacherCourses ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {[...Array(3)].map((_, i) => (
                         <SkeletonLoader key={i} className="h-48 rounded-xl"/>
@@ -32,7 +32,7 @@ export const CourseList = () => {
                 </div>
             ) : (
                 <>
-                    {courses.length === 0 ? (
+                    {teacherCourses.length === 0 ? (
                         <div className="text-center p-8 rounded-2xl bg-gradient-to-br from-primary/10 to-secondary/10">
                             <BookOpenIcon className="w-16 h-16 mx-auto text-primary/70 mb-4"/>
                             <h3 className="text-2xl font-bold mb-2 text-base-content">
@@ -45,7 +45,7 @@ export const CourseList = () => {
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
-                            {courses.map(course => (
+                            {teacherCourses.map(course => (
                                 <CourseCard
                                     key={course.id}
                                     course={course}

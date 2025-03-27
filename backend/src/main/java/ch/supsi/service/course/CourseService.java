@@ -31,7 +31,7 @@ public class CourseService implements ICourseService {
     CourseMapper courseMapper;
 
     @Override
-    public List<CourseDTO> getAllCourses(User user) {
+    public List<CourseDTO> getTeacherCourses(User user) {
         if (user == null)
             throw new InternalServerErrorException();
 
@@ -40,6 +40,13 @@ public class CourseService implements ICourseService {
                 .map(Optional::orElseThrow)
                 .map(this.courseMapper::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<CourseDTO> getAllCourses() {
+        return this.courseRepository.findAll().stream()
+                .map(this.courseMapper::toDTO)
+                .toList();
     }
 
     @Override
@@ -79,6 +86,14 @@ public class CourseService implements ICourseService {
     }
 
     @Override
+    public void leftCourse(ObjectId id, User currentUser) {
+        if (currentUser == null)
+            throw new InternalServerErrorException();
+
+        this.userRepository.removeCourseFromUser(id.toString(), currentUser.azureOid);
+    }
+
+    @Override
     public CourseDTO updateCourse(ObjectId id, CourseDTO courseDTO, User currentUser) {
         if (currentUser == null)
             throw new InternalServerErrorException();
@@ -94,15 +109,16 @@ public class CourseService implements ICourseService {
 
         String newName = courseDTO.getName().trim();
         if (!existingCourse.name.equalsIgnoreCase(newName)) {
-            if (this.isCourseNameDuplicated(newName, id)) {
+            if (this.isCourseNameDuplicated(newName)) {
                 throw new BadRequestException("Course name '" + newName + "' already exists");
             }
+
+            existingCourse.name = courseDTO.getName();
         }
 
-        existingCourse.name = courseDTO.getName();
         existingCourse.description = courseDTO.getDescription();
 
-        this.courseRepository.persist(existingCourse);
+        this.courseRepository.update(existingCourse);
 
         return this.courseMapper.toDTO(existingCourse);
     }
@@ -134,16 +150,12 @@ public class CourseService implements ICourseService {
             throw new BadRequestException("Course name cannot be empty");
         }
 
-        if (courseRepository.find("LOWER(name)", courseName.toLowerCase()).count() > 0) {
+        if (this.isCourseNameDuplicated(courseDTO.getName())) {
             throw new BadRequestException("Course name '" + courseName + "' already exists");
         }
     }
 
-    private boolean isCourseNameDuplicated(String courseName, ObjectId excludeCourseId) {
-        return courseRepository.find(
-                "LOWER(name) = LOWER(?1) and id != ?2",
-                courseName.trim(),
-                excludeCourseId
-        ).count() > 0;
+    private boolean isCourseNameDuplicated(String courseName) {
+        return this.courseRepository.findByNameOptional(courseName).isPresent();
     }
 }

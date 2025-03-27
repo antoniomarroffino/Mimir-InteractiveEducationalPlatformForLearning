@@ -7,7 +7,8 @@ import org.bson.types.ObjectId;
 import java.util.List;
 
 public interface ICourseService {
-    List<CourseDTO> getAllCourses(User user);
+    List<CourseDTO> getTeacherCourses(User user);
+    List<CourseDTO> getAllCourses();
 
     CourseDTO getCourseById(ObjectId id);
 
@@ -18,4 +19,5 @@ public interface ICourseService {
     void deleteCourse(ObjectId id, User currentUser);
 
     void assignCourse(ObjectId id, User currentUser);
+    void leftCourse(ObjectId id, User currentUser);
 }
