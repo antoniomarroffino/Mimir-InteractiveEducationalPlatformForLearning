@@ -1,19 +1,18 @@
 package ch.supsi.model.api.response;
 
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
-import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
-@Schema(description = "True/False Question Response model", name = "TrueFalseResponse")
+@Schema(description = "True/False Question Response model", name = "TrueFalseQuestionResponse")
 @BsonDiscriminator(key = "type", value = "TRUE_FALSE")
-public class TrueFalseResponse extends QuestionResponse {
+public class TrueFalseQuestionResponse extends QuestionResponse {
     public boolean selectedAnswer;
 
-    public TrueFalseResponse() {
+    public TrueFalseQuestionResponse() {
         super(ResponseType.TRUE_FALSE);
     }
 
-    public TrueFalseResponse(boolean selectedAnswer) {
+    public TrueFalseQuestionResponse(boolean selectedAnswer) {
         super(ResponseType.TRUE_FALSE);
         this.selectedAnswer = selectedAnswer;
     }

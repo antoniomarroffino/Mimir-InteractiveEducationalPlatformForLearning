@@ -11,8 +11,8 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 @BsonDiscriminator(key = "type")
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = TrueFalseResponse.class, name = "TRUE_FALSE"),
-        @JsonSubTypes.Type(value = MultipleChoiceResponse.class, name = "MULTIPLE_CHOICE")
+        @JsonSubTypes.Type(value = TrueFalseQuestionResponse.class, name = "TRUE_FALSE"),
+        @JsonSubTypes.Type(value = MultipleChoiceQuestionResponse.class, name = "MULTIPLE_CHOICE")
 })
 public abstract class QuestionResponse {
     public ObjectId id;

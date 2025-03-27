@@ -1,0 +1,12 @@
+package ch.supsi.service.quizattempt;
+
+import ch.supsi.model.dto.api.QuizAttemptDTO;
+import org.bson.types.ObjectId;
+
+import java.util.List;
+
+public interface IQuizAttemptService {
+    QuizAttemptDTO createQuizAttempt(QuizAttemptDTO quizAttemptDTO);
+    QuizAttemptDTO getQuizAttemptById(ObjectId attemptId);
+    List<QuizAttemptDTO> getQuizAttemptsByPublication(ObjectId publicationId);
+}

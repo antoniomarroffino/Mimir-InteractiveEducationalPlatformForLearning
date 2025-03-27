@@ -5,16 +5,16 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import java.util.List;
 
-@Schema(description = "Multiple Choice Question Response model", name = "MultipleChoiceResponse")
+@Schema(description = "Multiple Choice Question Response model", name = "MultipleChoiceQuestionResponse")
 @BsonDiscriminator(key = "type", value = "MULTIPLE_CHOICE")
-public class MultipleChoiceResponse extends QuestionResponse {
+public class MultipleChoiceQuestionResponse extends QuestionResponse {
     public List<Integer> selectedAnswerIndexes;
 
-    public MultipleChoiceResponse() {
+    public MultipleChoiceQuestionResponse() {
         super(ResponseType.MULTIPLE_CHOICE);
     }
 
-    public MultipleChoiceResponse(List<Integer> selectedAnswerIndexes) {
+    public MultipleChoiceQuestionResponse(List<Integer> selectedAnswerIndexes) {
         super(ResponseType.MULTIPLE_CHOICE);
         this.selectedAnswerIndexes = selectedAnswerIndexes;
     }
