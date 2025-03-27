@@ -4,8 +4,6 @@ import ch.supsi.model.api.user.Role;
 import ch.supsi.model.api.user.User;
 import ch.supsi.model.dto.api.UserWithoutCoursesDTO;
 
-import java.util.List;
-
 
 public interface IUserService {
     User getUserByAzureOid(String oid);

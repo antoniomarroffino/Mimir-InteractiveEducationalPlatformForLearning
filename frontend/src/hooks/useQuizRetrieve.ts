@@ -1,5 +1,5 @@
-import { useContext } from "react";
-import { QuizRetrieveContext, QuizRetrieveContextType } from "../contexts/QuizRetrieveContext.tsx";
+import {useContext} from "react";
+import {QuizRetrieveContext, QuizRetrieveContextType} from "../contexts/QuizRetrieveContext.tsx";
 
 export const useQuizRetrieve = (): QuizRetrieveContextType => {
     const context = useContext(QuizRetrieveContext);

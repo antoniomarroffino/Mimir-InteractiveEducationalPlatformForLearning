@@ -10,6 +10,7 @@ interface UserAnswer {
     questionType: QuestionType;
     answer: boolean | number[] | null;
     isCorrect: boolean;
+    hasBeenAnswered: boolean;
 }
 
 interface QuizQuestionsProps {
@@ -39,7 +40,8 @@ const QuizQuestions: React.FC<QuizQuestionsProps> = ({quiz}) => {
             questionId: currentQuestion.id!,
             questionType: currentQuestion.type,
             answer: answer,
-            isCorrect: isCorrect
+            isCorrect: isCorrect,
+            hasBeenAnswered: true
         };
 
         // Aggiorna lo stato delle risposte
@@ -102,6 +104,21 @@ const QuizQuestions: React.FC<QuizQuestionsProps> = ({quiz}) => {
         <div className="flex grow bg-gradient-to-br from-primary/5 to-secondary/5">
             <div className="container mx-auto px-4 py-4">
                 <div className="grid grid-cols-1 md:grid-cols-[1fr_300px] gap-4">
+                    {/* Navigazione del quiz per dispositivi mobili */}
+                    <div className="block md:hidden mb-4">
+                        <QuizNavigation
+                            questions={quiz.questions || []}
+                            currentQuestionIndex={currentQuestionIndex}
+                            answeredQuestions={
+                                quiz.questions?.map((question) =>
+                                    userAnswers.some(answer => answer.questionId === question.id)
+                                ) || []
+                            }
+                            onQuestionChange={(index) => setCurrentQuestionIndex(index)}
+                            onCompleteQuiz={handleCompleteQuiz}
+                        />
+                    </div>
+
                     <div className="relative w-full max-w-2xl mx-auto">
                         {/* Navigazione tra domande */}
                         <div className="absolute inset-y-0 left-0 flex items-center md:-left-12">
@@ -176,12 +193,15 @@ const QuizQuestions: React.FC<QuizQuestionsProps> = ({quiz}) => {
                                     initialAnswer={
                                         getCurrentQuestionAnswer()?.answer as number[] | null
                                     }
+                                    hasBeenAnswered={
+                                        !!getCurrentQuestionAnswer()?.hasBeenAnswered
+                                    }
                                 />
                             )}
                         </div>
                     </div>
 
-                    {/* Navigazione del quiz */}
+                    {/* Navigazione del quiz per desktop */}
                     <div className="hidden md:block">
                         <QuizNavigation
                             questions={quiz.questions || []}

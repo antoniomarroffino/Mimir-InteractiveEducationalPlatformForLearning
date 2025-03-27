@@ -1,6 +1,5 @@
 import {FolderRow} from './FolderRow';
 import React from "react";
-import { QuizProvider } from '../../provider/QuizProvider';
 import {useFolderList} from "../../hooks/folder/useFolderList.ts";
 
 interface FolderListProps {
@@ -10,25 +9,20 @@ interface FolderListProps {
 export const FolderList: React.FC<FolderListProps> = ({courseId}) => {
     const {folders, isLoadingFolders} = useFolderList();
 
-    if (!courseId) return <Error message="Invalid course ID" />;
+    if (!courseId) return <Error message="Invalid course ID"/>;
 
-    if (isLoadingFolders) return <Loader />;
+    if (isLoadingFolders) return <Loader/>;
 
-    if (!folders?.length) return <EmptyState />;
+    if (!folders?.length) return <EmptyState/>;
 
     return (
         <div className="space-y-4">
             {folders.map((folder) => (
-                <QuizProvider
+                <FolderRow
                     key={folder.id}
+                    folder={folder}
                     courseId={courseId}
-                    folderId={folder.id}
-                >
-                    <FolderRow
-                        folder={folder}
-                        courseId={courseId}
-                    />
-                </QuizProvider>
+                />
             ))}
         </div>
     );
@@ -46,7 +40,7 @@ const EmptyState = () => (
     </div>
 );
 
-const Error = ({message}: {message: string}) => (
+const Error = ({message}: { message: string }) => (
     <div className="text-center text-error py-8">
         {message}
     </div>

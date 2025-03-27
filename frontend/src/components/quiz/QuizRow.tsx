@@ -2,9 +2,9 @@ import React, {useState} from 'react';
 import {QuizDTO} from '@dti-isin/backend-api-client';
 import {BsPencil, BsRocket, BsTrash} from 'react-icons/bs';
 import {useNavigate} from 'react-router-dom';
-import {useQuiz} from '../../hooks/useQuiz';
 import {useQuizPublicationCRUD} from '../../hooks/quizPublication/useQuizPublicationCRUD.ts';
 import {useQuizPublicationVerification} from '../../hooks/quizPublication/useQuizPublicationVerification.ts';
+import {useQuizCRUD} from "../../hooks/quiz/useQuizCRUD.ts";
 
 interface QuizRowProps {
     quiz: QuizDTO;
@@ -17,7 +17,7 @@ export const QuizRow: React.FC<QuizRowProps> = ({
                                                     courseId,
                                                     folderId,
                                                 }) => {
-    const {deleteQuiz} = useQuiz();
+    const {deleteQuiz} = useQuizCRUD();
     const navigate = useNavigate();
 
     const {createPublication, isCreatingPublication: isPublishing} = useQuizPublicationCRUD();
@@ -93,7 +93,7 @@ export const QuizRow: React.FC<QuizRowProps> = ({
     const handleDeleteQuiz = async () => {
         try {
             setError(null);
-            await deleteQuiz(quiz.id!);
+            await deleteQuiz(folderId, quiz.id!);
             setShowDeleteModal(false);
         } catch (error) {
             console.error('Eliminazione quiz fallita:', error);

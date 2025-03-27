@@ -6,7 +6,6 @@ export type CourseSelectionContextType = {
     setSelectedCourseId: (id: string | null) => void;
     selectedCourse: CourseDTO | null;
     setSelectedCourse: (course: CourseDTO | null) => void;
-    selectCourse: (course: CourseDTO) => void;
     deselectCourse: () => void;
 };
 

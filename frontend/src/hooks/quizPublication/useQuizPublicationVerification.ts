@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import {useContext} from "react";
 import {QuizPublicationVerificationContext} from "../../contexts/quizPublication/QuizPublicationVerificationContext.ts";
 
 export const useQuizPublicationVerification = () => {

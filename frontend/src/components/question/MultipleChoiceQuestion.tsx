@@ -5,25 +5,42 @@ interface MultipleChoiceQuestionProps {
     question: MultipleChoiceQuestionDTO;
     onAnswer: (isCorrect: boolean) => void;
     initialAnswer?: number[] | null;
+    hasBeenAnswered?: boolean; // Nuova proprietà
 }
 
 const MultipleChoiceQuestion: React.FC<MultipleChoiceQuestionProps> = ({
                                                                            question,
                                                                            onAnswer,
-                                                                           initialAnswer = null
+                                                                           initialAnswer = null,
+                                                                           hasBeenAnswered = false
                                                                        }) => {
     const [selectedAnswers, setSelectedAnswers] = useState<number[]>(initialAnswer || []);
+    const [isSubmitted, setIsSubmitted] = useState(hasBeenAnswered);
+
+    // Resetta lo stato quando cambia la domanda
     useEffect(() => {
         setSelectedAnswers(initialAnswer || []);
-    }, [initialAnswer]);
+        setIsSubmitted(hasBeenAnswered);
+    }, [question.id, initialAnswer, hasBeenAnswered]);
 
     const handleAnswerSelection = (index: number) => {
+        // Impedisci selezioni se già sottomesso
+        if (isSubmitted) return;
+
         const newSelectedAnswers = selectedAnswers.includes(index)
             ? selectedAnswers.filter(i => i !== index)
             : [...selectedAnswers, index];
 
         setSelectedAnswers(newSelectedAnswers);
-        const isCorrect = JSON.stringify(newSelectedAnswers.sort()) ===
+    };
+
+    const submitAnswer = () => {
+        // Impedisci submit senza risposte o già sottomesso
+        if (selectedAnswers.length === 0 || isSubmitted) return;
+
+        setIsSubmitted(true);
+
+        const isCorrect = JSON.stringify(selectedAnswers.sort()) ===
             JSON.stringify(question.correctAnswerIndexes.sort());
 
         onAnswer(isCorrect);
@@ -34,19 +51,45 @@ const MultipleChoiceQuestion: React.FC<MultipleChoiceQuestionProps> = ({
             <h2 className="card-title">{question.questionText}</h2>
             <div className="space-y-2 mt-4">
                 {question.choices.map((choice, index) => (
-                    <div
+                    <label
                         key={index}
-                        className={`btn btn-block ${
-                            selectedAnswers.includes(index)
-                                ? 'btn-primary'
-                                : 'btn-outline'
-                        }`}
-                        onClick={() => handleAnswerSelection(index)}
+                        className={`
+                            flex items-center p-3 border rounded-lg cursor-pointer
+                            transition-all duration-300
+                            ${isSubmitted
+                            ? (selectedAnswers.includes(index)
+                                ? (question.correctAnswerIndexes.includes(index)
+                                    ? 'bg-success/20 border-success'
+                                    : 'bg-error/20 border-error')
+                                : (question.correctAnswerIndexes.includes(index)
+                                    ? 'bg-success/10 border-success'
+                                    : ''))
+                            : (selectedAnswers.includes(index)
+                                ? 'bg-primary/10 border-primary'
+                                : 'hover:bg-base-200')
+                        }
+                        `}
                     >
-                        {choice}
-                    </div>
+                        <input
+                            type="checkbox"
+                            checked={selectedAnswers.includes(index)}
+                            onChange={() => handleAnswerSelection(index)}
+                            disabled={isSubmitted}
+                            className="checkbox checkbox-primary mr-3"
+                        />
+                        <span>{choice}</span>
+                    </label>
                 ))}
             </div>
+            {!isSubmitted && (
+                <button
+                    onClick={submitAnswer}
+                    className="btn btn-primary mt-4 w-full"
+                    disabled={selectedAnswers.length === 0}
+                >
+                    Conferma Risposta
+                </button>
+            )}
         </div>
     );
 };

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { QuestionDTO } from '@dti-isin/backend-api-client';
+import React, {useState} from 'react';
+import {QuestionDTO} from '@dti-isin/backend-api-client';
 import ConfirmModal from './ConfirmModal';
 
 interface QuizNavigationProps {

@@ -1,8 +1,8 @@
 package ch.supsi.model.dto.api.question;
 
 import ch.supsi.model.api.question.QuestionType;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.validation.constraints.NotNull;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
@@ -26,7 +26,8 @@ public abstract class QuestionDTO {
     @NotNull(message = "Question type cannot be null")
     private QuestionType type;
 
-    public QuestionDTO() {}
+    public QuestionDTO() {
+    }
 
     public String getId() {
         return id;

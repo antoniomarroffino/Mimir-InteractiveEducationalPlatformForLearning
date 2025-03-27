@@ -16,14 +16,12 @@ import java.util.Random;
 @ApplicationScoped
 public class QuizPublicationService implements IQuizPublicationService {
 
-    @Inject
-    QuizPublicationRepository quizPublicationRepository;
-
-    @Inject
-    QuizPublicationMapper quizPublicationMapper;
-
     private static final String CODE_CHARACTERS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
     private static final int CODE_LENGTH = 6;
+    @Inject
+    QuizPublicationRepository quizPublicationRepository;
+    @Inject
+    QuizPublicationMapper quizPublicationMapper;
 
     @Override
     public QuizPublicationDTO publishQuiz(QuizPublicationDTO quizPublicationDTO) {

@@ -1,4 +1,4 @@
-import { Navigate } from 'react-router-dom';
+import {Navigate} from 'react-router-dom';
 import {Role} from "@dti-isin/backend-api-client";
 import {useAuth} from "../hooks/useAuth.ts";
 import React from "react";
@@ -8,8 +8,8 @@ type Props = {
     allowedRoles: Role[];
 };
 
-const ProtectedRoute = ({ children, allowedRoles }: Props) => {
-    const { user, isLoading } = useAuth();
+const ProtectedRoute = ({children, allowedRoles}: Props) => {
+    const {user, isLoading} = useAuth();
 
     if (isLoading) {
         return (
@@ -20,7 +20,7 @@ const ProtectedRoute = ({ children, allowedRoles }: Props) => {
     }
 
     if (!user || !allowedRoles.includes(user.role!)) {
-        return <Navigate to="/" replace />;
+        return <Navigate to="/" replace/>;
     }
 
     return <>{children}</>;

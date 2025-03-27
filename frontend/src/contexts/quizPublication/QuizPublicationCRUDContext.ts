@@ -1,5 +1,5 @@
-import { createContext } from "react";
-import { QuizPublicationDTO } from "@dti-isin/backend-api-client";
+import {createContext} from "react";
+import {QuizPublicationDTO} from "@dti-isin/backend-api-client";
 
 type CreateQuizPublicationDTO = Omit<QuizPublicationDTO, 'id' | 'publicationCode'>;
 

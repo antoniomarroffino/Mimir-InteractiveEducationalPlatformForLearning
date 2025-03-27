@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import {
-    QuestionDTO,
     MultipleChoiceQuestionDTO,
+    QuestionDTO,
     QuestionType,
     TrueFalseQuestionDTO
 } from '@dti-isin/backend-api-client';
 import { TrueFalseQuestionTemplate } from './TrueFalseQuestionTemplate';
 import { MultipleChoiceQuestionTemplate } from './MultipleChoiceQuestionTemplate';
+import { DefaultQuestionEditorScreen } from './DefaultQuestionEditorScreen';
 
 type SpecificQuestionDTO =
     | QuestionDTO
@@ -21,6 +22,7 @@ interface QuestionEditorProps {
     onQuestionTextChange?: (text: string) => void;
     isLoading?: boolean;
     disabled?: boolean;
+    isEditingExistingQuestion?: boolean;
 }
 
 export const QuestionEditor: React.FC<QuestionEditorProps> = ({
@@ -30,17 +32,14 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
                                                                   onCancel,
                                                                   onQuestionTextChange,
                                                                   isLoading = false,
-                                                                  disabled = false
+                                                                  disabled = false,
+                                                                  isEditingExistingQuestion = false,
                                                               }) => {
-    const [questionText, setQuestionText] = useState(template.questionText);
+    const [questionText, setQuestionText] = useState(template.questionText || '');
     const [isQuestionValid, setIsQuestionValid] = useState(false);
-
-    // True/False state
     const [correctAnswer, setCorrectAnswer] = useState<boolean>(
         (template as TrueFalseQuestionDTO).correctAnswer ?? true
     );
-
-    // Multiple Choice state
     const [choices, setChoices] = useState<string[]>(
         (template as MultipleChoiceQuestionDTO).choices ?? ['', '']
     );
@@ -48,15 +47,15 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
         (template as MultipleChoiceQuestionDTO).correctAnswerIndexes ?? []
     );
 
-    // Sync states when template changes
     useEffect(() => {
-        setQuestionText(template.questionText);
+        setQuestionText(template.questionText || '');
 
         if (questionType === QuestionType.TrueFalse) {
-            setCorrectAnswer((template as TrueFalseQuestionDTO).correctAnswer);
+            setCorrectAnswer((template as TrueFalseQuestionDTO).correctAnswer ?? true);
         } else if (questionType === QuestionType.MultipleChoice) {
-            setChoices((template as MultipleChoiceQuestionDTO).choices ?? ['', '']);
-            setCorrectChoices((template as MultipleChoiceQuestionDTO).correctAnswerIndexes ?? []);
+            const mcTemplate = template as MultipleChoiceQuestionDTO;
+            setChoices(mcTemplate.choices ?? ['', '']);
+            setCorrectChoices(mcTemplate.correctAnswerIndexes ?? []);
         }
     }, [template, questionType]);
 
@@ -87,9 +86,9 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
                     questionText: questionText?.trim(),
                     type: QuestionType.MultipleChoice,
                     choices: choices.filter(c => c.trim() !== ''),
-                    correctAnswerIndexes: correctChoices.filter(idx =>
-                        idx < choices.length && choices[idx].trim() !== ''
-                    )
+                    correctAnswerIndexes: correctChoices
+                        .filter(idx => idx < choices.length && choices[idx].trim() !== '')
+                        .map(idx => choices.indexOf(choices[idx]))
                 };
                 break;
 
@@ -99,6 +98,14 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
 
         onSave(finalQuestion);
     };
+
+    const isSaveDisabled = useMemo(() => {
+        const isTextEmpty = !questionText?.trim();
+        const isMultipleChoiceInvalid =
+            questionType === QuestionType.MultipleChoice && !isQuestionValid;
+
+        return isTextEmpty || isLoading || disabled || isMultipleChoiceInvalid;
+    }, [questionText, questionType, isLoading, disabled, isQuestionValid]);
 
     const renderSpecificFields = () => {
         switch (questionType) {
@@ -128,10 +135,14 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
         }
     };
 
+    if (disabled) {
+        return <DefaultQuestionEditorScreen />;
+    }
+
     return (
         <div className={`bg-base-100 rounded-lg p-6 shadow ${disabled ? 'opacity-50' : ''}`}>
             <h2 className="text-xl font-semibold mb-4 capitalize">
-                {questionType.toLowerCase()} Question
+                {isEditingExistingQuestion ? 'Edit' : 'Create'} {questionType.toLowerCase()} Question
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="form-control">
@@ -162,12 +173,7 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
                     <button
                         type="submit"
                         className="btn btn-primary"
-                        disabled={
-                            !questionText?.trim() ||
-                            isLoading ||
-                            disabled ||
-                            (questionType === QuestionType.MultipleChoice && !isQuestionValid)
-                        }
+                        disabled={isSaveDisabled}
                     >
                         {isLoading ? (
                             <span className="loading loading-spinner"></span>

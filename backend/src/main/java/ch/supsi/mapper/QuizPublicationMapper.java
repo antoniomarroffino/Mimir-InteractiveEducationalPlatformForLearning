@@ -9,14 +9,6 @@ import org.jetbrains.annotations.NotNull;
 @ApplicationScoped
 public class QuizPublicationMapper implements IBaseMapper<QuizPublication, QuizPublicationDTO> {
 
-    @Override
-    public QuizPublicationDTO toDTO(QuizPublication quizPublication) {
-        if (quizPublication == null) {
-            return null;
-        }
-        return getQuizPublicationDTO(quizPublication);
-    }
-
     private static @NotNull QuizPublicationDTO getQuizPublicationDTO(QuizPublication quizPublication) {
         QuizPublicationDTO dto = new QuizPublicationDTO();
         dto.setId(quizPublication.getId().toString());
@@ -29,14 +21,6 @@ public class QuizPublicationMapper implements IBaseMapper<QuizPublication, QuizP
         return dto;
     }
 
-    @Override
-    public QuizPublication toEntity(QuizPublicationDTO dto) {
-        if (dto == null) {
-            return null;
-        }
-        return getQuizPublication(dto);
-    }
-
     private static @NotNull QuizPublication getQuizPublication(QuizPublicationDTO dto) {
         QuizPublication quizPublication = new QuizPublication();
         quizPublication.setId(new ObjectId(dto.getId()));
@@ -47,5 +31,21 @@ public class QuizPublicationMapper implements IBaseMapper<QuizPublication, QuizP
         quizPublication.setAnonymous(dto.isAnonymous());
         quizPublication.setPublished(dto.isPublished());
         return quizPublication;
+    }
+
+    @Override
+    public QuizPublicationDTO toDTO(QuizPublication quizPublication) {
+        if (quizPublication == null) {
+            return null;
+        }
+        return getQuizPublicationDTO(quizPublication);
+    }
+
+    @Override
+    public QuizPublication toEntity(QuizPublicationDTO dto) {
+        if (dto == null) {
+            return null;
+        }
+        return getQuizPublication(dto);
     }
 }

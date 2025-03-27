@@ -2,8 +2,9 @@ import React, {useState} from "react";
 import {FolderDTO} from "@dti-isin/backend-api-client";
 import {BsChevronDown, BsChevronUp, BsFolder2, BsPlus} from "react-icons/bs";
 import {QuizList} from "../quiz/QuizList";
-import {useQuiz} from "../../hooks/useQuiz.ts";
-import {useQueryClient} from "react-query";
+import {useQuizCRUD} from "../../hooks/quiz/useQuizCRUD.ts";
+import {useFolderSelection} from "../../hooks/folder/useFolderSelection.ts";
+import {useQuizSelection} from "../../hooks/quiz/useQuizSelection.ts";
 
 interface FolderRowProps {
     folder: FolderDTO;
@@ -11,29 +12,39 @@ interface FolderRowProps {
 }
 
 export const FolderRow = ({folder, courseId}: FolderRowProps) => {
-    const queryClient = useQueryClient();
     const [isExpanded, setIsExpanded] = useState(false);
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [quizName, setQuizName] = useState("");
-    const {createQuiz, isCreatingQuiz} = useQuiz();
+    const {createQuiz, isCreatingQuiz} = useQuizCRUD();
+    const {setSelectedFolderId, setSelectedFolder} = useFolderSelection();
+    const {setCurrentFolder} = useQuizSelection();
 
     const handleCreateQuiz = async (e: React.FormEvent) => {
         e.preventDefault();
-        e.stopPropagation(); // Previene il toggle dell'espansione
+        e.stopPropagation();
 
-        if (!quizName.trim()) return;
+        // Imposta la cartella SOLO quando si sta creando un quiz
+        setCurrentFolder(folder.id!);
+        setSelectedFolderId(folder.id!);
+        setSelectedFolder(folder);
 
         try {
-            await createQuiz(
-                quizName.trim()
-            );
-
-            // Invalida la cache per forzare il refresh delle folder
-            queryClient.invalidateQueries(["folders", courseId]);
+            await createQuiz(folder.id!, quizName.trim());
             setQuizName("");
             setShowCreateForm(false);
         } catch (error) {
             console.error("Failed to create quiz", error);
+        }
+    };
+
+    const handleAddQuizClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        // Apri il form di creazione
+        setShowCreateForm(true);
+
+        // Espandi la cartella se non è già espansa
+        if (!isExpanded) {
+            setIsExpanded(true);
         }
     };
 
@@ -49,7 +60,7 @@ export const FolderRow = ({folder, courseId}: FolderRowProps) => {
                 </div>
                 <div className="flex items-center gap-4">
                     <span className="text-base-content/70">
-                        {folder.quizzes?.length || 0} quizzes
+                        open to see quizzes
                     </span>
                     {isExpanded ? <BsChevronUp/> : <BsChevronDown/>}
                 </div>
@@ -58,7 +69,6 @@ export const FolderRow = ({folder, courseId}: FolderRowProps) => {
             {isExpanded && (
                 <div className="border-t border-base-200 p-4">
                     <QuizList
-                        quizzes={folder.quizzes || []}
                         courseId={courseId}
                         folderId={folder.id!}
                     />
@@ -66,10 +76,7 @@ export const FolderRow = ({folder, courseId}: FolderRowProps) => {
                     <div className="mt-4" onClick={(e) => e.stopPropagation()}>
                         {!showCreateForm ? (
                             <button
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    setShowCreateForm(true);
-                                }}
+                                onClick={handleAddQuizClick}
                                 className="btn btn-primary w-full"
                                 disabled={isCreatingQuiz}
                             >

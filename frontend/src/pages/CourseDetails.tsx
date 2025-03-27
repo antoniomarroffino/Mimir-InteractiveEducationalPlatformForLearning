@@ -10,7 +10,7 @@ import {useCourseCRUD} from "../hooks/course/useCourseCRUD.ts";
 const CourseDetails = () => {
     const {courseId} = useParams();
     const navigate = useNavigate();
-    const {courses} = useCourseList();
+    const {courses, isLoadingCourses, errorCourses} = useCourseList();
     const {setSelectedCourseId, setSelectedCourse, selectedCourse} = useCourseSelection();
     const {updateCourse, deleteCourse} = useCourseCRUD();
     const [isEditing, setIsEditing] = useState(false);
@@ -59,6 +59,28 @@ const CourseDetails = () => {
             }
         }
     };
+
+    if (isLoadingCourses) {
+        return (
+            <div className="flex justify-center p-8">
+                <span className="loading loading-spinner loading-lg text-primary"></span>
+            </div>
+        );
+    }
+
+    if (errorCourses) {
+        return (
+            <div className="alert alert-error flex justify-between items-center">
+                <span>Error loading courses: {errorCourses.message}</span>
+                <button
+                    className="btn btn-sm btn-outline"
+                    onClick={() => navigate('/')}
+                >
+                    Back to Courses
+                </button>
+            </div>
+        );
+    }
 
     if (!courseId || !selectedCourse) {
         return (

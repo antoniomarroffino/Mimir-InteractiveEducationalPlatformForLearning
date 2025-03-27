@@ -12,6 +12,7 @@ public class CourseRepository implements PanacheMongoRepository<Course> {
     public List<Course> listAll() {
         return mongoCollection().find().into(new ArrayList<>());
     }
+
     public List<Course> findAllCourses() {
         return list("{}");
     }

@@ -70,7 +70,6 @@ export const AuthProvider = ({children}: { children: React.ReactNode }) => {
     };
 
 
-
     const logout = async () => {
         if (accounts.length > 0) {
             await instance.logoutPopup({

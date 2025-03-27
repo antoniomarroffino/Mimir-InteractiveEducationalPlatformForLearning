@@ -1,5 +1,5 @@
-import { createContext } from "react";
-import { QuizPublicationDTO } from "@dti-isin/backend-api-client";
+import {createContext} from "react";
+import {QuizPublicationDTO} from "@dti-isin/backend-api-client";
 
 export type QuizPublicationVerificationContextType = {
     currentPublication: QuizPublicationDTO | null;

@@ -1,8 +1,8 @@
-import { useAuth } from "../../hooks/useAuth.ts";
+import {useAuth} from "../../hooks/useAuth.ts";
 import QuizSessionComponent from "../../components/common/QuizSessionComponent.tsx";
 
 const StudentDashboard = () => {
-    const { user } = useAuth();
+    const {user} = useAuth();
 
     return (
         <div className="min-h-screen bg-base-200">
@@ -20,7 +20,7 @@ const StudentDashboard = () => {
             <div className="container mx-auto px-4 py-8">
 
                 {/* Sezione Partecipa a Quiz */}
-                <QuizSessionComponent />
+                <QuizSessionComponent/>
 
                 {/* Sezione Ultimi Risultati */}
                 <section>

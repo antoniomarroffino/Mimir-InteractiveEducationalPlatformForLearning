@@ -1,12 +1,12 @@
 import React from "react";
-import { useMutation, useQueryClient } from "react-query";
-import { QuizPublicationDTO } from "@dti-isin/backend-api-client";
-import { quizPublicationApi } from "../../../config/config.ts";
-import { QuizPublicationCRUDContext } from "./QuizPublicationCRUDContext.ts";
+import {useMutation, useQueryClient} from "react-query";
+import {QuizPublicationDTO} from "@dti-isin/backend-api-client";
+import {quizPublicationApi} from "../../../config/config.ts";
+import {QuizPublicationCRUDContext} from "../../contexts/quizPublication/QuizPublicationCRUDContext.ts";
 
 type CreateQuizPublicationDTO = Omit<QuizPublicationDTO, 'id' | 'publicationCode'>;
 
-export const QuizPublicationCRUDProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const QuizPublicationCRUDProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const queryClient = useQueryClient();
 
     const {
@@ -65,7 +65,7 @@ export const QuizPublicationCRUDProvider: React.FC<{ children: React.ReactNode }
         error: errorDeletePublication,
     } = useMutation<void, Error, string>({
         mutationFn: async (id) => {
-            await quizPublicationApi.apiPublicationsIdDelete({ id });
+            await quizPublicationApi.apiPublicationsIdDelete({id});
         },
         onSuccess: () => {
             queryClient.invalidateQueries(["publications"]);
@@ -78,7 +78,7 @@ export const QuizPublicationCRUDProvider: React.FC<{ children: React.ReactNode }
         error: errorGetPublication,
     } = useMutation<QuizPublicationDTO, Error, string>({
         mutationFn: async (publicationId: string) => {
-            const response = await quizPublicationApi.apiPublicationsPublicationIDGet({ publicationID: publicationId });
+            const response = await quizPublicationApi.apiPublicationsPublicationIDGet({publicationID: publicationId});
             return response.data;
         },
     });

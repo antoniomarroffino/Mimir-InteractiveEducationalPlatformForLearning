@@ -1,4 +1,5 @@
 import React from 'react';
+import {BsCheckCircle, BsXCircle} from 'react-icons/bs';
 
 interface TrueFalseTemplateProps {
     correctAnswer: boolean;
@@ -10,31 +11,54 @@ interface TrueFalseTemplateProps {
 export const TrueFalseQuestionTemplate: React.FC<TrueFalseTemplateProps> = ({
                                                                                 correctAnswer,
                                                                                 onCorrectAnswerChange,
-                                                                                isLoading = false,
                                                                                 disabled = false
                                                                             }) => {
     return (
-        <div className="form-control">
-            <label className="label">
-                <span className="label-text">Correct Answer</span>
-            </label>
-            <div className="flex items-center space-x-4">
-                <span>True</span>
-                <input
-                    type="radio"
-                    className="radio"
-                    checked={correctAnswer}
-                    onChange={() => onCorrectAnswerChange(true)}
-                    disabled={isLoading || disabled}
-                />
-                <span>False</span>
-                <input
-                    type="radio"
-                    className="radio"
-                    checked={!correctAnswer}
-                    onChange={() => onCorrectAnswerChange(false)}
-                    disabled={isLoading || disabled}
-                />
+        <div className="bg-gradient-to-br from-green-100 to-green-200 p-4 rounded-lg">
+            <div className="flex items-center justify-between mb-4">
+                <span className="text-lg font-semibold text-base-content/80">
+                    Select the Correct Answer
+                </span>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+                <div
+                    className={`
+                        p-3 
+                        rounded-lg 
+                        flex 
+                        items-center 
+                        justify-center 
+                        gap-2 
+                        cursor-pointer 
+                        transition-all 
+                        ${correctAnswer
+                        ? 'bg-green-500 text-white shadow-lg'
+                        : 'bg-base-200 text-base-content/70 hover:bg-base-300'}
+                    `}
+                    onClick={() => !disabled && onCorrectAnswerChange(true)}
+                >
+                    <BsCheckCircle className="text-2xl"/>
+                    <span className="font-semibold">True</span>
+                </div>
+                <div
+                    className={`
+                        p-3 
+                        rounded-lg 
+                        flex 
+                        items-center 
+                        justify-center 
+                        gap-2 
+                        cursor-pointer 
+                        transition-all 
+                        ${!correctAnswer
+                        ? 'bg-red-500 text-white shadow-lg'
+                        : 'bg-base-200 text-base-content/70 hover:bg-base-300'}
+                    `}
+                    onClick={() => !disabled && onCorrectAnswerChange(false)}
+                >
+                    <BsXCircle className="text-2xl"/>
+                    <span className="font-semibold">False</span>
+                </div>
             </div>
         </div>
     );

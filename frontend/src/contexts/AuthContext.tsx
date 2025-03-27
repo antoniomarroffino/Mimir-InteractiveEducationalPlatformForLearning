@@ -1,4 +1,4 @@
-import { createContext } from 'react';
+import {createContext} from 'react';
 import {Role, UserWithoutCoursesDTO} from '@dti-isin/backend-api-client';
 
 type AuthContextType = {
@@ -9,4 +9,13 @@ type AuthContextType = {
     hasRole: (role: Role) => boolean;
 };
 
-export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export const AuthContext = createContext<AuthContextType>({
+    user: null,
+    isLoading: false,
+    login: () => {
+    },
+    logout: () => {
+    },
+    hasRole: () => false,
+});

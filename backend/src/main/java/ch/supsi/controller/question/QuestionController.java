@@ -46,13 +46,6 @@ public class QuestionController {
                 new ObjectId(folderId),
                 new ObjectId(quizId)
         );
-
-        questionsDTO.forEach(q -> {
-            System.out.println("Returning question: " +
-                    q.getClass().getSimpleName() +
-                    " with type " + q.getType()
-            );
-        });
         return Response.ok(questionsDTO).build();
     }
 
@@ -102,6 +95,53 @@ public class QuestionController {
         return Response.status(Response.Status.CREATED)
                 .entity(savedQuestionDTO)
                 .build();
+    }
 
+    @PUT
+    @RolesAllowed("TEACHER")
+    @Path("/{questionId}")
+    @Operation(summary = "Update question")
+    @APIResponse(
+            responseCode = "200",
+            description = "Question updated successfully",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = QuestionDTO.class)
+            )
+    )
+    public Response updateQuestion(@PathParam("courseId") String courseId,
+                                   @PathParam("folderId") String folderId,
+                                   @PathParam("quizId") String quizId,
+                                   @PathParam("questionId") String questionId,
+                                   @Valid QuestionDTO questionDTO) {
+        QuestionDTO updatedQuestionDTO = this.questionService.updateQuestion(
+                new ObjectId(courseId),
+                new ObjectId(folderId),
+                new ObjectId(quizId),
+                new ObjectId(questionId),
+                questionDTO);
+
+        return Response.ok(updatedQuestionDTO).build();
+    }
+
+    @DELETE
+    @RolesAllowed("TEACHER")
+    @Path("/{questionId}")
+    @Operation(summary = "Delete question")
+    @APIResponse(
+            responseCode = "204",
+            description = "Question deleted successfully"
+    )
+    public Response deleteQuestion(@PathParam("courseId") String courseId,
+                                   @PathParam("folderId") String folderId,
+                                   @PathParam("quizId") String quizId,
+                                   @PathParam("questionId") String questionId) {
+        this.questionService.deleteQuestion(
+                new ObjectId(courseId),
+                new ObjectId(folderId),
+                new ObjectId(quizId),
+                new ObjectId(questionId));
+
+        return Response.status(Response.Status.NO_CONTENT).build();
     }
 }
