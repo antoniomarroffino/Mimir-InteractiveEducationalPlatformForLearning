@@ -204,7 +204,7 @@ const CourseDetails = () => {
                     </div>
                 </div>
                 <div className="flex-1">
-                    <div className="sticky top-8 h-fit">
+                    <div className="top-8 h-fit">
                         <CreateFolderForm />
                     </div>
                 </div>
