@@ -21,7 +21,6 @@ import java.util.List;
 @Path("/attempts")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@RolesAllowed({"TEACHER", "STUDENT"})
 public class QuizAttemptController {
 
     @Inject

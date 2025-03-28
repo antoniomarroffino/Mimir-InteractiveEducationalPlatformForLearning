@@ -4,18 +4,16 @@ import {useAuth} from "../../hooks/useAuth.ts";
 import {useQuizPublicationVerification} from "../../hooks/quizPublication/useQuizPublicationVerification.ts";
 import QuizScreen from "../../pages/QuizScreen.tsx";
 import {useQuizRetrieve} from "../../hooks/useQuizRetrieve.ts";
-import {useQuizAttemptLocal} from "../../hooks/quizAttempt/useQuizAttemptLocal.ts";
 
 export const QuizAccessRoute: React.FC = () => {
     const {accessCode} = useParams<{ accessCode: string }>();
     const {user} = useAuth();
     const {getPublicationByCode} = useQuizPublicationVerification();
     const {retrieveQuiz} = useQuizRetrieve();
+    const {login} = useAuth();
 
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-
-    const {startQuizAttempt} = useQuizAttemptLocal();
 
     useEffect(() => {
         const checkPublicationAccess = async () => {
@@ -33,7 +31,11 @@ export const QuizAccessRoute: React.FC = () => {
                     setIsLoading(false);
                     return;
                 }
-                startQuizAttempt(fetchedPublication);
+
+                if (!fetchedPublication.anonymous && !user) {
+                    login();
+                    return;
+                }
 
                 await retrieveQuiz(fetchedPublication);
 
@@ -46,7 +48,7 @@ export const QuizAccessRoute: React.FC = () => {
         };
 
         checkPublicationAccess();
-    }, [accessCode, user, getPublicationByCode]);
+    }, [accessCode, user, getPublicationByCode, retrieveQuiz, login]);
 
     if (isLoading) {
         return (

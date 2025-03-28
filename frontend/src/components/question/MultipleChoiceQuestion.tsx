@@ -5,7 +5,7 @@ interface MultipleChoiceQuestionProps {
     question: MultipleChoiceQuestionDTO;
     onAnswer: (isCorrect: boolean) => void;
     initialAnswer?: number[] | null;
-    hasBeenAnswered?: boolean; // Nuova proprietà
+    hasBeenAnswered?: boolean;
 }
 
 const MultipleChoiceQuestion: React.FC<MultipleChoiceQuestionProps> = ({
@@ -17,14 +17,12 @@ const MultipleChoiceQuestion: React.FC<MultipleChoiceQuestionProps> = ({
     const [selectedAnswers, setSelectedAnswers] = useState<number[]>(initialAnswer || []);
     const [isSubmitted, setIsSubmitted] = useState(hasBeenAnswered);
 
-    // Resetta lo stato quando cambia la domanda
     useEffect(() => {
         setSelectedAnswers(initialAnswer || []);
         setIsSubmitted(hasBeenAnswered);
     }, [question.id, initialAnswer, hasBeenAnswered]);
 
     const handleAnswerSelection = (index: number) => {
-        // Impedisci selezioni se già sottomesso
         if (isSubmitted) return;
 
         const newSelectedAnswers = selectedAnswers.includes(index)
@@ -35,7 +33,6 @@ const MultipleChoiceQuestion: React.FC<MultipleChoiceQuestionProps> = ({
     };
 
     const submitAnswer = () => {
-        // Impedisci submit senza risposte o già sottomesso
         if (selectedAnswers.length === 0 || isSubmitted) return;
 
         setIsSubmitted(true);
@@ -87,7 +84,7 @@ const MultipleChoiceQuestion: React.FC<MultipleChoiceQuestionProps> = ({
                     className="btn btn-primary mt-4 w-full"
                     disabled={selectedAnswers.length === 0}
                 >
-                    Conferma Risposta
+                    Confirm Answer
                 </button>
             )}
         </div>

@@ -9,22 +9,26 @@ interface QuizRetrieveProviderProps {
 
 export const QuizRetrieveProvider: React.FC<QuizRetrieveProviderProps> = ({children}) => {
     const [quiz, setQuiz] = useState<QuizDTO | null>(null);
+    const [quizPublication, setQuizPublication] = useState<QuizPublicationDTO | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<Error | null>(null);
 
-    const retrieveQuiz = async (quizPublication: QuizPublicationDTO) => {
-        if (quizPublication == null) return;
+    const retrieveQuiz = async (publication: QuizPublicationDTO) => {
+        if (publication == null) return;
         setIsLoading(true);
         setError(null);
         try {
+            setQuizPublication(publication);
+
             const response = await quizApi.apiCoursesCourseIdFoldersFolderIdQuizzesQuizIdGet({
-                courseId: quizPublication.courseId,
-                folderId: quizPublication.folderId,
-                quizId: quizPublication.quizId
+                courseId: publication.courseId,
+                folderId: publication.folderId,
+                quizId: publication.quizId
             });
             setQuiz(response.data);
         } catch (err) {
             setError(err as Error);
+            setQuizPublication(null);
         } finally {
             setIsLoading(false);
         }
@@ -32,6 +36,7 @@ export const QuizRetrieveProvider: React.FC<QuizRetrieveProviderProps> = ({child
 
     const value: QuizRetrieveContextType = {
         quiz,
+        quizPublication,
         isLoading,
         error,
         retrieveQuiz

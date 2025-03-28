@@ -1,5 +1,5 @@
-import React, {useMemo, useState} from 'react';
-import {QuizAttemptDTO, QuizPublicationDTO, QuestionResponseDTO} from "@dti-isin/backend-api-client";
+import React, {useCallback, useMemo, useState} from 'react';
+import {QuestionResponseDTO, QuizAttemptDTO, QuizPublicationDTO} from "@dti-isin/backend-api-client";
 import {useQuizAttemptCRUD} from '../../hooks/quizAttempt/useQuizAttemptCRUD';
 import {useAuth} from '../../hooks/useAuth';
 import {QuizAttemptLocalContext} from '../../contexts/quizAttempt/QuizAttemptLocalContext';
@@ -11,45 +11,61 @@ export const QuizAttemptLocalProvider: React.FC<{ children: React.ReactNode }> =
     const {user} = useAuth();
     const navigate = useNavigate();
 
-    const startQuizAttempt = (publication: QuizPublicationDTO) => {
-        const newAttempt: Partial<QuizAttemptDTO> = {
-            quizPublicationId: publication.id,
-            // Aggiungi userId solo se l'utente è presente e il quiz non è anonimo
-            ...(user && !publication.anonymous ? { userId: user.azureOid } : {}),
-            startedAt: new Date().toDateString(),
-            responses: []
-        };
-        setCurrentAttempt(newAttempt);
-    };
+    const startQuizAttempt = useCallback((publication: QuizPublicationDTO) => {
+        const createAttempt = async () => {
+            try {
+                const newAttempt: QuizAttemptDTO = {
+                    quizPublicationId: publication.id,
+                    ...(user && !publication.anonymous ? {userId: user.azureOid} : {}),
+                    startedAt: new Date().toISOString(),
+                    responses: [],
+                } as QuizAttemptDTO;
+                const createdAttempt = await createQuizAttempt(newAttempt);
+                setCurrentAttempt(createdAttempt);
 
-    const updateQuizAttemptResponses = (responses: QuestionResponseDTO[]) => {
-        if (currentAttempt) {
-            setCurrentAttempt(prev => ({
+                return createdAttempt;
+            } catch (error) {
+                console.error('Errore durante la creazione del tentativo:', error);
+                throw error;
+            }
+        };
+        return createAttempt();
+    }, [createQuizAttempt, user]);
+
+    const updateQuizAttemptResponses = useCallback((responses: QuestionResponseDTO[]) => {
+        setCurrentAttempt(prev => {
+            if (!prev) return prev;
+            return {
                 ...prev,
                 responses: responses
-            }));
-        }
-    };
+            };
+        });
+    }, []);
 
-    const completeQuizAttempt = async () => {
+    const completeQuizAttempt = useCallback(async () => {
         if (currentAttempt) {
-            const completedAttempt: QuizAttemptDTO = {
-                ...currentAttempt,
-                completedAt: new Date().toDateString()
-            } as QuizAttemptDTO;
-            navigate(`/quiz/results`, {
-                state: {
-                    attempt: completedAttempt
-                }
-            });
             try {
+                const completedAttempt: QuizAttemptDTO = {
+                    ...currentAttempt,
+                    completedAt: new Date().toISOString()
+                } as QuizAttemptDTO;
+
                 await createQuizAttempt(completedAttempt);
-                resetQuizAttempt();
+
+                navigate(`/quiz/results`, {
+                    state: {
+                        attempt: completedAttempt
+                    }
+                });
+
+                setCurrentAttempt(null);
             } catch (error) {
-                console.error('Errore durante il salvataggio del tentativo:', error);
+                console.error('Errore durante il completamento del tentativo:', error);
+                throw error;
             }
         }
-    };
+    }, [currentAttempt, createQuizAttempt, navigate]);
+
 
     const resetQuizAttempt = () => {
         setCurrentAttempt(null);

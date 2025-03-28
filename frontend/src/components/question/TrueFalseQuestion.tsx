@@ -13,6 +13,7 @@ const TrueFalseQuestion: React.FC<TrueFalseQuestionProps> = ({
                                                                  initialAnswer = null
                                                              }) => {
     const [selectedAnswer, setSelectedAnswer] = useState<boolean | null>(initialAnswer);
+
     useEffect(() => {
         setSelectedAnswer(initialAnswer);
     }, [initialAnswer]);
@@ -31,13 +32,13 @@ const TrueFalseQuestion: React.FC<TrueFalseQuestionProps> = ({
                     className={`btn ${selectedAnswer === true ? 'btn-primary' : 'btn-outline'}`}
                     onClick={() => handleAnswer(true)}
                 >
-                    Vero
+                    True
                 </button>
                 <button
                     className={`btn ${selectedAnswer === false ? 'btn-primary' : 'btn-outline'}`}
                     onClick={() => handleAnswer(false)}
                 >
-                    Falso
+                    False
                 </button>
             </div>
         </div>
