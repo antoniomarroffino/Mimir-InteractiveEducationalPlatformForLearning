@@ -1,25 +1,28 @@
 import React, {useMemo, useState} from 'react';
-import {QuizAttemptDTO, QuizPublicationDTO} from "@dti-isin/backend-api-client";
+import {QuizAttemptDTO, QuizPublicationDTO, QuestionResponseDTO} from "@dti-isin/backend-api-client";
 import {useQuizAttemptCRUD} from '../../hooks/quizAttempt/useQuizAttemptCRUD';
 import {useAuth} from '../../hooks/useAuth';
 import {QuizAttemptLocalContext} from '../../contexts/quizAttempt/QuizAttemptLocalContext';
+import {useNavigate} from "react-router-dom";
 
 export const QuizAttemptLocalProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const [currentAttempt, setCurrentAttempt] = useState<Partial<QuizAttemptDTO> | null>(null);
     const {createQuizAttempt} = useQuizAttemptCRUD();
     const {user} = useAuth();
+    const navigate = useNavigate();
 
     const startQuizAttempt = (publication: QuizPublicationDTO) => {
         const newAttempt: Partial<QuizAttemptDTO> = {
             quizPublicationId: publication.id,
-            userId: user!.azureOid,
+            // Aggiungi userId solo se l'utente è presente e il quiz non è anonimo
+            ...(user && !publication.anonymous ? { userId: user.azureOid } : {}),
             startedAt: new Date().toDateString(),
             responses: []
         };
         setCurrentAttempt(newAttempt);
     };
 
-    const updateQuizAttemptResponses = (responses: never[]) => {
+    const updateQuizAttemptResponses = (responses: QuestionResponseDTO[]) => {
         if (currentAttempt) {
             setCurrentAttempt(prev => ({
                 ...prev,
@@ -34,7 +37,11 @@ export const QuizAttemptLocalProvider: React.FC<{ children: React.ReactNode }> =
                 ...currentAttempt,
                 completedAt: new Date().toDateString()
             } as QuizAttemptDTO;
-
+            navigate(`/quiz/results`, {
+                state: {
+                    attempt: completedAttempt
+                }
+            });
             try {
                 await createQuizAttempt(completedAttempt);
                 resetQuizAttempt();

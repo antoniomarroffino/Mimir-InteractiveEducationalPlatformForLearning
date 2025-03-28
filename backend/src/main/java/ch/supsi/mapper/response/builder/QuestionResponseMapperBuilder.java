@@ -4,8 +4,8 @@ import ch.supsi.mapper.IBaseMapper;
 import ch.supsi.mapper.response.MultipleChoiceQuestionResponseMapper;
 import ch.supsi.mapper.response.QuestionResponseMapperHolder;
 import ch.supsi.mapper.response.TrueFalseQuestionResponseMapper;
+import ch.supsi.model.api.question.QuestionType;
 import ch.supsi.model.api.response.QuestionResponse;
-import ch.supsi.model.api.response.ResponseType;
 import ch.supsi.model.dto.api.response.QuestionResponseDTO;
 import jakarta.enterprise.context.ApplicationScoped;
 
@@ -14,17 +14,17 @@ import java.util.Map;
 
 @ApplicationScoped
 public class QuestionResponseMapperBuilder implements IQuestionResponseMapperBuilder {
-    private final Map<ResponseType, QuestionResponseMapperHolder<?, ?>> mapperMap;
+    private final Map<QuestionType, QuestionResponseMapperHolder<?, ?>> mapperMap;
 
     public QuestionResponseMapperBuilder() {
-        this.mapperMap = new EnumMap<>(ResponseType.class);
-        this.mapperMap.put(ResponseType.TRUE_FALSE, new QuestionResponseMapperHolder<>(new TrueFalseQuestionResponseMapper()));
-        this.mapperMap.put(ResponseType.MULTIPLE_CHOICE, new QuestionResponseMapperHolder<>(new MultipleChoiceQuestionResponseMapper()));
+        this.mapperMap = new EnumMap<>(QuestionType.class);
+        this.mapperMap.put(QuestionType.TRUE_FALSE, new QuestionResponseMapperHolder<>(new TrueFalseQuestionResponseMapper()));
+        this.mapperMap.put(QuestionType.MULTIPLE_CHOICE, new QuestionResponseMapperHolder<>(new MultipleChoiceQuestionResponseMapper()));
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public IBaseMapper<? extends QuestionResponse, ? extends QuestionResponseDTO> getQuestionResponseDTOMapper(ResponseType responseType) {
+    public IBaseMapper<? extends QuestionResponse, ? extends QuestionResponseDTO> getQuestionResponseDTOMapper(QuestionType responseType) {
         return this.mapperMap.get(responseType).mapper();
     }
 }

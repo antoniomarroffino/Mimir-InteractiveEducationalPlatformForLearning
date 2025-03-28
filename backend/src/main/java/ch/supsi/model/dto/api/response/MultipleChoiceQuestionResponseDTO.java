@@ -1,6 +1,6 @@
 package ch.supsi.model.dto.api.response;
 
-import ch.supsi.model.api.response.ResponseType;
+import ch.supsi.model.api.question.QuestionType;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.validation.constraints.NotNull;
@@ -16,7 +16,7 @@ public class MultipleChoiceQuestionResponseDTO extends QuestionResponseDTO {
     private List<Integer> selectedAnswerIndexes;
 
     public MultipleChoiceQuestionResponseDTO() {
-        this.setType(ResponseType.MULTIPLE_CHOICE);
+        this.setType(QuestionType.MULTIPLE_CHOICE);
     }
 
     public List<Integer> getSelectedAnswerIndexes() {

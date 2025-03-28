@@ -1,6 +1,6 @@
 package ch.supsi.model.dto.api.response;
 
-import ch.supsi.model.api.response.ResponseType;
+import ch.supsi.model.api.question.QuestionType;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.quarkus.runtime.annotations.RegisterForReflection;
@@ -23,7 +23,7 @@ public abstract class QuestionResponseDTO {
 
     @Schema(required = true)
     @NotNull(message = "Response type cannot be null")
-    private ResponseType type;
+    private QuestionType type;
 
     public QuestionResponseDTO() {
     }
@@ -36,11 +36,11 @@ public abstract class QuestionResponseDTO {
         this.id = id;
     }
 
-    public ResponseType getType() {
+    public QuestionType getType() {
         return type;
     }
 
-    public void setType(ResponseType type) {
+    public void setType(QuestionType type) {
         this.type = type;
     }
 }

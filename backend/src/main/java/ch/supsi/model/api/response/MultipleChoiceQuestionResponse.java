@@ -1,5 +1,6 @@
 package ch.supsi.model.api.response;
 
+import ch.supsi.model.api.question.QuestionType;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
@@ -11,11 +12,11 @@ public class MultipleChoiceQuestionResponse extends QuestionResponse {
     public List<Integer> selectedAnswerIndexes;
 
     public MultipleChoiceQuestionResponse() {
-        super(ResponseType.MULTIPLE_CHOICE);
+        super(QuestionType.MULTIPLE_CHOICE);
     }
 
     public MultipleChoiceQuestionResponse(List<Integer> selectedAnswerIndexes) {
-        super(ResponseType.MULTIPLE_CHOICE);
+        super(QuestionType.MULTIPLE_CHOICE);
         this.selectedAnswerIndexes = selectedAnswerIndexes;
     }
 }

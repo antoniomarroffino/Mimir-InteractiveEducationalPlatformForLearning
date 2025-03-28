@@ -15,15 +15,13 @@ export const QuizAttemptListProvider: React.FC<{ children: React.ReactNode }> = 
         },
         enabled: !!currentPublicationId
     });
-
-    const getQuizAttemptByIdQuery = useQuery<QuizAttemptDTO, Error>({
+    useQuery<QuizAttemptDTO, Error>({
         queryKey: ["quizAttempt"],
         queryFn: async () => {
             throw new Error("Attempt ID not set");
         },
         enabled: false
     });
-
     const value = useMemo(() => ({
         quizAttempts: quizAttemptsQuery.data || [],
         isLoadingQuizAttempts: quizAttemptsQuery.isLoading,

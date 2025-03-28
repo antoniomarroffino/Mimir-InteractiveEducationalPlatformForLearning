@@ -24,6 +24,7 @@ import {QuizProviders} from "../provider/quiz/QuizProviders.tsx";
 import {QuestionProviders} from "../provider/question/QuestionProviders.tsx";
 import {QuizAttemptProviders} from "../provider/quizAttempt/QuizAttemptProviders.tsx";
 import {QuizAttemptLocalProvider} from "../provider/quizAttempt/QuizAttemptLocalProvider.tsx";
+import QuizResults from "./QuizResults.tsx";
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -115,6 +116,10 @@ const App = () => {
                                     <Route
                                         path="/quiz/:accessCode"
                                         element={<QuizAccessRoute/>}
+                                    />
+                                    <Route
+                                        path="/quiz/:accessCode/results"
+                                        element={<QuizResults/>}
                                     />
                                 </Routes>
                                 <Footer/>

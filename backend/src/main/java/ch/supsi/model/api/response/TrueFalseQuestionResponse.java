@@ -1,5 +1,6 @@
 package ch.supsi.model.api.response;
 
+import ch.supsi.model.api.question.QuestionType;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
@@ -9,11 +10,11 @@ public class TrueFalseQuestionResponse extends QuestionResponse {
     public boolean selectedAnswer;
 
     public TrueFalseQuestionResponse() {
-        super(ResponseType.TRUE_FALSE);
+        super(QuestionType.TRUE_FALSE);
     }
 
     public TrueFalseQuestionResponse(boolean selectedAnswer) {
-        super(ResponseType.TRUE_FALSE);
+        super(QuestionType.TRUE_FALSE);
         this.selectedAnswer = selectedAnswer;
     }
 }
