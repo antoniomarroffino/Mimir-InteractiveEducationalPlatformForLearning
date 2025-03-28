@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 @RegisterForReflection
-@Schema(description = "True/False Response DTO", name = "TrueFalseResponseDTO")
+@Schema(description = "True/False Response DTO", name = "TrueFalseQuestionResponseDTO")
 @JsonTypeName("TRUE_FALSE")
 public class TrueFalseQuestionResponseDTO extends QuestionResponseDTO {
     @NotNull(message = "Selected answer cannot be null")

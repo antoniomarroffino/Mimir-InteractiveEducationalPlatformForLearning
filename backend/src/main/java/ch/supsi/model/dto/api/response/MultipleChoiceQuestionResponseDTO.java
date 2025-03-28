@@ -9,7 +9,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import java.util.List;
 
 @RegisterForReflection
-@Schema(description = "Multiple Choice Response DTO", name = "MultipleChoiceResponseDTO")
+@Schema(description = "Multiple Choice Response DTO", name = "MultipleChoiceQuestionResponseDTO")
 @JsonTypeName("MULTIPLE_CHOICE")
 public class MultipleChoiceQuestionResponseDTO extends QuestionResponseDTO {
     @NotNull(message = "Selected answer indexes cannot be null")
