@@ -3,6 +3,7 @@ package ch.supsi.model.api.question;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
+import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
@@ -14,6 +15,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
         @JsonSubTypes.Type(value = MultipleChoiceQuestion.class, name = "MULTIPLE_CHOICE")
 })
 public abstract class Question {
+    @BsonId
     public ObjectId id;
 
     public String questionText;
@@ -21,7 +23,6 @@ public abstract class Question {
     public QuestionType type;
 
     protected Question() {
-        this.id = new ObjectId();
     }
 
     protected Question(QuestionType type) {

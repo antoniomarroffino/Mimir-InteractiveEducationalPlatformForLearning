@@ -1,5 +1,6 @@
 package ch.supsi.mapper;
 
+import ch.supsi.mapper.quiz.QuizMapper;
 import ch.supsi.model.api.Folder;
 import ch.supsi.model.dto.api.FolderDTO;
 import jakarta.enterprise.context.ApplicationScoped;

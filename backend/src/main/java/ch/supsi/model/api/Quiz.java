@@ -1,6 +1,5 @@
 package ch.supsi.model.api;
 
-import ch.supsi.model.api.question.Question;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
@@ -15,7 +14,7 @@ public class Quiz {
     private String name;
 
     private String description;
-    private List<Question> questions = new ArrayList<>();
+    private List<String> questions = new ArrayList<>();
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -54,11 +53,11 @@ public class Quiz {
         this.description = description;
     }
 
-    public List<Question> getQuestions() {
+    public List<String> getQuestions() {
         return questions;
     }
 
-    public void setQuestions(List<Question> questions) {
+    public void setQuestions(List<String> questions) {
         this.questions = questions;
     }
 

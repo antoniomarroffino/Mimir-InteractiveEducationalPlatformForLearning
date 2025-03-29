@@ -1,6 +1,6 @@
 package ch.supsi.service.quiz;
 
-import ch.supsi.mapper.QuizMapper;
+import ch.supsi.mapper.quiz.facade.IQuizMapperFacade;
 import ch.supsi.model.api.Course;
 import ch.supsi.model.api.Folder;
 import ch.supsi.model.api.Quiz;
@@ -23,13 +23,13 @@ public class QuizService implements IQuizService {
     CourseRepository courseRepository;
 
     @Inject
-    QuizMapper quizMapper;
+    IQuizMapperFacade quizMapperFacade;
 
     @Override
     public List<QuizDTO> getQuizzesInFolder(ObjectId courseId, ObjectId folderId) {
         Folder folder = getFolderFromCourse(courseId, folderId);
         return folder.quizzes.stream()
-                .map(this.quizMapper::toDTO)
+                .map(this.quizMapperFacade::toDTO)
                 .collect(Collectors.toList());
     }
 
@@ -39,7 +39,7 @@ public class QuizService implements IQuizService {
 
         return folder.quizzes.stream()
                 .filter(q -> q.getId().equals(quizId))
-                .map(this.quizMapper::toDTO)
+                .map(this.quizMapperFacade::toDTO)
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("Quiz not found in folder"));
     }
@@ -56,12 +56,12 @@ public class QuizService implements IQuizService {
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("Folder not found in course"));
 
-        Quiz quiz = this.quizMapper.toEntity(quizDTO);
+        Quiz quiz = this.quizMapperFacade.toEntity(quizDTO);
 
         folder.quizzes.add(quiz);
         this.courseRepository.update(courseOpt.get());
 
-        return this.quizMapper.toDTO(quiz);
+        return this.quizMapperFacade.toDTO(quiz);
     }
 
     @Override
@@ -81,7 +81,7 @@ public class QuizService implements IQuizService {
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("Quiz not found in folder"));
 
-        Quiz updatedQuiz = this.quizMapper.toEntity(quizDTO);
+        Quiz updatedQuiz = this.quizMapperFacade.toEntity(quizDTO);
         updatedQuiz.setId(existingQuiz.getId());
         updatedQuiz.setCreatedAt(existingQuiz.getCreatedAt());
         updatedQuiz.setUpdatedAt(LocalDateTime.now());
@@ -91,7 +91,7 @@ public class QuizService implements IQuizService {
 
         this.courseRepository.update(courseOpt.get());
 
-        return this.quizMapper.toDTO(updatedQuiz);
+        return this.quizMapperFacade.toDTO(updatedQuiz);
     }
 
     @Override
