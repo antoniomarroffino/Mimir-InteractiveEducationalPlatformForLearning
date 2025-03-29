@@ -27,24 +27,6 @@ const QuizResults: React.FC = () => {
         }
     }, [quiz, attempt, navigate]);
 
-    // Mantieni le funzioni di formattazione e calcolo esistenti
-    const isResponseCorrect = (question: QuestionDTO, response: QuestionResponseDTO): boolean => {
-        if (question.type === QuestionType.TrueFalse) {
-            const trueFalseQuestion = question as TrueFalseQuestionDTO;
-            const trueFalseResponse = response as TrueFalseQuestionResponseDTO;
-            return trueFalseResponse.selectedAnswer === trueFalseQuestion.correctAnswer;
-        }
-
-        if (question.type === QuestionType.MultipleChoice) {
-            const multipleChoiceQuestion = question as MultipleChoiceQuestionDTO;
-            const multipleChoiceResponse = response as MultipleChoiceQuestionResponseDTO;
-            return JSON.stringify(multipleChoiceResponse.selectedAnswerIndexes) ===
-                JSON.stringify(multipleChoiceQuestion.correctAnswerIndexes);
-        }
-
-        return false;
-    };
-
     const formatUserResponse = (question: QuestionDTO, response: QuestionResponseDTO) => {
         if (question.type === QuestionType.TrueFalse) {
             const trueFalseResponse = response as TrueFalseQuestionResponseDTO;
@@ -57,7 +39,8 @@ const QuizResults: React.FC = () => {
             const multipleChoiceQuestion = question as MultipleChoiceQuestionDTO;
             const multipleChoiceResponse = response as MultipleChoiceQuestionResponseDTO;
 
-            if (multipleChoiceResponse.selectedAnswerIndexes.length === 0) {
+            // Aggiungi un controllo di nullità/undefined
+            if (!multipleChoiceResponse.selectedAnswerIndexes || multipleChoiceResponse.selectedAnswerIndexes.length === 0) {
                 return 'Nessuna risposta';
             }
 
@@ -67,6 +50,27 @@ const QuizResults: React.FC = () => {
         }
 
         return 'Tipo di domanda non supportato';
+    };
+
+    const isResponseCorrect = (question: QuestionDTO, response: QuestionResponseDTO): boolean => {
+        if (question.type === QuestionType.TrueFalse) {
+            const trueFalseQuestion = question as TrueFalseQuestionDTO;
+            const trueFalseResponse = response as TrueFalseQuestionResponseDTO;
+            return trueFalseResponse.selectedAnswer === trueFalseQuestion.correctAnswer;
+        }
+
+        if (question.type === QuestionType.MultipleChoice) {
+            const multipleChoiceQuestion = question as MultipleChoiceQuestionDTO;
+            const multipleChoiceResponse = response as MultipleChoiceQuestionResponseDTO;
+
+            // Aggiungi un controllo di nullità/undefined
+            const responseIndexes = multipleChoiceResponse.selectedAnswerIndexes || [];
+            const correctIndexes = multipleChoiceQuestion.correctAnswerIndexes || [];
+
+            return JSON.stringify(responseIndexes) === JSON.stringify(correctIndexes);
+        }
+
+        return false;
     };
 
     const formatCorrectAnswer = (question: QuestionDTO) => {

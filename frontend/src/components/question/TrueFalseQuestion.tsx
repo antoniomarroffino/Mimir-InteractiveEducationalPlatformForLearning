@@ -3,15 +3,15 @@ import {TrueFalseQuestionDTO} from '@dti-isin/backend-api-client';
 
 interface TrueFalseQuestionProps {
     question: TrueFalseQuestionDTO;
-    onAnswer: (isCorrect: boolean | null) => void;
+    onAnswer: (selectedAnswer: boolean | null) => void;
     initialAnswer?: boolean | null;
 }
 
 export const TrueFalseQuestion: React.FC<TrueFalseQuestionProps> = ({
-                                                                 question,
-                                                                 onAnswer,
-                                                                 initialAnswer = null
-                                                             }) => {
+                                                                        question,
+                                                                        onAnswer,
+                                                                        initialAnswer = null
+                                                                    }) => {
     const [selectedAnswer, setSelectedAnswer] = useState<boolean | null>(initialAnswer);
 
     useEffect(() => {
@@ -21,11 +21,12 @@ export const TrueFalseQuestion: React.FC<TrueFalseQuestionProps> = ({
     const handleAnswer = (answer: boolean) => {
         // Se clicco lo stesso bottone, rimuovo la selezione
         const newAnswer = selectedAnswer === answer ? null : answer;
+
+        // Aggiorna lo stato locale
         setSelectedAnswer(newAnswer);
 
-        // Passa null se la selezione è stata rimossa
-        const isCorrect = newAnswer === null ? null : newAnswer === question.correctAnswer;
-        onAnswer(isCorrect);
+        // Passa il valore selezionato, non la sua correttezza
+        onAnswer(newAnswer);
     };
 
     return (

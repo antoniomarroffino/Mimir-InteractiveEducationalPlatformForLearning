@@ -24,7 +24,7 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({quiz}) => {
 
     // Usa le risposte dal tentativo corrente
     const [userResponses, setUserResponses] = useState<QuestionResponseDTO[]>(
-        currentAttempt?.responses || []
+        currentAttempt?.responses || new Array(quiz.questions?.length || 0).fill(null)
     );
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
@@ -48,25 +48,27 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({quiz}) => {
         setUserResponses(prevResponses => {
             const updatedResponses = [...prevResponses];
 
-            if (currentQuestion.type === QuestionType.TrueFalse) {
+            if (currentQuestion.type === QuestionType.TrueFalse && (typeof answer === 'boolean' || answer === null)) {
                 updatedResponses[currentQuestionIndex] = {
                     type: QuestionType.TrueFalse,
-                    selectedAnswer: (answer === null ? null : answer) as unknown as boolean
+                    selectedAnswer: answer
                 } as TrueFalseQuestionResponseDTO;
-            } else if (currentQuestion.type === QuestionType.MultipleChoice) {
+            } else if (currentQuestion.type === QuestionType.MultipleChoice && Array.isArray(answer)) {
                 updatedResponses[currentQuestionIndex] = {
                     type: QuestionType.MultipleChoice,
-                    selectedAnswerIndexes: answer === null ? [] : answer as number[]
+                    selectedAnswerIndexes: answer
                 } as MultipleChoiceQuestionResponseDTO;
             }
 
             return updatedResponses;
         });
     }, [currentQuestionIndex, quiz.questions]);
+
     const getCurrentQuestionResponse = useCallback(() => {
         // Recupera la risposta usando l'indice corrente
         return userResponses[currentQuestionIndex] || null;
     }, [currentQuestionIndex, userResponses]);
+
     const handleCompleteQuiz = useCallback(async () => {
         try {
             await completeQuizAttempt();
@@ -107,12 +109,8 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({quiz}) => {
                         {isTrueFalseQuestion(currentQuestion!) && (
                             <TrueFalseQuestion
                                 question={currentQuestion}
-                                onAnswer={(isCorrect) => {
-                                    const answerValue = isCorrect
-                                        ? currentQuestion.correctAnswer
-                                        : !currentQuestion.correctAnswer;
-
-                                    handleAnswer(answerValue);
+                                onAnswer={(selectedAnswer) => {
+                                    handleAnswer(selectedAnswer);
                                 }}
                                 initialAnswer={
                                     (getCurrentQuestionResponse() as TrueFalseQuestionResponseDTO)?.selectedAnswer ?? null
@@ -122,12 +120,8 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({quiz}) => {
                         {isMultipleChoiceQuestion(currentQuestion!) && (
                             <MultipleChoiceQuestion
                                 question={currentQuestion}
-                                onAnswer={(isCorrect) => {
-                                    const answerValue = isCorrect
-                                        ? currentQuestion.correctAnswerIndexes
-                                        : [];
-
-                                    handleAnswer(answerValue);
+                                onAnswer={(selectedIndexes) => {
+                                    handleAnswer(selectedIndexes);
                                 }}
                                 initialAnswer={
                                     (getCurrentQuestionResponse() as MultipleChoiceQuestionResponseDTO)?.selectedAnswerIndexes ?? null
