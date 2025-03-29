@@ -1,14 +1,61 @@
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
+import {
+    MultipleChoiceQuestionResponseDTO,
+    QuestionType,
+    TrueFalseQuestionResponseDTO
+} from '@dti-isin/backend-api-client';
 import {useQuizRetrieve} from "../hooks/useQuizRetrieve.ts";
 import {useQuizAttemptLocal} from "../hooks/quizAttempt/useQuizAttemptLocal.ts";
 import {QuizQuestions} from "../components/common/QuizQuestions.tsx";
 import {LoadingSpinner} from '../components/common/LoadingSpinner.tsx';
 
+
 const QuizScreen: React.FC = () => {
     const {quiz, quizPublication, error: errorQuiz} = useQuizRetrieve();
-    const {startQuizAttempt} = useQuizAttemptLocal();
+    const {startQuizAttempt, prepareQuizResponses} = useQuizAttemptLocal();
     const [isQuizStarted, setIsQuizStarted] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+
+    const handleStartQuiz = useCallback(async () => {
+        if (quizPublication && quiz?.questions) {
+            try {
+                setIsLoading(true);
+
+                // Crea la struttura iniziale delle risposte
+                const initialResponses = quiz.questions.map(question => {
+                    switch (question.type) {
+                        case QuestionType.TrueFalse:
+                            return {
+                                type: QuestionType.TrueFalse,
+                                selectedAnswer: null as never
+                            } as TrueFalseQuestionResponseDTO;
+
+                        case QuestionType.MultipleChoice:
+                            return {
+                                type: QuestionType.MultipleChoice,
+                                selectedAnswerIndexes: []
+                            } as MultipleChoiceQuestionResponseDTO;
+
+                        default:
+                            throw new Error(`Unsupported question type: ${question.type}`);
+                    }
+                });
+
+                // Prepara le risposte nel provider
+                prepareQuizResponses(initialResponses);
+
+                // Avvia il tentativo di quiz
+                await startQuizAttempt(quizPublication);
+
+                // Imposta il quiz come iniziato
+                setIsQuizStarted(true);
+            } catch (error) {
+                console.error('Errore durante l\'avvio del quiz:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        }
+    }, [quizPublication, quiz, startQuizAttempt, prepareQuizResponses]);
 
     if (errorQuiz) {
         return (
@@ -31,19 +78,6 @@ const QuizScreen: React.FC = () => {
         return <LoadingSpinner/>;
     }
 
-    const handleStartQuiz = async () => {
-        if (quizPublication) {
-            try {
-                setIsLoading(true);
-                await startQuizAttempt(quizPublication);
-                setIsQuizStarted(true);
-            } catch (error) {
-                console.error('Errore durante l\'avvio del quiz:', error);
-            } finally {
-                setIsLoading(false);
-            }
-        }
-    };
     return (
         <div className="min-h-screen bg-base-200">
             {/* Hero Section con gradiente */}
@@ -76,9 +110,10 @@ const QuizScreen: React.FC = () => {
                                     <div className="card-actions justify-center mt-4">
                                         <button
                                             onClick={handleStartQuiz}
+                                            disabled={isLoading}
                                             className="btn btn-primary btn-wide hover:scale-105 transition-transform"
                                         >
-                                            Inizia il Quiz
+                                            {isLoading ? 'Caricamento...' : 'Inizia il Quiz'}
                                         </button>
                                     </div>
                                 </div>

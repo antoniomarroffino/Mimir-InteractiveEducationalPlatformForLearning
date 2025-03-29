@@ -11,6 +11,13 @@ export const QuizAttemptLocalProvider: React.FC<{ children: React.ReactNode }> =
     const {user} = useAuth();
     const navigate = useNavigate();
 
+    const prepareQuizResponses = useCallback((responses: QuestionResponseDTO[]) => {
+        setCurrentAttempt(prev => ({
+            ...(prev || {}),
+            responses: responses
+        }));
+    }, []);
+
     const startQuizAttempt = useCallback((publication: QuizPublicationDTO) => {
         const createAttempt = async () => {
             try {
@@ -18,8 +25,9 @@ export const QuizAttemptLocalProvider: React.FC<{ children: React.ReactNode }> =
                     quizPublicationId: publication.id,
                     ...(user && !publication.anonymous ? {userId: user.azureOid} : {}),
                     startedAt: new Date().toISOString(),
-                    responses: [],
+                    responses: currentAttempt?.responses || [], // Usa le risposte preparate
                 } as QuizAttemptDTO;
+
                 const createdAttempt = await createQuizAttempt(newAttempt);
                 setCurrentAttempt(createdAttempt);
 
@@ -30,7 +38,7 @@ export const QuizAttemptLocalProvider: React.FC<{ children: React.ReactNode }> =
             }
         };
         return createAttempt();
-    }, [createQuizAttempt, user]);
+    }, [createQuizAttempt, user, currentAttempt]);
 
     const updateQuizAttemptResponses = useCallback((responses: QuestionResponseDTO[]) => {
         setCurrentAttempt(prev => {
@@ -66,18 +74,25 @@ export const QuizAttemptLocalProvider: React.FC<{ children: React.ReactNode }> =
         }
     }, [currentAttempt, createQuizAttempt, navigate]);
 
-
-    const resetQuizAttempt = () => {
+    const resetQuizAttempt = useCallback(() => {
         setCurrentAttempt(null);
-    };
+    }, []);
 
     const value = useMemo(() => ({
         currentAttempt,
         startQuizAttempt,
         updateQuizAttemptResponses,
         completeQuizAttempt,
-        resetQuizAttempt
-    }), [currentAttempt]);
+        resetQuizAttempt,
+        prepareQuizResponses
+    }), [
+        currentAttempt,
+        startQuizAttempt,
+        updateQuizAttemptResponses,
+        completeQuizAttempt,
+        resetQuizAttempt,
+        prepareQuizResponses
+    ]);
 
     return (
         <QuizAttemptLocalContext.Provider value={value}>
