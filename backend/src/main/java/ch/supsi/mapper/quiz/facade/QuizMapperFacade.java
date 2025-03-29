@@ -30,7 +30,7 @@ public class QuizMapperFacade implements IQuizMapperFacade {
     public QuizDTO toDTO(Quiz entity) {
         if (entity == null) return null;
 
-        List<Question> questions = this.getQuestionsByIds(entity.getQuestions());
+        List<Question> questions = this.getQuestionsByIds(entity.questionsId);
 
         List<QuestionDTO> questionsDTO = questions
                 .stream()

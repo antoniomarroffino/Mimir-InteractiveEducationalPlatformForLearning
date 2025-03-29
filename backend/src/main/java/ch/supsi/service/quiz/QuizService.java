@@ -5,9 +5,11 @@ import ch.supsi.model.api.Course;
 import ch.supsi.model.api.Folder;
 import ch.supsi.model.api.Quiz;
 import ch.supsi.model.dto.api.QuizDTO;
+import ch.supsi.model.dto.api.question.QuestionDTO;
 import ch.supsi.repository.CourseRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.NotFoundException;
 import org.bson.types.ObjectId;
 
@@ -38,7 +40,7 @@ public class QuizService implements IQuizService {
         Folder folder = this.getFolderFromCourse(courseId, folderId);
 
         return folder.quizzes.stream()
-                .filter(q -> q.getId().equals(quizId))
+                .filter(q -> q.id.equals(quizId))
                 .map(this.quizMapperFacade::toDTO)
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("Quiz not found in folder"));
@@ -66,6 +68,8 @@ public class QuizService implements IQuizService {
 
     @Override
     public QuizDTO updateQuizInFolder(ObjectId courseId, ObjectId folderId, ObjectId quizId, QuizDTO quizDTO) {
+        if(quizDTO ==null) throw new BadRequestException("QuizDTO is null");
+
         Optional<Course> courseOpt = this.courseRepository.findByIdOptional(courseId);
         if (courseOpt.isEmpty()) {
             throw new NotFoundException("Course not found");
@@ -77,18 +81,17 @@ public class QuizService implements IQuizService {
                 .orElseThrow(() -> new NotFoundException("Folder not found in course"));
 
         Quiz existingQuiz = folder.quizzes.stream()
-                .filter(q -> q.getId().equals(quizId))
+                .filter(q -> q.id.equals(quizId))
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("Quiz not found in folder"));
 
         Quiz updatedQuiz = this.quizMapperFacade.toEntity(quizDTO);
-        updatedQuiz.setId(existingQuiz.getId());
-        updatedQuiz.setCreatedAt(existingQuiz.getCreatedAt());
-        updatedQuiz.setUpdatedAt(LocalDateTime.now());
+        updatedQuiz.createdAt = quizDTO.getCreatedAt();
+        updatedQuiz.updatedAt = LocalDateTime.now();
+        updatedQuiz.questionsId = quizDTO.getQuestions().stream().map(QuestionDTO::getId).collect(Collectors.toSet());
 
         int index = folder.quizzes.indexOf(existingQuiz);
         folder.quizzes.set(index, updatedQuiz);
-
         this.courseRepository.update(courseOpt.get());
 
         return this.quizMapperFacade.toDTO(updatedQuiz);
@@ -106,7 +109,7 @@ public class QuizService implements IQuizService {
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("Folder not found in course"));
 
-        boolean removed = folder.quizzes.removeIf(q -> q.getId().equals(quizId));
+        boolean removed = folder.quizzes.removeIf(q -> q.id.equals(quizId));
         if (!removed) {
             throw new NotFoundException("Quiz not found in folder");
         }

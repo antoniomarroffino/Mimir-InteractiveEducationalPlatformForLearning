@@ -1,18 +1,14 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import {
     MultipleChoiceQuestionDTO,
-    QuestionDTO,
     QuestionType,
     TrueFalseQuestionDTO
 } from '@dti-isin/backend-api-client';
 import { TrueFalseQuestionTemplate } from './TrueFalseQuestionTemplate';
 import { MultipleChoiceQuestionTemplate } from './MultipleChoiceQuestionTemplate';
 import { DefaultQuestionEditorScreen } from './DefaultQuestionEditorScreen';
+import {SpecificQuestionDTO} from "../../hooks/question/useQuestionCreation.ts";
 
-type SpecificQuestionDTO =
-    | QuestionDTO
-    | TrueFalseQuestionDTO
-    | MultipleChoiceQuestionDTO;
 
 interface QuestionEditorProps {
     questionType: QuestionType;

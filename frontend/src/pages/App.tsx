@@ -81,9 +81,11 @@ const App = () => {
                                 <Route
                                     path=":courseId/folders/:folderId/quizzes/:quizId/edit"
                                     element={
-                                        <QuestionProviders>
-                                            <QuizCreation/>
-                                        </QuestionProviders>
+                                        <QuestionBankProviders>
+                                            <QuestionProviders>
+                                                <QuizCreation/>
+                                            </QuestionProviders>
+                                        </QuestionBankProviders>
                                     }
                                 />
                                 <Route
@@ -105,7 +107,7 @@ const App = () => {
                                 }
                             >
                                 <Route index element={<QuestionBankDashboard/>}/>
-                                <Route path=":questionBankId" element={<QuestionBankDetails />}/>
+                                <Route path=":questionBankId" element={<QuestionBankDetails/>}/>
 
                             </Route>
 

@@ -1,37 +1,28 @@
 import {useNavigate, useParams} from 'react-router-dom';
-import {QuestionType} from '@dti-isin/backend-api-client';
+import {QuestionDTO} from '@dti-isin/backend-api-client';
 import {BreadcrumbCourses} from "../components/common/BreadcrumbCourses.tsx";
-import {QuestionsList} from "../components/question/QuestionList.tsx";
-import {CreateQuestionForm} from "../components/question/CreateQuestionForm.tsx";
-import {QuestionEditor} from "../components/question/QuestionEditor.tsx";
-import {QuestionTypeSelector} from "../components/question/QuestionTypeSelector.tsx";
-import {DraftQuestionElement} from "../components/question/DraftQuestionElement.tsx";
-import {useQuizQuestions} from "../hooks/quiz/useQuizQuestions.ts";
-import {useQuizQuestionCreation} from "../hooks/question/useQuizQuestionCreation.ts";
 import {useCourseList} from "../hooks/course/useCourseList.ts";
 import React, {useMemo, useState} from "react";
-import {BsLayoutSidebar, BsListTask, BsListUl, BsPlusCircle, BsQuestionDiamond} from 'react-icons/bs';
+import {BsLayoutSidebar, BsListTask, BsListUl, BsQuestionDiamond} from 'react-icons/bs';
+import {useQuizCRUD} from "../hooks/quiz/useQuizCRUD.ts";
+import {useQuestionBankList} from "../hooks/questionBank/useQuestionBankList.ts";
+import { ImportedQuestionsList } from '../components/quiz/ImportedQuestionsList.tsx';
+import {QuestionPreview} from "../components/quiz/QuestionPreview.tsx";
+import {QuestionBankList} from "../components/quiz/QuestionBankList.tsx";
+import {LightBulbIcon} from "@heroicons/react/24/outline";
+import {format} from "date-fns";
+import {XMarkIcon} from "@heroicons/react/16/solid";
 
 export const QuizCreation: React.FC = () => {
-    /*const navigate = useNavigate();
+    const navigate = useNavigate();
     const {courseId, folderId, quizId} = useParams();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const {teacherCourses} = useCourseList();
-    const quizQuestionsQuery = useQuizQuestions(courseId, folderId, quizId);
-    const {
-        isCreatingQuestion,
-        selectedQuestionType,
-        questionTemplate,
-        draftQuestion,
-        error,
-        handleTypeSelection,
-        handleSaveQuestion,
-        setDraftQuestion,
-        resetQuestionCreation,
-        startQuestionCreation,
-        startQuestionEditing,
-        isEditingExistingQuestion
-    } = useQuizQuestionCreation(courseId!, folderId!, quizId!);
+    const [selectedQuestions, setSelectedQuestions] = useState<Set<string>>(new Set());
+    const [previewQuestion, setPreviewQuestion] = useState<QuestionDTO | null>(null);
+    const {updateQuiz, isUpdatingQuiz} = useQuizCRUD();
+    const {questionBanks, isLoadingQuestionBanks, errorQuestionBanks} = useQuestionBankList();
+
 
     const currentCourse = useMemo(() =>
             teacherCourses.find(course => course.id === courseId),
@@ -48,13 +39,66 @@ export const QuizCreation: React.FC = () => {
         [currentFolder, quizId]
     );
 
-    if (quizQuestionsQuery.isLoading) {
-        return (
-            <div className="flex justify-center items-center min-h-screen">
-                <div className="loading loading-spinner loading-lg"></div>
-            </div>
-        );
-    }
+
+    const handleQuestionSelect = (questionId: string) => {
+        setSelectedQuestions(prev => {
+            const newSet = new Set(prev);
+            newSet.has(questionId) ? newSet.delete(questionId) : newSet.add(questionId);
+            return newSet;
+        });
+    };
+
+    const handleBankSelect = (bankId: string) => {
+        const bank = questionBanks.find(b => b.id === bankId);
+        const bankQuestionIds = bank?.questions?.map(q => q.id) || [];
+        setSelectedQuestions(prev => {
+            const newSet = new Set(prev);
+            bankQuestionIds.forEach(id => newSet.add(id));
+            return newSet;
+        });
+    };
+
+    const handleImportQuestions = async () => {
+        if (!currentQuiz || !folderId || !quizId) return;
+
+        const questionsToAdd = Array.from(selectedQuestions).map(id => {
+            for (const bank of questionBanks) {
+                const question = bank.questions?.find(q => q.id === id);
+                if (question) return question;
+            }
+            return null;
+        }).filter(q => q !== null) as QuestionDTO[];
+
+        const updatedQuestions = [
+            ...(currentQuiz.questions || []),
+            ...questionsToAdd
+        ];
+
+        try {
+            await updateQuiz(folderId, quizId, {
+                ...currentQuiz,
+                questions: updatedQuestions
+            });
+            setSelectedQuestions(new Set());
+        } catch (error) {
+            console.error('Failed to import questions:', error);
+        }
+    };
+
+    const handleQuestionDelete = async (questionId: string) => {
+        if (!currentQuiz || !folderId || !quizId) return;
+
+        const updatedQuestions = currentQuiz.questions?.filter(q => q.id !== questionId) || [];
+
+        try {
+            await updateQuiz(folderId, quizId, {
+                ...currentQuiz,
+                questions: updatedQuestions
+            });
+        } catch (error) {
+            console.error('Failed to delete question:', error);
+        }
+    };
 
     if (!courseId || !folderId || !quizId || !currentCourse || !currentFolder || !currentQuiz) {
         return (
@@ -70,50 +114,53 @@ export const QuizCreation: React.FC = () => {
         );
     }
 
+
     return (
         <div className="w-full min-h-screen p-4 sm:p-6 lg:p-8">
-            <Breadcrumb
+            <BreadcrumbCourses
                 course={currentCourse}
                 folder={currentFolder}
                 quiz={currentQuiz}
             />
 
-            <div className="flex items-center justify-between mb-8">
-                <div>
-                    <h1 className="text-2xl md:text-4xl font-bold text-base-content/90 flex items-center gap-3">
-                        <BsListTask className="text-primary"/>
-                        {currentQuiz.name}
-                    </h1>
-                    <p className="text-base-content/70 mt-2 flex items-center gap-2 text-sm md:text-base">
-                        <BsQuestionDiamond className="text-primary/70"/>
-                        {quizQuestionsQuery.data?.length || 0} questions
-                    </p>
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-8">
+                <div className="flex-1 flex items-center gap-4 bg-base-100 p-4 rounded-xl shadow-sm">
+                    <BsListTask className="text-primary w-8 h-8 shrink-0"/>
+                    <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-3 flex-wrap">
+                            <h1 className="text-3xl font-bold text-primary truncate">
+                                {currentQuiz.name}
+                            </h1>
+                        </div>
+                        <div className="flex items-center gap-3 text-sm text-base-content/60 mt-1">
+                            <span className="flex items-center gap-1">
+                                <BsQuestionDiamond/>
+                                {currentQuiz.questions?.length || 0} questions
+                            </span>
+                            <span>•</span>
+                            <span>
+                                Last modified: {format(new Date(currentQuiz.updatedAt!), 'dd MMM yyyy HH:mm')}
+                            </span>
+                        </div>
+                    </div>
                 </div>
-                {!isCreatingQuestion && (
-                    <button
-                        className="btn btn-primary btn-sm md:btn-lg flex items-center gap-2"
-                        onClick={startQuestionCreation}
-                    >
-                        <BsPlusCircle className="text-xl"/>
-                        <span className="hidden md:inline">Create Question</span>
-                    </button>
-                )}
+
+                <div className="bg-primary/5 p-4 rounded-xl border border-primary/10 flex items-center gap-3 flex-1 max-w-lg mx-4">
+                    <LightBulbIcon className="w-6 h-6 text-primary shrink-0"/>
+                    <div className="text-base-content/70 text-sm">
+                        {[
+                            "Pick questions from the question banks!",
+                            "Quality questions create great quizzes!",
+                            "Mix and match from different banks!",
+                            "Your perfect quiz is just a few clicks away!",
+                            "Curiosity fuels education!"
+                        ][Math.floor(Math.random() * 5)]}
+                    </div>
+                </div>
             </div>
 
-            {(error || quizQuestionsQuery.error) && (
-                <div className="alert alert-error mb-4 shadow-lg">
-                    {error || quizQuestionsQuery.error?.message}
-                </div>
-            )}
-
-            {quizQuestionsQuery.data?.length === 0 && (
-                <div className="alert alert-info mb-4 shadow-lg">
-                    No questions found. Start creating your first question!
-                </div>
-            )}
-
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 relative">
-                {/* Mobile Sidebar Toggle }
+                {/* Mobile Sidebar Toggle */}
                 <div className="lg:hidden absolute top-0 right-0 z-50">
                     <button
                         className="btn btn-ghost"
@@ -123,90 +170,71 @@ export const QuizCreation: React.FC = () => {
                     </button>
                 </div>
 
-                {/* Sidebar for Questions List }
+                {/* Imported Questions Sidebar */}
                 <div className={`
-                        lg:col-span-4 
-                        fixed 
-                        lg:static 
-                        top-0 
-                        left-0 
-                        w-full 
-                        h-full 
-                        lg:w-auto 
-                        lg:h-auto 
-                        z-40 
-                        transform 
-                        transition-transform 
-                        duration-300 
-                        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-                        lg:translate-x-0
-                        bg-base-100 
-                        lg:bg-transparent 
-                        p-6 
-                        lg:p-0
-                    `}>
+                    lg:col-span-4 
+                    fixed 
+                    lg:static 
+                    top-0 
+                    left-0 
+                    w-full 
+                    h-full 
+                    lg:w-auto 
+                    lg:h-auto 
+                    z-40 
+                    transform 
+                    transition-transform 
+                    duration-300 
+                    ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+                    lg:translate-x-0
+                    bg-base-100/95 
+                    backdrop-blur-sm
+                    lg:bg-transparent 
+                    p-6 
+                    lg:p-0
+                    overflow-y-auto
+                `}>
                     <div className="bg-base-100 rounded-xl p-6 shadow-xl space-y-6">
-                        <QuestionsList
-                            questions={quizQuestionsQuery.data || []}
-                            onStartEditing={startQuestionEditing}
+                        <div className="flex justify-between items-center mb-4">
+                            <h3 className="text-lg font-semibold">Quiz Questions</h3>
+                            <button
+                                className="btn btn-circle btn-sm lg:hidden"
+                                onClick={() => setIsSidebarOpen(false)}
+                            >
+                                <XMarkIcon className="w-4 h-4"/>
+                            </button>
+                        </div>
+                        <ImportedQuestionsList
+                            questions={currentQuiz.questions || []}
+                            onDelete={handleQuestionDelete}
+                            onPreview={setPreviewQuestion}
+                            isLoading={isUpdatingQuiz}
                         />
-
-                        {isCreatingQuestion && (
-                            <DraftQuestionElement
-                                questionText={draftQuestion.questionText}
-                                questionType={selectedQuestionType!}
-                            />
-                        )}
-
-                        {!isCreatingQuestion && (
-                            <CreateQuestionForm
-                                onStartCreation={startQuestionCreation}
-                                isDisabled={false}
-                            />
-                        )}
                     </div>
                 </div>
 
-                {/* Main Question Editor }
+                {/* Question Preview */}
                 <div className="lg:col-span-5 order-first lg:order-none">
-                    <QuestionEditor
-                        questionType={selectedQuestionType || QuestionType.TrueFalse}
-                        template={questionTemplate || {
-                            questionText: '',
-                            type: QuestionType.TrueFalse,
-                            correctAnswer: true
-                        }}
-                        onSave={handleSaveQuestion}
-                        onCancel={resetQuestionCreation}
-                        isLoading={quizQuestionsQuery.isLoading}
-                        onQuestionTextChange={(text) => setDraftQuestion(prev => ({...prev, questionText: text}))}
-                        disabled={!isCreatingQuestion || !selectedQuestionType}
-                        isEditingExistingQuestion={isEditingExistingQuestion}
+                    <QuestionPreview
+                        question={previewQuestion}
+                        onClose={() => setPreviewQuestion(null)}
                     />
                 </div>
 
-                {/* Question Type Selector }
+                {/* Question Banks Panel */}
                 <div className="lg:col-span-3">
-                    {isCreatingQuestion ? (
-                        <QuestionTypeSelector
-                            onSelectType={handleTypeSelection}
-                            isLoading={false}
-                            disabled={false}
-                            currentType={selectedQuestionType}
-                        />
-                    ) : (
-                        <div className="bg-base-100 rounded-xl p-6 shadow-xl opacity-50 text-center">
-                            <BsQuestionDiamond className="text-6xl mx-auto mb-4 text-base-content/30"/>
-                            <h2 className="text-lg font-semibold mb-3">Question Type</h2>
-                            <p className="text-base-content/70">
-                                Select "Create New Question" to start
-                            </p>
-                        </div>
-                    )}
+                    <QuestionBankList
+                        banks={questionBanks}
+                        isLoading={isLoadingQuestionBanks}
+                        error={errorQuestionBanks}
+                        selectedQuestions={selectedQuestions}
+                        onQuestionSelect={handleQuestionSelect}
+                        onBankSelect={handleBankSelect}
+                        onImport={handleImportQuestions}
+                        isImporting={isUpdatingQuiz}
+                    />
                 </div>
             </div>
         </div>
-    );*/
-
-    return(<></>);
+    );
 };

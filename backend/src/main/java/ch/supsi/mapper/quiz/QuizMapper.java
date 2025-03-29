@@ -13,9 +13,9 @@ import java.util.Set;
 public class QuizMapper {
     public QuizDTO toDTO(@NotNull Quiz quiz, List<QuestionDTO> questionDTOList) {
         QuizDTO dto = new QuizDTO();
-        dto.setId(quiz.getId().toString());
-        dto.setName(quiz.getName());
-        dto.setDescription(quiz.getDescription());
+        dto.setId(quiz.id.toString());
+        dto.setName(quiz.name);
+        dto.setDescription(quiz.description);
         dto.setQuestions(questionDTOList);
         return dto;
     }
@@ -24,15 +24,15 @@ public class QuizMapper {
         Quiz quiz = new Quiz(dto.getName());
 
         if (dto.getId() != null) {
-            quiz.setId(new ObjectId(dto.getId()));
+            quiz.id = new ObjectId(dto.getId());
         }
 
-        quiz.setDescription(dto.getDescription());
+        quiz.description = dto.getDescription();
 
-        quiz.setQuestions(questionIdList);
+        quiz.questionsId = questionIdList;
 
-        quiz.setCreatedAt(dto.getCreatedAt() != null ? dto.getCreatedAt() : LocalDateTime.now());
-        quiz.setUpdatedAt(dto.getUpdatedAt() != null ? dto.getUpdatedAt() : LocalDateTime.now());
+        quiz.createdAt = dto.getCreatedAt() != null ? dto.getCreatedAt() : LocalDateTime.now();
+        quiz.updatedAt = dto.getUpdatedAt() != null ? dto.getUpdatedAt() : LocalDateTime.now();
 
         return quiz;
     }

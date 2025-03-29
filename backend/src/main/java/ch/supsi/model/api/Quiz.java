@@ -11,14 +11,14 @@ import java.util.Set;
 
 @Schema(description = "Quiz model", name = "Quiz")
 public class Quiz {
-    private ObjectId id;
+    public ObjectId id;
 
-    private String name;
+    public String name;
 
-    private String description;
-    private Set<String> questionsId = new HashSet<>();
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    public String description;
+    public Set<String> questionsId = new HashSet<>();
+    public LocalDateTime createdAt;
+    public LocalDateTime updatedAt;
 
     public Quiz() {
         this.id = new ObjectId();
@@ -29,53 +29,5 @@ public class Quiz {
     public Quiz(String name) {
         this();
         this.name = name;
-    }
-
-    public ObjectId getId() {
-        return id;
-    }
-
-    public void setId(ObjectId id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Set<String> getQuestions() {
-        return questionsId;
-    }
-
-    public void setQuestions(Set<String> questions) {
-        this.questionsId = questions;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
     }
 }

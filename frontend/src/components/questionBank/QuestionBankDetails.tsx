@@ -3,7 +3,7 @@ import {useGetQuestionBankById} from "../../hooks/questionBank/useSelectedQuesti
 import {useQuestionBankCRUD} from "../../hooks/questionBank/useQuestionBankCRUD.ts";
 import React, {useEffect, useState} from "react";
 import {Spinner} from "../common/Spinner.tsx";
-import {SpecificQuestionDTO, useQuestionCreation} from "../../hooks/question/useQuizQuestionCreation.ts";
+import {SpecificQuestionDTO, useQuestionCreation} from "../../hooks/question/useQuestionCreation.ts";
 import {
     BsLayoutSidebar,
     BsListTask,
