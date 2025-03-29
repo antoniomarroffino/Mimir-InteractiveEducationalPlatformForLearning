@@ -8,6 +8,7 @@ import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
+@MongoEntity(collection = "questions")
 @Schema(description = "Base Question model", name = "Question")
 @BsonDiscriminator(key = "type")
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")

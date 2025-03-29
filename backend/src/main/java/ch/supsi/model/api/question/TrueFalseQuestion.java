@@ -1,8 +1,10 @@
 package ch.supsi.model.api.question;
 
+import io.quarkus.mongodb.panache.common.MongoEntity;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
+@MongoEntity(collection = "questions")
 @Schema(description = "True/False Question model", name = "TrueFalseQuestion")
 @BsonDiscriminator(key = "type", value = "TRUE_FALSE")
 public class TrueFalseQuestion extends Question {

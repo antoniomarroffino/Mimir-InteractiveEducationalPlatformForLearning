@@ -43,7 +43,6 @@ const QuestionBankDetails: React.FC = () => {
                 ...questionDTO,
                 questionBankId: questionBank!.id,
             }
-            console.log(questionDTO);
             await handleSaveQuestion(questionDTO);
         }
     }

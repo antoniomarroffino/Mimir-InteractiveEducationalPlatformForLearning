@@ -36,7 +36,7 @@ public class QuestionBankMapperFacade implements IQuestionBankMapperFacade {
         List<QuestionDTO> questionsDTO = questions
                 .stream()
                 .map(q -> this.questionMapperBuilder.getQuestionDTOMapper(q.type).toDTO(q))
-                .toList();;
+                .toList();
 
         return this.questionBankMapper.toDTO(entity, questionsDTO);
     }

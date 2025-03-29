@@ -35,6 +35,7 @@ export const QuestionCRUDProvider: React.FC<{ children: React.ReactNode }> = ({c
                         };
                     }
                 );
+                queryClient.invalidateQueries(['questionBanks', newQuestion.questionBankId]);
             },
             onError: (error: Error) => {
                 console.error("Question creation error:", error);
@@ -71,6 +72,7 @@ export const QuestionCRUDProvider: React.FC<{ children: React.ReactNode }> = ({c
                         };
                     }
                 );
+                queryClient.invalidateQueries(['questionBanks', updatedQuestion.questionBankId]);
             },
             onError: (error: Error) => {
                 console.error("Question updating error:", error);
@@ -102,6 +104,7 @@ export const QuestionCRUDProvider: React.FC<{ children: React.ReactNode }> = ({c
                         };
                     }
                 );
+                queryClient.invalidateQueries(['questionBanks', params.questionBankId]);
                 // deselectQuestion();
             },
             onError: (error: Error) => {
