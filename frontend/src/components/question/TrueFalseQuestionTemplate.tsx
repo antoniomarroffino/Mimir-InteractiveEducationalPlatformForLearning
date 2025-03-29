@@ -4,7 +4,6 @@ import {BsCheckCircle, BsXCircle} from 'react-icons/bs';
 interface TrueFalseTemplateProps {
     correctAnswer: boolean;
     onCorrectAnswerChange: (value: boolean) => void;
-    isLoading?: boolean;
     disabled?: boolean;
 }
 

@@ -26,11 +26,13 @@ public abstract class QuestionDTO {
     @NotNull(message = "Question type cannot be null")
     private QuestionType type;
 
+    private String questionBankId;
+
     public QuestionDTO() {
     }
 
     public String getId() {
-        return id;
+        return this.id;
     }
 
     public void setId(String id) {
@@ -38,7 +40,7 @@ public abstract class QuestionDTO {
     }
 
     public String getQuestionText() {
-        return questionText;
+        return this.questionText;
     }
 
     public void setQuestionText(String questionText) {
@@ -46,10 +48,18 @@ public abstract class QuestionDTO {
     }
 
     public QuestionType getType() {
-        return type;
+        return this.type;
     }
 
     public void setType(QuestionType type) {
         this.type = type;
+    }
+
+    public String getQuestionBankId() {
+        return this.questionBankId;
+    }
+
+    public void setQuestionBankId(String questionBankId) {
+        this.questionBankId = questionBankId;
     }
 }

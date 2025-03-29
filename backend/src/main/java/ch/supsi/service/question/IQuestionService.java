@@ -7,9 +7,9 @@ import org.bson.types.ObjectId;
 public interface IQuestionService {
     QuestionDTO createQuestionTemplate(QuestionType type);
 
-    QuestionDTO createQuestionInQuestionBank(ObjectId questionBankId, QuestionDTO questionDTO);
+    QuestionDTO createQuestionInQuestionBank(QuestionDTO questionDTO);
 
     QuestionDTO updateQuestion(ObjectId questionId, QuestionDTO questionDTO);
 
-    void deleteQuestionInQuestionBank(ObjectId questionId, ObjectId questionBankId);
+    void deleteQuestion(ObjectId questionId);
 }

@@ -45,7 +45,6 @@ public class QuestionController {
     }
 
     @POST
-    @Path("/{questionBankId}")
     @Operation(summary = "Add a question to a question bank")
     @APIResponse(
             responseCode = "201",
@@ -55,14 +54,9 @@ public class QuestionController {
                     schema = @Schema(implementation = QuestionDTO.class)
             )
     )
-    public Response createQuestionInQuestionBank(
-            @PathParam("questionBankId") String questionBankId,
-            @Valid QuestionDTO questionDTO) {
+    public Response createQuestionInQuestionBank(@Valid QuestionDTO questionDTO) {
 
-        QuestionDTO savedQuestionDTO = this.questionService.createQuestionInQuestionBank(
-                new ObjectId(questionBankId),
-                questionDTO
-        );
+        QuestionDTO savedQuestionDTO = this.questionService.createQuestionInQuestionBank(questionDTO);
 
         return Response.status(Response.Status.CREATED)
                 .entity(savedQuestionDTO)
@@ -98,9 +92,8 @@ public class QuestionController {
             responseCode = "204",
             description = "Question deleted successfully"
     )
-    public Response deleteQuestionInQuestionBank(@PathParam("questionId") String questionId,
-                                                 @QueryParam("questionBank") String questionBankId) {
-        this.questionService.deleteQuestionInQuestionBank(new ObjectId(questionId), new ObjectId(questionBankId));
+    public Response deleteQuestion(@PathParam("questionId") String questionId) {
+        this.questionService.deleteQuestion(new ObjectId(questionId));
 
         return Response.status(Response.Status.NO_CONTENT).build();
     }

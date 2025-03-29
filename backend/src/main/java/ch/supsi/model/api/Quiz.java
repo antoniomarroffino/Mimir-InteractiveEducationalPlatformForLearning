@@ -5,7 +5,9 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Schema(description = "Quiz model", name = "Quiz")
 public class Quiz {
@@ -14,7 +16,7 @@ public class Quiz {
     private String name;
 
     private String description;
-    private List<String> questions = new ArrayList<>();
+    private Set<String> questionsId = new HashSet<>();
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -53,12 +55,12 @@ public class Quiz {
         this.description = description;
     }
 
-    public List<String> getQuestions() {
-        return questions;
+    public Set<String> getQuestions() {
+        return questionsId;
     }
 
-    public void setQuestions(List<String> questions) {
-        this.questions = questions;
+    public void setQuestions(Set<String> questions) {
+        this.questionsId = questions;
     }
 
     public LocalDateTime getCreatedAt() {

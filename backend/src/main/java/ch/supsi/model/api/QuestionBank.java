@@ -6,7 +6,9 @@ import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @MongoEntity(collection = "question_banks")
 @Schema(description = "QuestionBank model", name = "QuestionBank")
@@ -14,10 +16,10 @@ public class QuestionBank {
     @BsonId
     public ObjectId id;
     public String name;
-    public List<String> questions;
+    public Set<String> questions;
 
     public QuestionBank() {
-        this.questions = new ArrayList<>();
+        this.questions = new HashSet<>();
     }
 
     public QuestionBank(String name) {

@@ -10,7 +10,6 @@ interface MultipleChoiceTemplateProps {
     correctChoices: number[];
     onChoicesChange: (choices: string[]) => void;
     onCorrectChoicesChange: (correctChoices: number[]) => void;
-    isLoading?: boolean;
     disabled?: boolean;
     onValidationChange?: (isValid: boolean) => void;
 }
@@ -20,7 +19,6 @@ export const MultipleChoiceQuestionTemplate: React.FC<MultipleChoiceTemplateProp
                                                                                           correctChoices,
                                                                                           onChoicesChange,
                                                                                           onCorrectChoicesChange,
-                                                                                          isLoading = false,
                                                                                           disabled = false,
                                                                                           onValidationChange
                                                                                       }) => {
@@ -95,7 +93,7 @@ export const MultipleChoiceQuestionTemplate: React.FC<MultipleChoiceTemplateProp
                                 m-0.5
                             `}
                             onClick={() => updateChoiceCount(num)}
-                            disabled={isLoading || disabled}
+                            disabled={disabled}
                         >
                             {num}
                         </button>
@@ -115,7 +113,7 @@ export const MultipleChoiceQuestionTemplate: React.FC<MultipleChoiceTemplateProp
                             className="input input-sm w-full px-2 py-1 border-none focus:outline-none"
                             value={choices[index] || ''}
                             onChange={(e) => handleChoiceChange(index, e.target.value)}
-                            disabled={isLoading || disabled}
+                            disabled={disabled}
                         />
                         <button
                             className={`
@@ -133,7 +131,7 @@ export const MultipleChoiceQuestionTemplate: React.FC<MultipleChoiceTemplateProp
                                 e.stopPropagation();
                                 toggleCorrectChoice(index);
                             }}
-                            disabled={isLoading || disabled}
+                            disabled={disabled}
                         >
                             {correctChoices.includes(index) ? (
                                 <BsCheckCircleFill className="text-lg"/>

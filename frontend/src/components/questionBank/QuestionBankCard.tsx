@@ -10,7 +10,7 @@ export const QuestionBankCard = ({ bank }: { bank: QuestionBankDTO }) => {
         <motion.div
             className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow cursor-pointer group border-2 border-transparent hover:border-purple-100"
             whileHover={{ y: -5 }}
-            onClick={() => navigate(`/question-banks/${bank.id}`)}
+            onClick={() => navigate(`/question_banks/${bank.id}`)}
         >
             <div className="flex flex-col h-full">
                 <div className="flex items-center gap-3 mb-4">

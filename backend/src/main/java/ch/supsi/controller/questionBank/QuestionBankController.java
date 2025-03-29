@@ -121,9 +121,12 @@ public class QuestionBankController {
             description = "Question bank not found"
     )
     public Response deleteQuestionBank(@PathParam("id") String id) {
-        QuestionBankDTO questionBankDTO = this.questionBankService.getQuestionBankById(new ObjectId(id));
-        for (QuestionDTO questionDTO : questionBankDTO.getQuestions())
-            this.questionService.deleteQuestionInQuestionBank(new ObjectId(questionDTO.getId()), new ObjectId(id));
+        this.questionBankService.getQuestionBankById(new ObjectId(id))
+                .getQuestions()
+                .stream()
+                .map(QuestionDTO::getId)
+                .map(ObjectId::new)
+                .forEach(questionBankService::deleteQuestionBank);
         this.questionBankService.deleteQuestionBank(new ObjectId(id));
         return Response.status(Response.Status.NO_CONTENT).build();
     }

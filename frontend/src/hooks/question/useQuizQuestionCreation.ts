@@ -7,16 +7,12 @@ import {
 } from '@dti-isin/backend-api-client';
 import { useQuestionCRUD } from "./useQuestionCRUD.ts";
 
-type SpecificQuestionDTO =
+export type SpecificQuestionDTO =
     | QuestionDTO
     | TrueFalseQuestionDTO
     | MultipleChoiceQuestionDTO;
 
-export const useQuizQuestionCreation = (
-    courseId: string,
-    folderId: string,
-    quizId: string
-) => {
+export const useQuestionCreation = () => {
     const [isCreatingQuestion, setIsCreatingQuestion] = useState(false);
     const [selectedQuestionType, setSelectedQuestionType] = useState<QuestionType | null>(null);
     const [questionTemplate, setQuestionTemplate] = useState<SpecificQuestionDTO | null>(null);
@@ -68,19 +64,10 @@ export const useQuizQuestionCreation = (
         try {
             setError(null);
 
-            const completeQuestionData = {
-                ...questionData,
-                courseId,
-                folderId,
-                quizId
-            };
-
             if (isEditingExistingQuestion && questionData.id) {
-                // Aggiornamento di una domanda esistente
-                await updateQuestion(questionData.id, completeQuestionData);
+                await updateQuestion(questionData.id, questionData);
             } else {
-                // Creazione di una nuova domanda
-                await createQuestion(completeQuestionData);
+                await createQuestion(questionData);
             }
 
             resetQuestionCreation();

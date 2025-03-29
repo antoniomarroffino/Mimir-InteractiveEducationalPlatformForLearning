@@ -3,7 +3,7 @@ import {createContext} from "react";
 
 
 export type QuestionCRUDContextType = {
-    createQuestion: (questionBankId: string, questionDTO: QuestionDTO) => Promise<QuestionDTO>;
+    createQuestion: (questionDTO: QuestionDTO) => Promise<QuestionDTO>;
 
     updateQuestion: (
         questionId: string,

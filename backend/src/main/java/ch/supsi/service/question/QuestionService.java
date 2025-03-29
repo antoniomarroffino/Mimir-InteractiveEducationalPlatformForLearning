@@ -10,6 +10,7 @@ import ch.supsi.repository.QuestionRepository;
 import ch.supsi.service.question.builder.IQuestionFactory;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.NotFoundException;
 import org.bson.types.ObjectId;
 
@@ -40,20 +41,18 @@ public class QuestionService implements IQuestionService {
     }
 
     @Override
-    public QuestionDTO createQuestionInQuestionBank(
-            ObjectId questionBankId,
-            QuestionDTO questionDTO) {
+    public QuestionDTO createQuestionInQuestionBank(QuestionDTO questionDTO) {
+        if(questionDTO == null) throw new BadRequestException("QuestionDTO is null");
 
-        Optional<QuestionBank> questionBankOpt = this.questionBankRepository.findByIdOptional(questionBankId);
+        Optional<QuestionBank> questionBankOpt = this.questionBankRepository.findByIdOptional(new ObjectId(questionDTO.getQuestionBankId()));
 
         if (questionBankOpt.isEmpty()) {
             throw new NotFoundException("Question bank not found");
         }
 
         Question question = this.questionMapperBuilder.getQuestionDTOMapper(questionDTO.getType()).toEntity(questionDTO);
-
-        this.questionBankRepository.addQuestionToQuestionBank(question.id.toString(), questionBankId.toString());
         this.questionRepository.persist(question);
+        this.questionBankRepository.addQuestionToQuestionBank(question.id.toString(), new ObjectId(question.questionBankId));
 
         return this.questionMapperBuilder.getQuestionDTOMapper(questionDTO.getType()).toDTO(question);
     }
@@ -73,19 +72,21 @@ public class QuestionService implements IQuestionService {
     }
 
     @Override
-    public void deleteQuestionInQuestionBank(ObjectId questionId, ObjectId questionBankId) {
+    public void deleteQuestion(ObjectId questionId) {
         Optional<Question> questionOpt = this.questionRepository.findByIdOptional(questionId);
-        Optional<QuestionBank> questionBankOpt = this.questionBankRepository.findByIdOptional(questionBankId);
 
         if (questionOpt.isEmpty()) {
             throw new NotFoundException("Question not found");
         }
 
+        Question question = questionOpt.get();
+        Optional<QuestionBank> questionBankOpt = this.questionBankRepository.findByIdOptional(new ObjectId(question.questionBankId));
+
         if (questionBankOpt.isEmpty()) {
             throw new NotFoundException("Question bank not found");
         }
 
-        this.questionBankRepository.removeQuestionFromQuestionBank(questionBankId.toString(), questionBankId.toString());
+        this.questionBankRepository.removeQuestionFromQuestionBank(question.id.toString(), new ObjectId(question.questionBankId));
         this.questionRepository.delete(questionOpt.get());
     }
 }

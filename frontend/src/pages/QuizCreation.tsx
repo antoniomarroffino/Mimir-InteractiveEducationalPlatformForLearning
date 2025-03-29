@@ -13,7 +13,7 @@ import React, {useMemo, useState} from "react";
 import {BsLayoutSidebar, BsListTask, BsListUl, BsPlusCircle, BsQuestionDiamond} from 'react-icons/bs';
 
 export const QuizCreation: React.FC = () => {
-    const navigate = useNavigate();
+    /*const navigate = useNavigate();
     const {courseId, folderId, quizId} = useParams();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const {teacherCourses} = useCourseList();
@@ -113,7 +113,7 @@ export const QuizCreation: React.FC = () => {
             )}
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 relative">
-                {/* Mobile Sidebar Toggle */}
+                {/* Mobile Sidebar Toggle }
                 <div className="lg:hidden absolute top-0 right-0 z-50">
                     <button
                         className="btn btn-ghost"
@@ -123,7 +123,7 @@ export const QuizCreation: React.FC = () => {
                     </button>
                 </div>
 
-                {/* Sidebar for Questions List */}
+                {/* Sidebar for Questions List }
                 <div className={`
                         lg:col-span-4 
                         fixed 
@@ -167,7 +167,7 @@ export const QuizCreation: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Main Question Editor */}
+                {/* Main Question Editor }
                 <div className="lg:col-span-5 order-first lg:order-none">
                     <QuestionEditor
                         questionType={selectedQuestionType || QuestionType.TrueFalse}
@@ -185,7 +185,7 @@ export const QuizCreation: React.FC = () => {
                     />
                 </div>
 
-                {/* Question Type Selector */}
+                {/* Question Type Selector }
                 <div className="lg:col-span-3">
                     {isCreatingQuestion ? (
                         <QuestionTypeSelector
@@ -206,5 +206,7 @@ export const QuizCreation: React.FC = () => {
                 </div>
             </div>
         </div>
-    );
+    );*/
+
+    return(<></>);
 };

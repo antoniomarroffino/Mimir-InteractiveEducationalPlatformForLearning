@@ -20,7 +20,6 @@ interface QuestionEditorProps {
     onSave: (question: SpecificQuestionDTO) => void;
     onCancel: () => void;
     onQuestionTextChange?: (text: string) => void;
-    isLoading?: boolean;
     disabled?: boolean;
     isEditingExistingQuestion?: boolean;
 }
@@ -31,7 +30,6 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
                                                                   onSave,
                                                                   onCancel,
                                                                   onQuestionTextChange,
-                                                                  isLoading = false,
                                                                   disabled = false,
                                                                   isEditingExistingQuestion = false,
                                                               }) => {
@@ -104,8 +102,8 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
         const isMultipleChoiceInvalid =
             questionType === QuestionType.MultipleChoice && !isQuestionValid;
 
-        return isTextEmpty || isLoading || disabled || isMultipleChoiceInvalid;
-    }, [questionText, questionType, isLoading, disabled, isQuestionValid]);
+        return isTextEmpty || disabled || isMultipleChoiceInvalid;
+    }, [questionText, questionType, disabled, isQuestionValid]);
 
     const renderSpecificFields = () => {
         switch (questionType) {
@@ -114,7 +112,6 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
                     <TrueFalseQuestionTemplate
                         correctAnswer={correctAnswer}
                         onCorrectAnswerChange={setCorrectAnswer}
-                        isLoading={isLoading}
                         disabled={disabled}
                     />
                 );
@@ -125,7 +122,6 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
                         correctChoices={correctChoices}
                         onChoicesChange={setChoices}
                         onCorrectChoicesChange={setCorrectChoices}
-                        isLoading={isLoading}
                         disabled={disabled}
                         onValidationChange={setIsQuestionValid}
                     />
@@ -155,7 +151,7 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
                         className="textarea textarea-bordered h-24"
                         placeholder="Enter your question"
                         required
-                        disabled={isLoading || disabled}
+                        disabled={disabled}
                     />
                 </div>
 
@@ -166,7 +162,7 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
                         type="button"
                         className="btn btn-ghost"
                         onClick={onCancel}
-                        disabled={isLoading || disabled}
+                        disabled={disabled}
                     >
                         Cancel
                     </button>
@@ -175,9 +171,7 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
                         className="btn btn-primary"
                         disabled={isSaveDisabled}
                     >
-                        {isLoading ? (
-                            <span className="loading loading-spinner"></span>
-                        ) : 'Save Question'}
+                        Save Question
                     </button>
                 </div>
             </form>

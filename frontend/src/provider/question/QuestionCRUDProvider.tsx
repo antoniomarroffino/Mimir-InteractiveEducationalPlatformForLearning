@@ -1,9 +1,8 @@
 import React from "react";
 import {useMutation, useQueryClient} from "react-query";
-import {QuestionDTO, QuestionType} from "@dti-isin/backend-api-client";
+import {QuestionBankDTO, QuestionDTO, QuestionType} from "@dti-isin/backend-api-client";
 import {QuestionCRUDContext} from "../../contexts/question/QuestionCRUDContext.ts";
 import {questionApi} from "../../../config/config.ts";
-import {useQuestionSelection} from "../../hooks/question/useQuestionSelection.ts";
 
 export const QuestionCRUDProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const queryClient = useQueryClient();
@@ -14,25 +13,27 @@ export const QuestionCRUDProvider: React.FC<{ children: React.ReactNode }> = ({c
 
 
     const createQuestionMutation = useMutation(
-        async (params: {
-            questionBankId: string;
-            questionDTO: QuestionDTO;
-        }) => {
-            if (!params.questionBankId) {
+        async (questionDTO: QuestionDTO) => {
+            if (!questionDTO.questionBankId) {
                 throw new Error("No question bank selected");
             }
 
-            const response = await questionApi.apiQuestionsQuestionBankIdPost({
-                questionBankId: params.questionBankId,
-                questionDTO: params.questionDTO,
-            });
+            const response = await questionApi.apiQuestionsPost({questionDTO});
             return response.data;
         },
         {
-            onSuccess: (newQuestion, params) => {
+            onSuccess: (newQuestion) => {
                 queryClient.setQueryData(
-                    ["questions", params.questionBankId],
-                    (oldData: QuestionDTO[] | undefined) => (oldData ? [...oldData, newQuestion] : [newQuestion])
+                    ["questionBanks", newQuestion.questionBankId],
+                    (oldData: QuestionBankDTO | undefined) => {
+                        if (!oldData) {
+                            return oldData;
+                        }
+                        return {
+                            ...oldData,
+                            questions: [...(oldData.questions || []), newQuestion]
+                        };
+                    }
                 );
             },
             onError: (error: Error) => {
@@ -59,12 +60,15 @@ export const QuestionCRUDProvider: React.FC<{ children: React.ReactNode }> = ({c
         {
             onSuccess: (updatedQuestion) => {
                 queryClient.setQueryData(
-                    ["questions"],
-                    (oldData: QuestionDTO[] | undefined) => {
-                        if (!oldData) return [updatedQuestion];
-                        return oldData.map((question) =>
-                            question.id === updatedQuestion.id ? updatedQuestion : question
-                        );
+                    ["questionBanks", updatedQuestion.questionBankId],
+                    (oldData: QuestionBankDTO | undefined) => {
+                        if (!oldData) return oldData;
+                        return {
+                            ...oldData,
+                            questions: oldData.questions!.map((question) =>
+                                question.id === updatedQuestion.id ? updatedQuestion : question
+                            ),
+                        };
                     }
                 );
             },
@@ -82,16 +86,23 @@ export const QuestionCRUDProvider: React.FC<{ children: React.ReactNode }> = ({c
 
             return questionApi.apiQuestionsQuestionIdDelete({
                 questionId: params.questionId,
-                questionBank: params.questionBankId,
             });
         },
         {
             onSuccess: (_, params) => {
-                queryClient.setQueryData<QuestionDTO[]>(
-                    ["questions"],
-                    (old) => old?.filter(q => q.id !== params.questionId) || []
+                queryClient.setQueryData(
+                    ["questionBanks", params.questionBankId],
+                    (oldData: QuestionBankDTO | undefined) => {
+                        if (!oldData) return oldData;
+                        return {
+                            ...oldData,
+                            questions: oldData.questions!.filter(
+                                (q) => q.id !== params.questionId
+                            ),
+                        };
+                    }
                 );
-                //deselectQuestion();
+                // deselectQuestion();
             },
             onError: (error: Error) => {
                 console.error("Question delete error:", error);
@@ -114,12 +125,9 @@ export const QuestionCRUDProvider: React.FC<{ children: React.ReactNode }> = ({c
     );
 
     const value = {
-        createQuestion: async (questionBankId: string, questionDTO: QuestionDTO) => {
+        createQuestion: async (questionDTO: QuestionDTO) => {
             try {
-                return await createQuestionMutation.mutateAsync({
-                    questionBankId,
-                    questionDTO
-                });
+                return await createQuestionMutation.mutateAsync(questionDTO);
             } catch (err) {
                 console.error("Question creation failed:", err);
                 throw err;

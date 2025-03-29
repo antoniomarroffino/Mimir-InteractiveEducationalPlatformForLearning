@@ -2,6 +2,7 @@ package ch.supsi.model.api.question;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import io.quarkus.mongodb.panache.common.MongoEntity;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.types.ObjectId;
@@ -21,6 +22,8 @@ public abstract class Question {
     public String questionText;
 
     public QuestionType type;
+
+    public String questionBankId;
 
     protected Question() {
     }

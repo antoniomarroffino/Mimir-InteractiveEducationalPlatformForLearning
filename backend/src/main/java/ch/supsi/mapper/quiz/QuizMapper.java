@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 public class QuizMapper {
     public QuizDTO toDTO(@NotNull Quiz quiz, List<QuestionDTO> questionDTOList) {
@@ -19,7 +20,7 @@ public class QuizMapper {
         return dto;
     }
 
-    public Quiz toEntity(@NotNull QuizDTO dto, List<String> questionIdList) {
+    public Quiz toEntity(@NotNull QuizDTO dto, Set<String> questionIdList) {
         Quiz quiz = new Quiz(dto.getName());
 
         if (dto.getId() != null) {
