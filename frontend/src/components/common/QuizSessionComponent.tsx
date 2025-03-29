@@ -3,11 +3,13 @@ import {useAuth} from "../../hooks/useAuth.ts";
 import {FiHash} from "react-icons/fi";
 import {useNavigate} from 'react-router-dom';
 import {useQuizPublicationVerification} from '../../hooks/quizPublication/useQuizPublicationVerification.ts';
+import {useQuizRetrieve} from "../../hooks/useQuizRetrieve.ts";
 
 const QuizSessionComponent = () => {
     const {user} = useAuth();
     const navigate = useNavigate();
     const {getPublicationByCode} = useQuizPublicationVerification();
+    const {retrieveQuiz} = useQuizRetrieve();
     const [code, setCode] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -35,6 +37,8 @@ const QuizSessionComponent = () => {
                 return;
             }
 
+            await retrieveQuiz(publication);
+
             navigate(`/quiz/${trimmedCode}`);
         } catch (error) {
             handleVerificationError(error);
@@ -42,6 +46,7 @@ const QuizSessionComponent = () => {
             setIsLoading(false);
         }
     };
+
     const handleInvalidCode = () => {
         setCode('');
         setErrorMessage('Codice non valido. Riprova.');

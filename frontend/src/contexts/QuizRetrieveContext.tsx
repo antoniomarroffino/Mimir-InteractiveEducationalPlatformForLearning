@@ -3,9 +3,11 @@ import {QuizDTO, QuizPublicationDTO} from "@dti-isin/backend-api-client";
 
 export type QuizRetrieveContextType = {
     quiz: QuizDTO | null;
+    quizPublication: QuizPublicationDTO | null;
     isLoading: boolean;
     error: Error | null;
-    retrieveQuiz: (quizPublication: QuizPublicationDTO) => Promise<void>;
+    retrieveQuiz: (quizPublication?: QuizPublicationDTO) => Promise<QuizDTO | null>;
+    resetQuiz?: () => void;
 };
 
 export const QuizRetrieveContext = createContext<QuizRetrieveContextType | undefined>(undefined);

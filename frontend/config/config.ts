@@ -5,7 +5,8 @@ import {
     QuestionControllerApi,
     QuizControllerApi,
     QuizPublicationControllerApi,
-    UserControllerApi
+    UserControllerApi,
+    QuizAttemptControllerApi
 } from '@dti-isin/backend-api-client';
 import axios from 'axios';
 
@@ -38,3 +39,4 @@ export const quizApi = new QuizControllerApi(config);
 export const questionApi = new QuestionControllerApi(config);
 export const userApi = new UserControllerApi(config);
 export const quizPublicationApi = new QuizPublicationControllerApi(config);
+export const quizAttemptApi = new QuizAttemptControllerApi(config);
