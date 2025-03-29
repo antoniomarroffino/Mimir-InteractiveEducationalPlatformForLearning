@@ -14,7 +14,7 @@ export const QuestionBankCreationForm = () => {
             await createQuestionBank({ name });
             setName('');
             await fetchQuestionBanks();
-        } catch (error) { /* Error handled by context */ }
+        } catch (error) { console.error(error); }
     };
 
     return (

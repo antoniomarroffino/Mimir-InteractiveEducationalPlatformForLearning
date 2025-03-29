@@ -7,7 +7,7 @@ import {useCourseSelection} from "../hooks/course/useCourseSelection.ts";
 import {useCourseCRUD} from "../hooks/course/useCourseCRUD.ts";
 import {FiFolder} from "react-icons/fi";
 import {BsBoxArrowRight, BsPencil, BsTrash} from "react-icons/bs";
-import {Breadcrumb} from "../components/common/Breadcrumb.tsx";
+import {BreadcrumbCourses} from "../components/common/BreadcrumbCourses.tsx";
 import {useFolderCRUD} from "../hooks/folder/useFolderCRUD.ts";
 
 const CourseDetails = () => {
@@ -146,7 +146,7 @@ const CourseDetails = () => {
 
     return (
         <div className="w-full min-h-screen p-4 sm:p-6 lg:p-8">
-            <Breadcrumb course={selectedCourse}/>
+            <BreadcrumbCourses course={selectedCourse}/>
 
 
             <div className="flex flex-col lg:flex-row gap-8 mb-8">

@@ -5,13 +5,13 @@ import {CourseDTO, FolderDTO, QuizDTO} from '@dti-isin/backend-api-client';
 import {FiBookOpen, FiChevronRight, FiHome} from "react-icons/fi";
 import {useCourseSelection} from "../../hooks/course/useCourseSelection.ts";
 
-interface BreadcrumbProps {
+interface BreadcrumbCoursesProps {
     course?: CourseDTO;
     folder?: FolderDTO;
     quiz?: QuizDTO;
 }
 
-export const Breadcrumb: React.FC<BreadcrumbProps> = ({
+export const BreadcrumbCourses: React.FC<BreadcrumbCoursesProps> = ({
                                                           course,
                                                           folder,
                                                           quiz

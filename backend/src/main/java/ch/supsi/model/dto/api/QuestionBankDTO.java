@@ -5,6 +5,7 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.validation.constraints.NotBlank;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -15,6 +16,7 @@ public class QuestionBankDTO {
     private String id;
     @NotBlank(message = "Question bank name cannot be null or empty")
     private String name;
+    private LocalDateTime lastModified;
     @Schema(description = "Question's Id list")
     private List<QuestionDTO> questions;
 
@@ -41,6 +43,14 @@ public class QuestionBankDTO {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public LocalDateTime getLastModified() {
+        return this.lastModified;
+    }
+
+    public void setLastModified(LocalDateTime lastModified) {
+        this.lastModified = lastModified;
     }
 
     public List<QuestionDTO> getQuestions() {

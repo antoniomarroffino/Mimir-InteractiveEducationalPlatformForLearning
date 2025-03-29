@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {useNavigate, useParams} from 'react-router-dom';
 import {QuestionDTO, QuestionType} from '@dti-isin/backend-api-client';
-import {Breadcrumb} from "../common/Breadcrumb.tsx";
+import {BreadcrumbCourses} from "../common/BreadcrumbCourses.tsx";
 import {QuestionsList} from "../question/QuestionList.tsx";
 import {CreateQuestionForm} from "../question/CreateQuestionForm.tsx";
 import {QuestionTypeSelector} from "../question/QuestionTypeSelector.tsx";
@@ -97,7 +97,7 @@ export const QuizCreationContent: React.FC = () => {
     return (
         <div className="container mx-auto px-4 py-8">
             {/* Breadcrumb */}
-            <Breadcrumb
+            <BreadcrumbCourses
                 course={currentCourse}
                 folder={currentFolder}
                 quiz={currentQuiz}

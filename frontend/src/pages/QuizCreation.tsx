@@ -1,6 +1,6 @@
 import {useNavigate, useParams} from 'react-router-dom';
 import {QuestionType} from '@dti-isin/backend-api-client';
-import {Breadcrumb} from "../components/common/Breadcrumb.tsx";
+import {BreadcrumbCourses} from "../components/common/BreadcrumbCourses.tsx";
 import {QuestionsList} from "../components/question/QuestionList.tsx";
 import {CreateQuestionForm} from "../components/question/CreateQuestionForm.tsx";
 import {QuestionEditor} from "../components/question/QuestionEditor.tsx";

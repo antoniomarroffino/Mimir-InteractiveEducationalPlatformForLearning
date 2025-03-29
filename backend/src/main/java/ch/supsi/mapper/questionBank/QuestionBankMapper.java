@@ -16,6 +16,7 @@ public class QuestionBankMapper {
         QuestionBankDTO dto = new QuestionBankDTO();
         dto.setId(questionBank.id.toString());
         dto.setName(questionBank.name);
+        dto.setLastModified(questionBank.lastModified);
         dto.setQuestions(questionDTOList);
         return dto;
     }
@@ -27,6 +28,7 @@ public class QuestionBankMapper {
             questionBank.id = new ObjectId(dto.getId());
         }
         questionBank.name = dto.getName();
+        questionBank.lastModified = dto.getLastModified();
         questionBank.questions = questionIdList;
         return questionBank;
     }

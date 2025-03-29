@@ -105,7 +105,6 @@ export const QuestionCRUDProvider: React.FC<{ children: React.ReactNode }> = ({c
                     }
                 );
                 queryClient.invalidateQueries(['questionBanks', params.questionBankId]);
-                // deselectQuestion();
             },
             onError: (error: Error) => {
                 console.error("Question delete error:", error);

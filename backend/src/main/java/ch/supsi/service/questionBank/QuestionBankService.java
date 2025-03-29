@@ -10,6 +10,7 @@ import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.NotFoundException;
 import org.bson.types.ObjectId;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,6 +62,7 @@ public class QuestionBankService implements IQuestionBankService {
         if (!questionBank.name.equalsIgnoreCase(questionBankDTO.getName()))
             questionBank.name = questionBankDTO.getName();
 
+        questionBank.lastModified = LocalDateTime.now();
         this.questionBankRepository.update(questionBank);
         return this.questionBankMapperFacade.toDTO(questionBank);
     }
