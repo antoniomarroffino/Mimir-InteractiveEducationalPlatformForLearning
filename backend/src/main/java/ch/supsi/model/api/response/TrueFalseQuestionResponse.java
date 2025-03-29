@@ -7,13 +7,13 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 @Schema(description = "True/False Question Response model", name = "TrueFalseQuestionResponse")
 @BsonDiscriminator(key = "type", value = "TRUE_FALSE")
 public class TrueFalseQuestionResponse extends QuestionResponse {
-    public boolean selectedAnswer;
+    public Boolean selectedAnswer;
 
     public TrueFalseQuestionResponse() {
         super(QuestionType.TRUE_FALSE);
     }
 
-    public TrueFalseQuestionResponse(boolean selectedAnswer) {
+    public TrueFalseQuestionResponse(Boolean selectedAnswer) {
         super(QuestionType.TRUE_FALSE);
         this.selectedAnswer = selectedAnswer;
     }

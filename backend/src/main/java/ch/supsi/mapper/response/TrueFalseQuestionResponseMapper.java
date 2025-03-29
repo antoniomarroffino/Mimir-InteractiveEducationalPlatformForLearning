@@ -12,6 +12,7 @@ public class TrueFalseQuestionResponseMapper extends AbstractQuestionResponseMap
 
         TrueFalseQuestionResponseDTO dto = new TrueFalseQuestionResponseDTO();
         super.mapCommonFieldsResponseToResponseDTO(trueFalseResponse, dto);
+
         dto.setSelectedAnswer(trueFalseResponse.selectedAnswer);
         return dto;
     }
@@ -24,6 +25,7 @@ public class TrueFalseQuestionResponseMapper extends AbstractQuestionResponseMap
 
         TrueFalseQuestionResponse response = new TrueFalseQuestionResponse();
         super.mapCommonFieldsResponseDTOToResponse(dto, response);
+
         response.selectedAnswer = dto.getSelectedAnswer();
         return response;
     }

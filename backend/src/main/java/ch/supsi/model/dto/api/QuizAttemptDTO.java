@@ -22,7 +22,6 @@ public class QuizAttemptDTO {
 
     private LocalDateTime completedAt;
 
-    @NotNull(message = "Responses cannot be null")
     private List<QuestionResponseDTO> responses;
 
     public QuizAttemptDTO() {

@@ -12,7 +12,6 @@ import java.util.List;
 @Schema(description = "Multiple Choice Response DTO", name = "MultipleChoiceQuestionResponseDTO")
 @JsonTypeName("MULTIPLE_CHOICE")
 public class MultipleChoiceQuestionResponseDTO extends QuestionResponseDTO {
-    @NotNull(message = "Selected answer indexes cannot be null")
     private List<Integer> selectedAnswerIndexes;
 
     public MultipleChoiceQuestionResponseDTO() {
