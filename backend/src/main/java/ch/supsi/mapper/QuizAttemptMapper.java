@@ -64,7 +64,7 @@ public class QuizAttemptMapper implements IBaseMapper<QuizAttempt, QuizAttemptDT
 
         quizAttempt.responses = dto.getResponses().stream()
                 .map(qDTO -> this.questionResponseMapperBuilder.getQuestionResponseDTOMapper(qDTO.getType()).toEntity(qDTO))
-                .collect(Collectors.toList()).reversed();
+                .collect(Collectors.toList());
 
 
         return quizAttempt;
