@@ -3,7 +3,7 @@ import {TrueFalseQuestionDTO} from '@dti-isin/backend-api-client';
 
 interface TrueFalseQuestionProps {
     question: TrueFalseQuestionDTO;
-    onAnswer: (isCorrect: boolean) => void;
+    onAnswer: (isCorrect: boolean | null) => void;
     initialAnswer?: boolean | null;
 }
 
@@ -18,9 +18,13 @@ const TrueFalseQuestion: React.FC<TrueFalseQuestionProps> = ({
         setSelectedAnswer(initialAnswer);
     }, [initialAnswer]);
 
-    const handleAnswer = (answer: boolean) => {
-        setSelectedAnswer(answer);
-        const isCorrect = answer === question.correctAnswer;
+    const handleAnswer = (answer: boolean | null) => {
+        // Se clicco lo stesso bottone, rimuovo la selezione
+        const newAnswer = selectedAnswer === answer ? null : answer;
+        setSelectedAnswer(newAnswer);
+
+        // Se newAnswer è null, passo null come isCorrect
+        const isCorrect = newAnswer === null ? null : newAnswer === question.correctAnswer;
         onAnswer(isCorrect);
     };
 

@@ -1,5 +1,12 @@
 import React, {useState} from 'react';
-import {QuestionDTO} from '@dti-isin/backend-api-client';
+import {
+    QuestionDTO,
+    QuestionType,
+    QuestionResponseDTO,
+    TrueFalseQuestionResponseDTO,
+    MultipleChoiceQuestionResponseDTO
+
+} from '@dti-isin/backend-api-client';
 import ConfirmModal from './ConfirmModal';
 
 interface QuizNavigationProps {
@@ -8,6 +15,7 @@ interface QuizNavigationProps {
     answeredQuestions: boolean[];
     onQuestionChange: (index: number) => void;
     onCompleteQuiz: () => void;
+    userResponses: QuestionResponseDTO[];
 }
 
 const QuizNavigation: React.FC<QuizNavigationProps> = ({
@@ -15,12 +23,37 @@ const QuizNavigation: React.FC<QuizNavigationProps> = ({
                                                            currentQuestionIndex,
                                                            answeredQuestions,
                                                            onQuestionChange,
-                                                           onCompleteQuiz
+                                                           onCompleteQuiz,
+                                                           userResponses
                                                        }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    // Conta le domande non risposte
-    const unansweredQuestions = questions.filter((_, index) => !answeredQuestions[index]);
+    const isQuestionAnswered = (index: number) => {
+        const question = questions[index];
+        const response = userResponses[index];
+
+        if (!response) return false;
+
+        switch (question.type) {
+            case QuestionType.TrueFalse:
+                { const trueFalseResponse = response as TrueFalseQuestionResponseDTO;
+                return trueFalseResponse.selectedAnswer !== null &&
+                    trueFalseResponse.selectedAnswer !== undefined; }
+
+            case QuestionType.MultipleChoice:
+                { const multipleChoiceResponse = response as MultipleChoiceQuestionResponseDTO;
+                return multipleChoiceResponse.selectedAnswerIndexes &&
+                    multipleChoiceResponse.selectedAnswerIndexes.length > 0; }
+
+            default:
+                return false;
+        }
+    };
+
+// Trova le domande non risposte
+    const unansweredQuestions = questions.filter((_, index) =>
+        !isQuestionAnswered(index)
+    );
 
     const handleCompleteQuizClick = () => {
         setIsModalOpen(true);
@@ -94,8 +127,10 @@ const QuizNavigation: React.FC<QuizNavigationProps> = ({
                         </p>
                         <p>Domande non risposte:</p>
                         <ul className="list-disc list-inside text-error">
-                            {unansweredQuestions.map((_, index) => (
-                                <li key={index}>Domanda {unansweredQuestions.indexOf(_) + 1}</li>
+                            {unansweredQuestions.map((question) => (
+                                <li key={question.id}>
+                                    Domanda {questions.indexOf(question) + 1}
+                                </li>
                             ))}
                         </ul>
                         <p className="mt-4">Sei sicuro di voler consegnare il quiz?</p>

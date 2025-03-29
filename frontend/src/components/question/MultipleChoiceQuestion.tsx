@@ -3,7 +3,7 @@ import {MultipleChoiceQuestionDTO} from '@dti-isin/backend-api-client';
 
 interface MultipleChoiceQuestionProps {
     question: MultipleChoiceQuestionDTO;
-    onAnswer: (isCorrect: boolean) => void;
+    onAnswer: (isCorrect: boolean | null) => void;
     initialAnswer?: number[] | null;
     hasBeenAnswered?: boolean;
 }
@@ -33,7 +33,11 @@ const MultipleChoiceQuestion: React.FC<MultipleChoiceQuestionProps> = ({
     };
 
     const submitAnswer = () => {
-        if (selectedAnswers.length === 0 || isSubmitted) return;
+        // Se nessuna risposta selezionata, passa null
+        if (selectedAnswers.length === 0) {
+            onAnswer(null);
+            return;
+        }
 
         setIsSubmitted(true);
 
@@ -82,7 +86,6 @@ const MultipleChoiceQuestion: React.FC<MultipleChoiceQuestionProps> = ({
                 <button
                     onClick={submitAnswer}
                     className="btn btn-primary mt-4 w-full"
-                    disabled={selectedAnswers.length === 0}
                 >
                     Confirm Answer
                 </button>
