@@ -118,7 +118,7 @@ const App = () => {
                                         element={<QuizAccessRoute/>}
                                     />
                                     <Route
-                                        path="/quiz/:accessCode/results"
+                                        path="/quiz/results"
                                         element={<QuizResults/>}
                                     />
                                 </Routes>

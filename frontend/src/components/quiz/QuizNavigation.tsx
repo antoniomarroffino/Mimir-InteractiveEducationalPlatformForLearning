@@ -5,23 +5,20 @@ import {
     QuestionResponseDTO,
     TrueFalseQuestionResponseDTO,
     MultipleChoiceQuestionResponseDTO
-
 } from '@dti-isin/backend-api-client';
 import ConfirmModal from './ConfirmModal';
 
 interface QuizNavigationProps {
     questions: QuestionDTO[];
     currentQuestionIndex: number;
-    answeredQuestions: boolean[];
     onQuestionChange: (index: number) => void;
     onCompleteQuiz: () => void;
     userResponses: QuestionResponseDTO[];
 }
 
-const QuizNavigation: React.FC<QuizNavigationProps> = ({
+export const QuizNavigation: React.FC<QuizNavigationProps> = ({
                                                            questions,
                                                            currentQuestionIndex,
-                                                           answeredQuestions,
                                                            onQuestionChange,
                                                            onCompleteQuiz,
                                                            userResponses
@@ -34,26 +31,35 @@ const QuizNavigation: React.FC<QuizNavigationProps> = ({
 
         if (!response) return false;
 
-        switch (question.type) {
-            case QuestionType.TrueFalse:
-                { const trueFalseResponse = response as TrueFalseQuestionResponseDTO;
-                return trueFalseResponse.selectedAnswer !== null &&
-                    trueFalseResponse.selectedAnswer !== undefined; }
+        try {
+            switch (question.type) {
+                case QuestionType.TrueFalse: {
+                    const trueFalseResponse = response as TrueFalseQuestionResponseDTO;
+                    // Considera risposta solo se è un booleano definito
+                    return typeof trueFalseResponse.selectedAnswer === 'boolean';
+                }
 
-            case QuestionType.MultipleChoice:
-                { const multipleChoiceResponse = response as MultipleChoiceQuestionResponseDTO;
-                return multipleChoiceResponse.selectedAnswerIndexes &&
-                    multipleChoiceResponse.selectedAnswerIndexes.length > 0; }
+                case QuestionType.MultipleChoice: {
+                    const multipleChoiceResponse = response as MultipleChoiceQuestionResponseDTO;
+                    // Considera risposta solo se ci sono indici selezionati
+                    return Array.isArray(multipleChoiceResponse.selectedAnswerIndexes) &&
+                        multipleChoiceResponse.selectedAnswerIndexes.length > 0;
+                }
 
-            default:
-                return false;
+                default:
+                    return false;
+            }
+        } catch (error) {
+            console.error('Errore nel verificare la risposta:', error);
+            return false;
         }
     };
 
-// Trova le domande non risposte
-    const unansweredQuestions = questions.filter((_, index) =>
-        !isQuestionAnswered(index)
-    );
+    // Calcola le risposte date
+    const answeredQuestions = questions.map((_, index) => isQuestionAnswered(index));
+
+    // Trova le domande non risposte
+    const unansweredQuestions = questions.filter((_, index) => !isQuestionAnswered(index));
 
     const handleCompleteQuizClick = () => {
         setIsModalOpen(true);
@@ -73,7 +79,7 @@ const QuizNavigation: React.FC<QuizNavigationProps> = ({
                 <div className="grid grid-cols-5 gap-2">
                     {questions.map((question, index) => {
                         const isCurrentQuestion = index === currentQuestionIndex;
-                        const isAnswered = answeredQuestions[index];
+                        const isAnswered = isQuestionAnswered(index);
 
                         const buttonClasses = `
                             btn btn-xs 
@@ -142,5 +148,3 @@ const QuizNavigation: React.FC<QuizNavigationProps> = ({
         </>
     );
 };
-
-export default QuizNavigation;

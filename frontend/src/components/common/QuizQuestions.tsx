@@ -9,10 +9,10 @@ import {
     TrueFalseQuestionDTO,
     TrueFalseQuestionResponseDTO
 } from '@dti-isin/backend-api-client';
-import MultipleChoiceQuestion from "../question/MultipleChoiceQuestion.tsx";
-import TrueFalseQuestion from "../question/TrueFalseQuestion.tsx";
+import {MultipleChoiceQuestion} from "../question/MultipleChoiceQuestion.tsx";
+import {TrueFalseQuestion} from "../question/TrueFalseQuestion.tsx";
 import {ChevronLeftIcon, ChevronRightIcon} from '@heroicons/react/24/solid';
-import QuizNavigation from "../quiz/QuizNavigation.tsx";
+import {QuizNavigation} from "../quiz/QuizNavigation.tsx";
 import {useQuizAttemptLocal} from "../../hooks/quizAttempt/useQuizAttemptLocal.ts";
 
 interface QuizQuestionsProps {
@@ -41,32 +41,28 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({quiz}) => {
         return question.type === QuestionType.MultipleChoice;
     };
 
-    const handleAnswer = useCallback((answer: boolean | number[]) => {
+    const handleAnswer = useCallback((answer: boolean | number[] | null) => {
         const currentQuestion = quiz.questions?.[currentQuestionIndex];
         if (!currentQuestion) return;
 
-        const newResponse =
-            currentQuestion.type === QuestionType.TrueFalse
-                ? {
-                    type: QuestionType.TrueFalse,
-                    selectedAnswer: answer as boolean
-                } as TrueFalseQuestionResponseDTO
-                : {
-                    type: QuestionType.MultipleChoice,
-                    selectedAnswerIndexes: answer as number[]
-                } as MultipleChoiceQuestionResponseDTO;
-
         setUserResponses(prevResponses => {
-            // Crea una nuova lista di risposte
             const updatedResponses = [...prevResponses];
 
-            // Sostituisci la risposta all'indice corrispondente
-            updatedResponses[currentQuestionIndex] = newResponse;
+            if (currentQuestion.type === QuestionType.TrueFalse) {
+                updatedResponses[currentQuestionIndex] = {
+                    type: QuestionType.TrueFalse,
+                    selectedAnswer: (answer === null ? null : answer) as unknown as boolean
+                } as TrueFalseQuestionResponseDTO;
+            } else if (currentQuestion.type === QuestionType.MultipleChoice) {
+                updatedResponses[currentQuestionIndex] = {
+                    type: QuestionType.MultipleChoice,
+                    selectedAnswerIndexes: answer === null ? [] : answer as number[]
+                } as MultipleChoiceQuestionResponseDTO;
+            }
 
             return updatedResponses;
         });
     }, [currentQuestionIndex, quiz.questions]);
-
     const getCurrentQuestionResponse = useCallback(() => {
         // Recupera la risposta usando l'indice corrente
         return userResponses[currentQuestionIndex] || null;
@@ -78,30 +74,6 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({quiz}) => {
             console.error('Errore durante il completamento del quiz:', error);
         }
     }, [completeQuizAttempt]);
-
-    const isQuestionAnswered = useCallback((questionIndex: number) => {
-        const question = quiz.questions?.[questionIndex];
-        if (!question) return false;
-
-        const response = userResponses[questionIndex];
-
-        if (!response) return false;
-
-        // Verifica specifica per ogni tipo di domanda
-        if (question.type === QuestionType.TrueFalse) {
-            const trueFalseResponse = response as TrueFalseQuestionResponseDTO;
-            return trueFalseResponse.selectedAnswer !== null &&
-                trueFalseResponse.selectedAnswer !== undefined;
-        }
-
-        if (question.type === QuestionType.MultipleChoice) {
-            const multipleChoiceResponse = response as MultipleChoiceQuestionResponseDTO;
-            return multipleChoiceResponse.selectedAnswerIndexes.length > 0;
-        }
-
-        return false;
-    }, [quiz.questions, userResponses]);
-
 
     const currentQuestion = quiz.questions?.[currentQuestionIndex];
     return (
@@ -170,9 +142,6 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({quiz}) => {
                         <QuizNavigation
                             questions={quiz.questions || []}
                             currentQuestionIndex={currentQuestionIndex}
-                            answeredQuestions={
-                                quiz.questions?.map((_, index) => isQuestionAnswered(index)) || []
-                            }
                             onQuestionChange={(index) => setCurrentQuestionIndex(index)}
                             onCompleteQuiz={handleCompleteQuiz}
                             userResponses={userResponses}
@@ -183,5 +152,3 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({quiz}) => {
         </div>
     );
 };
-
-export default QuizQuestions;

@@ -1,9 +1,4 @@
 import React, {useCallback, useState} from 'react';
-import {
-    MultipleChoiceQuestionResponseDTO,
-    QuestionType,
-    TrueFalseQuestionResponseDTO
-} from '@dti-isin/backend-api-client';
 import {useQuizRetrieve} from "../hooks/useQuizRetrieve.ts";
 import {useQuizAttemptLocal} from "../hooks/quizAttempt/useQuizAttemptLocal.ts";
 import {QuizQuestions} from "../components/common/QuizQuestions.tsx";
@@ -17,32 +12,12 @@ const QuizScreen: React.FC = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const handleStartQuiz = useCallback(async () => {
-        if (quizPublication && quiz?.questions) {
+        if (quizPublication && quiz) {
             try {
                 setIsLoading(true);
 
-                // Crea la struttura iniziale delle risposte
-                const initialResponses = quiz.questions.map(question => {
-                    switch (question.type) {
-                        case QuestionType.TrueFalse:
-                            return {
-                                type: QuestionType.TrueFalse,
-                                selectedAnswer: null as never
-                            } as TrueFalseQuestionResponseDTO;
-
-                        case QuestionType.MultipleChoice:
-                            return {
-                                type: QuestionType.MultipleChoice,
-                                selectedAnswerIndexes: []
-                            } as MultipleChoiceQuestionResponseDTO;
-
-                        default:
-                            throw new Error(`Unsupported question type: ${question.type}`);
-                    }
-                });
-
-                // Prepara le risposte nel provider
-                prepareQuizResponses(initialResponses);
+                // Passa il quiz a prepareQuizResponses
+                prepareQuizResponses(quiz);
 
                 // Avvia il tentativo di quiz
                 await startQuizAttempt(quizPublication);
@@ -56,7 +31,6 @@ const QuizScreen: React.FC = () => {
             }
         }
     }, [quizPublication, quiz, startQuizAttempt, prepareQuizResponses]);
-
     if (errorQuiz) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-base-200">

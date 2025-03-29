@@ -13,6 +13,13 @@ export const QuizRetrieveProvider: React.FC<QuizRetrieveProviderProps> = ({child
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<Error | null>(null);
 
+    const resetQuiz = () => {
+        setQuiz(null);
+        setQuizPublication(null);
+        setIsLoading(false);
+        setError(null);
+    };
+
     const retrieveQuiz = async (publication: QuizPublicationDTO) => {
         if (publication == null) return;
         setIsLoading(true);
@@ -39,7 +46,8 @@ export const QuizRetrieveProvider: React.FC<QuizRetrieveProviderProps> = ({child
         quizPublication,
         isLoading,
         error,
-        retrieveQuiz
+        retrieveQuiz,
+        resetQuiz
     };
 
     return (

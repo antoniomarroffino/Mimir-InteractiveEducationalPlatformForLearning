@@ -7,7 +7,7 @@ interface TrueFalseQuestionProps {
     initialAnswer?: boolean | null;
 }
 
-const TrueFalseQuestion: React.FC<TrueFalseQuestionProps> = ({
+export const TrueFalseQuestion: React.FC<TrueFalseQuestionProps> = ({
                                                                  question,
                                                                  onAnswer,
                                                                  initialAnswer = null
@@ -18,12 +18,12 @@ const TrueFalseQuestion: React.FC<TrueFalseQuestionProps> = ({
         setSelectedAnswer(initialAnswer);
     }, [initialAnswer]);
 
-    const handleAnswer = (answer: boolean | null) => {
+    const handleAnswer = (answer: boolean) => {
         // Se clicco lo stesso bottone, rimuovo la selezione
         const newAnswer = selectedAnswer === answer ? null : answer;
         setSelectedAnswer(newAnswer);
 
-        // Se newAnswer è null, passo null come isCorrect
+        // Passa null se la selezione è stata rimossa
         const isCorrect = newAnswer === null ? null : newAnswer === question.correctAnswer;
         onAnswer(isCorrect);
     };
@@ -48,5 +48,3 @@ const TrueFalseQuestion: React.FC<TrueFalseQuestionProps> = ({
         </div>
     );
 };
-
-export default TrueFalseQuestion;

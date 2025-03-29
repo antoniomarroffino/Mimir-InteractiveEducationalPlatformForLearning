@@ -8,7 +8,7 @@ interface MultipleChoiceQuestionProps {
     hasBeenAnswered?: boolean;
 }
 
-const MultipleChoiceQuestion: React.FC<MultipleChoiceQuestionProps> = ({
+export const MultipleChoiceQuestion: React.FC<MultipleChoiceQuestionProps> = ({
                                                                            question,
                                                                            onAnswer,
                                                                            initialAnswer = null,
@@ -93,5 +93,3 @@ const MultipleChoiceQuestion: React.FC<MultipleChoiceQuestionProps> = ({
         </div>
     );
 };
-
-export default MultipleChoiceQuestion;

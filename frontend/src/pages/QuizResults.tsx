@@ -1,46 +1,43 @@
-// QuizResults.tsx
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
-    QuizDTO,
-    QuestionResponseDTO,
     QuestionType,
     QuestionDTO,
+    QuestionResponseDTO,
     TrueFalseQuestionDTO,
     MultipleChoiceQuestionDTO,
-    TrueFalseResponseDTO,
-    MultipleChoiceResponseDTO
+    TrueFalseQuestionResponseDTO,
+    MultipleChoiceQuestionResponseDTO
 } from '@dti-isin/backend-api-client';
+import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/solid';
+import {useQuizRetrieve} from "../hooks/useQuizRetrieve.ts";
+import {useQuizAttemptLocal} from "../hooks/quizAttempt/useQuizAttemptLocal.ts";
 
 const QuizResults: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const [quiz, setQuiz] = useState<QuizDTO | null>(null);
-    const [responses, setResponses] = useState<QuestionResponseDTO[]>([]);
+    const { quiz } = useQuizRetrieve();
+    const { resetQuizAttempt } = useQuizAttemptLocal();
+    const { attempt } = location.state || {};
 
-    useEffect(() => {
-        const quizFromState = location.state?.quiz as QuizDTO;
-        const responsesFromState = location.state?.attempt?.responses as QuestionResponseDTO[];
-
-        if (!quizFromState || !responsesFromState) {
+    // Gestisci il caso in cui non ci siano dati
+    React.useEffect(() => {
+        if (!quiz || !attempt) {
             navigate('/');
-            return;
         }
+    }, [quiz, attempt, navigate]);
 
-        setQuiz(quizFromState);
-        setResponses(responsesFromState);
-    }, [location.state, navigate]);
-
+    // Mantieni le funzioni di formattazione e calcolo esistenti
     const isResponseCorrect = (question: QuestionDTO, response: QuestionResponseDTO): boolean => {
         if (question.type === QuestionType.TrueFalse) {
             const trueFalseQuestion = question as TrueFalseQuestionDTO;
-            const trueFalseResponse = response as TrueFalseResponseDTO;
+            const trueFalseResponse = response as TrueFalseQuestionResponseDTO;
             return trueFalseResponse.selectedAnswer === trueFalseQuestion.correctAnswer;
         }
 
         if (question.type === QuestionType.MultipleChoice) {
             const multipleChoiceQuestion = question as MultipleChoiceQuestionDTO;
-            const multipleChoiceResponse = response as MultipleChoiceResponseDTO;
+            const multipleChoiceResponse = response as MultipleChoiceQuestionResponseDTO;
             return JSON.stringify(multipleChoiceResponse.selectedAnswerIndexes) ===
                 JSON.stringify(multipleChoiceQuestion.correctAnswerIndexes);
         }
@@ -48,34 +45,97 @@ const QuizResults: React.FC = () => {
         return false;
     };
 
+    const formatUserResponse = (question: QuestionDTO, response: QuestionResponseDTO) => {
+        if (question.type === QuestionType.TrueFalse) {
+            const trueFalseResponse = response as TrueFalseQuestionResponseDTO;
+            return trueFalseResponse.selectedAnswer !== null
+                ? (trueFalseResponse.selectedAnswer ? 'Vero' : 'Falso')
+                : 'Nessuna risposta';
+        }
+
+        if (question.type === QuestionType.MultipleChoice) {
+            const multipleChoiceQuestion = question as MultipleChoiceQuestionDTO;
+            const multipleChoiceResponse = response as MultipleChoiceQuestionResponseDTO;
+
+            if (multipleChoiceResponse.selectedAnswerIndexes.length === 0) {
+                return 'Nessuna risposta';
+            }
+
+            return multipleChoiceResponse.selectedAnswerIndexes
+                .map(index => multipleChoiceQuestion.choices[index])
+                .join(', ');
+        }
+
+        return 'Tipo di domanda non supportato';
+    };
+
+    const formatCorrectAnswer = (question: QuestionDTO) => {
+        if (question.type === QuestionType.TrueFalse) {
+            const trueFalseQuestion = question as TrueFalseQuestionDTO;
+            return trueFalseQuestion.correctAnswer ? 'Vero' : 'Falso';
+        }
+
+        if (question.type === QuestionType.MultipleChoice) {
+            const multipleChoiceQuestion = question as MultipleChoiceQuestionDTO;
+            return multipleChoiceQuestion.correctAnswerIndexes
+                .map(index => multipleChoiceQuestion.choices[index])
+                .join(', ');
+        }
+
+        return 'Tipo di domanda non supportato';
+    };
+
     const calculateScore = () => {
-        return responses.filter((response, index) => {
+        return attempt.responses.filter((response: QuestionResponseDTO, index: number) => {
             const question = quiz?.questions?.[index];
             return question ? isResponseCorrect(question, response) : false;
         }).length;
     };
 
-    if (!quiz || !responses) {
+    const getScoreEmoji = (score: number, total: number) => {
+        const percentage = (score / total) * 100;
+        if (percentage === 100) return '🏆';
+        if (percentage >= 90) return '🌟';
+        if (percentage >= 70) return '👍';
+        if (percentage >= 50) return '🤔';
+        return '😕';
+    };
+
+    // Gestisci il caso di caricamento
+    if (!quiz || !attempt) {
         return <div>Caricamento...</div>;
     }
 
-    return (
-        <div className="min-h-screen bg-base-200 py-12">
-            <div className="container mx-auto px-4">
-                <div className="card bg-base-100 shadow-xl">
-                    <div className="card-body">
-                        <h2 className="card-title text-3xl text-primary mb-6">
-                            Risultati del Quiz
-                        </h2>
+    const totalQuestions = quiz.questions?.length || 0;
+    const score = calculateScore();
 
-                        <div className="stats shadow mb-6">
+    const handleRestart = () => {
+        resetQuizAttempt();
+        navigate('/'); // Torna alla pagina principale o dove preferisci
+    };
+
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-primary/10 to-secondary/10 py-12">
+            <div className="container mx-auto px-4">
+                <div className="card bg-base-100 shadow-2xl rounded-2xl overflow-hidden">
+                    <div className="card-body space-y-8">
+                        <div className="text-center">
+                            <h2 className="text-4xl font-bold text-primary mb-4">
+                                Risultati del Quiz
+                            </h2>
+                            <div className="text-6xl mb-4">
+                                {getScoreEmoji(score, totalQuestions)}
+                            </div>
+                        </div>
+
+                        <div className="stats shadow-lg w-full">
                             <div className="stat">
                                 <div className="stat-title">Punteggio</div>
                                 <div className="stat-value text-primary">
-                                    {calculateScore()} / {quiz.questions?.length || 0}
+                                    {score} / {totalQuestions}
                                 </div>
                                 <div className="stat-desc">
-                                    {Math.round((calculateScore() / (quiz.questions?.length || 1)) * 100)}%
+                                    {Math.round((score / (totalQuestions || 1)) * 100)}%
                                     risposte corrette
                                 </div>
                             </div>
@@ -83,45 +143,71 @@ const QuizResults: React.FC = () => {
 
                         <div className="space-y-6">
                             {quiz.questions?.map((question, index) => {
-                                const response = responses[index];
+                                const response = attempt.responses[index];
                                 const isCorrect = isResponseCorrect(question, response);
 
                                 return (
                                     <div
                                         key={index}
-                                        className={`card ${isCorrect ? 'bg-success/10' : 'bg-error/10'} shadow-sm`}
+                                        className={`
+                                            card 
+                                            ${isCorrect
+                                            ? 'bg-success/10 border-l-4 border-success'
+                                            : 'bg-error/10 border-l-4 border-error'
+                                        } 
+                                            shadow-md transition-all hover:shadow-lg
+                                        `}
                                     >
                                         <div className="card-body">
-                                            <h3 className="card-title text-xl">
-                                                Domanda {index + 1}: {question.questionText}
-                                            </h3>
-
-                                            <div className="flex justify-between items-center">
-                                                <div>
-                                                    <div className="font-bold mb-2">La tua risposta:</div>
-                                                    {/* Rendering della risposta dell'utente */}
-                                                    {/* Aggiungi qui la logica per mostrare la risposta specifica */}
-                                                </div>
-
-                                                <div>
-                                                    <div className="font-bold mb-2">Risposta corretta:</div>
-                                                    {/* Rendering della risposta corretta */}
-                                                    {/* Aggiungi qui la logica per mostrare la risposta corretta */}
-                                                </div>
+                                            <div className="flex items-center justify-between mb-4">
+                                                <h3 className="card-title text-xl flex-grow">
+                                                    Domanda {index + 1}: {question.questionText}
+                                                </h3>
+                                                {isCorrect
+                                                    ? <CheckCircleIcon className="h-8 w-8 text-success" />
+                                                    : <XCircleIcon className="h-8 w-8 text-error" />
+                                                }
                                             </div>
 
-                                            {!isCorrect && (
-                                                <div className="alert alert-error shadow-lg mt-4">
-                                                    <div>
-                                                        <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                                        <span>Risposta errata</span>
+                                            <div className="grid md:grid-cols-2 gap-4">
+                                                <div>
+                                                    <div className="font-bold mb-2 text-primary">
+                                                        La tua risposta:
                                                     </div>
+                                                    <p className={`
+                                                        p-2 rounded 
+                                                        ${isCorrect
+                                                        ? 'bg-success/20 text-success-content'
+                                                        : 'bg-error/20 text-error-content'
+                                                    }
+                                                    `}>
+                                                        {formatUserResponse(question, response)}
+                                                    </p>
                                                 </div>
-                                            )}
+
+                                                <div>
+                                                    <div className="font-bold mb-2 text-primary">
+                                                        Risposta corretta:
+                                                    </div>
+                                                    <p className="p-2 bg-info/20 text-info-content rounded">
+                                                        {formatCorrectAnswer(question)}
+                                                    </p>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 );
                             })}
+                        </div>
+
+                        {/* Pulsante per ricominciare */}
+                        <div className="text-center mt-8">
+                            <button
+                                onClick={handleRestart}
+                                className="btn btn-primary"
+                            >
+                                Torna alla Home
+                            </button>
                         </div>
                     </div>
                 </div>
