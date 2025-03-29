@@ -8,7 +8,7 @@ import {
 
 export type QuizAttemptLocalContextType = {
     currentAttempt: Partial<QuizAttemptDTO> | null;
-    startQuizAttempt: (publication: QuizPublicationDTO) => Promise<void>;
+    startQuizAttempt: (publication: QuizPublicationDTO, quiz: QuizDTO) => Promise<void>;
     updateQuizAttemptResponses: (responses: QuestionResponseDTO[]) => void;
     completeQuizAttempt: () => Promise<void>;
     resetQuizAttempt: () => void;

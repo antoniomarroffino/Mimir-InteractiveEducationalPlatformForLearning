@@ -1,23 +1,21 @@
 import React, {useCallback, useMemo, useState} from 'react';
 import {
-    MultipleChoiceQuestionResponseDTO,
     QuestionResponseDTO,
-    QuestionType,
-    QuizAttemptDTO,
     QuizDTO,
+    QuizAttemptDTO,
     QuizPublicationDTO,
-    TrueFalseQuestionResponseDTO
+    QuestionType,
+    TrueFalseQuestionResponseDTO,
+    MultipleChoiceQuestionResponseDTO
 } from "@dti-isin/backend-api-client";
 import {useQuizAttemptCRUD} from '../../hooks/quizAttempt/useQuizAttemptCRUD';
 import {useAuth} from '../../hooks/useAuth';
 import {QuizAttemptLocalContext} from '../../contexts/quizAttempt/QuizAttemptLocalContext';
 import {useNavigate} from "react-router-dom";
-import {useQuizRetrieve} from "../../hooks/useQuizRetrieve.ts";
 
 export const QuizAttemptLocalProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
-    const [currentAttempt, setCurrentAttempt] = useState<Partial<QuizAttemptDTO> | null>(null);
+    const [currentAttempt, setCurrentAttempt] = useState<Partial<QuizAttemptDTO> & { quizPublication?: QuizPublicationDTO } | null>(null);
     const {createQuizAttempt} = useQuizAttemptCRUD();
-    const {retrieveQuiz, resetQuiz, quiz: retrievedQuiz} = useQuizRetrieve();
     const {user} = useAuth();
     const navigate = useNavigate();
 
@@ -46,32 +44,22 @@ export const QuizAttemptLocalProvider: React.FC<{ children: React.ReactNode }> =
 
         console.log('Risposte iniziali:', initialResponses);
 
-        // Aggiorna lo stato del tentativo con le risposte iniziali
-        setCurrentAttempt(prev => ({
-            ...(prev || {}),
-            quizPublicationId: quizToUse.id,
-            responses: initialResponses,
-            startedAt: new Date().toISOString(),
-            ...(user ? {userId: user.azureOid} : {})
-        }));
-
         return initialResponses;
-    }, [user]);
+    }, []);
 
-    const startQuizAttempt = useCallback(async (publication: QuizPublicationDTO) => {
+    const startQuizAttempt = useCallback(async (publication: QuizPublicationDTO, quiz: QuizDTO) => {
         try {
-            // Recupera il quiz
-            await retrieveQuiz(publication);
-
-            // Usa il quiz recuperato
-            const quizToUse = retrievedQuiz;
-
-            if (!quizToUse) {
-                throw new Error('Impossibile recuperare il quiz');
-            }
-
             // Prepara le risposte localmente
-            prepareQuizResponses(quizToUse);
+            const responses = prepareQuizResponses(quiz);
+
+            // Aggiorna lo stato del tentativo
+            setCurrentAttempt({
+                quizPublicationId: publication.id,
+                quizPublication: publication,
+                responses: responses,
+                startedAt: new Date().toISOString(),
+                ...(user && !publication.anonymous ? { userId: user.azureOid } : {})
+            });
 
             // Naviga alla pagina del quiz
             navigate(`/quiz/${publication.id}`);
@@ -80,7 +68,7 @@ export const QuizAttemptLocalProvider: React.FC<{ children: React.ReactNode }> =
             console.error('Errore durante la preparazione del tentativo:', error);
             throw error;
         }
-    }, [retrieveQuiz, prepareQuizResponses, navigate]);
+    }, [prepareQuizResponses, user, navigate]);
 
     const completeQuizAttempt = useCallback(async () => {
         if (currentAttempt) {
@@ -93,12 +81,12 @@ export const QuizAttemptLocalProvider: React.FC<{ children: React.ReactNode }> =
                     responses: currentAttempt.responses || [],
                 };
 
-                // Invia l'attempt completato al backend
                 const completedQuizAttempt = await createQuizAttempt(completedAttempt);
 
                 navigate(`/quiz/results`, {
                     state: {
-                        attempt: completedQuizAttempt
+                        attempt: completedQuizAttempt,
+                        publication: currentAttempt.quizPublication
                     }
                 });
 
@@ -124,11 +112,8 @@ export const QuizAttemptLocalProvider: React.FC<{ children: React.ReactNode }> =
 
     const resetQuizAttempt = useCallback(() => {
         setCurrentAttempt(null);
-        if (resetQuiz) {
-            resetQuiz();
-        }
         navigate('/');
-    }, [resetQuiz, navigate]);
+    }, [navigate]);
 
     const value = useMemo(() => ({
         currentAttempt,

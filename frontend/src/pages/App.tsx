@@ -17,7 +17,6 @@ import UserProfile from "../components/user/UserProfile.tsx";
 import {QuizStatsPage} from "./QuizStatsPage.tsx";
 import {QuizRetrieveProvider} from '../provider/QuizRetrieveProvider.tsx';
 import {QuizPublicationProviders} from "../provider/quizPublication/QuizPublicationProviders.tsx";
-import {QuizAccessRoute} from "../components/common/QuizAccessRoute.tsx";
 import {CourseProviders} from "../provider/course/CourseProviders.tsx";
 import {FolderProviders} from "../provider/folder/FolderProviders.tsx";
 import {QuizProviders} from "../provider/quiz/QuizProviders.tsx";
@@ -25,6 +24,7 @@ import {QuestionProviders} from "../provider/question/QuestionProviders.tsx";
 import {QuizAttemptProviders} from "../provider/quizAttempt/QuizAttemptProviders.tsx";
 import {QuizAttemptLocalProvider} from "../provider/quizAttempt/QuizAttemptLocalProvider.tsx";
 import QuizResults from "./QuizResults.tsx";
+import QuizScreen from "./QuizScreen.tsx";
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -115,7 +115,7 @@ const App = () => {
                                     {/* Quiz Screen Route */}
                                     <Route
                                         path="/quiz/:accessCode"
-                                        element={<QuizAccessRoute/>}
+                                        element={<QuizScreen/>}
                                     />
                                     <Route
                                         path="/quiz/results"

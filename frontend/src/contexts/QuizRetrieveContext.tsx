@@ -6,7 +6,7 @@ export type QuizRetrieveContextType = {
     quizPublication: QuizPublicationDTO | null;
     isLoading: boolean;
     error: Error | null;
-    retrieveQuiz: (quizPublication: QuizPublicationDTO) => Promise<void>;
+    retrieveQuiz: (quizPublication?: QuizPublicationDTO) => Promise<QuizDTO | null>;
     resetQuiz?: () => void;
 };
 
