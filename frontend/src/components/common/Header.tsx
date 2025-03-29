@@ -16,6 +16,7 @@ const Header = () => {
         { name: 'Home', path: '/', icon: <FiHome />, roles: [Role.Admin, Role.Teacher, Role.Student] },
         { name: 'Admin', path: '/admin', roles: [Role.Admin] },
         { name: 'Corsi', path: '/courses', roles: [Role.Teacher] },
+        { name: 'Question Bank', path: '/question_banks', roles: [Role.Teacher] },
         { name: 'Dashboard', path: '/dashboard', roles: [Role.Student] },
     ];
 

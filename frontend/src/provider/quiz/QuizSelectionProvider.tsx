@@ -6,7 +6,7 @@ export const QuizSelectionProvider: React.FC<{ children: React.ReactNode }> = ({
     const [selectedQuizId, setSelectedQuizId] = useState<string | null>(null);
     const [currentFolderId, setCurrentFolderId] = useState<string | null>(null);
 
-    const {quizzes} = useQuizList(); // Cambiato da getQuizzes
+    const {quizzes} = useQuizList();
 
     const selectedQuiz = useMemo(
         () => quizzes.find(q => q.id === selectedQuizId) || null,

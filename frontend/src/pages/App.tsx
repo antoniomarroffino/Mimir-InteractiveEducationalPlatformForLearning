@@ -22,6 +22,9 @@ import {CourseProviders} from "../provider/course/CourseProviders.tsx";
 import {FolderProviders} from "../provider/folder/FolderProviders.tsx";
 import {QuizProviders} from "../provider/quiz/QuizProviders.tsx";
 import {QuestionProviders} from "../provider/question/QuestionProviders.tsx";
+import {QuestionBankProviders} from "../provider/questionBank/QuestionBankProviders.tsx";
+import {QuestionBankDashboard} from "./teacher/QuestionBankDashboard.tsx";
+import QuestionBankDetails from "../components/questionBank/QuestionBankDetails.tsx";
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -87,6 +90,23 @@ const App = () => {
                                     path=":courseId/publications/:publicationId/stats"
                                     element={<QuizStatsPage/>}
                                 />
+                            </Route>
+
+                            <Route
+                                path="/question_banks"
+                                element={
+                                    <ProtectedRoute allowedRoles={[Role.Teacher]}>
+                                        <QuestionBankProviders>
+                                            <QuestionProviders>
+                                                <Outlet/>
+                                            </QuestionProviders>
+                                        </QuestionBankProviders>
+                                    </ProtectedRoute>
+                                }
+                            >
+                                <Route index element={<QuestionBankDashboard/>}/>
+                                <Route path=":questionBankId" element={<QuestionBankDetails />}/>
+
                             </Route>
 
                             {/* Student Routes */}

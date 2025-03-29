@@ -3,28 +3,16 @@ import {createContext} from "react";
 
 
 export type QuestionCRUDContextType = {
-    createQuestion: (questionDTO: QuestionDTO & {
-        courseId?: string,
-        folderId?: string,
-        quizId?: string
-    }) => Promise<QuestionDTO>;
+    createQuestion: (questionBankId: string, questionDTO: QuestionDTO) => Promise<QuestionDTO>;
 
     updateQuestion: (
         questionId: string,
-        questionDTO: QuestionDTO & {
-            courseId?: string,
-            folderId?: string,
-            quizId?: string
-        }
+        questionDTO: QuestionDTO
     ) => Promise<QuestionDTO>;
 
     deleteQuestion: (
         questionId: string,
-        params?: {
-            courseId?: string,
-            folderId?: string,
-            quizId?: string
-        }
+        questionBankId: string,
     ) => Promise<void>;
 
     createQuestionTemplate: (questionType: QuestionType) => Promise<QuestionDTO>;

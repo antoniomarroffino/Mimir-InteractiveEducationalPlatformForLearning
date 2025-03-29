@@ -3,57 +3,35 @@ import {useMutation, useQueryClient} from "react-query";
 import {QuestionDTO, QuestionType} from "@dti-isin/backend-api-client";
 import {QuestionCRUDContext} from "../../contexts/question/QuestionCRUDContext.ts";
 import {questionApi} from "../../../config/config.ts";
-import {useCourseSelection} from "../../hooks/course/useCourseSelection.ts";
-import {useFolderSelection} from "../../hooks/folder/useFolderSelection.ts";
 import {useQuestionSelection} from "../../hooks/question/useQuestionSelection.ts";
-import {useQuizSelection} from "../../hooks/quiz/useQuizSelection.ts";
 
 export const QuestionCRUDProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const queryClient = useQueryClient();
-    const {selectedCourseId} = useCourseSelection();
-    const {selectedFolderId} = useFolderSelection();
-    const {selectedQuizId} = useQuizSelection();
-    const {deselectQuestion} = useQuestionSelection();
+    //const {selectedCourseId} = useCourseSelection();
+    //const {selectedFolderId} = useFolderSelection();
+    //const {selectedQuizId} = useQuizSelection();
+    //const {deselectQuestion} = useQuestionSelection();
 
 
     const createQuestionMutation = useMutation(
         async (params: {
-            questionDTO: QuestionDTO,
-            courseId?: string,
-            folderId?: string,
-            quizId?: string
+            questionBankId: string;
+            questionDTO: QuestionDTO;
         }) => {
-            // Usa gli ID passati o quelli selezionati
-            const courseId = params.courseId || selectedCourseId;
-            const folderId = params.folderId || selectedFolderId;
-            const quizId = params.quizId || selectedQuizId;
-
-            if (!courseId) {
-                throw new Error("No course selected");
-            }
-            if (!folderId) {
-                throw new Error("No folder selected");
-            }
-            if (!quizId) {
-                throw new Error("No quiz selected");
+            if (!params.questionBankId) {
+                throw new Error("No question bank selected");
             }
 
-            const response = await questionApi.apiCoursesCourseIdFoldersFolderIdQuizzesQuizIdQuestionsPost({
-                courseId,
-                folderId,
-                quizId,
+            const response = await questionApi.apiQuestionsQuestionBankIdPost({
+                questionBankId: params.questionBankId,
                 questionDTO: params.questionDTO,
             });
             return response.data;
         },
         {
             onSuccess: (newQuestion, params) => {
-                const courseId = params.courseId || selectedCourseId;
-                const folderId = params.folderId || selectedFolderId;
-                const quizId = params.quizId || selectedQuizId;
-
                 queryClient.setQueryData(
-                    ["questions", courseId, folderId, quizId],
+                    ["questions", params.questionBankId],
                     (oldData: QuestionDTO[] | undefined) => (oldData ? [...oldData, newQuestion] : [newQuestion])
                 );
             },
@@ -66,36 +44,22 @@ export const QuestionCRUDProvider: React.FC<{ children: React.ReactNode }> = ({c
     const updateQuestionMutation = useMutation(
         async (params: {
             questionId: string,
-            questionDTO: QuestionDTO,
-            courseId?: string,
-            folderId?: string,
-            quizId?: string
+            questionDTO: QuestionDTO
         }) => {
-            const courseId = params.courseId || selectedCourseId;
-            const folderId = params.folderId || selectedFolderId;
-            const quizId = params.quizId || selectedQuizId;
-
-            if (!courseId || !folderId || !quizId || !params.questionId) {
+            if (!params.questionId) {
                 throw new Error("Missing required parameters");
             }
 
-            const response = await questionApi.apiCoursesCourseIdFoldersFolderIdQuizzesQuizIdQuestionsQuestionIdPut({
-                courseId,
-                folderId,
-                quizId,
+            const response = await questionApi.apiQuestionsQuestionIdPut({
                 questionId: params.questionId,
                 questionDTO: params.questionDTO,
             });
             return response.data;
         },
         {
-            onSuccess: (updatedQuestion, params) => {
-                const courseId = params.courseId || selectedCourseId;
-                const folderId = params.folderId || selectedFolderId;
-                const quizId = params.quizId || selectedQuizId;
-
+            onSuccess: (updatedQuestion) => {
                 queryClient.setQueryData(
-                    ["questions", courseId, folderId, quizId],
+                    ["questions"],
                     (oldData: QuestionDTO[] | undefined) => {
                         if (!oldData) return [updatedQuestion];
                         return oldData.map((question) =>
@@ -111,38 +75,23 @@ export const QuestionCRUDProvider: React.FC<{ children: React.ReactNode }> = ({c
     );
 
     const deleteQuestionMutation = useMutation(
-        async (params: {
-            questionId: string,
-            courseId?: string,
-            folderId?: string,
-            quizId?: string
-        }) => {
-            const courseId = params.courseId || selectedCourseId;
-            const folderId = params.folderId || selectedFolderId;
-            const quizId = params.quizId || selectedQuizId;
-
-            if (!courseId || !folderId || !quizId || !params.questionId) {
+        async (params: {questionId: string, questionBankId: string}) => {
+            if (!params.questionId) {
                 throw new Error("Missing required parameters");
             }
 
-            return questionApi.apiCoursesCourseIdFoldersFolderIdQuizzesQuizIdQuestionsQuestionIdDelete({
-                courseId,
-                folderId,
-                quizId,
+            return questionApi.apiQuestionsQuestionIdDelete({
                 questionId: params.questionId,
+                questionBank: params.questionBankId,
             });
         },
         {
             onSuccess: (_, params) => {
-                const courseId = params.courseId || selectedCourseId;
-                const folderId = params.folderId || selectedFolderId;
-                const quizId = params.quizId || selectedQuizId;
-
                 queryClient.setQueryData<QuestionDTO[]>(
-                    ["questions", courseId, folderId, quizId],
+                    ["questions"],
                     (old) => old?.filter(q => q.id !== params.questionId) || []
                 );
-                deselectQuestion();
+                //deselectQuestion();
             },
             onError: (error: Error) => {
                 console.error("Question delete error:", error);
@@ -155,7 +104,7 @@ export const QuestionCRUDProvider: React.FC<{ children: React.ReactNode }> = ({c
             if (!questionType) {
                 throw new Error("question type is null");
             }
-            const response = await questionApi.apiCoursesCourseIdFoldersFolderIdQuizzesQuizIdQuestionsTypePost({type: questionType});
+            const response = await questionApi.apiQuestionsTypePost({type: questionType});
             return response.data;
         }, {
             onError: (error: Error) => {
@@ -165,17 +114,11 @@ export const QuestionCRUDProvider: React.FC<{ children: React.ReactNode }> = ({c
     );
 
     const value = {
-        createQuestion: async (questionDTO: QuestionDTO & {
-            courseId?: string,
-            folderId?: string,
-            quizId?: string
-        }) => {
+        createQuestion: async (questionBankId: string, questionDTO: QuestionDTO) => {
             try {
                 return await createQuestionMutation.mutateAsync({
-                    questionDTO,
-                    courseId: questionDTO.courseId,
-                    folderId: questionDTO.folderId,
-                    quizId: questionDTO.quizId
+                    questionBankId,
+                    questionDTO
                 });
             } catch (err) {
                 console.error("Question creation failed:", err);
@@ -183,18 +126,11 @@ export const QuestionCRUDProvider: React.FC<{ children: React.ReactNode }> = ({c
             }
         },
 
-        updateQuestion: async (questionId: string, questionDTO: QuestionDTO & {
-            courseId?: string,
-            folderId?: string,
-            quizId?: string
-        }) => {
+        updateQuestion: async (questionId: string, questionDTO: QuestionDTO) => {
             try {
                 return await updateQuestionMutation.mutateAsync({
                     questionId,
-                    questionDTO,
-                    courseId: questionDTO.courseId,
-                    folderId: questionDTO.folderId,
-                    quizId: questionDTO.quizId
+                    questionDTO
                 });
             } catch (err) {
                 console.error("Question updating failed:", err);
@@ -202,15 +138,11 @@ export const QuestionCRUDProvider: React.FC<{ children: React.ReactNode }> = ({c
             }
         },
 
-        deleteQuestion: async (questionId: string, params?: {
-            courseId?: string,
-            folderId?: string,
-            quizId?: string
-        }) => {
+        deleteQuestion: async (questionId: string, questionBankId: string) => {
             try {
                 await deleteQuestionMutation.mutateAsync({
                     questionId,
-                    ...params
+                    questionBankId
                 });
             } catch (err) {
                 console.error("Question deletion failed:", err);

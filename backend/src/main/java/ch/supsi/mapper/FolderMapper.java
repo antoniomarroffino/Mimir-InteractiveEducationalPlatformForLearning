@@ -1,6 +1,7 @@
 package ch.supsi.mapper;
 
 import ch.supsi.mapper.quiz.QuizMapper;
+import ch.supsi.mapper.quiz.facade.IQuizMapperFacade;
 import ch.supsi.model.api.Folder;
 import ch.supsi.model.dto.api.FolderDTO;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -13,7 +14,7 @@ import java.util.stream.Collectors;
 public class FolderMapper implements IBaseMapper<Folder, FolderDTO> {
 
     @Inject
-    QuizMapper quizMapper;
+    IQuizMapperFacade quizMapperFacade;
 
     @Override
     public FolderDTO toDTO(Folder folder) {
@@ -27,7 +28,7 @@ public class FolderMapper implements IBaseMapper<Folder, FolderDTO> {
 
         if (folder.quizzes != null) {
             dto.setQuizzes(folder.quizzes.stream()
-                    .map(quizMapper::toDTO)
+                    .map(this.quizMapperFacade::toDTO)
                     .collect(Collectors.toList()));
         }
 
@@ -48,7 +49,7 @@ public class FolderMapper implements IBaseMapper<Folder, FolderDTO> {
 
         if (dto.getQuizzes() != null) {
             folder.quizzes = dto.getQuizzes().stream()
-                    .map(quizMapper::toEntity)
+                    .map(this.quizMapperFacade::toEntity)
                     .collect(Collectors.toList());
         }
 

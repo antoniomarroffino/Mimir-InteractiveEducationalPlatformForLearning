@@ -2,6 +2,7 @@ import {
     Configuration,
     CourseControllerApi,
     FolderControllerApi,
+    QuestionBankControllerApi,
     QuestionControllerApi,
     QuizControllerApi,
     QuizPublicationControllerApi,
@@ -38,3 +39,4 @@ export const quizApi = new QuizControllerApi(config);
 export const questionApi = new QuestionControllerApi(config);
 export const userApi = new UserControllerApi(config);
 export const quizPublicationApi = new QuizPublicationControllerApi(config);
+export const questionBankApi = new QuestionBankControllerApi(config);
