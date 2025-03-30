@@ -1,6 +1,5 @@
 package ch.supsi.controller.quizpublication;
 
-import ch.supsi.mapper.QuizPublicationMapper;
 import ch.supsi.model.api.QuizPublication;
 import ch.supsi.model.dto.api.QuizPublicationDTO;
 import ch.supsi.service.quizpublication.IQuizPublicationService;
@@ -27,10 +26,6 @@ public class QuizPublicationController {
 
     @Inject
     IQuizPublicationService quizPublicationService;
-
-    @Inject
-    QuizPublicationMapper quizPublicationMapper;
-
 
     @POST
     @RolesAllowed("TEACHER")
@@ -65,7 +60,8 @@ public class QuizPublicationController {
                 new ObjectId(folderId),
                 new ObjectId(quizId)
         );
-        return Response.ok(this.quizPublicationMapper.toDTO(publication)).build();
+        QuizPublicationDTO publicationDTO = this.quizPublicationService.getQuizPublicationById(publication.id);
+        return Response.ok(publicationDTO).build();
     }
 
     @GET
@@ -78,7 +74,6 @@ public class QuizPublicationController {
     ))
     @APIResponse(responseCode = "404", description = "Publication not found")
     public Response getPublicationById(@PathParam("publicationID") String publicationID) {
-
         QuizPublicationDTO publicationDTO = this.quizPublicationService.getQuizPublicationById(new ObjectId(publicationID));
         return Response.ok(publicationDTO).build();
     }
@@ -91,13 +86,11 @@ public class QuizPublicationController {
             schema = @Schema(type = SchemaType.ARRAY, implementation = QuizPublicationDTO.class)
     ))
     public Response getAllPublications() {
-        List<QuizPublication> publications = this.quizPublicationService.getAllPublications();
-        List<QuizPublicationDTO> dtos = publications.stream()
-                .map(this.quizPublicationMapper::toDTO)
+        List<QuizPublicationDTO> publications = this.quizPublicationService.getAllPublications().stream()
+                .map(pub -> this.quizPublicationService.getQuizPublicationById(pub.id))
                 .collect(Collectors.toList());
-        return Response.ok(dtos).build();
+        return Response.ok(publications).build();
     }
-
 
     @GET
     @Path("/byCode/{code}")
@@ -109,8 +102,12 @@ public class QuizPublicationController {
     @APIResponse(responseCode = "404", description = "Publication not found")
     public Response getPublicationByCode(@PathParam("code") String code) {
         QuizPublication publication = this.quizPublicationService.getPublicationByCode(code);
-        return Response.ok(this.quizPublicationMapper.toDTO(publication)).build();
+        QuizPublicationDTO publicationDTO = this.quizPublicationService.getQuizPublicationById(publication.id);
+        return Response.ok(publicationDTO).build();
     }
+
+
+
 
 
     @PUT

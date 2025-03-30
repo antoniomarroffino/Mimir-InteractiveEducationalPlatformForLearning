@@ -4,6 +4,8 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.validation.constraints.NotBlank;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
+import java.time.LocalDateTime;
+
 @RegisterForReflection
 public class QuizPublicationDTO {
 
@@ -25,13 +27,18 @@ public class QuizPublicationDTO {
     @Schema(description = "Codice di pubblicazione generato dal backend", readOnly = true)
     private String publicationCode;
 
-    private boolean published;
+    private Boolean published;
 
-    private boolean anonymous;
+    private Boolean anonymous;
+
+    private LocalDateTime createdAt;
+
+    private LocalDateTime closedAt;
 
     public QuizPublicationDTO() {
         this.published = false;
         this.anonymous = true;
+        this.createdAt = LocalDateTime.now();
     }
 
     public QuizPublicationDTO(String id, String courseId, String folderId, String quizId, String publicationCode) {
@@ -83,19 +90,35 @@ public class QuizPublicationDTO {
         this.publicationCode = publicationCode;
     }
 
-    public boolean isPublished() {
+    public Boolean getPublished() {
         return this.published;
     }
 
-    public void setPublished(boolean published) {
+    public void setPublished(Boolean published) {
         this.published = published;
     }
 
-    public boolean isAnonymous() {
+    public Boolean getAnonymous() {
         return this.anonymous;
     }
 
-    public void setAnonymous(boolean anonymous) {
+    public void setAnonymous(Boolean anonymous) {
         this.anonymous = anonymous;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return this.createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getClosedAt() {
+        return this.closedAt;
+    }
+
+    public void setClosedAt(LocalDateTime closedAt) {
+        this.closedAt = closedAt;
     }
 }

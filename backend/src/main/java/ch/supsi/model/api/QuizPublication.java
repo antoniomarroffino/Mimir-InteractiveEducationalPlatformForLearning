@@ -5,34 +5,41 @@ import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
+import java.time.LocalDateTime;
+
 @MongoEntity(collection = "quiz_publications")
 @Schema(description = "Quiz Publication model", name = "QuizPublication")
 public class QuizPublication {
 
     @BsonId
-    private ObjectId id;
+    public ObjectId id;
 
     @Schema(required = true)
-    private ObjectId courseId;
+    public ObjectId courseId;
 
     @Schema(required = true)
-    private ObjectId folderId;
+    public ObjectId folderId;
 
     @Schema(required = true)
-    private ObjectId quizId;
+    public ObjectId quizId;
 
     @Schema(required = true)
-    private String publicationCode;
+    public String publicationCode;
 
-    private boolean published = false;
+    public Boolean published = false;
 
-    private boolean anonymous = true;
+    public Boolean anonymous = true;
+
+    public LocalDateTime createdAt;
+
+    public LocalDateTime closedAt;
 
     public QuizPublication() {
-
+        this.createdAt = LocalDateTime.now();
     }
 
     public QuizPublication(ObjectId courseId, ObjectId folderId, ObjectId quizId, String publicationCode) {
+        this();
         this.courseId = courseId;
         this.folderId = folderId;
         this.quizId = quizId;
@@ -40,66 +47,8 @@ public class QuizPublication {
     }
 
     public QuizPublication(ObjectId id, ObjectId courseId, ObjectId folderId, ObjectId quizId, String publicationCode) {
-        this.id = id;
-        this.courseId = courseId;
-        this.folderId = folderId;
-        this.quizId = quizId;
-        this.publicationCode = publicationCode;
-    }
-
-    public ObjectId getId() {
-        return this.id;
-    }
-
-    public void setId(ObjectId id) {
+        this(courseId, folderId, quizId, publicationCode);
         this.id = id;
     }
 
-    public ObjectId getCourseId() {
-        return this.courseId;
-    }
-
-    public void setCourseId(ObjectId courseId) {
-        this.courseId = courseId;
-    }
-
-    public ObjectId getFolderId() {
-        return this.folderId;
-    }
-
-    public void setFolderId(ObjectId folderId) {
-        this.folderId = folderId;
-    }
-
-    public ObjectId getQuizId() {
-        return this.quizId;
-    }
-
-    public void setQuizId(ObjectId quizId) {
-        this.quizId = quizId;
-    }
-
-    public String getPublicationCode() {
-        return this.publicationCode;
-    }
-
-    public void setPublicationCode(String publicationCode) {
-        this.publicationCode = publicationCode;
-    }
-
-    public boolean isPublished() {
-        return this.published;
-    }
-
-    public void setPublished(boolean published) {
-        this.published = published;
-    }
-
-    public boolean isAnonymous() {
-        return this.anonymous;
-    }
-
-    public void setAnonymous(boolean anonymous) {
-        this.anonymous = anonymous;
-    }
 }
