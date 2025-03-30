@@ -1,8 +1,7 @@
 import {useNavigate, useParams} from 'react-router-dom';
 import {QuestionDTO, QuestionType} from '@dti-isin/backend-api-client';
 import {BreadcrumbCourses} from "../components/common/BreadcrumbCourses.tsx";
-import {useCourseList} from "../hooks/course/useCourseList.ts";
-import React, {useMemo, useState} from "react";
+import React, {useState} from "react";
 import {BsLayoutSidebar, BsListTask, BsListUl, BsQuestionDiamond} from 'react-icons/bs';
 import {useQuizCRUD} from "../hooks/quiz/useQuizCRUD.ts";
 import {useQuestionBankList} from "../hooks/questionBank/useQuestionBankList.ts";
@@ -14,13 +13,16 @@ import {QuestionsList} from "../components/question/QuestionList.tsx";
 import {QuestionEditor} from "../components/question/QuestionEditor.tsx";
 import {SpecificQuestionDTO, useQuestionCreation} from "../hooks/question/useQuestionCreation.ts";
 import {useGetQuizById} from "../hooks/quiz/useGetQuizById.ts";
+import {useGetCourseById} from "../hooks/course/useGetCourseById.ts";
+import {useGetFolderById} from "../hooks/folder/useGetFolderById.ts";
 
 export const QuizCreation: React.FC = () => {
     const navigate = useNavigate();
     const {courseId, folderId, quizId} = useParams();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const {data: currentQuiz} = useGetQuizById(courseId!, folderId!, quizId!);
-    const {teacherCourses} = useCourseList();
+    const {data: currentCourse} = useGetCourseById(courseId!);
+    const {data: currentFolder} = useGetFolderById(courseId!, folderId!);
     const [selectedQuestions, setSelectedQuestions] = useState<string[]>([]);
     const {updateQuiz, isUpdatingQuiz} = useQuizCRUD();
     const {questionBanks, isLoadingQuestionBanks, errorQuestionBanks} = useQuestionBankList();
@@ -33,17 +35,6 @@ export const QuizCreation: React.FC = () => {
         startQuestionEditing,
         isEditingExistingQuestion
     } = useQuestionCreation();
-
-
-    const currentCourse = useMemo(() =>
-            teacherCourses.find(course => course.id === courseId),
-        [teacherCourses, courseId]
-    );
-
-    const currentFolder = useMemo(() =>
-            currentCourse?.folders?.find(folder => folder.id === folderId),
-        [currentCourse, folderId]
-    );
 
     const saveNewQuestion = async (questionDTO: SpecificQuestionDTO) => {
         if (questionDTO) {
@@ -91,7 +82,7 @@ export const QuizCreation: React.FC = () => {
         ];
 
         try {
-            await updateQuiz(folderId, quizId, {
+            await updateQuiz(courseId!, folderId, quizId, {
                 ...currentQuiz,
                 questions: updatedQuestions
             });
@@ -107,7 +98,7 @@ export const QuizCreation: React.FC = () => {
         const updatedQuestions = currentQuiz.questions?.filter(q => q.id !== questionId) || [];
 
         try {
-            await updateQuiz(folderId, quizId, {
+            await updateQuiz(courseId!, folderId, quizId, {
                 ...currentQuiz,
                 questions: updatedQuestions
             });

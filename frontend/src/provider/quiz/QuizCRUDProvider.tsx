@@ -2,35 +2,30 @@ import React, {useMemo} from "react";
 import {useMutation, useQueryClient} from "react-query";
 import {QuizDTO} from "@dti-isin/backend-api-client";
 import {quizApi} from "../../../config/config.ts";
-import {useCourseSelection} from "../../hooks/course/useCourseSelection.ts";
 import {QuizCRUDContext} from "../../contexts/quiz/QuizCRUDContext.tsx";
-import {useQuizSelection} from "../../hooks/quiz/useQuizSelection.ts";
 
 export const QuizCRUDProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const queryClient = useQueryClient();
 
-    const {selectedCourseId} = useCourseSelection();
-    const {deselectQuiz} = useQuizSelection();
-
     const createQuizMutation = useMutation(
-        async ({folderId, name, description}: { folderId: string; name: string; description?: string }) => {
-            if (!selectedCourseId) {
+        async ({courseId, folderId, quizDTO}: { courseId: string, folderId: string; quizDTO: QuizDTO }) => {
+            if (!courseId) {
                 throw new Error("No course selected");
             }
             if (!folderId) {
                 throw new Error("No folder selected");
             }
             const response = await quizApi.apiCoursesCourseIdFoldersFolderIdQuizzesPost({
-                courseId: selectedCourseId,
-                folderId: folderId,
-                quizDTO: {name, description}
+                courseId,
+                folderId,
+                quizDTO
             });
             return response.data;
         },
         {
-            onSuccess: (newQuiz, {folderId}) => {
+            onSuccess: (newQuiz, params) => {
                 queryClient.setQueryData<QuizDTO[]>(
-                    ["quizzes", selectedCourseId, folderId],
+                    ["quizzes", params.courseId, params.folderId],
                     (old) => old ? [...old, newQuiz] : [newQuiz]
                 );
             },
@@ -40,29 +35,29 @@ export const QuizCRUDProvider: React.FC<{ children: React.ReactNode }> = ({child
         }
     );
 
-    const updateQuizMutation = useMutation<QuizDTO, Error, { folderId: string, quizId: string, quizDTO: QuizDTO }>(
-        async ({folderId, quizId, quizDTO}) => {
-            if (!selectedCourseId) {
+    const updateQuizMutation = useMutation<QuizDTO, Error, {courseId: string, folderId: string, quizId: string, quizDTO: QuizDTO }>(
+        async ({courseId, folderId, quizId, quizDTO}) => {
+            if (!courseId) {
                 throw new Error("No course selected");
             }
             if (!folderId) {
                 throw new Error("No folder selected");
             }
             const response = await quizApi.apiCoursesCourseIdFoldersFolderIdQuizzesQuizIdPut({
-                courseId: selectedCourseId,
-                folderId: folderId,
+                courseId,
+                folderId,
                 quizId,
                 quizDTO
             });
             return response.data;
         },
         {
-            onSuccess: (updatedQuizDTO, {folderId}) => {
+            onSuccess: (updatedQuizDTO, params) => {
                 queryClient.invalidateQueries({
-                    queryKey: ["quizzes", selectedCourseId, folderId],
+                    queryKey: ["quizzes", params.courseId, params.folderId],
                 });
                 queryClient.invalidateQueries({
-                    queryKey: ["quiz", selectedCourseId, folderId, updatedQuizDTO.id],
+                    queryKey: ["quiz", params.courseId, params.folderId, updatedQuizDTO.id],
                 });
             },
             onError: (error: Error) => {
@@ -71,26 +66,25 @@ export const QuizCRUDProvider: React.FC<{ children: React.ReactNode }> = ({child
         }
     );
 
-    const deleteQuizMutation = useMutation<void, Error, { folderId: string, quizId: string }>(
-        async ({folderId, quizId}) => {
-            if (!selectedCourseId) {
+    const deleteQuizMutation = useMutation<void, Error, {courseId: string, folderId: string, quizId: string }>(
+        async ({courseId, folderId, quizId}) => {
+            if (!courseId) {
                 throw new Error("No course selected");
             }
             if (!folderId) {
                 throw new Error("No folder selected");
             }
             await quizApi.apiCoursesCourseIdFoldersFolderIdQuizzesQuizIdDelete({
-                courseId: selectedCourseId,
-                folderId: folderId,
+                courseId,
+                folderId,
                 quizId
             });
         },
         {
-            onSuccess: (_, {folderId}) => {
+            onSuccess: (_, params) => {
                 queryClient.invalidateQueries({
-                    queryKey: ["quizzes", selectedCourseId, folderId],
+                    queryKey: ["quizzes", params.courseId, params.folderId],
                 });
-                deselectQuiz();
             },
             onError: (error: Error) => {
                 console.error("Quiz delete error:", error);
@@ -99,27 +93,27 @@ export const QuizCRUDProvider: React.FC<{ children: React.ReactNode }> = ({child
     );
 
     const value = useMemo(() => ({
-        createQuiz: async (folderId: string, name: string, description?: string) => {
+        createQuiz: async (courseId: string, folderId: string, quizDTO: QuizDTO) => {
             try {
-                return await createQuizMutation.mutateAsync({folderId, name, description});
+                return await createQuizMutation.mutateAsync({courseId, folderId, quizDTO});
             } catch (err) {
                 console.error("Quiz creation failed:", err);
                 throw err;
             }
         },
 
-        updateQuiz: async (folderId: string, quizId: string, quizDTO: QuizDTO) => {
+        updateQuiz: async (courseId: string, folderId: string, quizId: string, quizDTO: QuizDTO) => {
             try {
-                return await updateQuizMutation.mutateAsync({folderId, quizId, quizDTO});
+                return await updateQuizMutation.mutateAsync({courseId, folderId, quizId, quizDTO});
             } catch (err) {
                 console.error("Quiz update failed:", err);
                 throw err;
             }
         },
 
-        deleteQuiz: async (folderId: string, quizId: string) => {
+        deleteQuiz: async (courseId: string, folderId: string, quizId: string) => {
             try {
-                await deleteQuizMutation.mutateAsync({folderId, quizId});
+                await deleteQuizMutation.mutateAsync({courseId, folderId, quizId});
             } catch (err) {
                 console.error("Quiz deletion failed:", err);
                 throw err;

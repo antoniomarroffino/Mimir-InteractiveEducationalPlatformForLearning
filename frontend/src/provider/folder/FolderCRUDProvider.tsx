@@ -2,28 +2,24 @@ import React, {useMemo} from "react";
 import {useMutation, useQueryClient} from "react-query";
 import {FolderDTO} from "@dti-isin/backend-api-client";
 import {folderApi} from "../../../config/config.ts";
-import {useCourseSelection} from "../../hooks/course/useCourseSelection.ts";
 import {FolderCRUDContext} from "../../contexts/folder/FolderCRUDContext.ts";
-import {useFolderSelection} from "../../hooks/folder/useFolderSelection.ts";
 
 export const FolderCRUDProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const queryClient = useQueryClient();
-    const {selectedCourseId} = useCourseSelection();
-    const {deselectFolder} = useFolderSelection();
 
     const createFolderMutation = useMutation(
-        async (name: string) => {
-            if (!selectedCourseId) throw new Error("No course selected");
+        async ({courseId, folderDTO}: {courseId: string, folderDTO: FolderDTO}) => {
+            if (!courseId) throw new Error("No course selected");
             const response = await folderApi.apiCoursesCourseIdFoldersPost({
-                courseId: selectedCourseId,
-                folderDTO: {name}
+                courseId,
+                folderDTO
             });
             return response.data;
         },
         {
-            onSuccess: (newFolder) => {
+            onSuccess: (newFolder, params) => {
                 queryClient.setQueryData<FolderDTO[]>(
-                    ["folders", selectedCourseId],
+                    ["folders", params.courseId],
                     (old) => old ? [...old, newFolder] : [newFolder]
                 );
             },
@@ -34,19 +30,19 @@ export const FolderCRUDProvider: React.FC<{ children: React.ReactNode }> = ({chi
     );
 
     const updateFolderMutation = useMutation(
-        async ({id, name}: { id: string; name: string }) => {
-            if (!selectedCourseId) throw new Error("No course selected");
+        async ({courseId, folderId, folderDTO}: { courseId: string, folderId: string, folderDTO: FolderDTO }) => {
+            if (!courseId) throw new Error("No course selected");
             const response = await folderApi.apiCoursesCourseIdFoldersFolderIdPut({
-                courseId: selectedCourseId,
-                folderId: id,
-                folderDTO: {name}
+                courseId,
+                folderId,
+                folderDTO
             });
             return response.data;
         },
         {
-            onSuccess: (updatedFolder) => {
+            onSuccess: (updatedFolder, params) => {
                 queryClient.setQueryData<FolderDTO[]>(
-                    ["folders", selectedCourseId],
+                    ["folders", params.courseId],
                     (old) => old?.map(f =>
                         f.id === updatedFolder.id ? updatedFolder : f
                     ) || [updatedFolder]
@@ -59,20 +55,19 @@ export const FolderCRUDProvider: React.FC<{ children: React.ReactNode }> = ({chi
     );
 
     const deleteFolderMutation = useMutation(
-        (id: string) => {
-            if (!selectedCourseId) throw new Error("No course selected");
+        ({courseId, folderId}: {courseId: string, folderId: string}) => {
+            if (!courseId) throw new Error("No course selected");
             return folderApi.apiCoursesCourseIdFoldersFolderIdDelete({
-                courseId: selectedCourseId,
-                folderId: id
+                courseId,
+                folderId
             })
         },
         {
-            onSuccess: (_, id) => {
+            onSuccess: (_, params) => {
                 queryClient.setQueryData<FolderDTO[]>(
-                    ["folders", selectedCourseId],
-                    (old) => old?.filter(f => f.id !== id) || []
+                    ["folders", params.courseId],
+                    (old) => old?.filter(f => f.id !== params.folderId) || []
                 );
-                deselectFolder();
             },
             onError: (error: Error) => {
                 console.error("Folder delete error:", error);
@@ -81,27 +76,27 @@ export const FolderCRUDProvider: React.FC<{ children: React.ReactNode }> = ({chi
     );
 
     const value = useMemo(() => ({
-        createFolder: async (name: string) => {
+        createFolder: async (courseId: string, folderDTO: FolderDTO) => {
             try {
-                return await createFolderMutation.mutateAsync(name);
+                return await createFolderMutation.mutateAsync({courseId, folderDTO});
             } catch (err) {
                 console.error("Folder creation failed:", err);
                 throw err;
             }
         },
 
-        updateFolder: async (id: string, name: string) => {
+        updateFolder: async (courseId: string, folderId: string, folderDTO: FolderDTO) => {
             try {
-                return await updateFolderMutation.mutateAsync({id, name});
+                return await updateFolderMutation.mutateAsync({courseId, folderId, folderDTO});
             } catch (err) {
                 console.error("Folder update failed:", err);
                 throw err;
             }
         },
 
-        deleteFolder: async (id: string) => {
+        deleteFolder: async (courseId: string, folderId: string) => {
             try {
-                await deleteFolderMutation.mutateAsync(id);
+                await deleteFolderMutation.mutateAsync({courseId, folderId});
             } catch (err) {
                 console.error("Folder deletion failed:", err);
                 throw err;

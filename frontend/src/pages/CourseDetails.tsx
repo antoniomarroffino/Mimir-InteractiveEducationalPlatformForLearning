@@ -3,18 +3,18 @@ import {useNavigate, useParams} from 'react-router-dom';
 import {FolderList} from "../components/folder/FolderList.tsx";
 import {CreateFolderForm} from "../components/folder/CreateFolderForm.tsx";
 import {useCourseList} from "../hooks/course/useCourseList.ts";
-import {useCourseSelection} from "../hooks/course/useCourseSelection.ts";
 import {useCourseCRUD} from "../hooks/course/useCourseCRUD.ts";
 import {FiFolder} from "react-icons/fi";
 import {BsBoxArrowRight, BsPencil, BsTrash} from "react-icons/bs";
 import {BreadcrumbCourses} from "../components/common/BreadcrumbCourses.tsx";
 import {useFolderCRUD} from "../hooks/folder/useFolderCRUD.ts";
+import {useGetCourseById} from "../hooks/course/useGetCourseById.ts";
 
 const CourseDetails = () => {
     const {courseId} = useParams();
     const navigate = useNavigate();
+    const {data: selectedCourse} = useGetCourseById(courseId!);
     const {teacherCourses, isLoadingTeacherCourses, errorTeacherCourses} = useCourseList();
-    const {setSelectedCourseId, setSelectedCourse, selectedCourse} = useCourseSelection();
     const {updateCourse, deleteCourse, leftCourse} = useCourseCRUD();
     const [isEditing, setIsEditing] = useState(false);
     const [editedName, setEditedName] = useState("");
@@ -40,7 +40,7 @@ const CourseDetails = () => {
 
     const handleDeleteSelected = async () => {
         for (const folderId of selectedFolders) {
-            await deleteFolder(folderId);
+            await deleteFolder(courseId!, folderId);
         }
         setSelectedFolders([]);
     };
@@ -61,13 +61,11 @@ const CourseDetails = () => {
         if (courseId) {
             const course = teacherCourses.find(course => course.id === courseId);
             if (course) {
-                setSelectedCourseId(courseId);
-                setSelectedCourse(course);
                 setEditedName(course.name);
                 setEditedDescription(course.description || '');
             }
         }
-    }, [courseId, teacherCourses, setSelectedCourseId, setSelectedCourse]);
+    }, [courseId, teacherCourses]);
 
     const handleSaveEdit = async () => {
         if (selectedCourse) {
@@ -233,7 +231,7 @@ const CourseDetails = () => {
                 </div>
                 <div className="flex-1">
                     <div className="top-8 h-fit">
-                        <CreateFolderForm/>
+                        <CreateFolderForm courseId={courseId}/>
                     </div>
                 </div>
             </div>

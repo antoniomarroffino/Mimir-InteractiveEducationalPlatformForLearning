@@ -3,7 +3,6 @@ import {Link} from 'react-router-dom';
 import {BsChevronRight, BsListTask} from 'react-icons/bs';
 import {CourseDTO, FolderDTO, QuizDTO} from '@dti-isin/backend-api-client';
 import {FiBookOpen, FiChevronRight, FiHome} from "react-icons/fi";
-import {useCourseSelection} from "../../hooks/course/useCourseSelection.ts";
 
 interface BreadcrumbCoursesProps {
     course?: CourseDTO;
@@ -16,9 +15,6 @@ export const BreadcrumbCourses: React.FC<BreadcrumbCoursesProps> = ({
                                                           folder,
                                                           quiz
                                                       }) => {
-
-    const {deselectCourse} = useCourseSelection();
-
     return (
         <div className="mb-8">
             <ul className="flex flex-wrap items-center gap-2 text-sm bg-base-200 px-4 py-2 rounded-full">
@@ -38,7 +34,6 @@ export const BreadcrumbCourses: React.FC<BreadcrumbCoursesProps> = ({
                             <Link
                                 to="/courses"
                                 className="flex items-center text-primary hover:text-primary-focus transition-colors"
-                                onClick={deselectCourse}
                             >
                                 <FiBookOpen className="mr-1.5"/>
                                 Courses

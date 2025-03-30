@@ -3,7 +3,11 @@ import {useFolderCRUD} from "../../hooks/folder/useFolderCRUD.ts";
 import {FiAlertCircle, FiCalendar, FiFolder, FiFolderPlus, FiPlus} from "react-icons/fi";
 import {addWeeks, endOfWeek, format, startOfWeek} from 'date-fns';
 
-export const CreateFolderForm = () => {
+interface CreateFolderFormProps {
+    courseId: string;
+}
+
+export const CreateFolderForm: React.FC<CreateFolderFormProps> = ({courseId}) => {
     const [name, setName] = useState('');
     const [mode, setMode] = useState<'manual' | 'weekly'>('manual');
     const [weeksNumber, setWeeksNumber] = useState(1);
@@ -54,15 +58,14 @@ export const CreateFolderForm = () => {
         try {
             if (mode === 'manual') {
                 if (!name.trim()) return;
-                await createFolder(name.trim());
+                await createFolder(courseId, {name: name.trim()});
                 setName('');
             } else {
                 const weeks = generateWeekRanges();
                 for (const week of weeks) {
                     const weekName = `${format(week.start, 'd MMMM')} - ${format(week.end, 'd MMMM')}`;
-                    await createFolder(weekName);
+                    await createFolder(courseId, {name: weekName});
                 }
-                // Resetta i campi dopo la creazione
                 setStartDate(format(startOfWeek(new Date(), {weekStartsOn: 1}), 'yyyy-MM-dd'));
                 setWeeksNumber(1);
             }

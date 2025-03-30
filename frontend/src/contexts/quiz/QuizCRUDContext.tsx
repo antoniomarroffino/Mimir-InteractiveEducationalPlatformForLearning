@@ -2,9 +2,9 @@ import {QuizDTO} from "@dti-isin/backend-api-client/dist/models/quiz-dto";
 import {createContext} from "react";
 
 export type QuizCRUDContextType = {
-    createQuiz: (folderId: string, name: string, description?: string) => Promise<QuizDTO>;
-    updateQuiz: (folderId: string, quizId: string, quizDTO: QuizDTO) => Promise<QuizDTO>;
-    deleteQuiz: (folderId: string, quizId: string) => Promise<void>;
+    createQuiz: (courseId: string, folderId: string, quizDTO: QuizDTO) => Promise<QuizDTO>;
+    updateQuiz: (courseId: string, folderId: string, quizId: string, quizDTO: QuizDTO) => Promise<QuizDTO>;
+    deleteQuiz: (courseId: string, folderId: string, quizId: string) => Promise<void>;
 
     isCreatingQuiz: boolean;
     isUpdatingQuiz: boolean;

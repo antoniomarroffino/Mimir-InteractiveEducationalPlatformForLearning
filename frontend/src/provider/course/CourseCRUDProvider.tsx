@@ -36,6 +36,7 @@ export const CourseCRUDProvider: React.FC<{ children: React.ReactNode }> = ({chi
                 );
                 queryClient.invalidateQueries(["teacherCourses"]);
                 queryClient.invalidateQueries(["allCourses"]);
+                queryClient.invalidateQueries(["course", updatedCourse.id])
             },
             onError: (error: Error) => {
                 console.error("Course update error:", error);

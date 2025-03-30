@@ -6,10 +6,6 @@ import {questionApi} from "../../../config/config.ts";
 
 export const QuestionCRUDProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const queryClient = useQueryClient();
-    //const {selectedCourseId} = useCourseSelection();
-    //const {selectedFolderId} = useFolderSelection();
-    //const {selectedQuizId} = useQuizSelection();
-    //const {deselectQuestion} = useQuestionSelection();
 
 
     const createQuestionMutation = useMutation(

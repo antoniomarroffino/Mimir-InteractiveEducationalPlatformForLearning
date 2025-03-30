@@ -1,6 +1,6 @@
 import {FolderRow} from './FolderRow';
 import React from "react";
-import {useFolderList} from "../../hooks/folder/useFolderList.ts";
+import {useGetFoldersInCourseId} from "../../hooks/folder/useGetFoldersInCourseId.ts";
 
 interface FolderListProps {
     courseId: string;
@@ -9,7 +9,7 @@ interface FolderListProps {
 }
 
 export const FolderList: React.FC<FolderListProps> = ({courseId, selectedFolders, onToggleSelect}) => {
-    const {folders, isLoadingFolders} = useFolderList();
+    const {data: folders, isLoading: isLoadingFolders} = useGetFoldersInCourseId(courseId);
 
     if (!courseId) return <Error message="Invalid course ID"/>;
 
