@@ -7,9 +7,9 @@ import org.bson.types.ObjectId;
 import java.util.List;
 
 public interface IQuizPublicationService {
-    QuizPublicationDTO publishQuiz(QuizPublication quizPublication);
+    QuizPublicationDTO publishQuiz(QuizPublicationDTO quizPublicationDTO);
 
-    QuizPublicationDTO getQuizPublicationById(String publicationID);
+    QuizPublicationDTO getQuizPublicationById(ObjectId publicationID);
 
     QuizPublication getPublicationByReferences(String courseId, String folderId, String quizId);
 
@@ -17,7 +17,7 @@ public interface IQuizPublicationService {
 
     QuizPublication getPublicationByCode(String code);
 
-    QuizPublicationDTO updateQuizPublication(QuizPublication quizPublication);
+    QuizPublicationDTO updateQuizPublication(QuizPublicationDTO quizPublicationDTO);
 
     QuizPublicationDTO deactivateQuizPublication(String publicationID);
 

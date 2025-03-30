@@ -56,9 +56,9 @@ public class QuizPublicationController {
             @PathParam("quizId") String quizId) {
 
         QuizPublication publication = this.quizPublicationService.getPublicationByReferences(
-                new ObjectId(courseId),
-                new ObjectId(folderId),
-                new ObjectId(quizId)
+                courseId,
+                folderId,
+                quizId
         );
         QuizPublicationDTO publicationDTO = this.quizPublicationService.getQuizPublicationById(publication.id);
         return Response.ok(publicationDTO).build();
@@ -106,10 +106,6 @@ public class QuizPublicationController {
         return Response.ok(publicationDTO).build();
     }
 
-
-
-
-
     @PUT
     @RolesAllowed("TEACHER")
     @Path("/{id}")
@@ -138,7 +134,7 @@ public class QuizPublicationController {
     ))
     @APIResponse(responseCode = "404", description = "Publication not found")
     public Response deactivateQuizPublication(@PathParam("publicationId") String publicationId) {
-        QuizPublicationDTO updatedDTO = this.quizPublicationService.deactivateQuizPublication(new ObjectId(publicationId));
+        QuizPublicationDTO updatedDTO = this.quizPublicationService.deactivateQuizPublication(publicationId);
 
         return Response.ok(updatedDTO).build();
     }

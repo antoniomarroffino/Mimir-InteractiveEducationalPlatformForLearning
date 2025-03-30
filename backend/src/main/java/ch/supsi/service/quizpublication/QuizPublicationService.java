@@ -28,11 +28,11 @@ public class QuizPublicationService implements IQuizPublicationService {
     QuizPublicationMapper quizPublicationMapper;
 
     @Override
-    public QuizPublicationDTO publishQuiz(QuizPublication quizPublication) {
+    public QuizPublicationDTO publishQuiz(QuizPublicationDTO quizPublicationDTO) {
         QuizPublication newQuizPublication = new QuizPublication(
-                new ObjectId(quizPublication.courseId.toString()),
-                new ObjectId(quizPublication.folderId.toString()),
-                new ObjectId(quizPublication.quizId.toString()),
+                new ObjectId(quizPublicationDTO.getCourseId()),
+                new ObjectId(quizPublicationDTO.getFolderId()),
+                new ObjectId(quizPublicationDTO.getQuizId()),
                 generateUniqueCode()
         );
         newQuizPublication.published = true;
@@ -42,8 +42,8 @@ public class QuizPublicationService implements IQuizPublicationService {
     }
 
     @Override
-    public QuizPublicationDTO getQuizPublicationById(String publicationID) {
-        Optional<QuizPublication> quizPublicationOpt = this.quizPublicationRepository.findByIdOptional(new ObjectId(publicationID));
+    public QuizPublicationDTO getQuizPublicationById(ObjectId publicationID) {
+        Optional<QuizPublication> quizPublicationOpt = this.quizPublicationRepository.findByIdOptional(publicationID);
         if (quizPublicationOpt.isEmpty()) {
             throw new NotFoundException("Quiz publication with id " + publicationID + " not found");
         }
@@ -76,18 +76,18 @@ public class QuizPublicationService implements IQuizPublicationService {
     }
 
     @Override
-    public QuizPublicationDTO updateQuizPublication(QuizPublication quizPublication) {
-        Optional<QuizPublication> quizPublicationOpt = this.quizPublicationRepository.findByIdOptional(quizPublication.id);
+    public QuizPublicationDTO updateQuizPublication(QuizPublicationDTO quizPublicationDTO) {
+        Optional<QuizPublication> quizPublicationOpt = this.quizPublicationRepository.findByIdOptional(new ObjectId(quizPublicationDTO.getId()));
         if (quizPublicationOpt.isEmpty()) {
-            throw new NotFoundException("Quiz publication with id " + quizPublication.id + " not found");
+            throw new NotFoundException("Quiz publication with id " + quizPublicationDTO.getId() + " not found");
         }
 
         QuizPublication existingPublication = quizPublicationOpt.get();
-        existingPublication.courseId = quizPublication.courseId;
-        existingPublication.folderId = quizPublication.folderId;
-        existingPublication.quizId = quizPublication.quizId;
-        existingPublication.published = quizPublication.published;
-        existingPublication.anonymous = quizPublication.anonymous;
+        existingPublication.courseId = new ObjectId(quizPublicationDTO.getCourseId());
+        existingPublication.folderId = new ObjectId(quizPublicationDTO.getFolderId());
+        existingPublication.quizId = new ObjectId(quizPublicationDTO.getQuizId());
+        existingPublication.published = quizPublicationDTO.getPublished();
+        existingPublication.anonymous = quizPublicationDTO.getAnonymous();
 
         quizPublicationRepository.update(existingPublication);
         return quizPublicationMapper.toDTO(existingPublication);
