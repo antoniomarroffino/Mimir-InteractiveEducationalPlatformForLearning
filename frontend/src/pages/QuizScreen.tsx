@@ -56,7 +56,6 @@ export const QuizScreen: React.FC = () => {
             );
         }
 
-        // Se il quiz non è anonimo e l'utente non è loggato
         if (!user) {
             return (
                 <div className="flex justify-center">

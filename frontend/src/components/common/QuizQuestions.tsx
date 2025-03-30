@@ -22,13 +22,11 @@ interface QuizQuestionsProps {
 export const QuizQuestions: React.FC<QuizQuestionsProps> = ({quiz}) => {
     const {currentAttempt, updateQuizAttemptResponses, completeQuizAttempt} = useQuizAttemptLocal();
 
-    // Usa le risposte dal tentativo corrente
     const [userResponses, setUserResponses] = useState<QuestionResponseDTO[]>(
         currentAttempt?.responses || new Array(quiz.questions?.length || 0).fill(null)
     );
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
-    // Aggiorna le risposte nel provider quando cambiano
     useEffect(() => {
         updateQuizAttemptResponses(userResponses);
     }, [userResponses, updateQuizAttemptResponses]);
@@ -48,16 +46,24 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({quiz}) => {
         setUserResponses(prevResponses => {
             const updatedResponses = [...prevResponses];
 
-            if (currentQuestion.type === QuestionType.TrueFalse && (typeof answer === 'boolean' || answer === null)) {
-                updatedResponses[currentQuestionIndex] = {
-                    type: QuestionType.TrueFalse,
-                    selectedAnswer: answer
-                } as TrueFalseQuestionResponseDTO;
-            } else if (currentQuestion.type === QuestionType.MultipleChoice && Array.isArray(answer)) {
-                updatedResponses[currentQuestionIndex] = {
-                    type: QuestionType.MultipleChoice,
-                    selectedAnswerIndexes: answer
-                } as MultipleChoiceQuestionResponseDTO;
+            switch (currentQuestion.type) {
+                case QuestionType.TrueFalse:
+                    if (typeof answer === 'boolean' || answer === null) {
+                        updatedResponses[currentQuestionIndex] = {
+                            type: QuestionType.TrueFalse,
+                            selectedAnswer: answer
+                        } as TrueFalseQuestionResponseDTO;
+                    }
+                    break;
+
+                case QuestionType.MultipleChoice:
+                    if (Array.isArray(answer) || answer === null) {
+                        updatedResponses[currentQuestionIndex] = {
+                            type: QuestionType.MultipleChoice,
+                            selectedAnswerIndexes: answer || []
+                        } as MultipleChoiceQuestionResponseDTO;
+                    }
+                    break;
             }
 
             return updatedResponses;
@@ -65,8 +71,20 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({quiz}) => {
     }, [currentQuestionIndex, quiz.questions]);
 
     const getCurrentQuestionResponse = useCallback(() => {
-        // Recupera la risposta usando l'indice corrente
-        return userResponses[currentQuestionIndex] || null;
+        const response = userResponses[currentQuestionIndex];
+
+        if (!response) return null;
+
+        switch (response.type) {
+            case QuestionType.TrueFalse:
+                return (response as TrueFalseQuestionResponseDTO).selectedAnswer;
+
+            case QuestionType.MultipleChoice:
+                return (response as MultipleChoiceQuestionResponseDTO).selectedAnswerIndexes;
+
+            default:
+                return null;
+        }
     }, [currentQuestionIndex, userResponses]);
 
     const handleCompleteQuiz = useCallback(async () => {
@@ -108,25 +126,26 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({quiz}) => {
                         {/* Rendering dinamico del tipo di domanda */}
                         {isTrueFalseQuestion(currentQuestion!) && (
                             <TrueFalseQuestion
+                                key={currentQuestion.id}
                                 question={currentQuestion}
                                 onAnswer={(selectedAnswer) => {
                                     handleAnswer(selectedAnswer);
                                 }}
                                 initialAnswer={
-                                    (getCurrentQuestionResponse() as TrueFalseQuestionResponseDTO)?.selectedAnswer ?? null
+                                    getCurrentQuestionResponse() as boolean | null
                                 }
                             />
                         )}
                         {isMultipleChoiceQuestion(currentQuestion!) && (
                             <MultipleChoiceQuestion
+                                key={currentQuestion.id}
                                 question={currentQuestion}
                                 onAnswer={(selectedIndexes) => {
                                     handleAnswer(selectedIndexes);
                                 }}
                                 initialAnswer={
-                                    (getCurrentQuestionResponse() as MultipleChoiceQuestionResponseDTO)?.selectedAnswerIndexes ?? null
+                                    getCurrentQuestionResponse() as number[] | null
                                 }
-                                hasBeenAnswered={!!getCurrentQuestionResponse()}
                             />
                         )}
                     </div>
