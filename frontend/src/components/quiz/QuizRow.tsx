@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {QuizDTO} from '@dti-isin/backend-api-client';
-import {BsPencil, BsRocket, BsTrash} from 'react-icons/bs';
+import {BsBarChart, BsPencil, BsRocket, BsTrash} from 'react-icons/bs';
 import {useNavigate} from 'react-router-dom';
 import {useQuizPublicationCRUD} from '../../hooks/quizPublication/useQuizPublicationCRUD.ts';
 import {useQuizPublicationVerification} from '../../hooks/quizPublication/useQuizPublicationVerification.ts';
@@ -76,6 +76,24 @@ export const QuizRow: React.FC<QuizRowProps> = ({
         }
     };
 
+    const handleResults = async () => {
+        try {
+
+            const existing = await getPublicationByReferences(
+                courseId,
+                folderId,
+                quiz.id!
+            );
+
+
+            navigate(`/courses/${courseId}/publications/${existing!.id}/results`);
+
+
+        } catch (error) {
+            handlePublishError(error);
+        }
+    };
+
     const handlePublishError = (error: unknown) => {
         console.error('Errore nella pubblicazione:', error);
         setPublishError(
@@ -108,7 +126,9 @@ export const QuizRow: React.FC<QuizRowProps> = ({
 
     return (
         <>
-            <div className="p-4 bg-base-100 rounded-lg flex justify-between items-center border-2 border-base-200 hover:border-primary/30 shadow-sm hover:shadow-xs transition-all duration-200 ease-out">                <div className="flex items-center gap-2">
+            <div
+                className="p-4 bg-base-100 rounded-lg flex justify-between items-center border-2 border-base-200 hover:border-primary/30 shadow-sm hover:shadow-xs transition-all duration-200 ease-out">
+                <div className="flex items-center gap-2">
                     <span>{quiz.name}</span>
 
                 </div>
@@ -119,6 +139,13 @@ export const QuizRow: React.FC<QuizRowProps> = ({
                         title="Pubblica quiz"
                     >
                         <BsRocket className="text-success"/>
+                    </button>
+                    <button
+                        onClick={handleResults}
+                        className="btn btn-sm btn-ghost"
+                        title="Vedi Risultati"
+                    >
+                        <BsBarChart className="text-info"/>
                     </button>
                     <button
                         onClick={handleUpdateQuiz}
@@ -214,7 +241,7 @@ export const QuizRow: React.FC<QuizRowProps> = ({
                                     className="btn btn-error gap-2"
                                     onClick={handleDeleteQuiz}
                                 >
-                                    <BsTrash />
+                                    <BsTrash/>
                                     Delete Permanently
                                 </button>
                             </div>
