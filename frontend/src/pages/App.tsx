@@ -94,7 +94,7 @@ const App = () => {
                                             element={<QuizStatsPage/>}
                                         />
                                         <Route
-                                            path=":courseId/publications/:publicationId/results"
+                                            path=":courseId/folders/:folderId/quizzes/:quizId/results"
                                             element={<PublicationStatsPage/>}
                                         />
                                     </Route>

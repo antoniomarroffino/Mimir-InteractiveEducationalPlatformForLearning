@@ -77,21 +77,8 @@ export const QuizRow: React.FC<QuizRowProps> = ({
     };
 
     const handleResults = async () => {
-        try {
+        navigate(`/courses/${courseId}/folders/${folderId}/quizzes/${quiz.id}/results`);
 
-            const existing = await getPublicationByReferences(
-                courseId,
-                folderId,
-                quiz.id!
-            );
-
-
-            navigate(`/courses/${courseId}/publications/${existing!.id}/results`);
-
-
-        } catch (error) {
-            handlePublishError(error);
-        }
     };
 
     const handlePublishError = (error: unknown) => {

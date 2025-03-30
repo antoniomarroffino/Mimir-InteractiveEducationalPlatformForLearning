@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     BsAward,
     BsTrophy,
@@ -8,7 +8,10 @@ import {
     BsCheckCircle,
     BsXCircle
 } from 'react-icons/bs';
-import { QuestionType } from '@dti-isin/backend-api-client';
+import { QuestionType, QuizPublicationDTO } from '@dti-isin/backend-api-client';
+import {useParams} from "react-router-dom";
+import {useQuizPublicationCRUD} from "../hooks/quizPublication/useQuizPublicationCRUD.ts";
+import {PublicationDetails} from "../components/quizPublication/PublicationDetails.tsx";
 
 // Tipi per le risposte e le domande
 interface QuestionResult {
@@ -28,6 +31,15 @@ interface StudentResult {
 }
 
 export const PublicationStatsPage: React.FC = () => {
+    const { quizId } = useParams();
+    const {
+        getPublicationsByQuizId,
+        isGettingPublicationsByQuizId
+    } = useQuizPublicationCRUD();
+
+    const [publications, setPublications] = useState<QuizPublicationDTO[]>([]);
+    const [selectedPublication, setSelectedPublication] = useState<QuizPublicationDTO | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
     // Dati di esempio più dettagliati
     const mockResults: StudentResult[] = [
         {
@@ -75,7 +87,6 @@ export const PublicationStatsPage: React.FC = () => {
             ]
         }
     ];
-
     const [selectedStudent, setSelectedStudent] = useState<StudentResult | null>(mockResults[0]);
 
     const getPerformanceEmoji = (score: number, total: number) => {
@@ -148,6 +159,54 @@ export const PublicationStatsPage: React.FC = () => {
         );
     };
 
+
+    useEffect(() => {
+        const fetchPublications = async () => {
+            try {
+                setIsLoading(true);
+                const fetchedPublications = await getPublicationsByQuizId(quizId!);
+                setPublications(fetchedPublications);
+
+                if (fetchedPublications.length > 0) {
+                    setSelectedPublication(fetchedPublications[0]);
+                }
+
+                // Imposta il primo studente di default
+                if (mockResults.length > 0) {
+                    setSelectedStudent(mockResults[0]);
+                }
+            } catch (error) {
+                console.log(error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        if (quizId) {
+            fetchPublications();
+        }
+    }, [quizId]);
+
+    // Gestisci lo stato di caricamento
+    if (isLoading || isGettingPublicationsByQuizId) {
+        return (
+            <div className="flex justify-center items-center min-h-screen">
+                <span className="loading loading-spinner loading-lg"></span>
+            </div>
+        );
+    }
+
+    // Gestisci il caso in cui non ci sono pubblicazioni
+    if (publications.length === 0) {
+        return (
+            <div className="flex justify-center items-center min-h-screen">
+                <div className="alert alert-warning">
+                    Nessuna pubblicazione trovata per questo quiz.
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-primary/10 to-secondary/10 p-8">
             <div className="max-w-6xl mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden">
@@ -158,6 +217,38 @@ export const PublicationStatsPage: React.FC = () => {
                         Risultati Dettagliati del Quiz
                     </h1>
                 </div>
+
+                {/* Dropdown Pubblicazioni */}
+                <div className="p-4 bg-base-200">
+                    <div className="form-control w-full">
+                        <label className="label">
+                            <span className="label-text">Seleziona Pubblicazione</span>
+                        </label>
+                        <select
+                            className="select select-bordered"
+                            value={selectedPublication?.id || ''}
+                            onChange={(e) => {
+                                const publication = publications.find(p => p.id === e.target.value);
+                                setSelectedPublication(publication || null);
+                            }}
+                        >
+                            {publications.map(publication => (
+                                <option key={publication.id} value={publication.id}>
+                                    Codice: {publication.publicationCode}
+                                    {publication.anonymous ? ' (Anonimo)' : ''}
+                                    {publication.published ? ' (Pubblicato)' : ' (Non Pubblicato)'}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+
+                {/* Dettagli Pubblicazione Selezionata */}
+                {selectedPublication && (
+                    <div className="p-4">
+                        <PublicationDetails publication={selectedPublication} />
+                    </div>
+                )}
 
                 {/* Sezione Studenti */}
                 <div className="p-4 bg-base-200 flex gap-2 overflow-x-auto">

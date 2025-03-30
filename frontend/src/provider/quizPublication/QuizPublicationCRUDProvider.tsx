@@ -10,6 +10,17 @@ export const QuizPublicationCRUDProvider: React.FC<{ children: React.ReactNode }
     const queryClient = useQueryClient();
 
     const {
+        mutateAsync: getPublicationsByQuizIdMutation,
+        isLoading: isGettingPublicationsByQuizId,
+        error: errorGetPublicationsByQuizId,
+    } = useMutation<QuizPublicationDTO[], Error, string>({
+        mutationFn: async (quizId: string) => {
+            const response = await quizPublicationApi.apiPublicationsByQuizIdQuizIdGet({quizId});
+            return response.data;
+        },
+    });
+
+    const {
         mutateAsync: createPublicationMutation,
         isLoading: isCreatingPublication,
         error: errorCreatePublication,
@@ -84,18 +95,21 @@ export const QuizPublicationCRUDProvider: React.FC<{ children: React.ReactNode }
     });
 
     const value = {
+        getPublicationsByQuizId: getPublicationsByQuizIdMutation,
         createPublication: createPublicationMutation,
         updatePublication: updatePublicationMutation,
         deletePublication: deletePublicationMutation,
         getPublication: getPublicationMutation,
         deactivatePublication: deactivatePublicationMutation,
 
+        isGettingPublicationsByQuizId,
         isCreatingPublication,
         isUpdatingPublication,
         isDeletingPublication,
         isGettingPublication,
         isDeactivatingPublication,
 
+        errorGetPublicationsByQuizId,
         errorCreatePublication,
         errorUpdatePublication,
         errorDeletePublication,
