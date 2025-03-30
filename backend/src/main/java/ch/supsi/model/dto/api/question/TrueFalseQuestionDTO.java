@@ -11,17 +11,17 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 @JsonTypeName("TRUE_FALSE")
 public class TrueFalseQuestionDTO extends QuestionDTO {
     @NotNull(message = "Correct answer cannot be null")
-    private boolean correctAnswer;
+    private Boolean correctAnswer;
 
     public TrueFalseQuestionDTO() {
         this.setType(QuestionType.TRUE_FALSE);
     }
 
-    public boolean getCorrectAnswer() {
+    public Boolean getCorrectAnswer() {
         return correctAnswer;
     }
 
-    public void setCorrectAnswer(boolean correctAnswer) {
+    public void setCorrectAnswer(Boolean correctAnswer) {
         this.correctAnswer = correctAnswer;
     }
 }

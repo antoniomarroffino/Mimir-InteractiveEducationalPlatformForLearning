@@ -1,5 +1,6 @@
 package ch.supsi.config;
 
+import ch.supsi.model.api.question.MultipleChoiceQuestion;
 import ch.supsi.model.api.question.Question;
 import ch.supsi.model.api.question.TrueFalseQuestion;
 import com.mongodb.MongoClientSettings;
@@ -17,7 +18,7 @@ public class MongoCodecConfig implements MongoClientCustomizer {
         CodecRegistry pojoCodecRegistry = CodecRegistries.fromProviders(
                 PojoCodecProvider.builder()
                         .register("ch.supsi.model.api")
-                        .register(Question.class, TrueFalseQuestion.class)
+                        .register(Question.class, TrueFalseQuestion.class, MultipleChoiceQuestion.class)
                         .automatic(true)
                         .build()
         );
