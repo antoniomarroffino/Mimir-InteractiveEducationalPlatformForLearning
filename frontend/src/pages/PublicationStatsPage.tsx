@@ -117,9 +117,9 @@ export const PublicationStatsPage: React.FC = () => {
             <div
                 key={result.questionText}
                 className={`
-                    p-4 rounded-lg mb-4 
-                    ${result.isCorrect ? 'bg-success/10' : 'bg-error/10'}
-                `}
+                p-4 rounded-lg mb-4 
+                ${result.isCorrect ? 'bg-success/10' : 'bg-error/10'}
+            `}
             >
                 <div className="flex justify-between items-center mb-2">
                     <h3 className="font-semibold">{result.questionText}</h3>
@@ -132,7 +132,7 @@ export const PublicationStatsPage: React.FC = () => {
 
                 <div className="grid grid-cols-2 gap-4">
                     <div>
-                        <h4 className="font-medium text-base-content/70">Risposta Corretta</h4>
+                        <h4 className="font-medium text-base-content/70">Correct Answer</h4>
                         {isMultipleChoice ? (
                             <ul className="list-disc pl-5">
                                 {(result.correctAnswer as string[]).map(ans => (
@@ -145,7 +145,7 @@ export const PublicationStatsPage: React.FC = () => {
                     </div>
 
                     <div>
-                        <h4 className="font-medium text-base-content/70">Risposta Dello Studente</h4>
+                        <h4 className="font-medium text-base-content/70">Student Answer</h4>
                         {isMultipleChoice ? (
                             <ul className="list-disc pl-5">
                                 {(result.studentAnswer as string[]).map(ans => (
