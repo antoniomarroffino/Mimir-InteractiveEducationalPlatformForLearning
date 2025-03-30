@@ -12,6 +12,7 @@ import org.bson.types.ObjectId;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class QuizPublicationService implements IQuizPublicationService {
@@ -117,6 +118,18 @@ public class QuizPublicationService implements IQuizPublicationService {
             System.err.println("Errore durante l'eliminazione della pubblicazione: " + e.getMessage());
             return false;
         }
+    }
+
+    @Override
+    public List<QuizPublicationDTO> getPublicationsByQuizId(String quizId) {
+        ObjectId quizObjectId = new ObjectId(quizId);
+        List<QuizPublication> publications = this.quizPublicationRepository.findPublicationsByQuizId(quizObjectId);
+        if (publications.isEmpty()) {
+            throw new NotFoundException("No publications found for quiz with id " + quizId);
+        }
+        return publications.stream()
+                .map(this.quizPublicationMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     private String generateUniqueCode() {

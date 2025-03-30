@@ -162,5 +162,19 @@ public class QuizPublicationController {
         return Response.noContent().build();
     }
 
+    @GET
+    @RolesAllowed("TEACHER")
+    @Path("/byQuizId/{quizId}")
+    @Operation(summary = "Get publications by quiz ID")
+    @APIResponse(responseCode = "200", description = "List of publications for the quiz", content = @Content(
+            mediaType = MediaType.APPLICATION_JSON,
+            schema = @Schema(type = SchemaType.ARRAY, implementation = QuizPublicationDTO.class)
+    ))
+    @APIResponse(responseCode = "404", description = "No publications found for the quiz")
+    public Response getPublicationsByQuizId(@PathParam("quizId") String quizId) {
+        List<QuizPublicationDTO> publications = this.quizPublicationService.getPublicationsByQuizId(quizId);
+        return Response.ok(publications).build();
+    }
+
 }
 

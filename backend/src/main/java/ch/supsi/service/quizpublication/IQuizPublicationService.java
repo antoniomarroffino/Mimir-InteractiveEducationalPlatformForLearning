@@ -22,4 +22,6 @@ public interface IQuizPublicationService {
     QuizPublicationDTO deactivateQuizPublication(ObjectId publicationID);
 
     boolean deleteQuizPublication(String id);
+
+    List<QuizPublicationDTO> getPublicationsByQuizId(String quizId);
 }
