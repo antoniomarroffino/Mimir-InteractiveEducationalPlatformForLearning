@@ -5,6 +5,7 @@ import {QuizList} from "../quiz/QuizList";
 import {useQuizCRUD} from "../../hooks/quiz/useQuizCRUD.ts";
 import {FiEdit2, FiPlus} from "react-icons/fi";
 import {useFolderCRUD} from "../../hooks/folder/useFolderCRUD.ts";
+import {useNavigate} from "react-router-dom";
 
 interface FolderRowProps {
     folder: FolderDTO;
@@ -14,6 +15,7 @@ interface FolderRowProps {
 }
 
 export const FolderRow = ({folder, courseId, isSelected, onToggleSelect}: FolderRowProps) => {
+    const navigate = useNavigate();
     const [isExpanded, setIsExpanded] = useState(false);
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [quizName, setQuizName] = useState("");
@@ -41,9 +43,10 @@ export const FolderRow = ({folder, courseId, isSelected, onToggleSelect}: Folder
         e.stopPropagation();
 
         try {
-            await createQuiz(courseId!, folder.id!, {name: quizName.trim()});
+            const createdQuizDTO = await createQuiz(courseId!, folder.id!, {name: quizName.trim()});
             setQuizName("");
             setShowCreateForm(false);
+            navigate(`/courses/${courseId}/folders/${folder.id}/quizzes/${createdQuizDTO.id}/edit`);
         } catch (error) {
             console.error("Failed to create quiz:", error);
         }
