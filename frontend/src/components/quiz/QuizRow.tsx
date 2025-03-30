@@ -92,7 +92,7 @@ export const QuizRow: React.FC<QuizRowProps> = ({
     const handleDeleteQuiz = async () => {
         try {
             setError(null);
-            await deleteQuiz(folderId, quiz.id!);
+            await deleteQuiz(courseId, folderId, quiz.id!);
             setShowDeleteModal(false);
         } catch (error) {
             console.error('Eliminazione quiz fallita:', error);

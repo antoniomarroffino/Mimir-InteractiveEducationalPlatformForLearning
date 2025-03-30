@@ -17,6 +17,7 @@ public class QuizMapper {
         dto.setName(quiz.name);
         dto.setDescription(quiz.description);
         dto.setQuestions(questionDTOList);
+        dto.setUpdatedAt(quiz.updatedAt);
         return dto;
     }
 

@@ -2,13 +2,13 @@ import {useNavigate, useParams} from 'react-router-dom';
 import {QuestionDTO, QuestionType} from '@dti-isin/backend-api-client';
 import {BreadcrumbCourses} from "../components/common/BreadcrumbCourses.tsx";
 import React, {useState} from "react";
-import {BsLayoutSidebar, BsListTask, BsListUl, BsQuestionDiamond} from 'react-icons/bs';
+import {BsLayoutSidebar, BsListTask, BsListUl, BsPencil, BsQuestionDiamond} from 'react-icons/bs';
 import {useQuizCRUD} from "../hooks/quiz/useQuizCRUD.ts";
 import {useQuestionBankList} from "../hooks/questionBank/useQuestionBankList.ts";
 import {QuestionBankList} from "../components/quiz/QuestionBankList.tsx";
 import {LightBulbIcon} from "@heroicons/react/24/outline";
 import {format} from "date-fns";
-import {XMarkIcon} from "@heroicons/react/16/solid";
+import {CheckIcon, XMarkIcon} from "@heroicons/react/16/solid";
 import {QuestionsList} from "../components/question/QuestionList.tsx";
 import {QuestionEditor} from "../components/question/QuestionEditor.tsx";
 import {SpecificQuestionDTO, useQuestionCreation} from "../hooks/question/useQuestionCreation.ts";
@@ -24,6 +24,8 @@ export const QuizCreation: React.FC = () => {
     const {data: currentCourse} = useGetCourseById(courseId!);
     const {data: currentFolder} = useGetFolderById(courseId!, folderId!);
     const [selectedQuestions, setSelectedQuestions] = useState<string[]>([]);
+    const [isEditingQuizName, setIsEditingQuizName] = useState(false);
+    const [editedQuizName, setEditedQuizName] = useState(currentQuiz?.name || '');
     const {updateQuiz, isUpdatingQuiz} = useQuizCRUD();
     const {questionBanks, isLoadingQuestionBanks, errorQuestionBanks} = useQuestionBankList();
     const {
@@ -41,6 +43,24 @@ export const QuizCreation: React.FC = () => {
             await handleSaveQuestion(questionDTO);
         }
     }
+
+    const handleQuizNameUpdate = async () => {
+        if (!currentQuiz || editedQuizName.trim() === currentQuiz.name) {
+            setIsEditingQuizName(false);
+            return;
+        }
+
+        try {
+            await updateQuiz(courseId!, folderId!, quizId!, {
+                ...currentQuiz,
+                name: editedQuizName.trim()
+            });
+        } catch (error) {
+            console.error('Failed to update quiz name:', error);
+        } finally {
+            setIsEditingQuizName(false);
+        }
+    };
 
     const handleQuestionSelect = (questionId: string) => {
         const isImported = currentQuiz!.questions?.some(q => q.id === questionId);
@@ -135,9 +155,63 @@ export const QuizCreation: React.FC = () => {
                     <BsListTask className="text-primary w-8 h-8 shrink-0"/>
                     <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-3 flex-wrap">
-                            <h1 className="text-3xl font-bold text-primary truncate">
-                                {currentQuiz.name}
-                            </h1>
+                            <div className="flex flex-col gap-2 w-full">
+                                {isEditingQuizName ? (
+                                    <>
+                                        <div className="flex items-center gap-2 w-full">
+                                            <input
+                                                type="text"
+                                                value={editedQuizName}
+                                                onChange={(e) => setEditedQuizName(e.target.value)}
+                                                className="text-3xl font-bold text-primary bg-transparent border-b-2 border-primary focus:outline-none w-full"
+                                                autoFocus
+                                                onKeyDown={(e) => e.key === 'Enter' && handleQuizNameUpdate()}
+                                            />
+                                            <button
+                                                className="btn btn-ghost btn-square hover:bg-transparent"
+                                                onClick={() => setIsEditingQuizName(false)}
+                                            >
+                                                <XMarkIcon className="w-5 h-5 text-base-content/60" />
+                                            </button>
+                                        </div>
+                                        <div className="flex justify-end gap-2 mt-2">
+                                            <button
+                                                className="btn btn-ghost"
+                                                onClick={() => {
+                                                    setIsEditingQuizName(false);
+                                                    setEditedQuizName(currentQuiz.name);
+                                                }}
+                                            >
+                                                Cancel
+                                            </button>
+                                            <button
+                                                className="btn btn-primary gap-2"
+                                                onClick={handleQuizNameUpdate}
+                                                disabled={isUpdatingQuiz}
+                                            >
+                                                {isUpdatingQuiz ? (
+                                                    <span className="loading loading-spinner"></span>
+                                                ) : (
+                                                    <CheckIcon className="w-5 h-5" />
+                                                )}
+                                                Save Changes
+                                            </button>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <div className="flex items-center gap-2 group">
+                                        <h1 className="text-3xl font-bold text-primary truncate">
+                                            {currentQuiz.name}
+                                        </h1>
+                                        <button
+                                            className="btn btn-ghost btn-square hover:bg-transparent"
+                                            onClick={() => setIsEditingQuizName(true)}
+                                        >
+                                            <BsPencil className="text-xl text-primary"/>
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                         <div className="flex items-center gap-3 text-sm text-base-content/60 mt-1">
                             <span className="flex items-center gap-1">
@@ -152,16 +226,11 @@ export const QuizCreation: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="bg-primary/5 p-4 rounded-xl border border-primary/10 flex items-center gap-3 flex-1 max-w-lg mx-4">
+                <div
+                    className="bg-primary/5 p-4 rounded-xl border border-primary/10 flex items-center gap-3 flex-1 max-w-lg mx-4">
                     <LightBulbIcon className="w-6 h-6 text-primary shrink-0"/>
                     <div className="text-base-content/70 text-sm">
-                        {[
-                            "Pick questions from the question banks!",
-                            "Quality questions create great quizzes!",
-                            "Mix and match from different banks!",
-                            "Your perfect quiz is just a few clicks away!",
-                            "Curiosity fuels education!"
-                        ][Math.floor(Math.random() * 5)]}
+                        Pick questions from the question banks!
                     </div>
                 </div>
             </div>
@@ -232,7 +301,7 @@ export const QuizCreation: React.FC = () => {
                                         className="btn btn-error gap-2"
                                         onClick={resetQuestionCreation}
                                     >
-                                        <XMarkIcon className="h-5 w-5" />
+                                        <XMarkIcon className="h-5 w-5"/>
                                         Exit Preview
                                     </button>
                                 )}

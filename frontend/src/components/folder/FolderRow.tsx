@@ -3,7 +3,6 @@ import {FolderDTO} from "@dti-isin/backend-api-client";
 import {BsChevronDown, BsChevronUp, BsFolder2} from "react-icons/bs";
 import {QuizList} from "../quiz/QuizList";
 import {useQuizCRUD} from "../../hooks/quiz/useQuizCRUD.ts";
-import {useQuizSelection} from "../../hooks/quiz/useQuizSelection.ts";
 import {FiEdit2, FiPlus} from "react-icons/fi";
 import {useFolderCRUD} from "../../hooks/folder/useFolderCRUD.ts";
 
@@ -19,7 +18,6 @@ export const FolderRow = ({folder, courseId, isSelected, onToggleSelect}: Folder
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [quizName, setQuizName] = useState("");
     const {createQuiz, isCreatingQuiz} = useQuizCRUD();
-    const {setCurrentFolder} = useQuizSelection();
     const [isEditing, setIsEditing] = useState(false);
     const [editedName, setEditedName] = useState(folder.name);
     const {updateFolder, isUpdatingFolder, errorUpdateFolder} = useFolderCRUD();
@@ -41,8 +39,6 @@ export const FolderRow = ({folder, courseId, isSelected, onToggleSelect}: Folder
     const handleCreateQuiz = async (e: React.FormEvent) => {
         e.preventDefault();
         e.stopPropagation();
-
-        setCurrentFolder(folder.id!);
 
         try {
             await createQuiz(courseId!, folder.id!, {name: quizName.trim()});
