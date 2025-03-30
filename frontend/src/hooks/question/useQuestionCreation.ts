@@ -65,7 +65,6 @@ export const useQuestionCreation = () => {
             setError(null);
 
             if (isEditingExistingQuestion && questionData.id) {
-                console.log("editing");
                 await updateQuestion(questionData.id, questionData);
             } else {
                 await createQuestion(questionData);

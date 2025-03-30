@@ -12,6 +12,7 @@ interface MultipleChoiceTemplateProps {
     onCorrectChoicesChange: (correctChoices: number[]) => void;
     disabled?: boolean;
     onValidationChange?: (isValid: boolean) => void;
+    isPreview?: boolean;
 }
 
 export const MultipleChoiceQuestionTemplate: React.FC<MultipleChoiceTemplateProps> = ({
@@ -20,7 +21,8 @@ export const MultipleChoiceQuestionTemplate: React.FC<MultipleChoiceTemplateProp
                                                                                           onChoicesChange,
                                                                                           onCorrectChoicesChange,
                                                                                           disabled = false,
-                                                                                          onValidationChange
+                                                                                          onValidationChange,
+                                                                                          isPreview = false,
                                                                                       }) => {
     const initialChoicesCount = Math.max(2, Math.min(choices.length || 2, 6));
     const [availableChoices, setAvailableChoices] = useState(initialChoicesCount);
@@ -76,45 +78,56 @@ export const MultipleChoiceQuestionTemplate: React.FC<MultipleChoiceTemplateProp
 
     return (
         <div className="bg-gradient-to-br from-blue-100 to-blue-200 p-4 rounded-lg">
-            <div className="flex flex-col sm:flex-row items-center justify-between mb-4">
-                <span className="text-base font-semibold text-base-content/80 mb-2 sm:mb-0">
-                    Multiple Choice Setup
-                </span>
-                <div className="flex items-center gap-1 flex-wrap justify-center">
-                    {[2, 3, 4, 5, 6].map(num => (
-                        <button
-                            key={num}
-                            type="button"
-                            className={`
-                                btn btn-xs 
-                                ${availableChoices === num
-                                ? 'btn-primary'
-                                : 'btn-ghost'}
-                                m-0.5
-                            `}
-                            onClick={() => updateChoiceCount(num)}
-                            disabled={disabled}
-                        >
-                            {num}
-                        </button>
-                    ))}
+            {!isPreview && (
+                <div className="flex flex-col sm:flex-row items-center justify-between mb-4">
+                    <span className="text-base font-semibold text-base-content/80 mb-2 sm:mb-0">
+                        Multiple Choice Setup
+                    </span>
+                    <div className="flex items-center gap-1 flex-wrap justify-center">
+                        {[2, 3, 4, 5, 6].map(num => (
+                            <button
+                                key={num}
+                                type="button"
+                                className={`
+                                    btn btn-xs 
+                                    ${availableChoices === num ? 'btn-primary' : 'btn-ghost'}
+                                    m-0.5
+                                `}
+                                onClick={() => updateChoiceCount(num)}
+                                disabled={disabled || isPreview}
+                            >
+                                {num}
+                            </button>
+                        ))}
+                    </div>
                 </div>
-            </div>
+            )}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {Array.from({length: availableChoices}).map((_, index) => (
                     <div
                         key={index}
-                        className="bg-white rounded-lg shadow-sm overflow-hidden flex"
+                        className={`
+                            bg-white rounded-lg shadow-sm overflow-hidden flex
+                            ${isPreview && correctChoices.includes(index) ?
+                            'ring-2 ring-green-500' : ''
+                        }
+                        `}
                     >
-                        <input
-                            type="text"
-                            placeholder={`Answer ${index + 1}`}
-                            className="input input-sm w-full px-2 py-1 border-none focus:outline-none"
-                            value={choices[index] || ''}
-                            onChange={(e) => handleChoiceChange(index, e.target.value)}
-                            disabled={disabled}
-                        />
+                        {isPreview ? (
+                            <div className="p-2 flex-1">
+                                {choices[index] || `Option ${index + 1}`}
+                            </div>
+                        ) : (
+                            <input
+                                type="text"
+                                placeholder={`Answer ${index + 1}`}
+                                className="input input-sm w-full px-2 py-1 border-none focus:outline-none"
+                                value={choices[index] || ''}
+                                onChange={(e) => handleChoiceChange(index, e.target.value)}
+                                disabled={disabled || isPreview}
+                            />
+                        )}
                         <button
                             className={`
                                 w-10 
@@ -131,19 +144,23 @@ export const MultipleChoiceQuestionTemplate: React.FC<MultipleChoiceTemplateProp
                                 e.stopPropagation();
                                 toggleCorrectChoice(index);
                             }}
-                            disabled={disabled}
+                            disabled={disabled || isPreview}
                         >
-                            {correctChoices.includes(index) ? (
+                            {isPreview ? (
                                 <BsCheckCircleFill className="text-lg"/>
                             ) : (
-                                <BsCircle className="text-lg"/>
+                                correctChoices.includes(index) ? (
+                                    <BsCheckCircleFill className="text-lg"/>
+                                ) : (
+                                    <BsCircle className="text-lg"/>
+                                )
                             )}
                         </button>
                     </div>
                 ))}
             </div>
 
-            {correctChoices.length === 0 && (
+            {!isPreview && correctChoices.length === 0 && (
                 <div className="text-error text-xs mt-2 flex items-center gap-1">
                     <BsDashCircle className="text-sm"/>
                     Select at least one correct answer

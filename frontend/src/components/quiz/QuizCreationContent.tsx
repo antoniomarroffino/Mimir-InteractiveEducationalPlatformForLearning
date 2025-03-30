@@ -177,7 +177,6 @@ export const QuizCreationContent: React.FC = () => {
                             setQuestionTemplate(null);
                             setDraftQuestion({});
                         }}
-                        isLoading={false}
                         onQuestionTextChange={handleQuestionTextChange}
                         disabled={!isCreatingQuestion || !selectedQuestionType}
                     />

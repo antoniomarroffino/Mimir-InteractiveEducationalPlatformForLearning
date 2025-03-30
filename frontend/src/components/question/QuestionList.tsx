@@ -1,11 +1,6 @@
 import React from "react";
-import { MultipleChoiceQuestionDTO, QuestionDTO, TrueFalseQuestionDTO } from '@dti-isin/backend-api-client';
 import { QuestionElement } from './QuestionElement';
-
-type SpecificQuestionDTO =
-    | QuestionDTO
-    | TrueFalseQuestionDTO
-    | MultipleChoiceQuestionDTO;
+import {SpecificQuestionDTO} from "../../hooks/question/useQuestionCreation.ts";
 
 interface QuestionsListProps {
     questions: SpecificQuestionDTO[];

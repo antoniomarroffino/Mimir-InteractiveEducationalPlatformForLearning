@@ -1,11 +1,14 @@
-import { QuestionBankDTO } from '@dti-isin/backend-api-client';
+import {QuestionBankDTO} from '@dti-isin/backend-api-client';
 import {QuestionBankItem} from "./QuestionBankItem.tsx";
+import {useMemo, useState} from "react";
+import {QuestionBankSearch} from "../questionBank/QuestionBankSearch.tsx";
 
 interface QuestionBankListProps {
     banks: QuestionBankDTO[];
     isLoading: boolean;
     error: Error | null;
-    selectedQuestions: Set<string>;
+    selectedQuestions: string[];
+    importedQuestion: string[];
     onQuestionSelect: (questionId: string) => void;
     onBankSelect: (bankId: string) => void;
     onImport: () => void;
@@ -17,11 +20,22 @@ export const QuestionBankList: React.FC<QuestionBankListProps> = ({
                                                                       isLoading,
                                                                       error,
                                                                       selectedQuestions,
+                                                                      importedQuestion,
                                                                       onQuestionSelect,
                                                                       onBankSelect,
                                                                       onImport,
                                                                       isImporting
                                                                   }) => {
+
+    const [searchTerm, setSearchTerm] = useState('');
+
+    const filteredBanks = useMemo(() => {
+        return banks.filter(bank =>
+            bank.name.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+    }, [banks, searchTerm]);
+
+
     if (error) {
         return (
             <div className="alert alert-error shadow-lg">
@@ -41,22 +55,35 @@ export const QuestionBankList: React.FC<QuestionBankListProps> = ({
                 <button
                     className="btn btn-primary btn-sm"
                     onClick={onImport}
-                    disabled={selectedQuestions.size === 0 || isImporting}
+                    disabled={selectedQuestions.length === 0 || isImporting}
                 >
-                    {isImporting ? 'Importing...' : `Import (${selectedQuestions.size})`}
+                    {isImporting ? 'Importing...' : `Import (${selectedQuestions.length})`}
                 </button>
             </div>
 
+            {/* Aggiungi la barra di ricerca */}
+            <QuestionBankSearch
+                searchTerm={searchTerm}
+                onSearchChange={setSearchTerm}
+            />
+
             <div className="overflow-y-auto max-h-[calc(100vh-300px)]">
-                {banks.map(bank => (
-                    <QuestionBankItem
-                        key={bank.id}
-                        bank={bank}
-                        selectedQuestions={selectedQuestions}
-                        onQuestionSelect={onQuestionSelect}
-                        onBankSelect={onBankSelect}
-                    />
-                ))}
+                {filteredBanks.length === 0 ? (
+                    <div className="text-center p-4 text-gray-500">
+                        No question banks found matching "{searchTerm}"
+                    </div>
+                ) : (
+                    filteredBanks.map(bank => (
+                        <QuestionBankItem
+                            key={bank.id}
+                            bank={bank}
+                            selectedQuestions={selectedQuestions}
+                            importedQuestions={importedQuestion}
+                            onQuestionSelect={onQuestionSelect}
+                            onBankSelect={onBankSelect}
+                        />
+                    ))
+                )}
             </div>
         </div>
     );

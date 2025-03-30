@@ -1,27 +1,36 @@
 import {useNavigate, useParams} from 'react-router-dom';
-import {QuestionDTO} from '@dti-isin/backend-api-client';
+import {QuestionDTO, QuestionType} from '@dti-isin/backend-api-client';
 import {BreadcrumbCourses} from "../components/common/BreadcrumbCourses.tsx";
 import {useCourseList} from "../hooks/course/useCourseList.ts";
 import React, {useMemo, useState} from "react";
 import {BsLayoutSidebar, BsListTask, BsListUl, BsQuestionDiamond} from 'react-icons/bs';
 import {useQuizCRUD} from "../hooks/quiz/useQuizCRUD.ts";
 import {useQuestionBankList} from "../hooks/questionBank/useQuestionBankList.ts";
-import { ImportedQuestionsList } from '../components/quiz/ImportedQuestionsList.tsx';
-import {QuestionPreview} from "../components/quiz/QuestionPreview.tsx";
 import {QuestionBankList} from "../components/quiz/QuestionBankList.tsx";
 import {LightBulbIcon} from "@heroicons/react/24/outline";
 import {format} from "date-fns";
 import {XMarkIcon} from "@heroicons/react/16/solid";
+import {QuestionsList} from "../components/question/QuestionList.tsx";
+import {QuestionEditor} from "../components/question/QuestionEditor.tsx";
+import {SpecificQuestionDTO, useQuestionCreation} from "../hooks/question/useQuestionCreation.ts";
 
 export const QuizCreation: React.FC = () => {
     const navigate = useNavigate();
     const {courseId, folderId, quizId} = useParams();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const {teacherCourses} = useCourseList();
-    const [selectedQuestions, setSelectedQuestions] = useState<Set<string>>(new Set());
-    const [previewQuestion, setPreviewQuestion] = useState<QuestionDTO | null>(null);
+    const [selectedQuestions, setSelectedQuestions] = useState<string[]>([]);
     const {updateQuiz, isUpdatingQuiz} = useQuizCRUD();
     const {questionBanks, isLoadingQuestionBanks, errorQuestionBanks} = useQuestionBankList();
+    const {
+        selectedQuestionType,
+        questionTemplate,
+        setDraftQuestion,
+        handleSaveQuestion,
+        resetQuestionCreation,
+        startQuestionEditing,
+        isEditingExistingQuestion
+    } = useQuestionCreation();
 
 
     const currentCourse = useMemo(() =>
@@ -39,29 +48,40 @@ export const QuizCreation: React.FC = () => {
         [currentFolder, quizId]
     );
 
+    const saveNewQuestion = async (questionDTO: SpecificQuestionDTO) => {
+        if (questionDTO) {
+            await handleSaveQuestion(questionDTO);
+        }
+    }
+
 
     const handleQuestionSelect = (questionId: string) => {
+        const isImported = currentQuiz!.questions?.some(q => q.id === questionId);
+        if (isImported) return;
+
         setSelectedQuestions(prev => {
-            const newSet = new Set(prev);
-            newSet.has(questionId) ? newSet.delete(questionId) : newSet.add(questionId);
-            return newSet;
+            if (prev.includes(questionId)) {
+                return prev.filter(q => q !== questionId);
+            } else {
+                return [...prev, questionId];
+            }
         });
     };
 
     const handleBankSelect = (bankId: string) => {
         const bank = questionBanks.find(b => b.id === bankId);
-        const bankQuestionIds = bank?.questions?.map(q => q.id) || [];
-        setSelectedQuestions(prev => {
-            const newSet = new Set(prev);
-            bankQuestionIds.forEach(id => newSet.add(id));
-            return newSet;
-        });
+        const bankQuestionIds = bank?.questions
+            ?.map(q => q.id)
+            .filter(id => !currentQuiz!.questions?.some(q => q.id === id))
+            .filter((id): id is string => id !== undefined) || [];
+
+        setSelectedQuestions(prev => [...new Set([...prev, ...bankQuestionIds])]);
     };
 
     const handleImportQuestions = async () => {
         if (!currentQuiz || !folderId || !quizId) return;
 
-        const questionsToAdd = Array.from(selectedQuestions).map(id => {
+        const questionsToAdd = selectedQuestions!.map(id => {
             for (const bank of questionBanks) {
                 const question = bank.questions?.find(q => q.id === id);
                 if (question) return question;
@@ -79,7 +99,7 @@ export const QuizCreation: React.FC = () => {
                 ...currentQuiz,
                 questions: updatedQuestions
             });
-            setSelectedQuestions(new Set());
+            setSelectedQuestions([]);
         } catch (error) {
             console.error('Failed to import questions:', error);
         }
@@ -172,7 +192,7 @@ export const QuizCreation: React.FC = () => {
 
                 {/* Imported Questions Sidebar */}
                 <div className={`
-                    lg:col-span-4 
+                    lg:col-span-3 
                     fixed 
                     lg:static 
                     top-0 
@@ -204,29 +224,60 @@ export const QuizCreation: React.FC = () => {
                                 <XMarkIcon className="w-4 h-4"/>
                             </button>
                         </div>
-                        <ImportedQuestionsList
+                        <QuestionsList
                             questions={currentQuiz.questions || []}
-                            onDelete={handleQuestionDelete}
-                            onPreview={setPreviewQuestion}
-                            isLoading={isUpdatingQuiz}
+                            onStartEditing={startQuestionEditing}
+                            onDeleteQuestion={handleQuestionDelete}
                         />
                     </div>
                 </div>
 
-                {/* Question Preview */}
                 <div className="lg:col-span-5 order-first lg:order-none">
-                    <QuestionPreview
-                        question={previewQuestion}
-                        onClose={() => setPreviewQuestion(null)}
-                    />
+                    <div className="card bg-base-100 shadow-lg">
+                        <div className="card-body">
+                            <div className="flex justify-between items-center mb-4">
+                                <h3 className="card-title">
+                                    Question Preview
+                                </h3>
+                                {selectedQuestionType && (
+                                    <button
+                                        type="button"
+                                        className="btn btn-error gap-2"
+                                        onClick={resetQuestionCreation}
+                                    >
+                                        <XMarkIcon className="h-5 w-5" />
+                                        Exit Preview
+                                    </button>
+                                )}
+                            </div>
+                            <QuestionEditor
+                                questionType={selectedQuestionType || QuestionType.TrueFalse}
+                                template={questionTemplate || {
+                                    questionText: '',
+                                    type: QuestionType.TrueFalse,
+                                    correctAnswer: true
+                                }}
+                                onSave={saveNewQuestion}
+                                onCancel={resetQuestionCreation}
+                                onQuestionTextChange={(text) => setDraftQuestion(prev => ({
+                                    ...prev,
+                                    questionText: text
+                                }))}
+                                disabled={!selectedQuestionType}
+                                isEditingExistingQuestion={isEditingExistingQuestion}
+                                isPreview={true}
+                            />
+                        </div>
+                    </div>
                 </div>
 
                 {/* Question Banks Panel */}
-                <div className="lg:col-span-3">
+                <div className="lg:col-span-4">
                     <QuestionBankList
                         banks={questionBanks}
                         isLoading={isLoadingQuestionBanks}
                         error={errorQuestionBanks}
+                        importedQuestion={currentQuiz.questions?.map(q => q.id!) || []}
                         selectedQuestions={selectedQuestions}
                         onQuestionSelect={handleQuestionSelect}
                         onBankSelect={handleBankSelect}
