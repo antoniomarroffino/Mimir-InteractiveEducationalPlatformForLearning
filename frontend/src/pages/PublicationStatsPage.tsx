@@ -1,21 +1,21 @@
 import React, {useEffect, useState} from 'react';
 import {
-    BsTrophy,
+    BsCheckCircle,
+    BsEmojiHeartEyes,
     BsEmojiSmile,
     BsEmojiSunglasses,
-    BsEmojiHeartEyes,
-    BsCheckCircle,
-    BsXCircle,
+    BsGraphUp,
     BsStars,
-    BsGraphUp
+    BsTrophy,
+    BsXCircle
 } from 'react-icons/bs';
-import { QuestionType, QuizPublicationDTO } from '@dti-isin/backend-api-client';
+import {QuestionType, QuizPublicationDTO} from '@dti-isin/backend-api-client';
 import {useParams} from "react-router-dom";
 import {useQuizPublicationCRUD} from "../hooks/quizPublication/useQuizPublicationCRUD.ts";
 import {PublicationDetails} from "../components/quizPublication/PublicationDetails.tsx";
-import { motion } from 'framer-motion';
+import {motion} from 'framer-motion';
+import {useQuizPublicationSelection} from "../hooks/quizPublication/useQuizPublicationSelection.ts";
 
-// Types for question results and student performance
 interface QuestionResult {
     questionText: string;
     type: QuestionType;
@@ -33,24 +33,19 @@ interface StudentResult {
 }
 
 export const PublicationStatsPage: React.FC = () => {
-    const { quizId } = useParams();
+    const {quizId} = useParams();
     const {
         getPublicationsByQuizId,
         isGettingPublicationsByQuizId
     } = useQuizPublicationCRUD();
+    const {
+        selectedPublication,
+        setSelectedPublication
+    } = useQuizPublicationSelection();
 
     const [publications, setPublications] = useState<QuizPublicationDTO[]>([]);
-    const [selectedPublication, setSelectedPublication] = useState<QuizPublicationDTO | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
-    useEffect(() => {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
-    }, []);
-    
-    // Dati di esempio più dettagliati
     const mockResults: StudentResult[] = [
         {
             studentName: "Mario Rossi",
@@ -101,10 +96,10 @@ export const PublicationStatsPage: React.FC = () => {
 
     const getPerformanceEmoji = (score: number, total: number) => {
         const percentage = (score / total) * 100;
-        if (percentage >= 90) return <BsEmojiHeartEyes className="text-4xl text-yellow-500" />;
-        if (percentage >= 70) return <BsEmojiSunglasses className="text-4xl text-green-500" />;
-        if (percentage >= 50) return <BsEmojiSmile className="text-4xl text-blue-500" />;
-        return <BsTrophy className="text-4xl text-gray-500" />;
+        if (percentage >= 90) return <BsEmojiHeartEyes className="text-4xl text-yellow-500"/>;
+        if (percentage >= 70) return <BsEmojiSunglasses className="text-4xl text-green-500"/>;
+        if (percentage >= 50) return <BsEmojiSmile className="text-4xl text-blue-500"/>;
+        return <BsTrophy className="text-4xl text-gray-500"/>;
     };
 
     const getPerformanceTitle = (score: number, total: number) => {
@@ -129,9 +124,9 @@ export const PublicationStatsPage: React.FC = () => {
                 <div className="flex justify-between items-center mb-2">
                     <h3 className="font-semibold">{result.questionText}</h3>
                     {result.isCorrect ? (
-                        <BsCheckCircle className="text-success" />
+                        <BsCheckCircle className="text-success"/>
                     ) : (
-                        <BsXCircle className="text-error" />
+                        <BsXCircle className="text-error"/>
                     )}
                 </div>
 
@@ -177,19 +172,31 @@ export const PublicationStatsPage: React.FC = () => {
         );
     };
 
-
     useEffect(() => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+
         const fetchPublications = async () => {
             try {
                 setIsLoading(true);
                 const fetchedPublications = await getPublicationsByQuizId(quizId!);
                 setPublications(fetchedPublications);
 
-                if (fetchedPublications.length > 0) {
-                    setSelectedPublication(fetchedPublications[0]);
-                }
+                const activePublication = fetchedPublications
+                    .filter(pub => pub.published)
+                    .sort((a, b) =>
+                        new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
+                    )[0];
 
-                // Imposta il primo studente di default
+                const selectedPub = activePublication ||
+                    fetchedPublications.sort((a, b) =>
+                        new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
+                    )[0];
+
+                setSelectedPublication(selectedPub);
+
                 if (mockResults.length > 0) {
                     setSelectedStudent(mockResults[0]);
                 }
@@ -205,7 +212,6 @@ export const PublicationStatsPage: React.FC = () => {
         }
     }, [quizId]);
 
-    // Gestisci lo stato di caricamento
     if (isLoading || isGettingPublicationsByQuizId) {
         return (
             <div className="flex justify-center items-center min-h-screen">
@@ -214,7 +220,6 @@ export const PublicationStatsPage: React.FC = () => {
         );
     }
 
-    // Gestisci il caso in cui non ci sono pubblicazioni
     if (publications.length === 0) {
         return (
             <div className="flex justify-center items-center min-h-screen">
@@ -227,20 +232,20 @@ export const PublicationStatsPage: React.FC = () => {
 
     return (
         <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
+            initial={{opacity: 0}}
+            animate={{opacity: 1}}
+            transition={{duration: 0.5}}
             className="min-h-screen bg-gradient-to-br from-primary/10 to-secondary/10 p-8"
         >
             <div className="max-w-6xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden">
                 {/* Header */}
                 <div className="bg-primary text-white p-6 flex justify-between items-center">
                     <motion.h1
-                        initial={{ x: -50, opacity: 0 }}
-                        animate={{ x: 0, opacity: 1 }}
+                        initial={{x: -50, opacity: 0}}
+                        animate={{x: 0, opacity: 1}}
                         className="text-3xl font-bold flex items-center gap-3"
                     >
-                        <BsStars className="text-yellow-300" />
+                        <BsStars className="text-yellow-300"/>
                         Quiz Performance Analytics
                     </motion.h1>
                 </div>
@@ -279,7 +284,7 @@ export const PublicationStatsPage: React.FC = () => {
                 {/* Publication Details */}
                 {selectedPublication && (
                     <div className="p-4">
-                        <PublicationDetails publication={selectedPublication} />
+                        <PublicationDetails publication={selectedPublication}/>
                     </div>
                 )}
 
@@ -287,8 +292,8 @@ export const PublicationStatsPage: React.FC = () => {
                 <div className="p-4 bg-base-200 flex gap-2 overflow-x-auto">
                     {mockResults.map(result => (
                         <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
+                            whileHover={{scale: 1.05}}
+                            whileTap={{scale: 0.95}}
                             key={result.studentName}
                             onClick={() => setSelectedStudent(result)}
                             className={`
@@ -306,8 +311,8 @@ export const PublicationStatsPage: React.FC = () => {
                 {/* Selected Student Details */}
                 {selectedStudent && (
                     <motion.div
-                        initial={{ y: 50, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
+                        initial={{y: 50, opacity: 0}}
+                        animate={{y: 0, opacity: 1}}
                         className="p-8"
                     >
                         <div className="bg-base-100 rounded-xl p-6 shadow-md mb-6">
@@ -316,7 +321,7 @@ export const PublicationStatsPage: React.FC = () => {
                                     {getPerformanceEmoji(selectedStudent.score, selectedStudent.totalQuestions)}
                                     <div>
                                         <h2 className="text-xl font-semibold flex items-center gap-2">
-                                            <BsTrophy className="text-primary" />
+                                            <BsTrophy className="text-primary"/>
                                             {selectedStudent.studentName}
                                         </h2>
                                         <p className="text-base-content/70">
@@ -328,7 +333,7 @@ export const PublicationStatsPage: React.FC = () => {
                                 <div className="text-right">
                                     <div className="stat">
                                         <div className="stat-title flex items-center gap-2">
-                                            <BsGraphUp className="text-primary" />
+                                            <BsGraphUp className="text-primary"/>
                                             Score
                                         </div>
                                         <div className="stat-value text-primary">
@@ -343,7 +348,7 @@ export const PublicationStatsPage: React.FC = () => {
                         {/* Question Results */}
                         <div className="space-y-4">
                             <h3 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                                <BsCheckCircle className="text-primary" />
+                                <BsCheckCircle className="text-primary"/>
                                 Answer Details
                             </h3>
                             {selectedStudent.questionResults.map(renderQuestionResult)}
@@ -354,8 +359,8 @@ export const PublicationStatsPage: React.FC = () => {
                 {/* Footer */}
                 <div className="bg-base-200 p-6 text-center">
                     <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
+                        whileHover={{scale: 1.05}}
+                        whileTap={{scale: 0.95}}
                         className="btn btn-primary btn-wide"
                     >
                         Download Full Report
