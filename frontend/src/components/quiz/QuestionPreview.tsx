@@ -1,4 +1,4 @@
-import { QuestionDTO } from '@dti-isin/backend-api-client';
+import {QuestionDTO} from '@dti-isin/backend-api-client';
 
 interface QuestionPreviewProps {
     question: QuestionDTO | null;

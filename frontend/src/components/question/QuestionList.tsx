@@ -1,5 +1,5 @@
 import React from "react";
-import { QuestionElement } from './QuestionElement';
+import {QuestionElement} from './QuestionElement';
 import {SpecificQuestionDTO} from "../../hooks/question/useQuestionCreation.ts";
 
 interface QuestionsListProps {

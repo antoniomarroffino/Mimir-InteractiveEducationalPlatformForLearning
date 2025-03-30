@@ -1,11 +1,6 @@
-import { useState } from 'react';
-import {
-    QuestionDTO,
-    QuestionType,
-    TrueFalseQuestionDTO,
-    MultipleChoiceQuestionDTO
-} from '@dti-isin/backend-api-client';
-import { useQuestionCRUD } from "./useQuestionCRUD.ts";
+import {useState} from 'react';
+import {MultipleChoiceQuestionDTO, QuestionDTO, QuestionType, TrueFalseQuestionDTO} from '@dti-isin/backend-api-client';
+import {useQuestionCRUD} from "./useQuestionCRUD.ts";
 
 export type SpecificQuestionDTO =
     | QuestionDTO
@@ -20,7 +15,7 @@ export const useQuestionCreation = () => {
     const [error, setError] = useState<string | null>(null);
     const [isEditingExistingQuestion, setIsEditingExistingQuestion] = useState(false);
 
-    const { createQuestion, updateQuestion, createQuestionTemplate } = useQuestionCRUD();
+    const {createQuestion, updateQuestion, createQuestionTemplate} = useQuestionCRUD();
 
     const startQuestionCreation = () => {
         setIsCreatingQuestion(true);

@@ -6,7 +6,7 @@ interface QuestionBankSearchProps {
     onSearchChange: (value: string) => void;
 }
 
-export const QuestionBankSearch: React.FC<QuestionBankSearchProps> = ({ searchTerm, onSearchChange }) => {
+export const QuestionBankSearch: React.FC<QuestionBankSearchProps> = ({searchTerm, onSearchChange}) => {
     const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm);
 
     useEffect(() => {
@@ -23,13 +23,13 @@ export const QuestionBankSearch: React.FC<QuestionBankSearchProps> = ({ searchTe
                 value={localSearchTerm}
                 onChange={(e) => setLocalSearchTerm(e.target.value)}
             />
-            <MagnifyingGlassIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <MagnifyingGlassIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"/>
             {localSearchTerm && (
                 <button
                     className="absolute right-4 top-1/2 -translate-y-1/2 p-1 hover:bg-gray-100 rounded-full"
                     onClick={() => setLocalSearchTerm('')}
                 >
-                    <XMarkIcon className="w-5 h-5 text-gray-400 hover:text-gray-600" />
+                    <XMarkIcon className="w-5 h-5 text-gray-400 hover:text-gray-600"/>
                 </button>
             )}
         </div>

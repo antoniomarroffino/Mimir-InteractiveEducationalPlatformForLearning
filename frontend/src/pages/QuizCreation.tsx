@@ -1,7 +1,7 @@
-import {useNavigate, useParams} from 'react-router-dom';
+import {useParams} from 'react-router-dom';
 import {QuestionDTO, QuestionType} from '@dti-isin/backend-api-client';
 import {BreadcrumbCourses} from "../components/common/BreadcrumbCourses.tsx";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {BsLayoutSidebar, BsListTask, BsListUl, BsPencil, BsQuestionDiamond} from 'react-icons/bs';
 import {useQuizCRUD} from "../hooks/quiz/useQuizCRUD.ts";
 import {useQuestionBankList} from "../hooks/questionBank/useQuestionBankList.ts";
@@ -15,14 +15,14 @@ import {SpecificQuestionDTO, useQuestionCreation} from "../hooks/question/useQue
 import {useGetQuizById} from "../hooks/quiz/useGetQuizById.ts";
 import {useGetCourseById} from "../hooks/course/useGetCourseById.ts";
 import {useGetFolderById} from "../hooks/folder/useGetFolderById.ts";
+import {LoadingSpinner} from "../components/common/LoadingSpinner.tsx";
 
 export const QuizCreation: React.FC = () => {
-    const navigate = useNavigate();
     const {courseId, folderId, quizId} = useParams();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const {data: currentQuiz} = useGetQuizById(courseId!, folderId!, quizId!);
-    const {data: currentCourse} = useGetCourseById(courseId!);
-    const {data: currentFolder} = useGetFolderById(courseId!, folderId!);
+    const {data: currentQuiz, isLoading: isLoadingQuiz} = useGetQuizById(courseId!, folderId!, quizId!);
+    const {data: currentFolder, isLoading: isLoadingFolder} = useGetFolderById(courseId!, folderId!);
+    const {data: currentCourse, isLoading: isLoadingCourse} = useGetCourseById(courseId!);
     const [selectedQuestions, setSelectedQuestions] = useState<string[]>([]);
     const [isEditingQuizName, setIsEditingQuizName] = useState(false);
     const [editedQuizName, setEditedQuizName] = useState(currentQuiz?.name || '');
@@ -37,6 +37,10 @@ export const QuizCreation: React.FC = () => {
         startQuestionEditing,
         isEditingExistingQuestion
     } = useQuestionCreation();
+
+    useEffect(() => {
+        setEditedQuizName(currentQuiz?.name || '');
+    }, [currentQuiz?.name]);
 
     const saveNewQuestion = async (questionDTO: SpecificQuestionDTO) => {
         if (questionDTO) {
@@ -88,13 +92,15 @@ export const QuizCreation: React.FC = () => {
     const handleImportQuestions = async () => {
         if (!currentQuiz || !folderId || !quizId) return;
 
-        const questionsToAdd = selectedQuestions!.map(id => {
-            for (const bank of questionBanks) {
-                const question = bank.questions?.find(q => q.id === id);
-                if (question) return question;
-            }
-            return null;
-        }).filter(q => q !== null) as QuestionDTO[];
+        const questionsToAdd = selectedQuestions
+            .map(id => {
+                for (const bank of questionBanks) {
+                    const question = bank.questions?.find(q => q.id === id);
+                    if (question) return question;
+                }
+                return null;
+            })
+            .filter(q => q !== null) as QuestionDTO[];
 
         const updatedQuestions = [
             ...(currentQuiz.questions || []),
@@ -122,25 +128,16 @@ export const QuizCreation: React.FC = () => {
                 ...currentQuiz,
                 questions: updatedQuestions
             });
+            if (questionTemplate!.id === questionId)
+                resetQuestionCreation();
         } catch (error) {
             console.error('Failed to delete question:', error);
         }
     };
 
-    if (!courseId || !folderId || !quizId || !currentCourse || !currentFolder || !currentQuiz) {
-        return (
-            <div className="alert alert-warning">
-                Quiz not found.
-                <button
-                    className="btn btn-sm btn-outline ml-4"
-                    onClick={() => navigate(`/courses/${courseId}`)}
-                >
-                    Back to Course
-                </button>
-            </div>
-        );
+    if (isLoadingQuiz || isLoadingFolder || isLoadingCourse || isLoadingQuestionBanks) {
+        return <LoadingSpinner fullScreen/>;
     }
-
 
     return (
         <div className="w-full min-h-screen p-4 sm:p-6 lg:p-8">
@@ -171,7 +168,7 @@ export const QuizCreation: React.FC = () => {
                                                 className="btn btn-ghost btn-square hover:bg-transparent"
                                                 onClick={() => setIsEditingQuizName(false)}
                                             >
-                                                <XMarkIcon className="w-5 h-5 text-base-content/60" />
+                                                <XMarkIcon className="w-5 h-5 text-base-content/60"/>
                                             </button>
                                         </div>
                                         <div className="flex justify-end gap-2 mt-2">
@@ -179,7 +176,7 @@ export const QuizCreation: React.FC = () => {
                                                 className="btn btn-ghost"
                                                 onClick={() => {
                                                     setIsEditingQuizName(false);
-                                                    setEditedQuizName(currentQuiz.name);
+                                                    setEditedQuizName(currentQuiz!.name);
                                                 }}
                                             >
                                                 Cancel
@@ -192,7 +189,7 @@ export const QuizCreation: React.FC = () => {
                                                 {isUpdatingQuiz ? (
                                                     <span className="loading loading-spinner"></span>
                                                 ) : (
-                                                    <CheckIcon className="w-5 h-5" />
+                                                    <CheckIcon className="w-5 h-5"/>
                                                 )}
                                                 Save Changes
                                             </button>
@@ -201,7 +198,7 @@ export const QuizCreation: React.FC = () => {
                                 ) : (
                                     <div className="flex items-center gap-2 group">
                                         <h1 className="text-3xl font-bold text-primary truncate">
-                                            {currentQuiz.name}
+                                            {currentQuiz!.name}
                                         </h1>
                                         <button
                                             className="btn btn-ghost btn-square hover:bg-transparent"
@@ -216,11 +213,11 @@ export const QuizCreation: React.FC = () => {
                         <div className="flex items-center gap-3 text-sm text-base-content/60 mt-1">
                             <span className="flex items-center gap-1">
                                 <BsQuestionDiamond/>
-                                {currentQuiz.questions?.length || 0} questions
+                                {currentQuiz!.questions?.length || 0} questions
                             </span>
                             <span>•</span>
                             <span>
-                                Last modified: {format(new Date(currentQuiz.updatedAt!), 'dd MMM yyyy HH:mm')}
+                                Last modified: {format(new Date(currentQuiz!.updatedAt!), 'dd MMM yyyy HH:mm')}
                             </span>
                         </div>
                     </div>
@@ -281,7 +278,7 @@ export const QuizCreation: React.FC = () => {
                             </button>
                         </div>
                         <QuestionsList
-                            questions={currentQuiz.questions || []}
+                            questions={currentQuiz!.questions || []}
                             onStartEditing={startQuestionEditing}
                             onDeleteQuestion={handleQuestionDelete}
                         />
@@ -333,7 +330,7 @@ export const QuizCreation: React.FC = () => {
                         banks={questionBanks}
                         isLoading={isLoadingQuestionBanks}
                         error={errorQuestionBanks}
-                        importedQuestion={currentQuiz.questions?.map(q => q.id!) || []}
+                        importedQuestion={currentQuiz!.questions?.map(q => q.id!) || []}
                         selectedQuestions={selectedQuestions}
                         onQuestionSelect={handleQuestionSelect}
                         onBankSelect={handleBankSelect}

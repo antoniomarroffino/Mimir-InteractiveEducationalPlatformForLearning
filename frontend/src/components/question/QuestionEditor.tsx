@@ -128,14 +128,18 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
     };
 
     if (disabled) {
-        return <DefaultQuestionEditorScreen/>;
+        return <DefaultQuestionEditorScreen isPreview={isPreview}/>;
     }
 
     return (
         <div
             className={`bg-base-100 rounded-lg p-6 shadow transition-all duration-200 ${disabled ? 'opacity-50' : ''}`}>
             <h2 className="text-xl font-semibold mb-4 capitalize">
-                {isEditingExistingQuestion ? 'Edit' : 'Create'} {questionType.toLowerCase()} Question
+                {isPreview ? (
+                    <>Previewing {questionType.toLowerCase()} Question</>
+                ) : (
+                    <>{isEditingExistingQuestion ? 'Edit' : 'Create'} {questionType.toLowerCase()} Question</>
+                )}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="form-control">

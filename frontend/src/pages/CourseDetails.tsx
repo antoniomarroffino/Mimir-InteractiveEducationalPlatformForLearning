@@ -9,11 +9,12 @@ import {BsBoxArrowRight, BsPencil, BsTrash} from "react-icons/bs";
 import {BreadcrumbCourses} from "../components/common/BreadcrumbCourses.tsx";
 import {useFolderCRUD} from "../hooks/folder/useFolderCRUD.ts";
 import {useGetCourseById} from "../hooks/course/useGetCourseById.ts";
+import {LoadingSpinner} from "../components/common/LoadingSpinner.tsx";
 
 const CourseDetails = () => {
     const {courseId} = useParams();
     const navigate = useNavigate();
-    const {data: selectedCourse} = useGetCourseById(courseId!);
+    const {data: selectedCourse, isLoading, error} = useGetCourseById(courseId!);
     const {teacherCourses, isLoadingTeacherCourses, errorTeacherCourses} = useCourseList();
     const {updateCourse, deleteCourse, leftCourse} = useCourseCRUD();
     const [isEditing, setIsEditing] = useState(false);
@@ -106,18 +107,14 @@ const CourseDetails = () => {
         }
     };
 
-    if (isLoadingTeacherCourses) {
-        return (
-            <div className="flex justify-center p-8">
-                <span className="loading loading-spinner loading-lg text-primary"></span>
-            </div>
-        );
+    if (isLoadingTeacherCourses || isLoading) {
+        return <LoadingSpinner fullScreen/>;
     }
 
-    if (errorTeacherCourses) {
+    if (errorTeacherCourses || error) {
         return (
             <div className="alert alert-error flex justify-between items-center">
-                <span>Error loading courses: {errorTeacherCourses.message}</span>
+                <span>Error loading courses: {errorTeacherCourses?.message}</span>
                 <button
                     className="btn btn-sm btn-outline"
                     onClick={() => navigate('/')}

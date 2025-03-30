@@ -42,7 +42,7 @@ public class QuestionService implements IQuestionService {
 
     @Override
     public QuestionDTO createQuestionInQuestionBank(QuestionDTO questionDTO) {
-        if(questionDTO == null) throw new BadRequestException("QuestionDTO is null");
+        if (questionDTO == null) throw new BadRequestException("QuestionDTO is null");
 
         Optional<QuestionBank> questionBankOpt = this.questionBankRepository.findByIdOptional(new ObjectId(questionDTO.getQuestionBankId()));
 

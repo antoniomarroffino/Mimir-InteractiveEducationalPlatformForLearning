@@ -32,6 +32,7 @@ export const QuestionCRUDProvider: React.FC<{ children: React.ReactNode }> = ({c
                     }
                 );
                 queryClient.invalidateQueries(['questionBanks', newQuestion.questionBankId]);
+                queryClient.invalidateQueries(['questionBanks']);
             },
             onError: (error: Error) => {
                 console.error("Question creation error:", error);
@@ -69,6 +70,7 @@ export const QuestionCRUDProvider: React.FC<{ children: React.ReactNode }> = ({c
                     }
                 );
                 queryClient.invalidateQueries(['questionBanks', updatedQuestion.questionBankId]);
+                queryClient.invalidateQueries(['questionBanks']);
             },
             onError: (error: Error) => {
                 console.error("Question updating error:", error);
@@ -77,7 +79,7 @@ export const QuestionCRUDProvider: React.FC<{ children: React.ReactNode }> = ({c
     );
 
     const deleteQuestionMutation = useMutation(
-        async (params: {questionId: string, questionBankId: string}) => {
+        async (params: { questionId: string, questionBankId: string }) => {
             if (!params.questionId) {
                 throw new Error("Missing required parameters");
             }
@@ -101,6 +103,7 @@ export const QuestionCRUDProvider: React.FC<{ children: React.ReactNode }> = ({c
                     }
                 );
                 queryClient.invalidateQueries(['questionBanks', params.questionBankId]);
+                queryClient.invalidateQueries(['questionBanks']);
             },
             onError: (error: Error) => {
                 console.error("Question delete error:", error);

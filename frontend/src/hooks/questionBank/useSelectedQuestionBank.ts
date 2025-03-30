@@ -1,4 +1,4 @@
-import { QuestionBankDTO } from "@dti-isin/backend-api-client";
+import {QuestionBankDTO} from "@dti-isin/backend-api-client";
 import {useQuery} from "react-query";
 import {questionBankApi} from "../../../config/config.ts";
 

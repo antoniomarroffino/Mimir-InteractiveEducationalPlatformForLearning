@@ -3,7 +3,7 @@ import {QuestionBankCRUDContext} from "../../contexts/questionBank/QuestionBankC
 
 export const useQuestionBankCRUD = () => {
     const context = useContext(QuestionBankCRUDContext);
-    if(context === undefined) {
+    if (context === undefined) {
         throw new Error('useQuestionBankCRUD must be used within a QuestionBankCRUDProvider')
     }
     return context;

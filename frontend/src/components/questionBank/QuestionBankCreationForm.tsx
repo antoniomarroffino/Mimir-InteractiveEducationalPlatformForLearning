@@ -1,20 +1,22 @@
-import { useState } from 'react';
+import {useState} from 'react';
 import {useQuestionBankCRUD} from "../../hooks/questionBank/useQuestionBankCRUD.ts";
 import {useQuestionBankList} from "../../hooks/questionBank/useQuestionBankList.ts";
 import {PlusCircleIcon} from "@heroicons/react/24/outline";
 
 export const QuestionBankCreationForm = () => {
     const [name, setName] = useState('');
-    const { createQuestionBank, isCreatingQuestionBank, errorCreateQuestionBank } = useQuestionBankCRUD();
-    const { fetchQuestionBanks } = useQuestionBankList();
+    const {createQuestionBank, isCreatingQuestionBank, errorCreateQuestionBank} = useQuestionBankCRUD();
+    const {fetchQuestionBanks} = useQuestionBankList();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await createQuestionBank({ name });
+            await createQuestionBank({name});
             setName('');
             await fetchQuestionBanks();
-        } catch (error) { console.error(error); }
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     return (

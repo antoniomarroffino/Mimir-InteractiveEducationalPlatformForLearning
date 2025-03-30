@@ -15,7 +15,8 @@ export const TrueFalseQuestionTemplate: React.FC<TrueFalseTemplateProps> = ({
                                                                                 isPreview = false,
                                                                             }) => {
     return (
-        <div className={`bg-gradient-to-br p-4 rounded-lg ${isPreview ? 'from-base-100 to-base-100' : 'from-green-100 to-green-200'}`}>
+        <div
+            className={`bg-gradient-to-br p-4 rounded-lg ${isPreview ? 'from-base-100 to-base-100' : 'from-green-100 to-green-200'}`}>
             <div className="flex items-center justify-between mb-4">
                 <span className="text-lg font-semibold text-base-content/80">
                     {isPreview ? 'Correct Answer' : 'Select the Correct Answer'}

@@ -26,7 +26,10 @@ export const FolderRow = ({folder, courseId, isSelected, onToggleSelect}: Folder
 
     const handleNameUpdate = async () => {
         try {
-            if(folder.name === editedName) {setIsEditing(false); return;}
+            if (folder.name === editedName) {
+                setIsEditing(false);
+                return;
+            }
             const folderDTO = {
                 ...folder,
                 name: editedName,

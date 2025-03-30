@@ -8,7 +8,7 @@ export const FolderCRUDProvider: React.FC<{ children: React.ReactNode }> = ({chi
     const queryClient = useQueryClient();
 
     const createFolderMutation = useMutation(
-        async ({courseId, folderDTO}: {courseId: string, folderDTO: FolderDTO}) => {
+        async ({courseId, folderDTO}: { courseId: string, folderDTO: FolderDTO }) => {
             if (!courseId) throw new Error("No course selected");
             const response = await folderApi.apiCoursesCourseIdFoldersPost({
                 courseId,
@@ -55,7 +55,7 @@ export const FolderCRUDProvider: React.FC<{ children: React.ReactNode }> = ({chi
     );
 
     const deleteFolderMutation = useMutation(
-        ({courseId, folderId}: {courseId: string, folderId: string}) => {
+        ({courseId, folderId}: { courseId: string, folderId: string }) => {
             if (!courseId) throw new Error("No course selected");
             return folderApi.apiCoursesCourseIdFoldersFolderIdDelete({
                 courseId,

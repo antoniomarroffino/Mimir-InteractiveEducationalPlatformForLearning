@@ -68,7 +68,7 @@ public class QuizService implements IQuizService {
 
     @Override
     public QuizDTO updateQuizInFolder(ObjectId courseId, ObjectId folderId, ObjectId quizId, QuizDTO quizDTO) {
-        if(quizDTO ==null) throw new BadRequestException("QuizDTO is null");
+        if (quizDTO == null) throw new BadRequestException("QuizDTO is null");
 
         Optional<Course> courseOpt = this.courseRepository.findByIdOptional(courseId);
         if (courseOpt.isEmpty()) {

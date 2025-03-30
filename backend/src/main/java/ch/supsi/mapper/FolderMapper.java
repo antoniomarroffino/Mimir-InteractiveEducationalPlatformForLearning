@@ -1,6 +1,5 @@
 package ch.supsi.mapper;
 
-import ch.supsi.mapper.quiz.QuizMapper;
 import ch.supsi.mapper.quiz.facade.IQuizMapperFacade;
 import ch.supsi.model.api.Folder;
 import ch.supsi.model.dto.api.FolderDTO;

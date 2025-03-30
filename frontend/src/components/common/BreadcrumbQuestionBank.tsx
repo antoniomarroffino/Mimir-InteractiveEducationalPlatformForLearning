@@ -1,7 +1,7 @@
 import React from "react";
 import {Link} from "react-router-dom";
 import {FiBookOpen, FiChevronRight, FiHome} from "react-icons/fi";
-import { QuestionBankDTO } from "@dti-isin/backend-api-client";
+import {QuestionBankDTO} from "@dti-isin/backend-api-client";
 
 interface BreadcrumbQuestionBankProps {
     questionBankDTO?: QuestionBankDTO;

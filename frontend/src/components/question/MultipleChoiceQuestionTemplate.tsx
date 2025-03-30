@@ -1,9 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import {
-    BsCheckCircleFill,
-    BsCircle,
-    BsDashCircle
-} from 'react-icons/bs';
+import React, {useEffect, useState} from 'react';
+import {BsCheckCircleFill, BsCircle, BsDashCircle} from 'react-icons/bs';
 
 interface MultipleChoiceTemplateProps {
     choices: string[];

@@ -20,7 +20,7 @@ export const QuestionBankItem: React.FC<QuestionBankItemProps> = ({
     const [isExpanded, setIsExpanded] = useState(false);
     const checkboxRef = useRef<HTMLInputElement>(null);
 
-    const { allSelected, someSelected, allImported } = useMemo(() => {
+    const {allSelected, someSelected, allImported} = useMemo(() => {
         const bankQuestions = bank.questions || [];
         const selectedCount = bankQuestions.filter(q => selectedQuestions.includes(q.id!)).length;
         const importedCount = bankQuestions.filter(q => importedQuestions.includes(q.id!)).length;

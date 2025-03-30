@@ -11,10 +11,10 @@ interface BreadcrumbCoursesProps {
 }
 
 export const BreadcrumbCourses: React.FC<BreadcrumbCoursesProps> = ({
-                                                          course,
-                                                          folder,
-                                                          quiz
-                                                      }) => {
+                                                                        course,
+                                                                        folder,
+                                                                        quiz
+                                                                    }) => {
     return (
         <div className="mb-8">
             <ul className="flex flex-wrap items-center gap-2 text-sm bg-base-200 px-4 py-2 rounded-full">

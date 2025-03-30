@@ -1,4 +1,4 @@
-import { QuestionBankDTO } from "@dti-isin/backend-api-client";
+import {QuestionBankDTO} from "@dti-isin/backend-api-client";
 import {createContext} from "react";
 
 export type QuestionBankListContextType = {

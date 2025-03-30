@@ -1,6 +1,6 @@
 import {useQuery} from "react-query";
 import {quizApi} from "../../../config/config.ts";
-import { QuizDTO } from "@dti-isin/backend-api-client";
+import {QuizDTO} from "@dti-isin/backend-api-client";
 
 export const useGetQuizById = (courseId: string, folderId: string, quizId: string) => {
     return useQuery<QuizDTO, Error>({

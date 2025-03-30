@@ -3,7 +3,7 @@ import {QuestionBankListContext} from "../../contexts/questionBank/QuestionBankL
 
 export const useQuestionBankList = () => {
     const context = useContext(QuestionBankListContext);
-    if(context === undefined) {
+    if (context === undefined) {
         throw new Error('useQuestionBankList must be used within a QuestionBankListProvider');
     }
     return context;

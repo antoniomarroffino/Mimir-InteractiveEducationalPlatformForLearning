@@ -186,13 +186,7 @@ const QuestionBankDetails: React.FC = () => {
                     className="bg-primary/5 p-4 rounded-xl border border-primary/10 flex items-center gap-3 flex-1 max-w-lg mx-4">
                     <LightBulbIcon className="w-6 h-6 text-primary shrink-0"/>
                     <div className="text-base-content/70 text-sm">
-                        {[
-                            "Every great quiz starts with a single question!",
-                            "Knowledge grows when shared!",
-                            "Your questions inspire learning!",
-                            "Quality questions create quality minds!",
-                            "Curiosity fuels education!"
-                        ][Math.floor(Math.random() * 5)]}
+                        Quality questions create quality minds!
                     </div>
                 </div>
 

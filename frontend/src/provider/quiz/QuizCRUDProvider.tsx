@@ -35,7 +35,12 @@ export const QuizCRUDProvider: React.FC<{ children: React.ReactNode }> = ({child
         }
     );
 
-    const updateQuizMutation = useMutation<QuizDTO, Error, {courseId: string, folderId: string, quizId: string, quizDTO: QuizDTO }>(
+    const updateQuizMutation = useMutation<QuizDTO, Error, {
+        courseId: string,
+        folderId: string,
+        quizId: string,
+        quizDTO: QuizDTO
+    }>(
         async ({courseId, folderId, quizId, quizDTO}) => {
             if (!courseId) {
                 throw new Error("No course selected");
@@ -66,7 +71,7 @@ export const QuizCRUDProvider: React.FC<{ children: React.ReactNode }> = ({child
         }
     );
 
-    const deleteQuizMutation = useMutation<void, Error, {courseId: string, folderId: string, quizId: string }>(
+    const deleteQuizMutation = useMutation<void, Error, { courseId: string, folderId: string, quizId: string }>(
         async ({courseId, folderId, quizId}) => {
             if (!courseId) {
                 throw new Error("No course selected");

@@ -1,8 +1,8 @@
 import {useQuery} from "react-query";
 import {folderApi} from "../../../config/config.ts";
-import { FolderDTO } from "@dti-isin/backend-api-client";
+import {FolderDTO} from "@dti-isin/backend-api-client";
 
-export const useGetFolderById = (courseId: string, folderId:string) => {
+export const useGetFolderById = (courseId: string, folderId: string) => {
     return useQuery<FolderDTO, Error>({
         queryKey: ['folder', folderId],
         queryFn: async () => folderApi.apiCoursesCourseIdFoldersFolderIdGet({

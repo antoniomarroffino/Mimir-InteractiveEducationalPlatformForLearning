@@ -1,10 +1,10 @@
-import { QuestionBankDTO } from "@dti-isin/backend-api-client";
+import {QuestionBankDTO} from "@dti-isin/backend-api-client";
 import {QuestionBankCRUDContext} from "../../contexts/questionBank/QuestionBankCRUDContext.ts";
 import {useMutation, useQueryClient} from "react-query";
 import {questionBankApi} from "../../../config/config.ts";
 import {useMemo} from "react";
 
-export const QuestionBankCRUDProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
+export const QuestionBankCRUDProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const queryClient = useQueryClient();
 
     const createQuestionBankMutation = useMutation(
@@ -24,7 +24,7 @@ export const QuestionBankCRUDProvider: React.FC<{children: React.ReactNode}> = (
     );
 
     const updateQuestionBankMutation = useMutation(
-        ({id, questionBankDTO}: {id: string, questionBankDTO: QuestionBankDTO}) =>
+        ({id, questionBankDTO}: { id: string, questionBankDTO: QuestionBankDTO }) =>
             questionBankApi.apiQuestionBanksIdPut({id, questionBankDTO}).then(response => response.data),
         {
             onSuccess: (updatedQuestionBank) => {
@@ -73,9 +73,9 @@ export const QuestionBankCRUDProvider: React.FC<{children: React.ReactNode}> = (
         },
 
         deleteQuestionBank: async (id: string) => {
-            try{
+            try {
                 await deleteQuestionBankMutation.mutateAsync(id);
-            }catch(err){
+            } catch (err) {
                 console.error("Question bank delete failed:", err);
                 throw err;
             }
