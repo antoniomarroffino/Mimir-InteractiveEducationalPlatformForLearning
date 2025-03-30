@@ -57,9 +57,12 @@ export const QuizCRUDProvider: React.FC<{ children: React.ReactNode }> = ({child
             return response.data;
         },
         {
-            onSuccess: (_, {folderId}) => {
+            onSuccess: (updatedQuizDTO, {folderId}) => {
                 queryClient.invalidateQueries({
                     queryKey: ["quizzes", selectedCourseId, folderId],
+                });
+                queryClient.invalidateQueries({
+                    queryKey: ["quiz", selectedCourseId, folderId, updatedQuizDTO.id],
                 });
             },
             onError: (error: Error) => {

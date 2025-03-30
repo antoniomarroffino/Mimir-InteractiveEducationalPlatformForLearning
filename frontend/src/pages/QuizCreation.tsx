@@ -13,11 +13,13 @@ import {XMarkIcon} from "@heroicons/react/16/solid";
 import {QuestionsList} from "../components/question/QuestionList.tsx";
 import {QuestionEditor} from "../components/question/QuestionEditor.tsx";
 import {SpecificQuestionDTO, useQuestionCreation} from "../hooks/question/useQuestionCreation.ts";
+import {useGetQuizById} from "../hooks/quiz/useGetQuizById.ts";
 
 export const QuizCreation: React.FC = () => {
     const navigate = useNavigate();
     const {courseId, folderId, quizId} = useParams();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const {data: currentQuiz} = useGetQuizById(courseId!, folderId!, quizId!);
     const {teacherCourses} = useCourseList();
     const [selectedQuestions, setSelectedQuestions] = useState<string[]>([]);
     const {updateQuiz, isUpdatingQuiz} = useQuizCRUD();
@@ -43,17 +45,11 @@ export const QuizCreation: React.FC = () => {
         [currentCourse, folderId]
     );
 
-    const currentQuiz = useMemo(() =>
-            currentFolder?.quizzes?.find(quiz => quiz.id === quizId),
-        [currentFolder, quizId]
-    );
-
     const saveNewQuestion = async (questionDTO: SpecificQuestionDTO) => {
         if (questionDTO) {
             await handleSaveQuestion(questionDTO);
         }
     }
-
 
     const handleQuestionSelect = (questionId: string) => {
         const isImported = currentQuiz!.questions?.some(q => q.id === questionId);
