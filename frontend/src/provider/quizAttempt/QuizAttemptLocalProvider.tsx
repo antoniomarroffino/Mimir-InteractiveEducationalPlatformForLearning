@@ -27,13 +27,13 @@ export const QuizAttemptLocalProvider: React.FC<{ children: React.ReactNode }> =
             switch (question.type) {
                 case QuestionType.TrueFalse:
                     return {
-                        type: QuestionType.TrueFalse,
+                        responseType: QuestionType.TrueFalse,
                         selectedAnswer: null as unknown as boolean
                     } as TrueFalseQuestionResponseDTO;
 
                 case QuestionType.MultipleChoice:
                     return {
-                        type: QuestionType.MultipleChoice,
+                        responseType: QuestionType.MultipleChoice,
                         selectedAnswerIndexes: []
                     } as MultipleChoiceQuestionResponseDTO;
 
