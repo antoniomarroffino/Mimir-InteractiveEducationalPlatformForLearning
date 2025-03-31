@@ -1,7 +1,7 @@
 {
   "name": "frontend",
   "private": true,
-  "version": "0.1.5",
+  "version": "0.1.6",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -12,7 +12,7 @@
   "dependencies": {
     "@azure/msal-browser": "^4.4.0",
     "@azure/msal-react": "^3.0.5",
-    "@dti-isin/backend-api-client": "^0.1.5",
+    "@dti-isin/backend-api-client": "^0.1.6",
     "@heroicons/react": "^2.2.0",
     "axios": "^1.8.2",
     "bootstrap": "^5.3.3",
