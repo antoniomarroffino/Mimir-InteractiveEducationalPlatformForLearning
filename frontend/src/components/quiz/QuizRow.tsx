@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { QuizDTO } from '@dti-isin/backend-api-client';
-import { BsBarChart, BsPencil, BsRocket, BsTrash } from 'react-icons/bs';
+import {BsBarChart, BsPencil, BsPersonCheck, BsRocket, BsShieldLock, BsTrash} from 'react-icons/bs';
 import { useNavigate } from 'react-router-dom';
 import { useQuizPublicationCRUD } from '../../hooks/quizPublication/useQuizPublicationCRUD.ts';
 import { useQuizCRUD } from "../../hooks/quiz/useQuizCRUD.ts";
 import { FiAlertCircle } from "react-icons/fi";
 import { useGetQuizPublicationsByQuizId } from "../../hooks/quizPublication/useGetQuizPublicationsByQuizId.ts";
 import { LoadingSpinner } from "../common/LoadingSpinner.tsx";
+import { motion } from 'framer-motion';
 
 interface QuizRowProps {
     quiz: QuizDTO;
@@ -68,7 +69,7 @@ export const QuizRow: React.FC<QuizRowProps> = ({
             });
 
             if (!publication?.id) {
-                console.error('Pubblicazione creata senza ID valido');
+                console.error('Publication created without a valid ID');
             }
             navigate(`/courses/${courseId}/folders/${folderId}/quizzes/${quiz.id}/publications/${publication.id}`);
 
@@ -82,25 +83,25 @@ export const QuizRow: React.FC<QuizRowProps> = ({
 
     const handleResults = async () => {
         if (!quizPublications || quizPublications.length === 0) {
-            alert("Non esistono pubblicazioni per questo quiz, non è possibile mostrare i risultati.");
+            alert("There are no publications for this quiz, it is not possible to show the results.");
             return;
         }
         navigate(`/courses/${courseId}/folders/${folderId}/quizzes/${quiz.id}/results`);
     };
 
     const handlePublishError = (error: unknown) => {
-        console.error('Errore nella pubblicazione:', error);
+        console.error('Error in publication:', error);
         setPublishError(
             error instanceof Error
                 ? error.message
-                : 'Errore sconosciuto durante la pubblicazione'
+                : 'Unknown error during publication'
         );
     };
 
     const handleUpdateQuiz = () => {
         const activePublication = quizPublications?.find(publication => publication.published);
         if (activePublication) {
-            alert("L'aggiornamento del quiz non può essere fatto perché esiste una pubblicazione attiva.");
+            alert("The quiz cannot be updated because an active publication exists.");
             return;
         }
         navigate(`/courses/${courseId}/folders/${folderId}/quizzes/${quiz.id}/edit`);
@@ -112,11 +113,11 @@ export const QuizRow: React.FC<QuizRowProps> = ({
             await deleteQuiz(courseId, folderId, quiz.id!);
             setShowDeleteModal(false);
         } catch (error) {
-            console.error('Eliminazione quiz fallita:', error);
+            console.error('Quiz deletion failed:', error);
             setError(
                 error instanceof Error
                     ? error.message
-                    : 'Impossibile eliminare il quiz'
+                    : 'Unable to delete the quiz'
             );
         }
     };
@@ -133,28 +134,28 @@ export const QuizRow: React.FC<QuizRowProps> = ({
                     <button
                         onClick={handlePublishQuiz}
                         className="btn btn-sm btn-ghost"
-                        title="Pubblica quiz"
+                        title="Publish Quiz"
                     >
                         <BsRocket className="text-success" />
                     </button>
                     <button
                         onClick={handleResults}
                         className="btn btn-sm btn-ghost"
-                        title="Vedi Risultati"
+                        title="View Results"
                     >
                         <BsBarChart className="text-info" />
                     </button>
                     <button
                         onClick={handleUpdateQuiz}
                         className="btn btn-sm btn-ghost"
-                        title="Modifica quiz"
+                        title="Edit Quiz"
                     >
                         <BsPencil className="text-primary" />
                     </button>
                     <button
                         onClick={() => setShowDeleteModal(true)}
                         className="btn btn-sm btn-ghost"
-                        title="Elimina quiz"
+                        title="Delete Quiz"
                     >
                         <BsTrash className="text-error" />
                     </button>
@@ -164,38 +165,82 @@ export const QuizRow: React.FC<QuizRowProps> = ({
             {/* Publish Modal */}
             {showPublishModal && (
                 <div className="modal modal-open">
-                    <div className="modal-box">
-                        <h3 className="font-bold text-lg">Conferma pubblicazione</h3>
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.3 }}
+                        className="modal-box bg-gradient-to-br from-base-100 to-base-200 rounded-2xl shadow-2xl border border-base-200"
+                    >
+                        <div className="flex items-center gap-3 mb-6 border-b border-base-content/10 pb-3">
+                            <BsRocket className="text-success text-2xl" />
+                            <h3 className="font-bold text-xl text-base-content/90">Confirm Publication</h3>
+                        </div>
+
                         {publishError && (
-                            <div className="alert alert-error mt-4">
+                            <div className="alert alert-error mb-4">
                                 {publishError}
                             </div>
                         )}
-                        <p className="py-4">
-                            Sei sicuro di voler pubblicare il quiz "{quiz.name}"?<br />
-                            Una volta pubblicato, sarà accessibile agli studenti tramite codice.
+
+                        <p className="py-4 text-base-content/80">
+                            Are you sure you want to publish the quiz <strong>"{quiz.name}"</strong>?<br />
+                            Once published, it will be accessible to students via code.
                         </p>
 
-                        <div className="form-control">
-                            <label className="label cursor-pointer">
-                                <span className="label-text">
-                                    Consenti esecuzione del quiz senza login
-                                </span>
+                        <div className="bg-base-100 rounded-lg p-4 mb-4 shadow-sm">
+                            <div className="flex justify-between items-center">
+                                <div className="flex items-center gap-3">
+                                    <BsShieldLock className={`text-lg ${isAnonymous ? 'text-secondary' : 'text-primary'}`} />
+                                    <span className="font-medium text-base-content/70">
+                            Allow quiz execution without login
+                        </span>
+                                </div>
                                 <input
                                     type="checkbox"
                                     className="toggle toggle-primary"
                                     checked={isAnonymous}
                                     onChange={() => setIsAnonymous(!isAnonymous)}
                                 />
-                            </label>
-                            <p className="text-sm text-base-content/70">
-                                {isAnonymous
-                                    ? "Gli studenti potranno eseguire il quiz senza effettuare il login"
-                                    : "Gli studenti dovranno effettuare il login per eseguire il quiz"}
-                            </p>
+                            </div>
+
+                            <div
+                                className={`
+                        mt-3 p-3 rounded-lg 
+                        ${isAnonymous
+                                    ? 'bg-secondary/10 border-l-4 border-secondary'
+                                    : 'bg-error/10 border-l-4 border-error'}
+                    `}
+                            >
+                                <div className="flex items-center gap-2">
+                                    {isAnonymous ? (
+                                        <>
+                                            <BsPersonCheck className="text-secondary" />
+                                            <p className="text-secondary font-semibold">
+                                                Students can take the quiz without logging in
+                                            </p>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <BsPersonCheck className="text-error" />
+                                            <p className="text-error font-semibold">
+                                                Students must log in to take the quiz
+                                            </p>
+                                        </>
+                                    )}
+                                </div>
+                            </div>
                         </div>
 
                         <div className="modal-action">
+                            <button
+                                className="btn btn-ghost"
+                                onClick={() => {
+                                    setShowPublishModal(false);
+                                    setIsAnonymous(false);
+                                }}
+                            >
+                                Cancel
+                            </button>
                             <button
                                 className="btn btn-success"
                                 onClick={confirmPublish}
@@ -204,20 +249,11 @@ export const QuizRow: React.FC<QuizRowProps> = ({
                                 {isPublishing ? (
                                     <span className="loading loading-spinner"></span>
                                 ) : (
-                                    'Pubblica'
+                                    'Publish'
                                 )}
                             </button>
-                            <button
-                                className="btn"
-                                onClick={() => {
-                                    setShowPublishModal(false);
-                                    setIsAnonymous(false);
-                                }}
-                            >
-                                Annulla
-                            </button>
                         </div>
-                    </div>
+                    </motion.div>
                 </div>
             )}
 
