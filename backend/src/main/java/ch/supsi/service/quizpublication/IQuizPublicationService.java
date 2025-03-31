@@ -11,17 +11,13 @@ public interface IQuizPublicationService {
 
     QuizPublicationDTO getQuizPublicationById(ObjectId publicationID);
 
-    QuizPublication getPublicationByReferences(String courseId, String folderId, String quizId);
-
-    List<QuizPublication> getAllPublications();
-
-    QuizPublication getPublicationByCode(String code);
+    QuizPublicationDTO getPublicationByCode(String code);
 
     QuizPublicationDTO updateQuizPublication(QuizPublicationDTO quizPublicationDTO);
 
-    QuizPublicationDTO deactivateQuizPublication(String publicationID);
+    QuizPublicationDTO deactivateQuizPublication(ObjectId publicationId);
 
-    boolean deleteQuizPublication(String id);
+    boolean deleteQuizPublication(ObjectId publicationId);
 
-    List<QuizPublicationDTO> getPublicationsByQuizId(String quizId);
+    List<QuizPublicationDTO> getPublicationsByQuizId(ObjectId quizId);
 }

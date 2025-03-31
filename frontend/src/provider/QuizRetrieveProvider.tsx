@@ -2,23 +2,15 @@ import React, {useCallback, useState} from 'react';
 import {quizApi} from "../../config/config";
 import {QuizDTO, QuizPublicationDTO} from "@dti-isin/backend-api-client";
 import {QuizRetrieveContext, QuizRetrieveContextType} from '../contexts/QuizRetrieveContext';
-import {useQuizPublicationVerification} from '../hooks/quizPublication/useQuizPublicationVerification';
 
-interface QuizRetrieveProviderProps {
-    children: React.ReactNode;
-}
-
-export const QuizRetrieveProvider: React.FC<QuizRetrieveProviderProps> = ({children}) => {
-    const {currentPublication} = useQuizPublicationVerification();
+export const QuizRetrieveProvider: React.FC<{children: React.ReactNode}> = ({children}) => {
     const [quiz, setQuiz] = useState<QuizDTO | null>(null);
     const [quizPublication, setQuizPublication] = useState<QuizPublicationDTO | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<Error | null>(null);
 
-    const retrieveQuiz = useCallback(async (publication?: QuizPublicationDTO) => {
-        const pubToUse = publication || currentPublication;
-
-        if (!pubToUse) {
+    const retrieveQuiz = async (publication: QuizPublicationDTO) => {
+        if (!publication) {
             setQuiz(null);
             setQuizPublication(null);
             return null;
@@ -29,14 +21,13 @@ export const QuizRetrieveProvider: React.FC<QuizRetrieveProviderProps> = ({child
 
         try {
             const response = await quizApi.apiCoursesCourseIdFoldersFolderIdQuizzesQuizIdGet({
-                courseId: pubToUse.courseId,
-                folderId: pubToUse.folderId,
-                quizId: pubToUse.quizId
+                courseId: publication.courseId,
+                folderId: publication.folderId,
+                quizId: publication.quizId
             });
 
-            // Salva sia il quiz che la pubblicazione
             setQuiz(response.data);
-            setQuizPublication(pubToUse);
+            setQuizPublication(publication);
             setIsLoading(false);
             return response.data;
         } catch (err) {
@@ -46,7 +37,7 @@ export const QuizRetrieveProvider: React.FC<QuizRetrieveProviderProps> = ({child
             setIsLoading(false);
             return null;
         }
-    }, [currentPublication]);
+    };
 
     const resetQuiz = useCallback(() => {
         setQuiz(null);

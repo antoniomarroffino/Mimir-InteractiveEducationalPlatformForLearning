@@ -2,13 +2,12 @@ import React, {useState} from 'react';
 import {useAuth} from "../../hooks/useAuth.ts";
 import {FiHash} from "react-icons/fi";
 import {useNavigate} from 'react-router-dom';
-import {useQuizPublicationVerification} from '../../hooks/quizPublication/useQuizPublicationVerification.ts';
 import {useQuizRetrieve} from "../../hooks/useQuizRetrieve.ts";
+import {useGetQuizPublicationByCode} from "../../hooks/quizPublication/useGetQuizPublicationByCode.ts";
 
 const QuizSessionComponent = () => {
     const {user} = useAuth();
     const navigate = useNavigate();
-    const {getPublicationByCode} = useQuizPublicationVerification();
     const {retrieveQuiz} = useQuizRetrieve();
     const [code, setCode] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
@@ -25,7 +24,7 @@ const QuizSessionComponent = () => {
 
         try {
             setIsLoading(true);
-            const publication = await getPublicationByCode(trimmedCode);
+            const {data: publication} = useGetQuizPublicationByCode(trimmedCode);
 
             if (!publication) {
                 handleInvalidCode();

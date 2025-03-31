@@ -10,17 +10,6 @@ export const QuizPublicationCRUDProvider: React.FC<{ children: React.ReactNode }
     const queryClient = useQueryClient();
 
     const {
-        mutateAsync: getPublicationsByQuizIdMutation,
-        isLoading: isGettingPublicationsByQuizId,
-        error: errorGetPublicationsByQuizId,
-    } = useMutation<QuizPublicationDTO[], Error, string>({
-        mutationFn: async (quizId: string) => {
-            const response = await quizPublicationApi.apiPublicationsByQuizIdQuizIdGet({quizId});
-            return response.data;
-        },
-    });
-
-    const {
         mutateAsync: createPublicationMutation,
         isLoading: isCreatingPublication,
         error: errorCreatePublication,
@@ -34,8 +23,8 @@ export const QuizPublicationCRUDProvider: React.FC<{ children: React.ReactNode }
             });
             return response.data;
         },
-        onSuccess: () => {
-            queryClient.invalidateQueries(["publications"]);
+        onSuccess: (createdQuizPublicationDTO) => {
+            queryClient.invalidateQueries(["quizPublications", createdQuizPublicationDTO.quizId]);
         },
     });
 
@@ -51,7 +40,8 @@ export const QuizPublicationCRUDProvider: React.FC<{ children: React.ReactNode }
             });
             return response.data;
         },
-        onSuccess: () => {
+        onSuccess: (updatedQuizPublicationDTO) => {
+            queryClient.invalidateQueries(["quizPublications", updatedQuizPublicationDTO.quizId]);
             queryClient.invalidateQueries(["publications"]);
         },
     });
@@ -65,8 +55,9 @@ export const QuizPublicationCRUDProvider: React.FC<{ children: React.ReactNode }
             const response = await quizPublicationApi.apiPublicationsDeactivatePublicationIdPut({publicationId: publicationId});
             return response.data;
         },
-        onSuccess: () => {
-            queryClient.invalidateQueries(["publications"]);
+        onSuccess: (updatedQuizPublicationDTO, publicationId) => {
+            queryClient.invalidateQueries(["quizPublications", updatedQuizPublicationDTO.quizId]);
+            queryClient.invalidateQueries(["quizPublication", publicationId]);
         },
     });
 
@@ -79,41 +70,24 @@ export const QuizPublicationCRUDProvider: React.FC<{ children: React.ReactNode }
             await quizPublicationApi.apiPublicationsIdDelete({id});
         },
         onSuccess: () => {
-            queryClient.invalidateQueries(["publications"]);
-        },
-    });
-
-    const {
-        mutateAsync: getPublicationMutation,
-        isLoading: isGettingPublication,
-        error: errorGetPublication,
-    } = useMutation<QuizPublicationDTO, Error, string>({
-        mutationFn: async (publicationId: string) => {
-            const response = await quizPublicationApi.apiPublicationsPublicationIDGet({publicationID: publicationId});
-            return response.data;
+            queryClient.invalidateQueries(["quizPublications"]);
         },
     });
 
     const value = {
-        getPublicationsByQuizId: getPublicationsByQuizIdMutation,
         createPublication: createPublicationMutation,
         updatePublication: updatePublicationMutation,
         deletePublication: deletePublicationMutation,
-        getPublication: getPublicationMutation,
         deactivatePublication: deactivatePublicationMutation,
 
-        isGettingPublicationsByQuizId,
         isCreatingPublication,
         isUpdatingPublication,
         isDeletingPublication,
-        isGettingPublication,
         isDeactivatingPublication,
 
-        errorGetPublicationsByQuizId,
         errorCreatePublication,
         errorUpdatePublication,
         errorDeletePublication,
-        errorGetPublication,
         errorDeactivatePublication,
     };
 

@@ -43,29 +43,6 @@ public class QuizPublicationController {
 
     @GET
     @RolesAllowed("TEACHER")
-    @Path("/byReferences/{courseId}/{folderId}/{quizId}")
-    @Operation(summary = "Get publication by references")
-    @APIResponse(responseCode = "200", description = "Publication found", content = @Content(
-            mediaType = MediaType.APPLICATION_JSON,
-            schema = @Schema(implementation = QuizPublicationDTO.class)
-    ))
-    @APIResponse(responseCode = "404", description = "Publication not found")
-    public Response getPublicationByReferences(
-            @PathParam("courseId") String courseId,
-            @PathParam("folderId") String folderId,
-            @PathParam("quizId") String quizId) {
-
-        QuizPublication publication = this.quizPublicationService.getPublicationByReferences(
-                courseId,
-                folderId,
-                quizId
-        );
-        QuizPublicationDTO publicationDTO = this.quizPublicationService.getQuizPublicationById(publication.id);
-        return Response.ok(publicationDTO).build();
-    }
-
-    @GET
-    @RolesAllowed("TEACHER")
     @Path("/{publicationID}")
     @Operation(summary = "Get publication by id")
     @APIResponse(responseCode = "200", description = "Publication found", content = @Content(
@@ -79,20 +56,6 @@ public class QuizPublicationController {
     }
 
     @GET
-    @RolesAllowed("TEACHER")
-    @Operation(summary = "Get all publications")
-    @APIResponse(responseCode = "200", description = "List of all publications", content = @Content(
-            mediaType = MediaType.APPLICATION_JSON,
-            schema = @Schema(type = SchemaType.ARRAY, implementation = QuizPublicationDTO.class)
-    ))
-    public Response getAllPublications() {
-        List<QuizPublicationDTO> publications = this.quizPublicationService.getAllPublications().stream()
-                .map(pub -> this.quizPublicationService.getQuizPublicationById(pub.id))
-                .collect(Collectors.toList());
-        return Response.ok(publications).build();
-    }
-
-    @GET
     @Path("/byCode/{code}")
     @Operation(summary = "Get publication by access code")
     @APIResponse(responseCode = "200", description = "Publication found", content = @Content(
@@ -101,8 +64,7 @@ public class QuizPublicationController {
     ))
     @APIResponse(responseCode = "404", description = "Publication not found")
     public Response getPublicationByCode(@PathParam("code") String code) {
-        QuizPublication publication = this.quizPublicationService.getPublicationByCode(code);
-        QuizPublicationDTO publicationDTO = this.quizPublicationService.getQuizPublicationById(publication.id);
+        QuizPublicationDTO publicationDTO = this.quizPublicationService.getPublicationByCode(code);
         return Response.ok(publicationDTO).build();
     }
 
@@ -134,7 +96,7 @@ public class QuizPublicationController {
     ))
     @APIResponse(responseCode = "404", description = "Publication not found")
     public Response deactivateQuizPublication(@PathParam("publicationId") String publicationId) {
-        QuizPublicationDTO updatedDTO = this.quizPublicationService.deactivateQuizPublication(publicationId);
+        QuizPublicationDTO updatedDTO = this.quizPublicationService.deactivateQuizPublication(new ObjectId(publicationId));
 
         return Response.ok(updatedDTO).build();
     }
@@ -146,11 +108,7 @@ public class QuizPublicationController {
     @APIResponse(responseCode = "204", description = "Quiz publication deleted successfully")
     @APIResponse(responseCode = "404", description = "Publication not found")
     public Response deleteQuizPublication(@PathParam("id") String id) {
-        boolean deleted = this.quizPublicationService.deleteQuizPublication(id);
-
-        if (!deleted) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
+        boolean deleted = this.quizPublicationService.deleteQuizPublication(new ObjectId(id));
 
         return Response.noContent().build();
     }
@@ -165,9 +123,7 @@ public class QuizPublicationController {
     ))
     @APIResponse(responseCode = "404", description = "No publications found for the quiz")
     public Response getPublicationsByQuizId(@PathParam("quizId") String quizId) {
-        List<QuizPublicationDTO> publications = this.quizPublicationService.getPublicationsByQuizId(quizId);
+        List<QuizPublicationDTO> publications = this.quizPublicationService.getPublicationsByQuizId(new ObjectId(quizId));
         return Response.ok(publications).build();
     }
-
 }
-

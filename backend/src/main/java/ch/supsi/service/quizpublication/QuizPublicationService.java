@@ -52,27 +52,12 @@ public class QuizPublicationService implements IQuizPublicationService {
     }
 
     @Override
-    public QuizPublication getPublicationByReferences(String courseId, String folderId, String quizId) {
-        return this.quizPublicationRepository.find(
-                "courseId = ?1 and folderId = ?2 and quizId = ?3",
-                new ObjectId(courseId),
-                new ObjectId(folderId),
-                new ObjectId(quizId)
-        ).firstResult();
-    }
-
-    @Override
-    public List<QuizPublication> getAllPublications() {
-        return this.quizPublicationRepository.listAll();
-    }
-
-    @Override
-    public QuizPublication getPublicationByCode(String code) {
+    public QuizPublicationDTO getPublicationByCode(String code) {
         Optional<QuizPublication> quizPublicationOpt = this.quizPublicationRepository.findByCodeOptional(code);
         if (quizPublicationOpt.isEmpty()) {
             throw new NotFoundException("Quiz publication with code " + code + " not found");
         }
-        return quizPublicationOpt.get();
+        return this.quizPublicationMapper.toDTO(quizPublicationOpt.get());
     }
 
     @Override
@@ -94,10 +79,10 @@ public class QuizPublicationService implements IQuizPublicationService {
     }
 
     @Override
-    public QuizPublicationDTO deactivateQuizPublication(String publicationID) {
-        Optional<QuizPublication> quizPublicationOpt = this.quizPublicationRepository.findByIdOptional(new ObjectId(publicationID));
+    public QuizPublicationDTO deactivateQuizPublication(ObjectId publicationId) {
+        Optional<QuizPublication> quizPublicationOpt = this.quizPublicationRepository.findByIdOptional(publicationId);
         if (quizPublicationOpt.isEmpty()) {
-            throw new NotFoundException("Quiz publication with id " + publicationID + " not found");
+            throw new NotFoundException("Quiz publication with id " + publicationId + " not found");
         }
 
         QuizPublication quizPublication = quizPublicationOpt.get();
@@ -108,31 +93,21 @@ public class QuizPublicationService implements IQuizPublicationService {
     }
 
     @Override
-    public boolean deleteQuizPublication(String id) {
-        try {
-            ObjectId objectId = new ObjectId(id);
+    public boolean deleteQuizPublication(ObjectId publicationId) {
+        Optional<QuizPublication> publicationOpt = this.quizPublicationRepository.findByIdOptional(publicationId);
 
-            QuizPublication publication = quizPublicationRepository.findById(objectId);
-
-            if (publication == null) {
-                return false;
-            }
-
-            quizPublicationRepository.delete(publication);
-            return true;
-        } catch (Exception e) {
-            System.err.println("Errore durante l'eliminazione della pubblicazione: " + e.getMessage());
-            return false;
+        if (publicationOpt.isEmpty()) {
+            throw new NotFoundException("QUiz publication not found");
         }
+
+        quizPublicationRepository.delete(publicationOpt.get());
+        return true;
     }
 
     @Override
-    public List<QuizPublicationDTO> getPublicationsByQuizId(String quizId) {
-        ObjectId quizObjectId = new ObjectId(quizId);
-        List<QuizPublication> publications = this.quizPublicationRepository.findPublicationsByQuizId(quizObjectId);
-        if (publications.isEmpty()) {
-            throw new NotFoundException("No publications found for quiz with id " + quizId);
-        }
+    public List<QuizPublicationDTO> getPublicationsByQuizId(ObjectId quizId) {
+        List<QuizPublication> publications = this.quizPublicationRepository.findPublicationsByQuizId(quizId);
+
         return publications.stream()
                 .map(this.quizPublicationMapper::toDTO)
                 .collect(Collectors.toList());

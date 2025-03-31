@@ -4,25 +4,19 @@ import {QuizPublicationDTO} from "@dti-isin/backend-api-client";
 type CreateQuizPublicationDTO = Omit<QuizPublicationDTO, 'id' | 'publicationCode'>;
 
 export type QuizPublicationCRUDContextType = {
-    getPublicationsByQuizId: (quizId: string) => Promise<QuizPublicationDTO[]>;
     createPublication: (data: CreateQuizPublicationDTO) => Promise<QuizPublicationDTO>;
     updatePublication: (data: QuizPublicationDTO) => Promise<QuizPublicationDTO>;
     deletePublication: (id: string) => Promise<void>;
-    getPublication: (id: string) => Promise<QuizPublicationDTO>;
     deactivatePublication: (id: string) => Promise<QuizPublicationDTO>;
 
-    isGettingPublicationsByQuizId: boolean;
     isCreatingPublication: boolean;
     isUpdatingPublication: boolean;
     isDeletingPublication: boolean;
-    isGettingPublication: boolean;
     isDeactivatingPublication: boolean;
 
-    errorGetPublicationsByQuizId: Error | null;
     errorCreatePublication: Error | null;
     errorUpdatePublication: Error | null;
     errorDeletePublication: Error | null;
-    errorGetPublication: Error | null;
     errorDeactivatePublication: Error | null;
 };
 

@@ -3,9 +3,10 @@ import {QuizDTO} from '@dti-isin/backend-api-client';
 import {BsBarChart, BsPencil, BsRocket, BsTrash} from 'react-icons/bs';
 import {useNavigate} from 'react-router-dom';
 import {useQuizPublicationCRUD} from '../../hooks/quizPublication/useQuizPublicationCRUD.ts';
-import {useQuizPublicationVerification} from '../../hooks/quizPublication/useQuizPublicationVerification.ts';
 import {useQuizCRUD} from "../../hooks/quiz/useQuizCRUD.ts";
 import {FiAlertCircle} from "react-icons/fi";
+import {useGetQuizPublicationsByQuizId} from "../../hooks/quizPublication/useGetQuizPublicationsByQuizId.ts";
+import {LoadingSpinner} from "../common/LoadingSpinner.tsx";
 
 interface QuizRowProps {
     quiz: QuizDTO;
@@ -22,7 +23,7 @@ export const QuizRow: React.FC<QuizRowProps> = ({
     const navigate = useNavigate();
 
     const {createPublication, isCreatingPublication: isPublishing} = useQuizPublicationCRUD();
-    const {getPublicationByReferences} = useQuizPublicationVerification();
+    const {data: quizPublications, isLoading: isLoadingQuizPublications} = useGetQuizPublicationsByQuizId(quiz.id!);
 
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showPublishModal, setShowPublishModal] = useState(false);
@@ -30,19 +31,19 @@ export const QuizRow: React.FC<QuizRowProps> = ({
     const [error, setError] = useState<string | null>(null);
     const [publishError, setPublishError] = useState<string | null>(null);
 
+    if (isLoadingQuizPublications) {
+        return <LoadingSpinner fullScreen/>;
+    }
+
 
     const handlePublishQuiz = async () => {
         try {
             setPublishError(null);
 
-            const existing = await getPublicationByReferences(
-                courseId,
-                folderId,
-                quiz.id!
-            );
+            const existingPublication = quizPublications?.find(publication => publication.published);
 
-            if (existing?.published) {
-                navigate(`/courses/${courseId}/publications/${existing.id}/stats`);
+            if (existingPublication) {
+                navigate(`/courses/${courseId}/folders/${folderId}/quizzes/${quiz.id}/publications/${existingPublication.id}`);
                 return;
             }
 
@@ -67,7 +68,7 @@ export const QuizRow: React.FC<QuizRowProps> = ({
             if (!publication?.id) {
                 throw new Error('Pubblicazione creata senza ID valido');
             }
-            navigate(`/courses/${courseId}/publications/${publication.id}/stats`);
+            navigate(`/courses/${courseId}/folders/${folderId}/quizzes/${quiz.id}/publications/${publication.id}`);
 
         } catch (error) {
             handlePublishError(error);

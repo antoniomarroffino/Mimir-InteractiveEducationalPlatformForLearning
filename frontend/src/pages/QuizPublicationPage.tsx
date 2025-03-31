@@ -1,46 +1,29 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {QRCodeSVG} from 'qrcode.react';
 import {useQuizPublicationCRUD} from "../hooks/quizPublication/useQuizPublicationCRUD.ts";
-import {QuizPublicationDTO} from "@dti-isin/backend-api-client";
 import {useParams} from "react-router-dom";
 import {FaInfoCircle, FaPowerOff, FaQrcode} from 'react-icons/fa';
+import {useGetQuizPublicationById} from "../hooks/quizPublication/useGetQuizPublicationById.ts";
 
-export const QuizStatsPage: React.FC = () => {
+export const QuizPublicationPage: React.FC = () => {
     const {publicationId} = useParams<{ publicationId: string }>();
     const {
-        getPublication,
-        isGettingPublication,
-        errorGetPublication,
         deactivatePublication,
         isDeactivatingPublication,
     } = useQuizPublicationCRUD();
-    const [currentPublication, setCurrentPublication] = useState<QuizPublicationDTO | null>(null);
+    const {data: publication, isLoading: isLoadingPublication, error: errorGetPublication} = useGetQuizPublicationById(publicationId!);
 
-
-    useEffect(() => {
-        const fetchPublication = async () => {
-            try {
-                const publication = await getPublication(publicationId!);
-                setCurrentPublication(publication);
-            } catch (error) {
-                console.error("Errore nel recupero della pubblicazione:", error);
-            }
-        };
-
-        fetchPublication();
-    }, [publicationId, getPublication]);
-
+    //TODO: rivedere
     const handleTogglePublication = async () => {
-        if (!currentPublication) return;
+        if (!publication) return;
         try {
-            const updatedPublication = await deactivatePublication(publicationId!);
-            setCurrentPublication(updatedPublication);
+            await deactivatePublication(publicationId!);
         } catch (error) {
             console.error("Errore nell'aggiornamento:", error);
         }
     };
 
-    if (isGettingPublication) {
+    if (isLoadingPublication) {
         return (
             <div className="flex justify-center items-center h-screen">
                 <span className="loading loading-spinner loading-lg"></span>
@@ -48,7 +31,7 @@ export const QuizStatsPage: React.FC = () => {
         );
     }
 
-    if (errorGetPublication || !currentPublication) {
+    if (errorGetPublication || !publication) {
         return (
             <div className="alert alert-error shadow-lg m-4">
                 <div>
@@ -71,7 +54,7 @@ export const QuizStatsPage: React.FC = () => {
         );
     }
     const baseUrl = import.meta.env.VITE_REDIRECT_URI.replace(/\/+$/, '');
-    const fullUrl = `${baseUrl}/quiz/${currentPublication.publicationCode}`;
+    const fullUrl = `${baseUrl}/quiz/${publication.publicationCode}`;
 
     return (
         <div className="p-4 max-w-4xl mx-auto">
@@ -83,7 +66,7 @@ export const QuizStatsPage: React.FC = () => {
 
                 <button
                     onClick={handleTogglePublication}
-                    className={`btn gap-2 ${currentPublication.published
+                    className={`btn gap-2 ${publication.published
                         ? 'btn-error'
                         : 'btn-success'}
                         md:mt-0 mt-4`}
@@ -94,7 +77,7 @@ export const QuizStatsPage: React.FC = () => {
                     ) : (
                         <FaPowerOff/>
                     )}
-                    {currentPublication.published ? 'Disattiva Pubblicazione' : 'Attiva Pubblicazione'}
+                    {publication.published ? 'Disattiva Pubblicazione' : 'Attiva Pubblicazione'}
                 </button>
             </div>
 
@@ -107,7 +90,7 @@ export const QuizStatsPage: React.FC = () => {
                                 Codice di Accesso
                             </h2>
                             <div className="text-5xl font-mono my-4 text-center font-bold text-primary">
-                                {currentPublication.publicationCode}
+                                {publication.publicationCode}
                             </div>
                         </div>
                     </div>
@@ -125,11 +108,11 @@ export const QuizStatsPage: React.FC = () => {
                                 <div className="flex justify-between items-center">
                                     <span>Stato pubblicazione:</span>
                                     <div className="flex items-center gap-2">
-                                        <span className={`font-semibold ${currentPublication.published
+                                        <span className={`font-semibold ${publication.published
                                             ? 'text-success'
                                             : 'text-error'}`}
                                         >
-                                            {currentPublication.published ? 'Attivo' : 'Disattivato'}
+                                            {publication.published ? 'Attivo' : 'Disattivato'}
                                         </span>
                                     </div>
                                 </div>
@@ -150,7 +133,6 @@ export const QuizStatsPage: React.FC = () => {
                                 <QRCodeSVG
                                     value={fullUrl}
                                     size={256}
-                                    includeMargin
                                     className="rounded-lg"
                                 />
                             </div>

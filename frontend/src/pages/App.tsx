@@ -14,7 +14,7 @@ import StudentDashboard from "./student/StudentDashboard.tsx";
 import PublicHome from "./no-logged/PublicHome.tsx";
 import {AdminProvider} from "../provider/AdminProvider.tsx";
 import UserProfile from "../components/user/UserProfile.tsx";
-import {QuizStatsPage} from "./QuizStatsPage.tsx";
+import {QuizPublicationPage} from "./QuizPublicationPage.tsx";
 import {QuizRetrieveProvider} from '../provider/QuizRetrieveProvider.tsx';
 import {QuizPublicationProviders} from "../provider/quizPublication/QuizPublicationProviders.tsx";
 import {CourseProviders} from "../provider/course/CourseProviders.tsx";
@@ -95,8 +95,8 @@ const App = () => {
                                             }
                                         />
                                         <Route
-                                            path=":courseId/publications/:publicationId/stats"
-                                            element={<QuizStatsPage/>}
+                                            path=":courseId/folders/:folderId/quizzes/:quizId/publications/:publicationId"
+                                            element={<QuizPublicationPage/>}
                                         />
                                         <Route
                                             path=":courseId/folders/:folderId/quizzes/:quizId/results"
