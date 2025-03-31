@@ -1,7 +1,7 @@
 import {QuestionBankDTO} from '@dti-isin/backend-api-client';
 import {ArchiveBoxIcon, ArrowRightIcon} from '@heroicons/react/24/outline';
 import {useNavigate} from 'react-router-dom';
-import {motion} from "motion/react";
+import { motion } from 'framer-motion';
 
 export const QuestionBankCard = ({bank}: { bank: QuestionBankDTO }) => {
     const navigate = useNavigate();
