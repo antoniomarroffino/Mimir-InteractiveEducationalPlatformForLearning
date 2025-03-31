@@ -31,6 +31,8 @@ export const QuizRow: React.FC<QuizRowProps> = ({
     const [error, setError] = useState<string | null>(null);
     const [publishError, setPublishError] = useState<string | null>(null);
 
+    const [isAnonymous, setIsAnonymous] = useState<boolean>(false);
+
     if (isLoadingQuizPublications) {
         return <LoadingSpinner fullScreen />;
     }
@@ -61,11 +63,12 @@ export const QuizRow: React.FC<QuizRowProps> = ({
                 courseId,
                 folderId,
                 quizId: quiz.id!,
-                published: true
+                published: true,
+                anonymous: isAnonymous
             });
 
             if (!publication?.id) {
-                throw new Error('Pubblicazione creata senza ID valido');
+                console.error('Pubblicazione creata senza ID valido');
             }
             navigate(`/courses/${courseId}/folders/${folderId}/quizzes/${quiz.id}/publications/${publication.id}`);
 
@@ -73,6 +76,7 @@ export const QuizRow: React.FC<QuizRowProps> = ({
             handlePublishError(error);
         } finally {
             setShowPublishModal(false);
+            setIsAnonymous(false);
         }
     };
 
@@ -171,6 +175,26 @@ export const QuizRow: React.FC<QuizRowProps> = ({
                             Sei sicuro di voler pubblicare il quiz "{quiz.name}"?<br />
                             Una volta pubblicato, sarà accessibile agli studenti tramite codice.
                         </p>
+
+                        <div className="form-control">
+                            <label className="label cursor-pointer">
+                                <span className="label-text">
+                                    Consenti esecuzione del quiz senza login
+                                </span>
+                                <input
+                                    type="checkbox"
+                                    className="toggle toggle-primary"
+                                    checked={isAnonymous}
+                                    onChange={() => setIsAnonymous(!isAnonymous)}
+                                />
+                            </label>
+                            <p className="text-sm text-base-content/70">
+                                {isAnonymous
+                                    ? "Gli studenti potranno eseguire il quiz senza effettuare il login"
+                                    : "Gli studenti dovranno effettuare il login per eseguire il quiz"}
+                            </p>
+                        </div>
+
                         <div className="modal-action">
                             <button
                                 className="btn btn-success"
@@ -185,7 +209,10 @@ export const QuizRow: React.FC<QuizRowProps> = ({
                             </button>
                             <button
                                 className="btn"
-                                onClick={() => setShowPublishModal(false)}
+                                onClick={() => {
+                                    setShowPublishModal(false);
+                                    setIsAnonymous(false);
+                                }}
                             >
                                 Annulla
                             </button>
