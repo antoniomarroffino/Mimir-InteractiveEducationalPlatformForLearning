@@ -50,7 +50,7 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({quiz}) => {
                 case QuestionType.TrueFalse:
                     if (typeof answer === 'boolean' || answer === null) {
                         updatedResponses[currentQuestionIndex] = {
-                            type: QuestionType.TrueFalse,
+                            responseType: QuestionType.TrueFalse,
                             selectedAnswer: answer
                         } as TrueFalseQuestionResponseDTO;
                     }
@@ -59,7 +59,7 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({quiz}) => {
                 case QuestionType.MultipleChoice:
                     if (Array.isArray(answer) || answer === null) {
                         updatedResponses[currentQuestionIndex] = {
-                            type: QuestionType.MultipleChoice,
+                            responseType: QuestionType.MultipleChoice,
                             selectedAnswerIndexes: answer || []
                         } as MultipleChoiceQuestionResponseDTO;
                     }
@@ -75,7 +75,7 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({quiz}) => {
 
         if (!response) return null;
 
-        switch (response.type) {
+        switch (response.responseType) {
             case QuestionType.TrueFalse:
                 return (response as TrueFalseQuestionResponseDTO).selectedAnswer;
 

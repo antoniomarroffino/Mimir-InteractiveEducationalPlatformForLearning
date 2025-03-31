@@ -38,7 +38,7 @@ public class QuizAttemptService implements IQuizAttemptService {
             if (quizAttemptDTO.getResponses() != null) {
                 System.out.println("Numero di risposte: " + quizAttemptDTO.getResponses().size());
                 quizAttemptDTO.getResponses().forEach(response -> {
-                    System.out.println("Risposta - Tipo: " + response.getType());
+                    System.out.println("Risposta - Tipo: " + response.getResponseType());
                     // Aggiungi altri dettagli specifici del tipo di risposta
                 });
             } else {

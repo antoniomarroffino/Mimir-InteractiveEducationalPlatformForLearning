@@ -13,7 +13,7 @@ public class TrueFalseQuestionResponseDTO extends QuestionResponseDTO {
     private Boolean selectedAnswer;
 
     public TrueFalseQuestionResponseDTO() {
-        this.setType(QuestionType.TRUE_FALSE);
+        this.setResponseType(QuestionType.TRUE_FALSE);
     }
 
     public Boolean getSelectedAnswer() {

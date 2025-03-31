@@ -10,7 +10,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         include = JsonTypeInfo.As.PROPERTY,
-        property = "type",
+        property = "responseType",
         visible = true
 )
 @JsonSubTypes({
@@ -23,7 +23,7 @@ public abstract class QuestionResponseDTO {
 
     @Schema(required = true)
     @NotNull(message = "Response type cannot be null")
-    private QuestionType type;
+    private QuestionType responseType;
 
     public QuestionResponseDTO() {
     }
@@ -36,11 +36,11 @@ public abstract class QuestionResponseDTO {
         this.id = id;
     }
 
-    public QuestionType getType() {
-        return type;
+    public QuestionType getResponseType() {
+        return responseType;
     }
 
-    public void setType(QuestionType type) {
-        this.type = type;
+    public void setResponseType(QuestionType responseType) {
+        this.responseType = responseType;
     }
 }

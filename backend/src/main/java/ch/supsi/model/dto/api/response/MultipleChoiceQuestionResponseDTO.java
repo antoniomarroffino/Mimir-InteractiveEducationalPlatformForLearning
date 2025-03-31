@@ -15,7 +15,7 @@ public class MultipleChoiceQuestionResponseDTO extends QuestionResponseDTO {
     private List<Integer> selectedAnswerIndexes;
 
     public MultipleChoiceQuestionResponseDTO() {
-        this.setType(QuestionType.MULTIPLE_CHOICE);
+        this.setResponseType(QuestionType.MULTIPLE_CHOICE);
     }
 
     public List<Integer> getSelectedAnswerIndexes() {

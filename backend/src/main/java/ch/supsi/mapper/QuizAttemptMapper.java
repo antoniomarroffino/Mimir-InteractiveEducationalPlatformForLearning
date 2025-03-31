@@ -34,7 +34,7 @@ public class QuizAttemptMapper implements IBaseMapper<QuizAttempt, QuizAttemptDT
 
         if (quizAttempt.responses != null) {
             dto.setResponses(quizAttempt.responses.stream()
-                    .map(question -> this.questionResponseMapperBuilder.getQuestionResponseDTOMapper(question.type).toDTO(question))
+                    .map(question -> this.questionResponseMapperBuilder.getQuestionResponseDTOMapper(question.responseType).toDTO(question))
                     .collect(Collectors.toList()));
         }
 
@@ -63,7 +63,7 @@ public class QuizAttemptMapper implements IBaseMapper<QuizAttempt, QuizAttemptDT
         quizAttempt.completedAt = dto.getCompletedAt();
 
         quizAttempt.responses = dto.getResponses().stream()
-                .map(qDTO -> this.questionResponseMapperBuilder.getQuestionResponseDTOMapper(qDTO.getType()).toEntity(qDTO))
+                .map(qDTO -> this.questionResponseMapperBuilder.getQuestionResponseDTOMapper(qDTO.getResponseType()).toEntity(qDTO))
                 .collect(Collectors.toList());
 
 

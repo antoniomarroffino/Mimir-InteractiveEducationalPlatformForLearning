@@ -9,7 +9,7 @@ public abstract class AbstractQuestionResponseMapper<E extends QuestionResponse,
 
     protected void mapCommonFieldsResponseToResponseDTO(QuestionResponse response, QuestionResponseDTO dto) {
         dto.setId(response.id.toString());
-        dto.setType(response.type);
+        dto.setResponseType(response.responseType);
     }
 
     protected void mapCommonFieldsResponseDTOToResponse(QuestionResponseDTO dto, QuestionResponse response) {

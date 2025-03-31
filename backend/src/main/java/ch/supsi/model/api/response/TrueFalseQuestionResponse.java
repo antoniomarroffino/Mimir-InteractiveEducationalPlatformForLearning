@@ -5,7 +5,7 @@ import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 @Schema(description = "True/False Question Response model", name = "TrueFalseQuestionResponse")
-@BsonDiscriminator(key = "type", value = "TRUE_FALSE")
+@BsonDiscriminator(value = "TRUE_FALSE")
 public class TrueFalseQuestionResponse extends QuestionResponse {
     public Boolean selectedAnswer;
 
