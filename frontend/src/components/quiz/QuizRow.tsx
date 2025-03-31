@@ -1,12 +1,12 @@
-import React, {useState} from 'react';
-import {QuizDTO} from '@dti-isin/backend-api-client';
-import {BsBarChart, BsPencil, BsRocket, BsTrash} from 'react-icons/bs';
-import {useNavigate} from 'react-router-dom';
-import {useQuizPublicationCRUD} from '../../hooks/quizPublication/useQuizPublicationCRUD.ts';
-import {useQuizCRUD} from "../../hooks/quiz/useQuizCRUD.ts";
-import {FiAlertCircle} from "react-icons/fi";
-import {useGetQuizPublicationsByQuizId} from "../../hooks/quizPublication/useGetQuizPublicationsByQuizId.ts";
-import {LoadingSpinner} from "../common/LoadingSpinner.tsx";
+import React, { useState } from 'react';
+import { QuizDTO } from '@dti-isin/backend-api-client';
+import { BsBarChart, BsPencil, BsRocket, BsTrash } from 'react-icons/bs';
+import { useNavigate } from 'react-router-dom';
+import { useQuizPublicationCRUD } from '../../hooks/quizPublication/useQuizPublicationCRUD.ts';
+import { useQuizCRUD } from "../../hooks/quiz/useQuizCRUD.ts";
+import { FiAlertCircle } from "react-icons/fi";
+import { useGetQuizPublicationsByQuizId } from "../../hooks/quizPublication/useGetQuizPublicationsByQuizId.ts";
+import { LoadingSpinner } from "../common/LoadingSpinner.tsx";
 
 interface QuizRowProps {
     quiz: QuizDTO;
@@ -19,11 +19,11 @@ export const QuizRow: React.FC<QuizRowProps> = ({
                                                     courseId,
                                                     folderId,
                                                 }) => {
-    const {deleteQuiz} = useQuizCRUD();
+    const { deleteQuiz } = useQuizCRUD();
     const navigate = useNavigate();
 
-    const {createPublication, isCreatingPublication: isPublishing} = useQuizPublicationCRUD();
-    const {data: quizPublications, isLoading: isLoadingQuizPublications} = useGetQuizPublicationsByQuizId(quiz.id!);
+    const { createPublication, isCreatingPublication: isPublishing } = useQuizPublicationCRUD();
+    const { data: quizPublications, isLoading: isLoadingQuizPublications } = useGetQuizPublicationsByQuizId(quiz.id!);
 
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showPublishModal, setShowPublishModal] = useState(false);
@@ -32,9 +32,8 @@ export const QuizRow: React.FC<QuizRowProps> = ({
     const [publishError, setPublishError] = useState<string | null>(null);
 
     if (isLoadingQuizPublications) {
-        return <LoadingSpinner fullScreen/>;
+        return <LoadingSpinner fullScreen />;
     }
-
 
     const handlePublishQuiz = async () => {
         try {
@@ -78,8 +77,11 @@ export const QuizRow: React.FC<QuizRowProps> = ({
     };
 
     const handleResults = async () => {
+        if (!quizPublications || quizPublications.length === 0) {
+            alert("Non esistono pubblicazioni per questo quiz, non è possibile mostrare i risultati.");
+            return;
+        }
         navigate(`/courses/${courseId}/folders/${folderId}/quizzes/${quiz.id}/results`);
-
     };
 
     const handlePublishError = (error: unknown) => {
@@ -92,6 +94,11 @@ export const QuizRow: React.FC<QuizRowProps> = ({
     };
 
     const handleUpdateQuiz = () => {
+        const activePublication = quizPublications?.find(publication => publication.published);
+        if (activePublication) {
+            alert("L'aggiornamento del quiz non può essere fatto perché esiste una pubblicazione attiva.");
+            return;
+        }
         navigate(`/courses/${courseId}/folders/${folderId}/quizzes/${quiz.id}/edit`);
     };
 
@@ -113,10 +120,10 @@ export const QuizRow: React.FC<QuizRowProps> = ({
     return (
         <>
             <div
-                className="p-4 bg-base-100 rounded-lg flex justify-between items-center border-2 border-base-200 hover:border-primary/30 shadow-sm hover:shadow-xs transition-all duration-200 ease-out">
+                className="p-4 bg-base-100 rounded-lg flex justify-between items-center border-2 border-base-200 hover:border-primary/30 shadow-sm hover:shadow-xs transition-all duration-200 ease-out"
+            >
                 <div className="flex items-center gap-2">
                     <span>{quiz.name}</span>
-
                 </div>
                 <div className="flex gap-2">
                     <button
@@ -124,28 +131,28 @@ export const QuizRow: React.FC<QuizRowProps> = ({
                         className="btn btn-sm btn-ghost"
                         title="Pubblica quiz"
                     >
-                        <BsRocket className="text-success"/>
+                        <BsRocket className="text-success" />
                     </button>
                     <button
                         onClick={handleResults}
                         className="btn btn-sm btn-ghost"
                         title="Vedi Risultati"
                     >
-                        <BsBarChart className="text-info"/>
+                        <BsBarChart className="text-info" />
                     </button>
                     <button
                         onClick={handleUpdateQuiz}
                         className="btn btn-sm btn-ghost"
                         title="Modifica quiz"
                     >
-                        <BsPencil className="text-primary"/>
+                        <BsPencil className="text-primary" />
                     </button>
                     <button
                         onClick={() => setShowDeleteModal(true)}
                         className="btn btn-sm btn-ghost"
                         title="Elimina quiz"
                     >
-                        <BsTrash className="text-error"/>
+                        <BsTrash className="text-error" />
                     </button>
                 </div>
             </div>
@@ -161,7 +168,7 @@ export const QuizRow: React.FC<QuizRowProps> = ({
                             </div>
                         )}
                         <p className="py-4">
-                            Sei sicuro di voler pubblicare il quiz "{quiz.name}"?<br/>
+                            Sei sicuro di voler pubblicare il quiz "{quiz.name}"?<br />
                             Una volta pubblicato, sarà accessibile agli studenti tramite codice.
                         </p>
                         <div className="modal-action">
@@ -199,14 +206,14 @@ export const QuizRow: React.FC<QuizRowProps> = ({
                         <form method="dialog" className="space-y-6">
                             <div className="flex items-center gap-3">
                                 <div className="p-2 rounded-full bg-error/10 text-error">
-                                    <BsTrash className="text-2xl"/>
+                                    <BsTrash className="text-2xl" />
                                 </div>
                                 <h3 className="font-bold text-lg">Confirm Deletion</h3>
                             </div>
 
                             {error && (
                                 <div className="alert alert-error">
-                                    <FiAlertCircle className="text-lg"/>
+                                    <FiAlertCircle className="text-lg" />
                                     {error}
                                 </div>
                             )}
@@ -227,7 +234,7 @@ export const QuizRow: React.FC<QuizRowProps> = ({
                                     className="btn btn-error gap-2"
                                     onClick={handleDeleteQuiz}
                                 >
-                                    <BsTrash/>
+                                    <BsTrash />
                                     Delete Permanently
                                 </button>
                             </div>
