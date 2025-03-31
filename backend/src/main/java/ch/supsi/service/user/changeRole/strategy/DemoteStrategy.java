@@ -18,7 +18,7 @@ public class DemoteStrategy implements ChangeRoleStrategy {
     public void changeRole(com.microsoft.graph.models.User microsoftUser) {
         Optional<User> userToDeleteOpt = this.userRepository.findByAzureOidOptional(microsoftUser.id);
 
-        if(userToDeleteOpt.isEmpty())
+        if (userToDeleteOpt.isEmpty())
             return;
 
         User userToDelete = userToDeleteOpt.get();

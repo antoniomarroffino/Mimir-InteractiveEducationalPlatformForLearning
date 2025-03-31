@@ -1,6 +1,6 @@
 import React from 'react';
-import { QuestionType } from '@dti-isin/backend-api-client';
-import { BsListCheck, BsToggleOn } from 'react-icons/bs';
+import {QuestionType} from '@dti-isin/backend-api-client';
+import {BsListCheck, BsToggleOn} from 'react-icons/bs';
 
 interface DraftQuestionElementProps {
     questionText?: string;
@@ -15,14 +15,14 @@ export const DraftQuestionElement: React.FC<DraftQuestionElementProps> = ({
         switch (questionType) {
             case QuestionType.TrueFalse:
                 return {
-                    icon: <BsToggleOn className="text-green-600" />,
+                    icon: <BsToggleOn className="text-green-600"/>,
                     borderColor: 'border-green-500',
                     bgColor: 'bg-green-50',
                     textColor: 'text-green-700'
                 };
             case QuestionType.MultipleChoice:
                 return {
-                    icon: <BsListCheck className="text-blue-600" />,
+                    icon: <BsListCheck className="text-blue-600"/>,
                     borderColor: 'border-blue-500',
                     bgColor: 'bg-blue-50',
                     textColor: 'text-blue-700'
@@ -76,7 +76,8 @@ export const DraftQuestionElement: React.FC<DraftQuestionElementProps> = ({
                             Draft Question
                         </span>
                         {questionType && (
-                            <span className={`text-xs rounded px-2 py-0.5 ${typeStyles.bgColor} ${typeStyles.textColor}`}>
+                            <span
+                                className={`text-xs rounded px-2 py-0.5 ${typeStyles.bgColor} ${typeStyles.textColor}`}>
                                 {questionType}
                             </span>
                         )}

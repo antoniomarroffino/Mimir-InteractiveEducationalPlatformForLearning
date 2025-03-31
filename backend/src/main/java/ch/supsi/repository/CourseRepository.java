@@ -13,6 +13,7 @@ public class CourseRepository implements PanacheMongoRepository<Course> {
     public List<Course> listAll() {
         return mongoCollection().find().into(new ArrayList<>());
     }
+
     public Optional<Course> findByNameOptional(String name) {
         return find("{'name': ?1}", name).firstResultOptional();
     }

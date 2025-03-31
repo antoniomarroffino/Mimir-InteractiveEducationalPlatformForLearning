@@ -8,14 +8,18 @@ import org.bson.types.ObjectId;
 public abstract class AbstractQuestionMapper<E extends Question, D extends QuestionDTO> implements IBaseMapper<E, D> {
 
     protected void mapCommonFieldsQuestionToQuestionDTO(Question question, QuestionDTO dto) {
-        dto.setId(question.id.toString());
+        dto.setId(question.id != null ? question.id.toString() : null);
         dto.setQuestionText(question.questionText);
         dto.setType(question.type);
+        dto.setQuestionBankId(question.questionBankId);
     }
 
     protected void mapCommonFieldsQuestionDTOToQuestion(QuestionDTO dto, Question question) {
-        question.id = new ObjectId(dto.getId());
+        if (dto.getId() != null) {
+            question.id = new ObjectId(dto.getId());
+        }
         question.questionText = dto.getQuestionText();
+        question.questionBankId = dto.getQuestionBankId();
     }
 }
 

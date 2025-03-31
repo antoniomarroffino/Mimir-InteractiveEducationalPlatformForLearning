@@ -2,9 +2,9 @@ import {createContext} from "react";
 import {FolderDTO} from "@dti-isin/backend-api-client";
 
 export type FolderCRUDContextType = {
-    createFolder: (name: string) => Promise<FolderDTO>;
-    updateFolder: (id: string, name: string) => Promise<FolderDTO>;
-    deleteFolder: (id: string) => Promise<void>;
+    createFolder: (courseId: string, folderDTO: FolderDTO) => Promise<FolderDTO>;
+    updateFolder: (courseId: string, folderId: string, folderDTO: FolderDTO) => Promise<FolderDTO>;
+    deleteFolder: (courseId: string, folderId: string) => Promise<void>;
     isCreatingFolder: boolean;
     isUpdatingFolder: boolean;
     isDeletingFolder: boolean;

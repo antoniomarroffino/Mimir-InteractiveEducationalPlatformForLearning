@@ -90,16 +90,14 @@ export const QuizRow: React.FC<QuizRowProps> = ({
         );
     };
 
-    // Naviga alla pagina di modifica del quiz
     const handleUpdateQuiz = () => {
         navigate(`/courses/${courseId}/folders/${folderId}/quizzes/${quiz.id}/edit`);
     };
 
-    // Elimina il quiz
     const handleDeleteQuiz = async () => {
         try {
             setError(null);
-            await deleteQuiz(folderId, quiz.id!);
+            await deleteQuiz(courseId, folderId, quiz.id!);
             setShowDeleteModal(false);
         } catch (error) {
             console.error('Eliminazione quiz fallita:', error);

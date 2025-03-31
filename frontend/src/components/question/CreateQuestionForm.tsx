@@ -9,10 +9,10 @@ interface CreateQuestionFormProps {
 }
 
 export const CreateQuestionForm: React.FC<CreateQuestionFormProps> = ({
-                                                                   onStartCreation,
-                                                                   isDisabled = false,
-                                                                   className = ''
-                                                               }) => {
+                                                                          onStartCreation,
+                                                                          isDisabled = false,
+                                                                          className = ''
+                                                                      }) => {
     const handleClick = () => {
         if (!isDisabled) {
             onStartCreation();

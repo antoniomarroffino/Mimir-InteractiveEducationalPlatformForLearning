@@ -1,41 +1,44 @@
 import React from 'react';
-import {
-    BsQuestionDiamond,
-    BsLightbulb,
-    BsListCheck
-} from 'react-icons/bs';
+import {LightBulbIcon} from '@heroicons/react/24/outline';
 
-export const DefaultQuestionEditorScreen: React.FC = () => {
+interface DefaultQuestionEditorScreenProps {
+    isPreview?: boolean;
+}
+
+export const DefaultQuestionEditorScreen: React.FC<DefaultQuestionEditorScreenProps> = ({isPreview = false}) => {
     return (
-        <div className="bg-base-100 rounded-lg p-8 shadow flex flex-col items-center justify-center text-center">
-            <div className="mb-6 opacity-50">
-                <BsQuestionDiamond className="text-6xl mx-auto text-primary/50" />
-            </div>
-            <h2 className="text-2xl font-bold mb-4 text-base-content/70">
-                Ready to Create Questions?
-            </h2>
-            <div className="max-w-md text-base-content/60 mb-6">
-                <p>
-                    Start by clicking the "+" button to begin crafting
-                    engaging questions for your quiz.
-                </p>
-            </div>
-            <div className="grid grid-cols-2 gap-4 max-w-md">
-                <div className="bg-base-200 rounded-lg p-4 text-center">
-                    <BsLightbulb className="text-3xl mx-auto mb-2 text-warning" />
-                    <h3 className="font-semibold mb-2">Tip 1</h3>
-                    <p className="text-sm text-base-content/70">
-                        Clear and concise questions work best
+        <div className="bg-base-100 rounded-lg p-6 shadow-lg border-2 border-dashed border-primary/20">
+            {isPreview ? (
+                <div className="text-center space-y-4">
+                    <LightBulbIcon className="w-12 h-12 text-primary mx-auto mb-4"/>
+                    <h3 className="text-xl font-semibold text-primary mb-2">Question Preview</h3>
+                    <p className="text-base-content/70 mb-4">
+                        This is a live preview of how the question will appear in the quiz.
                     </p>
+                    <div className="bg-primary/5 p-4 rounded-lg">
+                        <p className="text-sm text-primary/80">
+                            📌 Select questions from the Question Banks panel to build your quiz
+                        </p>
+                    </div>
                 </div>
-                <div className="bg-base-200 rounded-lg p-4 text-center">
-                    <BsListCheck className="text-3xl mx-auto mb-2 text-success" />
-                    <h3 className="font-semibold mb-2">Tip 2</h3>
-                    <p className="text-sm text-base-content/70">
-                        Vary your question types for engaging quizzes
+            ) : (
+                <div className="text-center space-y-4">
+                    <LightBulbIcon className="w-12 h-12 text-primary mx-auto mb-4"/>
+                    <h3 className="text-xl font-semibold text-primary mb-2">
+                        {isPreview ? 'Question Preview' : 'Create New Question'}
+                    </h3>
+                    <p className="text-base-content/70">
+                        {isPreview
+                            ? 'Select a question type to start editing'
+                            : 'Select a question type from the toolbar above to start creating your question'}
                     </p>
+                    <div className="bg-primary/5 p-4 rounded-lg mt-4">
+                        <p className="text-sm text-primary/80">
+                            💡 Pro tip: Use the question banks to browse and import existing questions
+                        </p>
+                    </div>
                 </div>
-            </div>
+            )}
         </div>
     );
 };

@@ -98,6 +98,8 @@ public class CourseService implements ICourseService {
         if (currentUser == null)
             throw new InternalServerErrorException();
 
+        this.verifyCourseIsValid(courseDTO);
+
         Optional<Course> courseOpt = this.courseRepository.findByIdOptional(id);
         if (courseOpt.isEmpty())
             throw new NotFoundException("Course " + id + " not found");
@@ -107,12 +109,8 @@ public class CourseService implements ICourseService {
 
         Course existingCourse = courseOpt.get();
 
-        String newName = courseDTO.getName().trim();
+        String newName = courseDTO.getName();
         if (!existingCourse.name.equalsIgnoreCase(newName)) {
-            if (this.isCourseNameDuplicated(newName)) {
-                throw new BadRequestException("Course name '" + newName + "' already exists");
-            }
-
             existingCourse.name = courseDTO.getName();
         }
 

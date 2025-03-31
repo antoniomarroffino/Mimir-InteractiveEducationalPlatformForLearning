@@ -177,7 +177,8 @@ const AdminDashboard = () => {
                                             >
                                                 <div className="flex items-center gap-4">
                                                     <div className="avatar placeholder">
-                                                        <div className="bg-neutral text-neutral-content rounded-full w-12">
+                                                        <div
+                                                            className="bg-neutral text-neutral-content rounded-full w-12">
                                                             <span>{teacher.name?.[0]?.toUpperCase() || teacher.email?.toUpperCase()}</span>
                                                         </div>
                                                     </div>

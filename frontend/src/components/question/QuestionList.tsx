@@ -1,22 +1,15 @@
 import React from "react";
-import { MultipleChoiceQuestionDTO, QuestionDTO, TrueFalseQuestionDTO } from '@dti-isin/backend-api-client';
-import { QuestionElement } from './QuestionElement';
-
-type SpecificQuestionDTO =
-    | QuestionDTO
-    | TrueFalseQuestionDTO
-    | MultipleChoiceQuestionDTO;
+import {QuestionElement} from './QuestionElement';
+import {SpecificQuestionDTO} from "../../hooks/question/useQuestionCreation.ts";
 
 interface QuestionsListProps {
     questions: SpecificQuestionDTO[];
-    onEditQuestion?: (question: SpecificQuestionDTO) => void;
     onStartEditing?: (question: SpecificQuestionDTO) => void;
     onDeleteQuestion?: (questionId: string) => void;
 }
 
 export const QuestionsList: React.FC<QuestionsListProps> = ({
                                                                 questions,
-                                                                onEditQuestion,
                                                                 onStartEditing,
                                                                 onDeleteQuestion
                                                             }) => {
@@ -35,7 +28,6 @@ export const QuestionsList: React.FC<QuestionsListProps> = ({
                             key={question.id}
                             question={question}
                             index={index}
-                            onEdit={onEditQuestion}
                             onDelete={onDeleteQuestion}
                             onStartEditing={() => onStartEditing?.(question)}
                         />

@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {MultipleChoiceQuestionDTO, QuestionDTO, QuestionType, TrueFalseQuestionDTO} from '@dti-isin/backend-api-client';
-import {BsCheckCircle, BsLightbulb, BsListCheck, BsPencil, BsToggleOn, BsTrash, BsXCircle} from 'react-icons/bs';
+import {BsCheckCircle, BsLightbulb, BsListCheck, BsToggleOn, BsTrash, BsXCircle} from 'react-icons/bs';
 import {Tooltip} from '../common/Tooltip';
 
 type SpecificQuestionDTO =
@@ -11,7 +11,6 @@ type SpecificQuestionDTO =
 interface QuestionElementProps {
     question: SpecificQuestionDTO;
     index: number;
-    onEdit?: (question: SpecificQuestionDTO) => void;
     onDelete?: (questionId: string) => void;
     onStartEditing?: () => void;
 }
@@ -127,7 +126,6 @@ export const QuestionElement: React.FC<QuestionElementProps> = ({
             `}
             onClick={() => onStartEditing?.()}
         >
-            {/* Indicatore laterale */}
             <div
                 className={`
                     absolute 
@@ -182,30 +180,17 @@ export const QuestionElement: React.FC<QuestionElementProps> = ({
                             </Tooltip>
                         </div>
                     ) : (
-                        <>
-                            <Tooltip text="Edit Question">
-                                <button
-                                    className="btn btn-xs btn-ghost text-base-content/70 hover:text-primary"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-
-                                    }}
-                                >
-                                    <BsPencil className="text-xs"/>
-                                </button>
-                            </Tooltip>
-                            <Tooltip text="Delete Question">
-                                <button
-                                    className="btn btn-xs btn-ghost text-base-content/70 hover:text-error"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        setIsConfirmingDelete(true);
-                                    }}
-                                >
-                                    <BsTrash className="text-xs"/>
-                                </button>
-                            </Tooltip>
-                        </>
+                        <Tooltip text="Delete Question">
+                            <button
+                                className="btn btn-xs btn-ghost text-base-content/70 hover:text-error"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setIsConfirmingDelete(true);
+                                }}
+                            >
+                                <BsTrash className="text-xs"/>
+                            </button>
+                        </Tooltip>
                     )}
                 </div>
             </div>

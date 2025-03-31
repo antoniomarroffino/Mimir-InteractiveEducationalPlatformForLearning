@@ -1,22 +1,23 @@
-import { Link } from 'react-router-dom';
-import { FiHome, FiMenu, FiX, FiUser } from 'react-icons/fi';
+import {Link} from 'react-router-dom';
+import {FiHome, FiMenu, FiUser, FiX} from 'react-icons/fi';
 import LogoutButton from "../../auth/LogoutButton.tsx";
-import { useState } from "react";
+import {useState} from "react";
 import '../../App.css';
-import { useAuth } from "../../hooks/useAuth.ts";
-import { Role } from "@dti-isin/backend-api-client";
+import {useAuth} from "../../hooks/useAuth.ts";
+import {Role} from "@dti-isin/backend-api-client";
 import LoginButton from "../../auth/LoginButton.tsx";
 
 const Header = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const { user } = useAuth();
+    const {user} = useAuth();
 
     const navigationLinks = [
-        { name: 'Home', path: '/', icon: <FiHome />, roles: [Role.Admin, Role.Teacher, Role.Student] },
-        { name: 'Admin', path: '/admin', roles: [Role.Admin] },
-        { name: 'Corsi', path: '/courses', roles: [Role.Teacher] },
-        { name: 'Dashboard', path: '/dashboard', roles: [Role.Student] },
+        {name: 'Home', path: '/', icon: <FiHome/>, roles: [Role.Admin, Role.Teacher, Role.Student]},
+        {name: 'Admin', path: '/admin', roles: [Role.Admin]},
+        {name: 'Corsi', path: '/courses', roles: [Role.Teacher]},
+        {name: 'Question Bank', path: '/question_banks', roles: [Role.Teacher]},
+        {name: 'Dashboard', path: '/dashboard', roles: [Role.Student]},
     ];
 
     const filteredLinks = navigationLinks.filter(link =>
@@ -24,7 +25,8 @@ const Header = () => {
     );
 
     return (
-        <header className="navbar bg-gradient-to-r from-primary to-secondary text-primary-content shadow-lg px-4 lg:px-8">
+        <header
+            className="navbar bg-gradient-to-r from-primary to-secondary text-primary-content shadow-lg px-4 lg:px-8">
             {/* Logo */}
             <div className="navbar-start">
                 <Link to="/" className="flex items-center gap-2">
@@ -43,7 +45,7 @@ const Header = () => {
                     className="btn btn-ghost text-xl"
                     onClick={() => setIsOpen(!isOpen)}
                 >
-                    {isOpen ? <FiX /> : <FiMenu />}
+                    {isOpen ? <FiX/> : <FiMenu/>}
                 </button>
 
                 {isOpen && (
@@ -69,13 +71,13 @@ const Header = () => {
                                             className="text-base-content hover:bg-primary/10"
                                             onClick={() => setIsOpen(false)}
                                         >
-                                            <FiUser className="mr-2" />
+                                            <FiUser className="mr-2"/>
                                             Profilo
                                         </Link>
-                                        <LogoutButton className="btn btn-primary w-full mt-2" />
+                                        <LogoutButton className="btn btn-primary w-full mt-2"/>
                                     </>
                                 ) : (
-                                    <LoginButton className="btn btn-outline w-full" />
+                                    <LoginButton className="btn btn-outline w-full"/>
                                 )}
                             </li>
                         </ul>
@@ -110,7 +112,7 @@ const Header = () => {
                             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                         >
                             <div className="w-10 rounded-full">
-                                <FiUser className="w-6 h-6 mx-auto" />
+                                <FiUser className="w-6 h-6 mx-auto"/>
                             </div>
                         </button>
 
@@ -125,18 +127,18 @@ const Header = () => {
                                         className="text-base-content hover:bg-primary/10"
                                         onClick={() => setIsDropdownOpen(false)}
                                     >
-                                        <FiUser className="text-lg" />
+                                        <FiUser className="text-lg"/>
                                         Profilo
                                     </Link>
                                 </li>
                                 <li className="px-1.5 pb-1.5">
-                                    <LogoutButton className="text-error hover:bg-error/10" />
+                                    <LogoutButton className="text-error hover:bg-error/10"/>
                                 </li>
                             </ul>
                         )}
                     </div>
                 ) : (
-                    <LoginButton className="btn btn-outline" />
+                    <LoginButton className="btn btn-outline"/>
                 )}
             </div>
         </header>

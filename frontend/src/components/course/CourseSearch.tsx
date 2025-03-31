@@ -112,7 +112,8 @@ export const CourseSearch = () => {
                     </button>
 
                     {showFilterDropdown && (
-                        <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-base-200 z-50">
+                        <div
+                            className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-base-200 z-50">
                             <div className="p-2 space-y-1">
                                 <button
                                     className={`w-full px-4 py-2 text-sm text-left rounded-md flex items-center gap-2 ${

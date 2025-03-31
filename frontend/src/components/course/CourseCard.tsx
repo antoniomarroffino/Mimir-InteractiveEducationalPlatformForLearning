@@ -137,7 +137,8 @@ export const CourseCard = ({
                             >
                                 {isAssigning ? (
                                     <>
-                                        <div className="h-5 w-5 border-2 border-white/50 border-t-transparent rounded-full animate-spin"/>
+                                        <div
+                                            className="h-5 w-5 border-2 border-white/50 border-t-transparent rounded-full animate-spin"/>
                                         <span>Assigning...</span>
                                     </>
                                 ) : (
@@ -173,7 +174,8 @@ export const CourseCard = ({
                             "
                         >
                             <span className="font-medium">View Details</span>
-                            <FiChevronRight className="mt-0.5 transform group-hover:translate-x-0.5 transition-transform"/>
+                            <FiChevronRight
+                                className="mt-0.5 transform group-hover:translate-x-0.5 transition-transform"/>
                         </Link>
                     </div>
                 </div>

@@ -3,10 +3,9 @@ import {FolderDTO} from "@dti-isin/backend-api-client";
 import {BsChevronDown, BsChevronUp, BsFolder2} from "react-icons/bs";
 import {QuizList} from "../quiz/QuizList";
 import {useQuizCRUD} from "../../hooks/quiz/useQuizCRUD.ts";
-import {useFolderSelection} from "../../hooks/folder/useFolderSelection.ts";
-import {useQuizSelection} from "../../hooks/quiz/useQuizSelection.ts";
 import {FiEdit2, FiPlus} from "react-icons/fi";
 import {useFolderCRUD} from "../../hooks/folder/useFolderCRUD.ts";
+import {useNavigate} from "react-router-dom";
 
 interface FolderRowProps {
     folder: FolderDTO;
@@ -16,20 +15,26 @@ interface FolderRowProps {
 }
 
 export const FolderRow = ({folder, courseId, isSelected, onToggleSelect}: FolderRowProps) => {
+    const navigate = useNavigate();
     const [isExpanded, setIsExpanded] = useState(false);
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [quizName, setQuizName] = useState("");
     const {createQuiz, isCreatingQuiz} = useQuizCRUD();
-    const {setSelectedFolderId, setSelectedFolder} = useFolderSelection();
-    const {setCurrentFolder} = useQuizSelection();
     const [isEditing, setIsEditing] = useState(false);
     const [editedName, setEditedName] = useState(folder.name);
     const {updateFolder, isUpdatingFolder, errorUpdateFolder} = useFolderCRUD();
 
     const handleNameUpdate = async () => {
         try {
-            if(folder.name === editedName) {setIsEditing(false); return;}
-            await updateFolder(folder.id!, editedName);
+            if (folder.name === editedName) {
+                setIsEditing(false);
+                return;
+            }
+            const folderDTO = {
+                ...folder,
+                name: editedName,
+            } as FolderDTO;
+            await updateFolder(courseId, folder.id!, folderDTO);
             setIsEditing(false);
         } catch (error) {
             console.error("Failed to update folder:", error);
@@ -40,14 +45,11 @@ export const FolderRow = ({folder, courseId, isSelected, onToggleSelect}: Folder
         e.preventDefault();
         e.stopPropagation();
 
-        setCurrentFolder(folder.id!);
-        setSelectedFolderId(folder.id!);
-        setSelectedFolder(folder);
-
         try {
-            await createQuiz(folder.id!, quizName.trim());
+            const createdQuizDTO = await createQuiz(courseId!, folder.id!, {name: quizName.trim()});
             setQuizName("");
             setShowCreateForm(false);
+            navigate(`/courses/${courseId}/folders/${folder.id}/quizzes/${createdQuizDTO.id}/edit`);
         } catch (error) {
             console.error("Failed to create quiz:", error);
         }

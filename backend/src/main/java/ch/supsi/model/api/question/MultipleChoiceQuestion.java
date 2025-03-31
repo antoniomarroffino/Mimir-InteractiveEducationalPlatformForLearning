@@ -1,11 +1,13 @@
 package ch.supsi.model.api.question;
 
+import io.quarkus.mongodb.panache.common.MongoEntity;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@MongoEntity(collection = "questions")
 @Schema(description = "Multiple Choice Question model", name = "MultipleChoiceQuestion")
 @BsonDiscriminator(key = "type", value = "MULTIPLE_CHOICE")
 public class MultipleChoiceQuestion extends Question {

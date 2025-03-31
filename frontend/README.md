@@ -17,13 +17,13 @@ If you are developing a production application, we recommend updating the config
 
 ```js
 export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
+    languageOptions: {
+        // other options...
+        parserOptions: {
+            project: ['./tsconfig.node.json', './tsconfig.app.json'],
+            tsconfigRootDir: import.meta.dirname,
+        },
     },
-  },
 })
 ```
 

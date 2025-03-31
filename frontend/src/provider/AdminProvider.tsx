@@ -4,7 +4,7 @@ import {useMutation, useQuery, useQueryClient} from "react-query";
 import {Role, UserWithoutCoursesDTO} from "@dti-isin/backend-api-client";
 import {userApi} from "../../config/config.ts";
 
-export const AdminProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
+export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const queryClient = useQueryClient();
 
     const {
@@ -23,7 +23,7 @@ export const AdminProvider: React.FC<{children: React.ReactNode}> = ({ children 
 
     const promoteUser = async (email: string, newRole: Role) => {
         try {
-            await promoteUserMutation({ email, role: newRole });
+            await promoteUserMutation({email, role: newRole});
         } catch (err) {
             console.error("Errore nella promozione/demozione utente:", err);
             throw err;
