@@ -37,6 +37,7 @@ public class QuizPublicationService implements IQuizPublicationService {
         );
         newQuizPublication.published = true;
         newQuizPublication.createdAt = LocalDateTime.now();
+        newQuizPublication.anonymous = quizPublicationDTO.getAnonymous();
         this.quizPublicationRepository.persist(newQuizPublication);
         return this.quizPublicationMapper.toDTO(newQuizPublication);
     }
