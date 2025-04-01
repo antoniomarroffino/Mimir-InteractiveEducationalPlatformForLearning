@@ -1,5 +1,5 @@
 import {useAuth} from "../../hooks/useAuth.ts";
-import QuizSessionComponent from "../../components/common/QuizSessionComponent.tsx";
+import {QuizSessionComponent} from "../../components/common/QuizSessionComponent.tsx";
 
 const StudentDashboard = () => {
     const {user} = useAuth();

@@ -1,70 +1,18 @@
 import React, {useState} from 'react';
 import {useAuth} from "../../hooks/useAuth.ts";
 import {FiHash} from "react-icons/fi";
-import {useNavigate} from 'react-router-dom';
 import {useQuizRetrieve} from "../../hooks/useQuizRetrieve.ts";
-import {useGetQuizPublicationByCode} from "../../hooks/quizPublication/useGetQuizPublicationByCode.ts";
+import {useQuizJoin} from "../../hooks/useQuizJoin.ts";
 
-const QuizSessionComponent = () => {
+export const QuizSessionComponent = () => {
     const {user} = useAuth();
-    const navigate = useNavigate();
     const {retrieveQuiz} = useQuizRetrieve();
     const [code, setCode] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
 
-    const handleJoin = async () => {
-        setErrorMessage('');
-
-        const trimmedCode = code.trim();
-        if (trimmedCode === '') {
-            setErrorMessage('Inserisci un codice valido');
-            return;
-        }
-
-        try {
-            setIsLoading(true);
-            const {data: publication} = useGetQuizPublicationByCode(trimmedCode);
-
-            if (!publication) {
-                handleInvalidCode();
-                return;
-            }
-
-            if (!publication.published) {
-                handleDeactivatedPublication()
-                return;
-            }
-
-            await retrieveQuiz(publication);
-
-            navigate(`/quiz/${trimmedCode}`);
-        } catch (error) {
-            handleVerificationError(error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const handleInvalidCode = () => {
-        setCode('');
-        setErrorMessage('Codice non valido. Riprova.');
-    };
-
-    const handleDeactivatedPublication = () => {
-        setCode('');
-        setErrorMessage('Pubblicazione non attiva.');
-    };
-
-    const handleVerificationError = (error: unknown) => {
-        setCode('');
-        setErrorMessage('Errore durante la verifica del codice. Riprova.');
-        console.error('Error verifying code:', error);
-    };
+    const {handleJoin, errorMessage, isLoading} = useQuizJoin(code, retrieveQuiz);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setCode(e.target.value);
-        setErrorMessage('');
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -81,14 +29,14 @@ const QuizSessionComponent = () => {
                         <FiHash className="text-4xl text-primary"/>
                     </div>
 
-                    <h2 className="card-title text-2xl text-center">Partecipa a un quiz</h2>
-                    <p className="text-base-content/70 mb-6">Inserisci il codice:</p>
+                    <h2 className="card-title text-2xl text-center">Join a Quiz</h2>
+                    <p className="text-base-content/70 mb-6">Enter the code:</p>
 
                     <div className="w-full">
                         <div className="join w-full">
                             <input
                                 type="text"
-                                placeholder="Codice sessione"
+                                placeholder="Session Code"
                                 className="input input-bordered join-item flex-1"
                                 value={code}
                                 onChange={handleInputChange}
@@ -102,7 +50,7 @@ const QuizSessionComponent = () => {
                             >
                                 {isLoading ? (
                                     <span className="loading loading-spinner"></span>
-                                ) : user ? "Unisciti" : "Accedi"}
+                                ) : user ? "Join" : "Login"}
                             </button>
                         </div>
                     </div>
@@ -113,7 +61,7 @@ const QuizSessionComponent = () => {
 
                     {!user && (
                         <p className="text-sm text-base-content/70 mt-4">
-                            Effettua il login per accedere a tutte le funzionalità
+                            Login to access all features
                         </p>
                     )}
                 </div>
@@ -121,5 +69,3 @@ const QuizSessionComponent = () => {
         </section>
     );
 };
-
-export default QuizSessionComponent;

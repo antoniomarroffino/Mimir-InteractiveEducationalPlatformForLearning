@@ -1,6 +1,6 @@
 import {Link} from 'react-router-dom';
 import {useAuth} from '../../hooks/useAuth.ts';
-import QuizSessionComponent from "../../components/common/QuizSessionComponent.tsx";
+import {QuizSessionComponent} from "../../components/common/QuizSessionComponent.tsx";
 
 const PublicHome = () => {
     const {user} = useAuth();
