@@ -4,7 +4,7 @@ import {useParams} from "react-router-dom";
 import {useGetQuizPublicationByCode} from "../hooks/quizPublication/useGetQuizPublicationByCode.ts";
 import QuizPreStart from "../components/QuizPreStart.tsx";
 
-export const QuizScreen: React.FC = () => {
+const QuizScreen: React.FC = () => {
     const {accessCode} = useParams();
     const {data: publication, isLoading: isLoadingPublication, error: errorGetPublication} = useGetQuizPublicationByCode(accessCode!);
 

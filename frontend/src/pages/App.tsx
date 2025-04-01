@@ -28,7 +28,7 @@ import {QuizAttemptProviders} from "../provider/quizAttempt/QuizAttemptProviders
 import {QuizAttemptLocalProvider} from "../provider/quizAttempt/QuizAttemptLocalProvider.tsx";
 import QuizResults from "./QuizResults.tsx";
 import QuizScreen from "./QuizScreen.tsx";
-import {PublicationStatsPage} from "./PublicationStatsPage.tsx";
+import PublicationStatsPage from "./PublicationStatsPage.tsx";
 
 const queryClient = new QueryClient({
     defaultOptions: {

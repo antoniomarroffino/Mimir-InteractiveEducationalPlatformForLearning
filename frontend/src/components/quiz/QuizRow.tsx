@@ -7,7 +7,8 @@ import { useQuizCRUD } from "../../hooks/quiz/useQuizCRUD.ts";
 import { FiAlertCircle } from "react-icons/fi";
 import { useGetQuizPublicationsByQuizId } from "../../hooks/quizPublication/useGetQuizPublicationsByQuizId.ts";
 import { LoadingSpinner } from "../common/LoadingSpinner.tsx";
-import { motion } from 'framer-motion';
+import {AnimatePresence, motion} from 'framer-motion';
+import {ErrorToast} from "../common/ErrorToast.tsx";
 
 interface QuizRowProps {
     quiz: QuizDTO;
@@ -33,6 +34,8 @@ export const QuizRow: React.FC<QuizRowProps> = ({
     const [publishError, setPublishError] = useState<string | null>(null);
 
     const [isAnonymous, setIsAnonymous] = useState<boolean>(false);
+
+    const [showPublicationError, setShowPublicationError] = useState(false);
 
     if (isLoadingQuizPublications) {
         return <LoadingSpinner fullScreen />;
@@ -82,10 +85,6 @@ export const QuizRow: React.FC<QuizRowProps> = ({
     };
 
     const handleResults = async () => {
-        if (!quizPublications || quizPublications.length === 0) {
-            alert("There are no publications for this quiz, it is not possible to show the results.");
-            return;
-        }
         navigate(`/courses/${courseId}/folders/${folderId}/quizzes/${quiz.id}/results`);
     };
 
@@ -101,7 +100,7 @@ export const QuizRow: React.FC<QuizRowProps> = ({
     const handleUpdateQuiz = () => {
         const activePublication = quizPublications?.find(publication => publication.published);
         if (activePublication) {
-            alert("The quiz cannot be updated because an active publication exists.");
+            setShowPublicationError(true);
             return;
         }
         navigate(`/courses/${courseId}/folders/${folderId}/quizzes/${quiz.id}/edit`);
@@ -305,6 +304,15 @@ export const QuizRow: React.FC<QuizRowProps> = ({
                     </div>
                 </dialog>
             )}
+
+            <AnimatePresence>
+                {showPublicationError && (
+                    <ErrorToast
+                        message="This quiz has an active publication. Please close the current publication before making changes."
+                        onClose={() => setShowPublicationError(false)}
+                    />
+                )}
+            </AnimatePresence>
         </>
     );
 };

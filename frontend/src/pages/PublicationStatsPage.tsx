@@ -14,6 +14,7 @@ import { useParams } from "react-router-dom";
 import { PublicationDetails } from "../components/quizPublication/PublicationDetails.tsx";
 import { motion } from 'framer-motion';
 import { useGetQuizPublicationsByQuizId } from "../hooks/quizPublication/useGetQuizPublicationsByQuizId.ts";
+import NoPublicationsPlaceholder from "../components/quizPublication/NoPublicationsPlaceholder.tsx";
 
 interface QuestionResult {
     questionText: string;
@@ -31,7 +32,7 @@ interface StudentResult {
     questionResults: QuestionResult[];
 }
 
-export const PublicationStatsPage: React.FC = () => {
+const PublicationStatsPage: React.FC = () => {
     const { quizId } = useParams();
     const { data: publications, isLoading: isGettingPublicationsByQuizId } = useGetQuizPublicationsByQuizId(quizId!);
 
@@ -199,13 +200,7 @@ export const PublicationStatsPage: React.FC = () => {
     }
 
     if (!publications || publications.length === 0) {
-        return (
-            <div className="flex justify-center items-center min-h-screen">
-                <div className="alert alert-warning">
-                    Nessuna pubblicazione trovata per questo quiz.
-                </div>
-            </div>
-        );
+        return <NoPublicationsPlaceholder />;
     }
 
     return (
@@ -339,3 +334,5 @@ export const PublicationStatsPage: React.FC = () => {
         </motion.div>
     );
 };
+
+export default PublicationStatsPage;
