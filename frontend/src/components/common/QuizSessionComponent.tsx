@@ -1,28 +1,41 @@
 import React, {useState} from 'react';
 import {useAuth} from "../../hooks/useAuth.ts";
 import {FiHash} from "react-icons/fi";
-import {useQuizRetrieve} from "../../hooks/useQuizRetrieve.ts";
-import {useQuizJoin} from "../../hooks/useQuizJoin.ts";
+import {QuizCodeAnalyzer} from "./QuizCodeAnalyzer.tsx";
 
 export const QuizSessionComponent = () => {
     const {user} = useAuth();
-    const {retrieveQuiz} = useQuizRetrieve();
     const [code, setCode] = useState('');
-
-    const {handleJoin, errorMessage, isLoading} = useQuizJoin(code, retrieveQuiz);
+    const [isAnalyzing, setIsAnalyzing] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setCode(e.target.value);
+        setErrorMessage('');
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter' && !isLoading) {
-            handleJoin();
+        if (e.key === 'Enter' && code.trim()) {
+            setIsAnalyzing(true);
         }
     };
 
+    const handlePressJoinButton = () => {
+        if(code.trim()) {
+            setIsAnalyzing(true);
+        }
+    }
+
     return (
         <section className="w-full max-w-md mx-auto">
+            {isAnalyzing && (
+                <QuizCodeAnalyzer
+                    publicationCode={code}
+                    onClose={() => setIsAnalyzing(false)}
+                    onError={(error) => setErrorMessage(error)}
+                />
+            )}
+
             <div className="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow">
                 <div className="card-body items-center text-center">
                     <div className="p-4 bg-primary/10 rounded-full mb-4">
@@ -41,16 +54,12 @@ export const QuizSessionComponent = () => {
                                 value={code}
                                 onChange={handleInputChange}
                                 onKeyDown={handleKeyDown}
-                                disabled={isLoading}
                             />
                             <button
                                 className="btn btn-primary join-item"
-                                onClick={handleJoin}
-                                disabled={isLoading}
+                                onClick={handlePressJoinButton}
                             >
-                                {isLoading ? (
-                                    <span className="loading loading-spinner"></span>
-                                ) : user ? "Join" : "Login"}
+                                {user ? "Join" : "Login"}
                             </button>
                         </div>
                     </div>
