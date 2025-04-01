@@ -126,7 +126,7 @@ public class QuestionBankController {
                 .stream()
                 .map(QuestionDTO::getId)
                 .map(ObjectId::new)
-                .forEach(questionBankService::deleteQuestionBank);
+                .forEach(this.questionService::deleteQuestion);
         this.questionBankService.deleteQuestionBank(new ObjectId(id));
         return Response.status(Response.Status.NO_CONTENT).build();
     }

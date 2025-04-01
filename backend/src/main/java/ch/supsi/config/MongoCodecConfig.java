@@ -19,13 +19,21 @@ public class MongoCodecConfig implements MongoClientCustomizer {
 
     @Override
     public MongoClientSettings.Builder customize(MongoClientSettings.@NotNull Builder mongoClientSettingsBuilder) {
-        CodecRegistry pojoCodecRegistry = CodecRegistries.fromProviders(
+        CodecRegistry pojoCodecRegistryQuestion = CodecRegistries.fromProviders(
                 PojoCodecProvider.builder()
                         .register(
                                 Question.class,
-                                QuestionResponse.class,
                                 TrueFalseQuestion.class,
-                                MultipleChoiceQuestion.class,
+                                MultipleChoiceQuestion.class
+                        )
+                        .automatic(true)
+                        .build()
+        );
+
+        CodecRegistry pojoCodecRegistryResponse = CodecRegistries.fromProviders(
+                PojoCodecProvider.builder()
+                        .register(
+                                QuestionResponse.class,
                                 TrueFalseQuestionResponse.class,
                                 MultipleChoiceQuestionResponse.class
                         )
@@ -36,7 +44,7 @@ public class MongoCodecConfig implements MongoClientCustomizer {
         return mongoClientSettingsBuilder.codecRegistry(
                 CodecRegistries.fromRegistries(
                         MongoClientSettings.getDefaultCodecRegistry(),
-                        pojoCodecRegistry
+                        pojoCodecRegistryQuestion, pojoCodecRegistryResponse
                 )
         );
     }
