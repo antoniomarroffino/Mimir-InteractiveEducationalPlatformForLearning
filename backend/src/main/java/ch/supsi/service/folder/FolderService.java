@@ -1,8 +1,10 @@
 package ch.supsi.service.folder;
 
+import ch.supsi.mapper.CourseMapper;
 import ch.supsi.mapper.FolderMapper;
 import ch.supsi.model.api.Course;
 import ch.supsi.model.api.Folder;
+import ch.supsi.model.dto.api.CourseDTO;
 import ch.supsi.model.dto.api.FolderDTO;
 import ch.supsi.repository.CourseRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -17,46 +19,37 @@ import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class FolderService implements IFolderService {
-
     @Inject
     CourseRepository courseRepository;
+
+    @Inject
+    CourseMapper courseMapper;
 
     @Inject
     FolderMapper folderMapper;
 
     @Override
-    public List<FolderDTO> getFoldersInCourse(ObjectId courseId) {
-        Optional<Course> courseOpt = this.courseRepository.findByIdOptional(courseId);
-        if (courseOpt.isEmpty()) {
-            throw new NotFoundException("Course " + courseId + " not found");
-        }
-        return courseOpt.get().folders.stream()
+    public List<FolderDTO> getFoldersInCourse(CourseDTO courseDTO) {
+        this.verifyCourseDTOIsValid(courseDTO);
+        return this.courseMapper.toEntity(courseDTO)
+                .folders.stream()
                 .map(this.folderMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public FolderDTO getFolderInCourse(ObjectId courseId, ObjectId folderId) {
-        Optional<Course> courseOpt = this.courseRepository.findByIdOptional(courseId);
-        if (courseOpt.isEmpty()) {
-            throw new NotFoundException("Course " + courseId + " not found");
-        }
-
-        return courseOpt.get().folders.stream()
-                .filter(f -> f.id.equals(folderId))
-                .map(this.folderMapper::toDTO)
-                .findFirst()
-                .orElseThrow(() -> new NotFoundException("Folder " + folderId + " not found in course: " + courseId));
+    public FolderDTO getFolderInCourse(CourseDTO courseDTO, ObjectId folderId) {
+        this.verifyCourseDTOIsValid(courseDTO);
+        Course course = this.courseMapper.toEntity(courseDTO);
+        Folder folder = this.findFolderInCourseById(course, folderId);
+        return this.folderMapper.toDTO(folder);
     }
 
     @Override
-    public FolderDTO addFolderToCourse(ObjectId courseId, FolderDTO folderDTO) {
-        Optional<Course> courseOpt = this.courseRepository.findByIdOptional(courseId);
-        if (courseOpt.isEmpty()) {
-            throw new NotFoundException("Course " + courseId + " not found");
-        }
+    public FolderDTO addFolderToCourse(CourseDTO courseDTO, FolderDTO folderDTO) {
+        this.verifyCourseDTOIsValid(courseDTO);
 
-        Course course = courseOpt.get();
+        Course course = this.courseMapper.toEntity(courseDTO);
 
         this.verifyFolderIsValid(course, folderDTO);
 
@@ -70,16 +63,14 @@ public class FolderService implements IFolderService {
 
 
     @Override
-    public FolderDTO updateFolder(ObjectId courseId, ObjectId folderId, FolderDTO folderDTO) {
-        Course course = this.courseRepository.findByIdOptional(courseId)
-                .orElseThrow(() -> new NotFoundException("Course " + courseId + " not found"));
+    public FolderDTO updateFolder(CourseDTO courseDTO, ObjectId folderId, FolderDTO folderDTO) {
+        this.verifyCourseDTOIsValid(courseDTO);
+        Course course = this.courseMapper.toEntity(courseDTO);
 
-        Folder folderToUpdate = course.folders.stream()
-                .filter(f -> f.id.equals(folderId))
-                .findFirst()
-                .orElseThrow(() -> new NotFoundException("Folder " + folderId + " not found"));
+        Folder folderToUpdate = this.findFolderInCourseById(course, folderId);
 
-        this.verifyFolderIsValid(course, folderDTO.getName(), folderToUpdate.id);
+        this.verifyFolderNameIsDuplicated(course, folderDTO.getName(), folderId);
+
         folderToUpdate.name = folderDTO.getName();
 
         this.courseRepository.update(course);
@@ -87,38 +78,49 @@ public class FolderService implements IFolderService {
     }
 
     @Override
-    public void deleteFolder(ObjectId courseId, ObjectId folderId) {
-        Course course = this.courseRepository.findByIdOptional(courseId)
-                .orElseThrow(() -> new NotFoundException("Course " + courseId + " not found"));
+    public void deleteFolder(CourseDTO courseDTO, ObjectId folderId) {
+        this.verifyCourseDTOIsValid(courseDTO);
+        Course course = this.courseMapper.toEntity(courseDTO);
 
         boolean removed = course.folders.removeIf(f -> f.id.equals(folderId));
 
-        if (!removed) {
+        if (!removed)
             throw new NotFoundException("Folder " + folderId + " not found");
-        }
 
         this.courseRepository.update(course);
     }
 
+    private Folder findFolderInCourseById(Course course, ObjectId folderId) {
+        return course.folders.stream()
+                .filter(f -> f.id.equals(folderId))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("Folder " + folderId + " not found"));
+    }
+
+    private void verifyCourseDTOIsValid(CourseDTO courseDTO) {
+        if(courseDTO == null)
+            throw new BadRequestException("Course passed is null");
+    }
 
     private void verifyFolderIsValid(Course course, FolderDTO folderDTO) {
         if (folderDTO == null) {
             throw new BadRequestException("Folder data cannot be null");
         }
-        this.verifyFolderIsValid(course, folderDTO.getName(), null);
-    }
 
-    private void verifyFolderIsValid(Course course, String folderName, ObjectId excludeFolderId) {
-        if (folderName == null || folderName.isBlank()) {
+        String folderName = folderDTO.getName().trim();
+        if (folderName.isBlank()) {
             throw new BadRequestException("Folder name cannot be empty");
         }
 
-        boolean nameExists = course.folders.stream()
-                .filter(f -> !f.id.equals(excludeFolderId))
+        this.verifyFolderNameIsDuplicated(course, folderDTO.getName(), new ObjectId(folderDTO.getId()));
+    }
+
+    private void verifyFolderNameIsDuplicated(Course course, String folderName, ObjectId excludeFolderId) {
+        boolean isNameDuplicated = course.folders.stream()
                 .anyMatch(f -> f.name.equalsIgnoreCase(folderName.trim()));
 
-        if (nameExists) {
-            throw new BadRequestException("Folder name '" + folderName + "' already exists in this course");
+        if (isNameDuplicated) {
+            throw new BadRequestException("Folder name " + folderName + " already exists in this course");
         }
     }
 }
