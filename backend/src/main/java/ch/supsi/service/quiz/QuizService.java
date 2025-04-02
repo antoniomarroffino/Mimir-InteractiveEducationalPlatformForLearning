@@ -5,7 +5,6 @@ import ch.supsi.model.api.Course;
 import ch.supsi.model.api.Folder;
 import ch.supsi.model.api.Quiz;
 import ch.supsi.model.dto.api.QuizDTO;
-import ch.supsi.model.dto.api.question.QuestionDTO;
 import ch.supsi.repository.CourseRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -88,7 +87,9 @@ public class QuizService implements IQuizService {
         Quiz updatedQuiz = this.quizMapperFacade.toEntity(quizDTO);
         updatedQuiz.createdAt = quizDTO.getCreatedAt();
         updatedQuiz.updatedAt = LocalDateTime.now();
-        updatedQuiz.questionsId = quizDTO.getQuestions().stream().map(QuestionDTO::getId).collect(Collectors.toSet());
+        updatedQuiz.questionsId = quizDTO.getQuestions().stream()
+                .map(questionDTO -> new ObjectId(questionDTO.getId()))
+                .collect(Collectors.toSet());
 
         int index = folder.quizzes.indexOf(existingQuiz);
         folder.quizzes.set(index, updatedQuiz);

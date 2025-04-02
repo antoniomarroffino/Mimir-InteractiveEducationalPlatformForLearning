@@ -14,7 +14,7 @@ public class Quiz {
     public String name;
 
     public String description;
-    public Set<String> questionsId = new HashSet<>();
+    public Set<ObjectId> questionsId = new HashSet<>();
     public LocalDateTime createdAt;
     public LocalDateTime updatedAt;
 
