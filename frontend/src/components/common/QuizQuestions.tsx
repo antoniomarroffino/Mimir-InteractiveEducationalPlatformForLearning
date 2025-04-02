@@ -5,7 +5,7 @@ import {
     QuestionDTO,
     QuestionResponseDTO,
     QuestionType,
-    QuizDTO,
+    QuizPublicationDTO,
     TrueFalseQuestionDTO,
     TrueFalseQuestionResponseDTO
 } from '@dti-isin/backend-api-client';
@@ -16,14 +16,14 @@ import {QuizNavigation} from "../quiz/QuizNavigation.tsx";
 import {useQuizAttemptLocal} from "../../hooks/quizAttempt/useQuizAttemptLocal.ts";
 
 interface QuizQuestionsProps {
-    quiz: QuizDTO;
+    publication: QuizPublicationDTO;
 }
 
-export const QuizQuestions: React.FC<QuizQuestionsProps> = ({quiz}) => {
+export const QuizQuestions: React.FC<QuizQuestionsProps> = ({publication}) => {
     const {currentAttempt, updateQuizAttemptResponses, completeQuizAttempt} = useQuizAttemptLocal();
 
     const [userResponses, setUserResponses] = useState<QuestionResponseDTO[]>(
-        currentAttempt?.responses || new Array(quiz.questions?.length || 0).fill(null)
+        currentAttempt?.responses || new Array(publication.questions?.length || 0).fill(null)
     );
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
@@ -40,7 +40,7 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({quiz}) => {
     };
 
     const handleAnswer = useCallback((answer: boolean | number[] | null) => {
-        const currentQuestion = quiz.questions?.[currentQuestionIndex];
+        const currentQuestion = publication.questions?.[currentQuestionIndex];
         if (!currentQuestion) return;
 
         setUserResponses(prevResponses => {
@@ -68,7 +68,7 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({quiz}) => {
 
             return updatedResponses;
         });
-    }, [currentQuestionIndex, quiz.questions]);
+    }, [currentQuestionIndex, publication.questions]);
 
     const getCurrentQuestionResponse = useCallback(() => {
         const response = userResponses[currentQuestionIndex];
@@ -95,7 +95,7 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({quiz}) => {
         }
     }, [completeQuizAttempt]);
 
-    const currentQuestion = quiz.questions?.[currentQuestionIndex];
+    const currentQuestion = publication.questions?.[currentQuestionIndex];
     return (
         <div className="flex grow bg-gradient-to-br from-primary/5 to-secondary/5">
             <div className="container mx-auto px-4 py-4">
@@ -114,9 +114,9 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({quiz}) => {
                         <div className="absolute inset-y-0 right-0 flex items-center md:-right-12">
                             <button
                                 onClick={() => setCurrentQuestionIndex(prev =>
-                                    Math.min((quiz.questions?.length || 0) - 1, prev + 1)
+                                    Math.min((publication.questions?.length || 0) - 1, prev + 1)
                                 )}
-                                disabled={currentQuestionIndex === (quiz.questions?.length || 0) - 1}
+                                disabled={currentQuestionIndex === (publication.questions?.length || 0) - 1}
                                 className="btn btn-circle btn-sm md:btn-md btn-outline btn-primary"
                             >
                                 <ChevronRightIcon className="h-5 w-5 md:h-6 md:w-6"/>
@@ -153,7 +153,7 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({quiz}) => {
                     {/* Navigazione del quiz */}
                     <div className="hidden md:block">
                         <QuizNavigation
-                            questions={quiz.questions || []}
+                            questions={publication.questions || []}
                             currentQuestionIndex={currentQuestionIndex}
                             onQuestionChange={(index) => setCurrentQuestionIndex(index)}
                             onCompleteQuiz={handleCompleteQuiz}

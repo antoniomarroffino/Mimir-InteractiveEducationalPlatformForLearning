@@ -52,9 +52,8 @@ public class QuizMapperFacade implements IQuizMapperFacade {
         return this.quizMapper.toEntity(dto, questionIdList);
     }
 
-    private List<Question> getQuestionsByIds(Set<String> idList) {
+    private List<Question> getQuestionsByIds(Set<ObjectId> idList) {
         return idList.stream()
-                .map(ObjectId::new)
                 .map(this.questionRepository::findByIdOptional)
                 .filter(Optional::isPresent)
                 .map(Optional::get)

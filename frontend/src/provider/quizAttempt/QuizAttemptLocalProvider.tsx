@@ -1,12 +1,11 @@
 import React, {useCallback, useMemo, useState} from 'react';
 import {
+    MultipleChoiceQuestionResponseDTO,
     QuestionResponseDTO,
-    QuizDTO,
+    QuestionType,
     QuizAttemptDTO,
     QuizPublicationDTO,
-    QuestionType,
-    TrueFalseQuestionResponseDTO,
-    MultipleChoiceQuestionResponseDTO
+    TrueFalseQuestionResponseDTO
 } from "@dti-isin/backend-api-client";
 import {useQuizAttemptCRUD} from '../../hooks/quizAttempt/useQuizAttemptCRUD';
 import {useAuth} from '../../hooks/useAuth';
@@ -14,16 +13,16 @@ import {QuizAttemptLocalContext} from '../../contexts/quizAttempt/QuizAttemptLoc
 import {useNavigate} from "react-router-dom";
 
 export const QuizAttemptLocalProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
-    const [currentAttempt, setCurrentAttempt] = useState<Partial<QuizAttemptDTO> & { quizPublication?: QuizPublicationDTO } | null>(null);
+    const [currentAttempt, setCurrentAttempt] = useState<Partial<QuizAttemptDTO> & {
+        quizPublication?: QuizPublicationDTO
+    } | null>(null);
     const {createQuizAttempt} = useQuizAttemptCRUD();
     const {user} = useAuth();
     const navigate = useNavigate();
 
-    const prepareQuizResponses = useCallback((quizToUse: QuizDTO) => {
-        console.log('Preparazione risposte per quiz:', quizToUse);
+    const prepareQuizResponses = useCallback((publication: QuizPublicationDTO) => {
 
-        // Crea la struttura iniziale delle risposte basata sui tipi di domande
-        const initialResponses = quizToUse.questions?.map(question => {
+        return publication.questions?.map(question => {
             switch (question.type) {
                 case QuestionType.TrueFalse:
                     return {
@@ -41,27 +40,21 @@ export const QuizAttemptLocalProvider: React.FC<{ children: React.ReactNode }> =
                     throw new Error(`Tipo di domanda non supportato: ${question.type}`);
             }
         }) || [];
-
-        console.log('Risposte iniziali:', initialResponses);
-
-        return initialResponses;
     }, []);
 
-    const startQuizAttempt = useCallback(async (publication: QuizPublicationDTO, quiz: QuizDTO) => {
+    const startQuizAttempt = useCallback(async (publication: QuizPublicationDTO) => {
         try {
-            // Prepara le risposte localmente
-            const responses = prepareQuizResponses(quiz);
+            const responses = prepareQuizResponses(publication);
+            console.log('Starting quiz attempt with publication:', publication);
 
-            // Aggiorna lo stato del tentativo
             setCurrentAttempt({
                 quizPublicationId: publication.id,
                 quizPublication: publication,
                 responses: responses,
                 startedAt: new Date().toISOString(),
-                ...(user && !publication.anonymous ? { userId: user.azureOid } : {})
+                ...(user && !publication.anonymous ? {userId: user.azureOid} : {})
             });
 
-            // Naviga alla pagina del quiz
             navigate(`/quiz/${publication.id}`);
 
         } catch (error) {
