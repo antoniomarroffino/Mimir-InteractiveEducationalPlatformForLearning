@@ -1,7 +1,8 @@
 package ch.supsi.controller.quizpublication;
 
-import ch.supsi.model.api.QuizPublication;
+import ch.supsi.model.dto.api.QuizDTO;
 import ch.supsi.model.dto.api.QuizPublicationDTO;
+import ch.supsi.service.quiz.IQuizService;
 import ch.supsi.service.quizpublication.IQuizPublicationService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
@@ -17,7 +18,6 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Path("/publications")
 @Produces(MediaType.APPLICATION_JSON)
@@ -26,6 +26,9 @@ public class QuizPublicationController {
 
     @Inject
     IQuizPublicationService quizPublicationService;
+
+    @Inject
+    IQuizService quizService;
 
     @POST
     @RolesAllowed("TEACHER")
@@ -37,6 +40,12 @@ public class QuizPublicationController {
     @APIResponse(responseCode = "400", description = "Invalid input data")
     @APIResponse(responseCode = "404", description = "Resource not found")
     public Response publishQuiz(@Valid QuizPublicationDTO quizPublicationDTO) {
+        QuizDTO quizDTO = this.quizService.getQuizInFolder(
+                new ObjectId(quizPublicationDTO.getCourseId()),
+                new ObjectId(quizPublicationDTO.getFolderId()),
+                new ObjectId(quizPublicationDTO.getQuizId())
+        );
+        quizPublicationDTO.setQuestions(quizDTO.getQuestions());
         QuizPublicationDTO responseDTO = this.quizPublicationService.publishQuiz(quizPublicationDTO);
         return Response.status(Response.Status.CREATED).entity(responseDTO).build();
     }

@@ -1,8 +1,12 @@
 package ch.supsi.service.quizpublication;
 
+import ch.supsi.mapper.IBaseMapper;
 import ch.supsi.mapper.QuizPublicationMapper;
+import ch.supsi.mapper.question.builder.QuestionMapperBuilder;
 import ch.supsi.model.api.QuizPublication;
+import ch.supsi.model.api.question.Question;
 import ch.supsi.model.dto.api.QuizPublicationDTO;
+import ch.supsi.model.dto.api.question.QuestionDTO;
 import ch.supsi.repository.QuizPublicationRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -27,17 +31,30 @@ public class QuizPublicationService implements IQuizPublicationService {
     @Inject
     QuizPublicationMapper quizPublicationMapper;
 
+    @Inject
+    QuestionMapperBuilder questionMapperBuilder;
+
     @Override
     public QuizPublicationDTO publishQuiz(QuizPublicationDTO quizPublicationDTO) {
         QuizPublication newQuizPublication = new QuizPublication(
                 new ObjectId(quizPublicationDTO.getCourseId()),
                 new ObjectId(quizPublicationDTO.getFolderId()),
                 new ObjectId(quizPublicationDTO.getQuizId()),
+                quizPublicationDTO.getQuestions().stream()
+                        .map(questionDTO -> {
+                            IBaseMapper<Question, QuestionDTO> mapper =
+                                    (IBaseMapper<Question, QuestionDTO>) questionMapperBuilder.getQuestionDTOMapper(questionDTO.getType());
+
+                            return mapper.toEntity(questionDTO);
+                        })
+                        .collect(Collectors.toList()),
                 generateUniqueCode()
         );
+
         newQuizPublication.published = true;
         newQuizPublication.createdAt = LocalDateTime.now();
         newQuizPublication.anonymous = quizPublicationDTO.getAnonymous();
+
         this.quizPublicationRepository.persist(newQuizPublication);
         return this.quizPublicationMapper.toDTO(newQuizPublication);
     }
