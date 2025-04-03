@@ -2,6 +2,8 @@ import {CourseDTO} from '@dti-isin/backend-api-client';
 import {Link} from 'react-router-dom';
 import {FiBookOpen, FiChevronRight, FiEdit3, FiFolder, FiUserCheck, FiUserPlus} from 'react-icons/fi';
 import {useState} from 'react';
+import {useGetFoldersInCourseId} from "../../hooks/folder/useGetFoldersInCourseId.ts";
+import {LoadingSpinner} from "../common/LoadingSpinner.tsx";
 
 interface CourseCardProps {
     course: CourseDTO;
@@ -24,7 +26,12 @@ export const CourseCard = ({
                                assignError,
                                showAssignButton = false
                            }: CourseCardProps) => {
+    const {data: folders, isLoading: isLoadingFolders} = useGetFoldersInCourseId(course.id!);
     const [localError, setLocalError] = useState<string | null>(null);
+
+    if (isLoadingFolders) {
+        return <LoadingSpinner fullScreen />;
+    }
 
     const handleAssign = async () => {
         if (!onAssign) return;
@@ -158,7 +165,7 @@ export const CourseCard = ({
                     <div className="flex items-center justify-between text-sm">
                         <div className="flex items-center gap-2 text-base-content/60">
                             <FiFolder/>
-                            <span>{course.folders?.length || 0} Folders</span>
+                            <span>{folders!.length || 0} Folders</span>
                         </div>
                         <Link
                             to={`/courses/${course.id}`}
