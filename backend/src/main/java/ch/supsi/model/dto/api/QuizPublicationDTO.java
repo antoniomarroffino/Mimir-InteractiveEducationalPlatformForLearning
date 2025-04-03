@@ -1,6 +1,8 @@
 package ch.supsi.model.dto.api;
 
 import ch.supsi.model.dto.api.question.QuestionDTO;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.validation.constraints.NotBlank;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
@@ -9,6 +11,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RegisterForReflection
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class QuizPublicationDTO {
 
     @Schema(description = "ID univoco della pubblicazione (generato dal backend)", readOnly = true)

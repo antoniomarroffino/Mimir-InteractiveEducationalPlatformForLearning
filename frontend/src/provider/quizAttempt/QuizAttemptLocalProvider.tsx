@@ -55,7 +55,7 @@ export const QuizAttemptLocalProvider: React.FC<{ children: React.ReactNode }> =
                 ...(user && !publication.anonymous ? {userId: user.azureOid} : {})
             });
 
-            navigate(`/quiz/${publication.id}`);
+            navigate(`/quiz/${publication.publicationCode}`);
 
         } catch (error) {
             console.error('Errore durante la preparazione del tentativo:', error);
@@ -75,7 +75,9 @@ export const QuizAttemptLocalProvider: React.FC<{ children: React.ReactNode }> =
                 };
 
                 const completedQuizAttempt = await createQuizAttempt(completedAttempt);
-
+                if (!completedQuizAttempt) {
+                    console.error('Failed to create quiz attempt');
+                }
                 navigate(`/quiz/results`, {
                     state: {
                         attempt: completedQuizAttempt,

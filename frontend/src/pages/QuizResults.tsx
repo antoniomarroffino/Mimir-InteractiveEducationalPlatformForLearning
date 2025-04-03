@@ -23,7 +23,7 @@ const QuizResults: React.FC = () => {
     const { attempt } = location.state || {};
 
     React.useEffect(() => {
-        if (!quiz || !attempt) {
+        if (!attempt) {
             navigate('/');
         }
     }, [quiz, attempt, navigate]);

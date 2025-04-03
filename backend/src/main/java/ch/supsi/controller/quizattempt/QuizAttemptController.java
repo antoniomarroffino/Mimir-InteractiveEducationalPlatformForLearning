@@ -26,9 +26,6 @@ public class QuizAttemptController {
     @Inject
     IQuizAttemptService quizAttemptService;
 
-    @Inject
-    QuizAttemptMapper quizAttemptMapper;
-
     @POST
     @Operation(summary = "Create a new quiz attempt")
     @APIResponse(responseCode = "201", description = "Quiz attempt created successfully", content = @Content(

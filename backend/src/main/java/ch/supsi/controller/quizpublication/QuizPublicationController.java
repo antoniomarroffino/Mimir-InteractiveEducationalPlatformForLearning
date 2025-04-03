@@ -17,7 +17,11 @@ import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+
+import static io.smallrye.config._private.ConfigLogging.log;
 
 @Path("/publications")
 @Produces(MediaType.APPLICATION_JSON)
@@ -64,6 +68,7 @@ public class QuizPublicationController {
         return Response.ok(publicationDTO).build();
     }
 
+
     @GET
     @Path("/byCode/{code}")
     @Operation(summary = "Get publication by access code")
@@ -73,10 +78,21 @@ public class QuizPublicationController {
     ))
     @APIResponse(responseCode = "404", description = "Publication not found")
     public Response getPublicationByCode(@PathParam("code") String code) {
-        QuizPublicationDTO publicationDTO = this.quizPublicationService.getPublicationByCode(code);
-        return Response.ok(publicationDTO).build();
-    }
+        try {
+            QuizPublicationDTO publicationDTO = this.quizPublicationService.getPublicationByCode(code);
+            return Response.ok(publicationDTO).build();
+        } catch (Exception e) {
+            log.error("Errore nel recupero della pubblicazione", e);
 
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(Map.of(
+                            "message", e.getMessage(),
+                            "type", e.getClass().getName(),
+                            "details", Arrays.toString(e.getStackTrace())
+                    ))
+                    .build();
+        }
+    }
     @PUT
     @RolesAllowed("TEACHER")
     @Path("/{id}")

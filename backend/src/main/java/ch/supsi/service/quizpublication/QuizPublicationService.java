@@ -4,9 +4,13 @@ import ch.supsi.mapper.IBaseMapper;
 import ch.supsi.mapper.QuizPublicationMapper;
 import ch.supsi.mapper.question.builder.QuestionMapperBuilder;
 import ch.supsi.model.api.QuizPublication;
+import ch.supsi.model.api.question.MultipleChoiceQuestion;
 import ch.supsi.model.api.question.Question;
+import ch.supsi.model.api.question.TrueFalseQuestion;
 import ch.supsi.model.dto.api.QuizPublicationDTO;
+import ch.supsi.model.dto.api.question.MultipleChoiceQuestionDTO;
 import ch.supsi.model.dto.api.question.QuestionDTO;
+import ch.supsi.model.dto.api.question.TrueFalseQuestionDTO;
 import ch.supsi.repository.QuizPublicationRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -36,21 +40,16 @@ public class QuizPublicationService implements IQuizPublicationService {
 
     @Override
     public QuizPublicationDTO publishQuiz(QuizPublicationDTO quizPublicationDTO) {
+        List<Question> questions = quizPublicationDTO.getQuestions().stream()
+                .map(this::convertQuestionDtoToEntity)
+                .collect(Collectors.toList());
         QuizPublication newQuizPublication = new QuizPublication(
                 new ObjectId(quizPublicationDTO.getCourseId()),
                 new ObjectId(quizPublicationDTO.getFolderId()),
                 new ObjectId(quizPublicationDTO.getQuizId()),
-                quizPublicationDTO.getQuestions().stream()
-                        .map(questionDTO -> {
-                            IBaseMapper<Question, QuestionDTO> mapper =
-                                    (IBaseMapper<Question, QuestionDTO>) questionMapperBuilder.getQuestionDTOMapper(questionDTO.getType());
-
-                            return mapper.toEntity(questionDTO);
-                        })
-                        .collect(Collectors.toList()),
+                questions,
                 generateUniqueCode()
         );
-
         newQuizPublication.published = true;
         newQuizPublication.createdAt = LocalDateTime.now();
         newQuizPublication.anonymous = quizPublicationDTO.getAnonymous();
@@ -59,6 +58,26 @@ public class QuizPublicationService implements IQuizPublicationService {
         return this.quizPublicationMapper.toDTO(newQuizPublication);
     }
 
+
+    private Question convertQuestionDtoToEntity(QuestionDTO questionDTO) {
+        return switch (questionDTO.getType()) {
+            case TRUE_FALSE -> {
+                TrueFalseQuestionDTO trueFalseDTO = (TrueFalseQuestionDTO) questionDTO;
+                yield new TrueFalseQuestion(
+                        trueFalseDTO.getQuestionText(),
+                        trueFalseDTO.getCorrectAnswer()
+                );
+            }
+            case MULTIPLE_CHOICE -> {
+                MultipleChoiceQuestionDTO multipleChoiceDTO = (MultipleChoiceQuestionDTO) questionDTO;
+                yield new MultipleChoiceQuestion(
+                        multipleChoiceDTO.getQuestionText(),
+                        multipleChoiceDTO.getChoices(),
+                        multipleChoiceDTO.getCorrectAnswerIndexes()
+                );
+            }
+        };
+    }
     @Override
     public QuizPublicationDTO getQuizPublicationById(ObjectId publicationID) {
         Optional<QuizPublication> quizPublicationOpt = this.quizPublicationRepository.findByIdOptional(publicationID);

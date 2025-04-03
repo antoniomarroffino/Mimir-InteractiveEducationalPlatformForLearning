@@ -28,6 +28,10 @@ public abstract class QuestionResponseDTO {
     public QuestionResponseDTO() {
     }
 
+    public QuestionResponseDTO(QuestionType responseType) {
+        this.responseType = responseType;
+    }
+
     public String getId() {
         return id;
     }

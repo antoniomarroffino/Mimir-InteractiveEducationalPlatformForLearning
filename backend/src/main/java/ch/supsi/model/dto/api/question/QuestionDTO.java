@@ -31,6 +31,9 @@ public abstract class QuestionDTO {
     public QuestionDTO() {
     }
 
+    public QuestionDTO(QuestionType type) {
+        this.type = type;
+    }
     public String getId() {
         return this.id;
     }

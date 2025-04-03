@@ -36,12 +36,25 @@ public class QuizPublicationMapper implements IBaseMapper<QuizPublication, QuizP
         dto.setClosedAt(quizPublication.closedAt);
 
         if (quizPublication.questions != null) {
+            // Aggiungi log dettagliato
+            System.out.println("Numero di domande: " + quizPublication.questions.size());
+            System.out.println("Tipi di domande:");
+            quizPublication.questions.forEach(q ->
+                    System.out.println(q.getClass().getName() + " - Tipo: " + q.type)
+            );
+
             List<QuestionDTO> questionDTOs = quizPublication.questions.stream()
-                    .map(question ->
-                            this.questionMapperBuilder
+                    .map(question -> {
+                        try {
+                            return this.questionMapperBuilder
                                     .getQuestionDTOMapper(question.type)
-                                    .toDTO(question)
-                    )
+                                    .toDTO(question);
+                        } catch (Exception e) {
+                            System.err.println("Errore durante la conversione della domanda: " + e.getMessage());
+                            e.printStackTrace();
+                            throw e;
+                        }
+                    })
                     .collect(Collectors.toList());
 
             dto.setQuestions(questionDTOs);

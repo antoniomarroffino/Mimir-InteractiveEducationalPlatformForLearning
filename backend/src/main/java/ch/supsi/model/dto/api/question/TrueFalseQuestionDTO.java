@@ -14,7 +14,7 @@ public class TrueFalseQuestionDTO extends QuestionDTO {
     private Boolean correctAnswer;
 
     public TrueFalseQuestionDTO() {
-        this.setType(QuestionType.TRUE_FALSE);
+        super(QuestionType.TRUE_FALSE);
     }
 
     public Boolean getCorrectAnswer() {
