@@ -88,4 +88,35 @@ public class CourseMapperTest {
 
         verify(this.folderMapper, times(1)).toEntity(folderDTO);
     }
+
+    @Test
+    @DisplayName("Should return Course from CourseDTO with id null")
+    void test05ToEntity_ReturnCourseWithIdNull() {
+        CourseDTO courseDTO = new CourseDTO("Test");
+        courseDTO.setId(null);
+
+        Course course_retrieved = this.courseMapper.toEntity(courseDTO);
+        assertNotNull(course_retrieved);
+        assertNull(course_retrieved.id);
+        assertEquals(courseDTO.getName(), course_retrieved.name);
+        assertTrue(course_retrieved.folders.isEmpty());
+
+        verify(this.folderMapper, never()).toEntity(any(FolderDTO.class));
+    }
+
+    @Test
+    @DisplayName("Should return Course from CourseDTO with folders null")
+    void test06ToEntity_ReturnCourseWithFoldersNull() {
+        CourseDTO courseDTO = new CourseDTO("Test");
+        courseDTO.setId(new ObjectId().toString());
+        courseDTO.setFolders(null);
+
+        Course course_retrieved = this.courseMapper.toEntity(courseDTO);
+        assertNotNull(course_retrieved);
+        assertEquals(courseDTO.getId(), course_retrieved.id.toString());
+        assertEquals(courseDTO.getName(), course_retrieved.name);
+        assertTrue(course_retrieved.folders.isEmpty());
+
+        verify(this.folderMapper, never()).toEntity(any(FolderDTO.class));
+    }
 }

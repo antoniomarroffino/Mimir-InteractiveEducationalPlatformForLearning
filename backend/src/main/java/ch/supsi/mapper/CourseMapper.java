@@ -21,15 +21,13 @@ public class CourseMapper implements IBaseMapper<Course, CourseDTO> {
         }
 
         CourseDTO dto = new CourseDTO();
-        dto.setId(course.id != null ? course.id.toString() : null);
+        dto.setId(course.id.toString());
         dto.setName(course.name);
         dto.setDescription(course.description);
 
-        if (course.folders != null) {
-            dto.setFolders(course.folders.stream()
-                    .map(this.folderMapper::toDTO)
-                    .collect(Collectors.toList()));
-        }
+        dto.setFolders(course.folders.stream()
+                .map(this.folderMapper::toDTO)
+                .collect(Collectors.toList()));
 
         return dto;
     }
@@ -47,11 +45,9 @@ public class CourseMapper implements IBaseMapper<Course, CourseDTO> {
             course.id = new ObjectId(dto.getId());
         }
 
-        if (dto.getFolders() != null) {
-            course.folders = dto.getFolders().stream()
-                    .map(this.folderMapper::toEntity)
-                    .collect(Collectors.toList());
-        }
+        course.folders = dto.getFolders().stream()
+                .map(this.folderMapper::toEntity)
+                .collect(Collectors.toList());
 
         return course;
     }

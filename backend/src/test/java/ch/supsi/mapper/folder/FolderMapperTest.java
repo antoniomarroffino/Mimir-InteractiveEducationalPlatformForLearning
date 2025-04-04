@@ -93,4 +93,19 @@ public class FolderMapperTest {
 
         verify(this.quizMapperFacade, times(1)).toEntity(quizDTO);
     }
+
+    @Test
+    @DisplayName("Should return Folder from FolderDTO with id build at construction time")
+    void test05ToEntity_ReturnFolderWithIdNull() {
+        FolderDTO folderDTO = new FolderDTO("Folder");
+        folderDTO.setId(null);
+
+        Folder folder_retrieved = this.folderMapper.toEntity(folderDTO);
+        assertNotNull(folder_retrieved);
+        assertNotNull(folder_retrieved.id);
+        assertEquals(folderDTO.getName(), folder_retrieved.name);
+        assertTrue(folder_retrieved.quizzes.isEmpty());
+
+        verify(this.quizMapperFacade, never()).toEntity(any(QuizDTO.class));
+    }
 }

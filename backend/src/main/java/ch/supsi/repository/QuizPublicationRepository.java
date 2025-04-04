@@ -17,13 +17,4 @@ public class QuizPublicationRepository implements PanacheMongoRepository<QuizPub
     public List<QuizPublication> findPublicationsByQuizId(ObjectId quizId) {
         return find("quizId", quizId).list();
     }
-
-    public Optional<QuizPublication> findByReferencesIds(ObjectId courseId, ObjectId folderId, ObjectId quizId) {
-        return find(
-                "courseId = ?1 and folderId = ?2 and quizId = ?3",
-                courseId,
-                folderId,
-                quizId
-        ).firstResultOptional();
-    }
 }
