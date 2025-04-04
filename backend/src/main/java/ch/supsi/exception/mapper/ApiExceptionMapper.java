@@ -5,16 +5,17 @@ import ch.supsi.model.dto.error.ErrorResponse;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.jboss.resteasy.reactive.RestResponse;
 import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 @ApplicationScoped
 public class ApiExceptionMapper {
     @ServerExceptionMapper(value = ApiException.class)
-    public RestResponse<ErrorResponse> handleApiException(ApiException exception) {
+    public RestResponse<ErrorResponse> handleApiException(@NotNull ApiException exception) {
         ErrorResponse error = new ErrorResponse(
-                exception.getStatus().getReasonPhrase(),
-                List.of(exception.getMessage())
+                exception.getMessage(),
+                List.of(exception.getStatus().getReasonPhrase())
         );
 
         return RestResponse.status(exception.getStatus(), error);

@@ -1,9 +1,11 @@
 package ch.supsi.service.quiz;
 
+import ch.supsi.mapper.FolderMapper;
 import ch.supsi.mapper.quiz.facade.IQuizMapperFacade;
 import ch.supsi.model.api.Course;
 import ch.supsi.model.api.Folder;
 import ch.supsi.model.api.Quiz;
+import ch.supsi.model.dto.api.FolderDTO;
 import ch.supsi.model.dto.api.QuizDTO;
 import ch.supsi.model.dto.api.question.QuestionDTO;
 import ch.supsi.repository.CourseRepository;
@@ -27,19 +29,21 @@ public class QuizService implements IQuizService {
     @Inject
     IQuizMapperFacade quizMapperFacade;
 
+    @Inject
+    FolderMapper folderMapper;
+
     @Override
-    public List<QuizDTO> getQuizzesInFolder(ObjectId courseId, ObjectId folderId) {
-        Folder folder = getFolderFromCourse(courseId, folderId);
-        return folder.quizzes.stream()
+    public List<QuizDTO> getQuizzesInFolder(FolderDTO folderDTO) {
+        return this.folderMapper.toEntity(folderDTO)
+                .quizzes.stream()
                 .map(this.quizMapperFacade::toDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public QuizDTO getQuizInFolder(ObjectId courseId, ObjectId folderId, ObjectId quizId) {
-        Folder folder = this.getFolderFromCourse(courseId, folderId);
-
-        return folder.quizzes.stream()
+    public QuizDTO getQuizInFolder(FolderDTO folderDTO, ObjectId quizId) {
+        return this.folderMapper.toEntity(folderDTO)
+                .quizzes.stream()
                 .filter(q -> q.id.equals(quizId))
                 .map(this.quizMapperFacade::toDTO)
                 .findFirst()

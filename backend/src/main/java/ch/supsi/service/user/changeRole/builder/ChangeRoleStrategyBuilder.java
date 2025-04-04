@@ -1,7 +1,7 @@
 package ch.supsi.service.user.changeRole.builder;
 
 import ch.supsi.model.api.user.Role;
-import ch.supsi.service.user.changeRole.strategy.ChangeRoleStrategy;
+import ch.supsi.service.user.changeRole.strategy.IChangeRoleStrategy;
 import ch.supsi.service.user.changeRole.strategy.DemoteStrategy;
 import ch.supsi.service.user.changeRole.strategy.InvalidAdminStrategy;
 import ch.supsi.service.user.changeRole.strategy.PromoteStrategy;
@@ -13,7 +13,7 @@ import java.util.Map;
 
 @ApplicationScoped
 public class ChangeRoleStrategyBuilder implements IChangeRoleStrategyBuilder {
-    private final Map<Role, ChangeRoleStrategy> changeRoleStrategyMap = new HashMap<>();
+    private final Map<Role, IChangeRoleStrategy> changeRoleStrategyMap = new HashMap<>();
 
     @Inject
     public ChangeRoleStrategyBuilder(PromoteStrategy promoteStrategy,
@@ -25,8 +25,8 @@ public class ChangeRoleStrategyBuilder implements IChangeRoleStrategyBuilder {
     }
 
     @Override
-    public ChangeRoleStrategy buildChangeRoleStrategy(Role role) {
-        ChangeRoleStrategy changeRoleStrategy = this.changeRoleStrategyMap.get(role);
+    public IChangeRoleStrategy buildChangeRoleStrategy(Role role) {
+        IChangeRoleStrategy changeRoleStrategy = this.changeRoleStrategyMap.get(role);
         if (changeRoleStrategy == null) {
             throw new UnsupportedOperationException("Role not supported: " + role);
         }

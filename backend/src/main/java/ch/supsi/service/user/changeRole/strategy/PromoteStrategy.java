@@ -9,7 +9,7 @@ import jakarta.inject.Inject;
 import java.util.Optional;
 
 @Dependent
-public class PromoteStrategy implements ChangeRoleStrategy {
+public class PromoteStrategy implements IChangeRoleStrategy {
     private final Role newRole = Role.TEACHER;
     @Inject
     UserRepository userRepository;

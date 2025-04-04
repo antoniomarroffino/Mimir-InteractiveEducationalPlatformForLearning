@@ -3,15 +3,20 @@ package ch.supsi.exception.mapper;
 import ch.supsi.model.dto.error.ErrorResponse;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Response;
 import org.jboss.resteasy.reactive.RestResponse;
 import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
+
+import java.util.Arrays;
+import java.util.List;
 
 @ApplicationScoped
 public class WebExceptionMapper {
     @ServerExceptionMapper(WebApplicationException.class)
     public RestResponse<ErrorResponse> handleWebException(WebApplicationException exception) {
         ErrorResponse error = new ErrorResponse(
-                exception.getMessage()
+                exception.getMessage(),
+                List.of(Arrays.toString(exception.getStackTrace()))
         );
 
         return RestResponse.status(exception.getResponse().getStatusInfo().toEnum(), error);

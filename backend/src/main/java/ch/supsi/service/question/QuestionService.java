@@ -31,13 +31,15 @@ public class QuestionService implements IQuestionService {
     @Inject
     IQuestionMapperBuilder questionMapperBuilder;
 
-
-    public QuestionService() {
-    }
-
     @Override
     public QuestionDTO createQuestionTemplate(QuestionType type) {
-        return this.questionMapperBuilder.getQuestionDTOMapper(type).toDTO(this.questionFactory.getStrategy(type).createQuestion());
+        return this.questionMapperBuilder
+                .getQuestionDTOMapper(type)
+                .toDTO(
+                        this.questionFactory
+                                .getStrategy(type)
+                                .createQuestion()
+                );
     }
 
     @Override

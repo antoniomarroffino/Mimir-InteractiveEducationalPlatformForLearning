@@ -10,7 +10,7 @@ import jakarta.ws.rs.ForbiddenException;
 import java.util.Optional;
 
 @Dependent
-public class DemoteStrategy implements ChangeRoleStrategy {
+public class DemoteStrategy implements IChangeRoleStrategy {
     @Inject
     UserRepository userRepository;
 

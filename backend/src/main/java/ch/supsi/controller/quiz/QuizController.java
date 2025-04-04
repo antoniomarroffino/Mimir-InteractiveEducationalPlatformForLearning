@@ -1,6 +1,8 @@
 package ch.supsi.controller.quiz;
 
 import ch.supsi.model.dto.api.QuizDTO;
+import ch.supsi.service.course.ICourseService;
+import ch.supsi.service.folder.IFolderService;
 import ch.supsi.service.quiz.IQuizService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
@@ -25,6 +27,12 @@ public class QuizController {
     @Inject
     IQuizService quizService;
 
+    @Inject
+    IFolderService folderService;
+
+    @Inject
+    ICourseService courseService;
+
     @GET
     @RolesAllowed("TEACHER")
     @Operation(summary = "Get all quizzes in a folder")
@@ -40,8 +48,10 @@ public class QuizController {
             @PathParam("courseId") String courseId,
             @PathParam("folderId") String folderId) {
         List<QuizDTO> quizzesDTO = this.quizService.getQuizzesInFolder(
-                new ObjectId(courseId),
-                new ObjectId(folderId)
+                this.folderService.getFolderInCourse(
+                        this.courseService.getCourseById(new ObjectId(courseId)),
+                        new ObjectId(folderId)
+                )
         );
         return Response.ok(quizzesDTO).build();
     }
@@ -62,8 +72,10 @@ public class QuizController {
             @PathParam("folderId") String folderId,
             @PathParam("quizId") String quizId) {
         QuizDTO quizDTO = this.quizService.getQuizInFolder(
-                new ObjectId(courseId),
-                new ObjectId(folderId),
+                this.folderService.getFolderInCourse(
+                        this.courseService.getCourseById(new ObjectId(courseId)),
+                        new ObjectId(folderId)
+                ),
                 new ObjectId(quizId)
         );
         return Response.ok(quizDTO).build();
