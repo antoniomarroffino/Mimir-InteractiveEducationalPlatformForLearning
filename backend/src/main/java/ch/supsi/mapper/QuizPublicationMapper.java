@@ -36,13 +36,6 @@ public class QuizPublicationMapper implements IBaseMapper<QuizPublication, QuizP
         dto.setClosedAt(quizPublication.closedAt);
 
         if (quizPublication.questions != null) {
-            // Aggiungi log dettagliato
-            System.out.println("Numero di domande: " + quizPublication.questions.size());
-            System.out.println("Tipi di domande:");
-            quizPublication.questions.forEach(q ->
-                    System.out.println(q.getClass().getName() + " - Tipo: " + q.type)
-            );
-
             List<QuestionDTO> questionDTOs = quizPublication.questions.stream()
                     .map(question -> {
                         try {

@@ -2,6 +2,7 @@ package ch.supsi.service.quizpublication;
 
 import ch.supsi.mapper.IBaseMapper;
 import ch.supsi.mapper.QuizPublicationMapper;
+import ch.supsi.mapper.question.builder.IQuestionMapperBuilder;
 import ch.supsi.mapper.question.builder.QuestionMapperBuilder;
 import ch.supsi.model.api.QuizPublication;
 import ch.supsi.model.api.question.MultipleChoiceQuestion;
@@ -36,12 +37,12 @@ public class QuizPublicationService implements IQuizPublicationService {
     QuizPublicationMapper quizPublicationMapper;
 
     @Inject
-    QuestionMapperBuilder questionMapperBuilder;
+    IQuestionMapperBuilder questionMapperBuilder;
 
     @Override
     public QuizPublicationDTO publishQuiz(QuizPublicationDTO quizPublicationDTO) {
         List<Question> questions = quizPublicationDTO.getQuestions().stream()
-                .map(this::convertQuestionDtoToEntity)
+                .map(qDTO -> this.questionMapperBuilder.getQuestionDTOMapper(qDTO.getType()).toEntity(qDTO))
                 .collect(Collectors.toList());
         QuizPublication newQuizPublication = new QuizPublication(
                 new ObjectId(quizPublicationDTO.getCourseId()),
@@ -58,26 +59,6 @@ public class QuizPublicationService implements IQuizPublicationService {
         return this.quizPublicationMapper.toDTO(newQuizPublication);
     }
 
-
-    private Question convertQuestionDtoToEntity(QuestionDTO questionDTO) {
-        return switch (questionDTO.getType()) {
-            case TRUE_FALSE -> {
-                TrueFalseQuestionDTO trueFalseDTO = (TrueFalseQuestionDTO) questionDTO;
-                yield new TrueFalseQuestion(
-                        trueFalseDTO.getQuestionText(),
-                        trueFalseDTO.getCorrectAnswer()
-                );
-            }
-            case MULTIPLE_CHOICE -> {
-                MultipleChoiceQuestionDTO multipleChoiceDTO = (MultipleChoiceQuestionDTO) questionDTO;
-                yield new MultipleChoiceQuestion(
-                        multipleChoiceDTO.getQuestionText(),
-                        multipleChoiceDTO.getChoices(),
-                        multipleChoiceDTO.getCorrectAnswerIndexes()
-                );
-            }
-        };
-    }
     @Override
     public QuizPublicationDTO getQuizPublicationById(ObjectId publicationID) {
         Optional<QuizPublication> quizPublicationOpt = this.quizPublicationRepository.findByIdOptional(publicationID);

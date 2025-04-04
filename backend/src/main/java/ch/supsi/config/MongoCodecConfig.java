@@ -16,36 +16,23 @@ import org.jetbrains.annotations.NotNull;
 
 @ApplicationScoped
 public class MongoCodecConfig implements MongoClientCustomizer {
-
     @Override
     public MongoClientSettings.Builder customize(MongoClientSettings.@NotNull Builder mongoClientSettingsBuilder) {
-        CodecRegistry pojoCodecRegistryQuestion = CodecRegistries.fromProviders(
-                PojoCodecProvider.builder()
-                        .register(
-                                Question.class,
-                                TrueFalseQuestion.class,
-                                MultipleChoiceQuestion.class
-                        )
-                        .automatic(true)
-                        .build()
+        PojoCodecProvider pojoCodecProvider = PojoCodecProvider.builder()
+                .register(Question.class)
+                .register(TrueFalseQuestion.class)
+                .register(MultipleChoiceQuestion.class)
+                .register(QuestionResponse.class)
+                .register(TrueFalseQuestionResponse.class)
+                .register(MultipleChoiceQuestionResponse.class)
+                .automatic(true)
+                .build();
+
+        CodecRegistry pojoCodecRegistry = CodecRegistries.fromRegistries(
+                MongoClientSettings.getDefaultCodecRegistry(),
+                CodecRegistries.fromProviders(pojoCodecProvider)
         );
 
-        CodecRegistry pojoCodecRegistryResponse = CodecRegistries.fromProviders(
-                PojoCodecProvider.builder()
-                        .register(
-                                QuestionResponse.class,
-                                TrueFalseQuestionResponse.class,
-                                MultipleChoiceQuestionResponse.class
-                        )
-                        .automatic(true)
-                        .build()
-        );
-
-        return mongoClientSettingsBuilder.codecRegistry(
-                CodecRegistries.fromRegistries(
-                        MongoClientSettings.getDefaultCodecRegistry(),
-                        pojoCodecRegistryQuestion, pojoCodecRegistryResponse
-                )
-        );
+        return mongoClientSettingsBuilder.codecRegistry(pojoCodecRegistry);
     }
 }

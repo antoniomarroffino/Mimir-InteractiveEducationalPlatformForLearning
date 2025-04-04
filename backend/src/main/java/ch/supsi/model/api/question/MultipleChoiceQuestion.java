@@ -9,7 +9,7 @@ import java.util.List;
 
 @MongoEntity(collection = "questions")
 @Schema(description = "Multiple Choice Question model", name = "MultipleChoiceQuestion")
-@BsonDiscriminator(value = "MULTIPLE_CHOICE")
+@BsonDiscriminator(key = "_questionClass", value = "MultipleChoiceQuestion")
 public class MultipleChoiceQuestion extends Question {
     public List<String> choices;
     public List<Integer> correctAnswerIndexes;

@@ -45,7 +45,6 @@ export const QuizAttemptLocalProvider: React.FC<{ children: React.ReactNode }> =
     const startQuizAttempt = useCallback(async (publication: QuizPublicationDTO) => {
         try {
             const responses = prepareQuizResponses(publication);
-            console.log('Starting quiz attempt with publication:', publication);
 
             setCurrentAttempt({
                 quizPublicationId: publication.id,
@@ -66,9 +65,10 @@ export const QuizAttemptLocalProvider: React.FC<{ children: React.ReactNode }> =
     const completeQuizAttempt = useCallback(async () => {
         if (currentAttempt) {
             try {
+                console.log(currentAttempt.responses);
                 const completedAttempt: QuizAttemptDTO = {
                     quizPublicationId: currentAttempt.quizPublicationId!,
-                    userId: currentAttempt.userId,
+                    userAzureOID: currentAttempt.userAzureOID,
                     startedAt: currentAttempt.startedAt,
                     completedAt: new Date().toISOString(),
                     responses: currentAttempt.responses || [],

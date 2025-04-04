@@ -24,11 +24,7 @@ public class QuizAttemptMapper implements IBaseMapper<QuizAttempt, QuizAttemptDT
         QuizAttemptDTO dto = new QuizAttemptDTO();
         dto.setId(quizAttempt.id.toString());
         dto.setQuizPublicationId(quizAttempt.quizPublicationId.toString());
-
-        if (quizAttempt.userId != null) {
-            dto.setUserId(quizAttempt.userId.toString());
-        }
-
+        dto.setUserAzureOID(quizAttempt.userAzureOID);
         dto.setStartedAt(quizAttempt.startedAt);
         dto.setCompletedAt(quizAttempt.completedAt);
 
@@ -54,11 +50,7 @@ public class QuizAttemptMapper implements IBaseMapper<QuizAttempt, QuizAttemptDT
         }
 
         quizAttempt.quizPublicationId = new ObjectId(dto.getQuizPublicationId());
-
-        if (dto.getUserId() != null) {
-            quizAttempt.userId = new ObjectId(dto.getUserId());
-        }
-
+        quizAttempt.userAzureOID = dto.getUserAzureOID();
         quizAttempt.startedAt = dto.getStartedAt();
         quizAttempt.completedAt = dto.getCompletedAt();
 

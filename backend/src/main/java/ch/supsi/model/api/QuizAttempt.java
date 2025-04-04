@@ -19,7 +19,7 @@ public class QuizAttempt {
     public ObjectId quizPublicationId;
 
     @Schema(description = "User who attempted the quiz (can be null for anonymous)")
-    public ObjectId userId;
+    public String userAzureOID;
 
     @Schema(description = "Timestamp when the attempt started")
     public LocalDateTime startedAt;
@@ -33,5 +33,13 @@ public class QuizAttempt {
 
     public QuizAttempt() {
 
+    }
+
+    public QuizAttempt(ObjectId quizPublicationId, String userAzureOID, LocalDateTime startedAt, LocalDateTime completedAt, List<QuestionResponse> responses) {
+        this.quizPublicationId = quizPublicationId;
+        this.userAzureOID = userAzureOID;
+        this.startedAt = startedAt;
+        this.completedAt = completedAt;
+        this.responses = responses;
     }
 }

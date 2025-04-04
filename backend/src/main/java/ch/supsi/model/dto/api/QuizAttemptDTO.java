@@ -16,7 +16,7 @@ public class QuizAttemptDTO {
     @NotNull(message = "Quiz publication ID cannot be null")
     private String quizPublicationId;
 
-    private String userId;
+    private String userAzureOID;
 
     private LocalDateTime startedAt;
 
@@ -44,12 +44,12 @@ public class QuizAttemptDTO {
         this.quizPublicationId = quizPublicationId;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getUserAzureOID() {
+        return userAzureOID;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setUserAzureOID(String userAzureOID) {
+        this.userAzureOID = userAzureOID;
     }
 
     public LocalDateTime getStartedAt() {
