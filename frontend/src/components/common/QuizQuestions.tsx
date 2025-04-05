@@ -53,6 +53,7 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({publication}) => {
                     if (typeof answer === 'boolean' || answer === null) {
                         updatedResponses[currentQuestionIndex] = {
                             responseType: QuestionType.TrueFalse,
+                            questionId: currentQuestion.id,
                             selectedAnswer: answer
                         } as TrueFalseQuestionResponseDTO;
                     }
@@ -62,6 +63,7 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({publication}) => {
                     if (Array.isArray(answer) || answer === null) {
                         updatedResponses[currentQuestionIndex] = {
                             responseType: QuestionType.MultipleChoice,
+                            questionId: currentQuestion.id,
                             selectedAnswerIndexes: answer || []
                         } as MultipleChoiceQuestionResponseDTO;
                     }

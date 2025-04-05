@@ -21,17 +21,22 @@ export const QuizAttemptLocalProvider: React.FC<{ children: React.ReactNode }> =
     const navigate = useNavigate();
 
     const prepareQuizResponses = useCallback((publication: QuizPublicationDTO) => {
-
         return publication.questions?.map(question => {
+            const baseResponse = {
+                questionId: question.id
+            };
+
             switch (question.type) {
                 case QuestionType.TrueFalse:
                     return {
+                        ...baseResponse,
                         responseType: QuestionType.TrueFalse,
                         selectedAnswer: null as unknown as boolean
                     } as TrueFalseQuestionResponseDTO;
 
                 case QuestionType.MultipleChoice:
                     return {
+                        ...baseResponse,
                         responseType: QuestionType.MultipleChoice,
                         selectedAnswerIndexes: []
                     } as MultipleChoiceQuestionResponseDTO;
@@ -78,7 +83,7 @@ export const QuizAttemptLocalProvider: React.FC<{ children: React.ReactNode }> =
 
             const completedQuizAttempt = await createQuizAttempt(completedAttempt);
             if (!completedQuizAttempt) {
-                throw new Error('Failed to create quiz attempt');
+                console.error('Failed to create quiz attempt');
             }
 
             setCurrentAttempt(null);
@@ -91,11 +96,32 @@ export const QuizAttemptLocalProvider: React.FC<{ children: React.ReactNode }> =
 
     const updateQuizAttemptResponses = useCallback((responses: QuestionResponseDTO[]) => {
         setCurrentAttempt(prev => {
-            if (!prev) return prev;
+            if (!prev || !prev.quizPublication?.questions) return prev;
+
+            const updatedResponses = responses.map((response, index) => {
+                const question = prev.quizPublication!.questions![index];
+
+                if (response.responseType === QuestionType.TrueFalse) {
+                    return {
+                        ...response,
+                        questionId: question.id,
+                        responseType: QuestionType.TrueFalse,
+                    } as TrueFalseQuestionResponseDTO;
+                } else if (response.responseType === QuestionType.MultipleChoice) {
+                    return {
+                        ...response,
+                        questionId: question.id,
+                        responseType: QuestionType.MultipleChoice,
+                    } as MultipleChoiceQuestionResponseDTO;
+                }
+
+                return response;
+            });
+
             return {
                 ...prev,
-                responses: responses
-            };
+                responses: updatedResponses
+            } as typeof prev;
         });
     }, []);
 
