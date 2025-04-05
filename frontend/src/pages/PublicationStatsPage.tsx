@@ -1,176 +1,34 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
-    BsCheckCircle,
-    BsEmojiHeartEyes,
-    BsEmojiSmile,
-    BsEmojiSunglasses,
-    BsGraphUp,
     BsStars,
-    BsTrophy,
-    BsXCircle
 } from 'react-icons/bs';
-import { QuestionType, QuizPublicationDTO } from '@dti-isin/backend-api-client';
+import {
+    QuestionType,
+    QuizPublicationDTO,
+    QuizAttemptDTO,
+    TrueFalseQuestionDTO,
+    MultipleChoiceQuestionDTO,
+    TrueFalseQuestionResponseDTO,
+    MultipleChoiceQuestionResponseDTO
+} from '@dti-isin/backend-api-client';
 import { useParams } from "react-router-dom";
 import { PublicationDetails } from "../components/quizPublication/PublicationDetails.tsx";
 import { motion } from 'framer-motion';
 import { useGetQuizPublicationsByQuizId } from "../hooks/quizPublication/useGetQuizPublicationsByQuizId.ts";
 import NoPublicationsPlaceholder from "../components/quizPublication/NoPublicationsPlaceholder.tsx";
-
-interface QuestionResult {
-    questionText: string;
-    type: QuestionType;
-    correctAnswer: string | string[];
-    studentAnswer: string | string[];
-    isCorrect: boolean;
-}
-
-interface StudentResult {
-    studentName: string;
-    score: number;
-    totalQuestions: number;
-    timeTaken: string;
-    questionResults: QuestionResult[];
-}
+import {useGetQuizAttemptsByPublication} from "../hooks/quizPublication/useGetQuizAttemptsByPublication.ts";
 
 const PublicationStatsPage: React.FC = () => {
     const { quizId } = useParams();
     const { data: publications, isLoading: isGettingPublicationsByQuizId } = useGetQuizPublicationsByQuizId(quizId!);
-
     const [selectedPublication, setSelectedPublication] = useState<QuizPublicationDTO | null>(null);
-    const [isLocalLoading, setIsLocalLoading] = useState(true);
+    const { data: attempts, isLoading: isLoadingAttempts } = useGetQuizAttemptsByPublication(
+        selectedPublication?.id || ''
+    );
+    const [selectedAttempt, setSelectedAttempt] = useState<QuizAttemptDTO | null>(null);
 
-    const mockResults: StudentResult[] = [
-        {
-            studentName: "Mario Rossi",
-            score: 8,
-            totalQuestions: 10,
-            timeTaken: "00:05:23",
-            questionResults: [
-                {
-                    questionText: "La capitale dell'Italia è Roma?",
-                    type: QuestionType.TrueFalse,
-                    correctAnswer: "true",
-                    studentAnswer: "true",
-                    isCorrect: true
-                },
-                {
-                    questionText: "Quali sono le capitali europee?",
-                    type: QuestionType.MultipleChoice,
-                    correctAnswer: ["Parigi", "Berlino", "Roma"],
-                    studentAnswer: ["Parigi", "Roma"],
-                    isCorrect: false
-                }
-            ]
-        },
-        {
-            studentName: "Giulia Bianchi",
-            score: 6,
-            totalQuestions: 10,
-            timeTaken: "00:07:45",
-            questionResults: [
-                {
-                    questionText: "La capitale dell'Italia è Roma?",
-                    type: QuestionType.TrueFalse,
-                    correctAnswer: "true",
-                    studentAnswer: "false",
-                    isCorrect: false
-                },
-                {
-                    questionText: "Quali sono le capitali europee?",
-                    type: QuestionType.MultipleChoice,
-                    correctAnswer: ["Parigi", "Berlino", "Roma"],
-                    studentAnswer: ["Londra"],
-                    isCorrect: false
-                }
-            ]
-        }
-    ];
-    const [selectedStudent, setSelectedStudent] = useState<StudentResult | null>(mockResults[0]);
-
-    const getPerformanceEmoji = (score: number, total: number) => {
-        const percentage = (score / total) * 100;
-        if (percentage >= 90) return <BsEmojiHeartEyes className="text-4xl text-yellow-500" />;
-        if (percentage >= 70) return <BsEmojiSunglasses className="text-4xl text-green-500" />;
-        if (percentage >= 50) return <BsEmojiSmile className="text-4xl text-blue-500" />;
-        return <BsTrophy className="text-4xl text-gray-500" />;
-    };
-
-    const getPerformanceTitle = (score: number, total: number) => {
-        const percentage = (score / total) * 100;
-        if (percentage >= 90) return "Genius Level!";
-        if (percentage >= 70) return "Excellent Performance!";
-        if (percentage >= 50) return "Good Job!";
-        return "Keep Practicing!";
-    };
-
-    const renderQuestionResult = (result: QuestionResult) => {
-        const isMultipleChoice = result.type === QuestionType.MultipleChoice;
-
-        return (
-            <div
-                key={result.questionText}
-                className={`
-                    p-4 rounded-lg mb-4 
-                    ${result.isCorrect ? 'bg-success/10' : 'bg-error/10'}
-                `}
-            >
-                <div className="flex justify-between items-center mb-2">
-                    <h3 className="font-semibold">{result.questionText}</h3>
-                    {result.isCorrect ? (
-                        <BsCheckCircle className="text-success" />
-                    ) : (
-                        <BsXCircle className="text-error" />
-                    )}
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                    <div>
-                        <h4 className="font-medium text-base-content/70">Correct Answer</h4>
-                        {isMultipleChoice ? (
-                            <ul className="list-disc pl-5">
-                                {(result.correctAnswer as string[]).map(ans => (
-                                    <li key={ans} className="text-success">{ans}</li>
-                                ))}
-                            </ul>
-                        ) : (
-                            <p className="text-success">{result.correctAnswer}</p>
-                        )}
-                    </div>
-
-                    <div>
-                        <h4 className="font-medium text-base-content/70">Student Answer</h4>
-                        {isMultipleChoice ? (
-                            <ul className="list-disc pl-5">
-                                {(result.studentAnswer as string[]).map(ans => (
-                                    <li
-                                        key={ans}
-                                        className={
-                                            (result.correctAnswer as string[]).includes(ans)
-                                                ? "text-success"
-                                                : "text-error"
-                                        }
-                                    >
-                                        {ans}
-                                    </li>
-                                ))}
-                            </ul>
-                        ) : (
-                            <p className={result.isCorrect ? "text-success" : "text-error"}>
-                                {result.studentAnswer}
-                            </p>
-                        )}
-                    </div>
-                </div>
-            </div>
-        );
-    };
-
-    const fetchPublications = async () => {
-        if (!publications || publications.length === 0) {
-            setIsLocalLoading(false);
-            return;
-        }
-        try {
+    useEffect(() => {
+        if (publications) {
             const activePublication = publications
                 .filter(pub => pub.published)
                 .sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime())[0];
@@ -178,20 +36,53 @@ const PublicationStatsPage: React.FC = () => {
             const selectedPub = activePublication ||
                 publications.sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime())[0];
             setSelectedPublication(selectedPub);
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setIsLocalLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        if (publications) {
-            fetchPublications();
         }
     }, [publications]);
 
-    if (isLocalLoading || isGettingPublicationsByQuizId) {
+    useEffect(() => {
+        if (attempts && attempts.length > 0) {
+            setSelectedAttempt(attempts[0]);
+        }
+    }, [attempts]);
+
+    const questionStats = useMemo(() => {
+        if (!attempts || !selectedPublication?.questions) return null;
+
+        return selectedPublication.questions.map(question => {
+            // Aggiungi controlli null-safe
+            const responses = attempts.flatMap(attempt =>
+                (attempt.responses || []).filter(response =>
+                    response.questionId === question.id
+                )
+            );
+
+            const totalResponses = responses.length;
+            const correctResponses = responses.filter(response => {
+                if (!response || !question) return false;
+
+                if (question.type === QuestionType.TrueFalse) {
+                    const tfResponse = response as TrueFalseQuestionResponseDTO;
+                    const tfQuestion = question as TrueFalseQuestionDTO;
+                    return tfResponse.selectedAnswer === tfQuestion.correctAnswer;
+                } else if (question.type === QuestionType.MultipleChoice) {
+                    const mcResponse = response as MultipleChoiceQuestionResponseDTO;
+                    const mcQuestion = question as MultipleChoiceQuestionDTO;
+                    return JSON.stringify(mcResponse.selectedAnswerIndexes || [].sort()) ===
+                        JSON.stringify(mcQuestion.correctAnswerIndexes || [].sort());
+                }
+                return false;
+            }).length;
+
+            return {
+                question,
+                totalResponses,
+                correctResponses,
+                percentageCorrect: totalResponses > 0 ? (correctResponses / totalResponses) * 100 : 0
+            };
+        });
+    }, [attempts, selectedPublication]);
+
+    if (isGettingPublicationsByQuizId || isLoadingAttempts) {
         return (
             <div className="flex justify-center items-center min-h-screen">
                 <span className="loading loading-spinner loading-lg"></span>
@@ -261,75 +152,178 @@ const PublicationStatsPage: React.FC = () => {
                     </div>
                 )}
 
-                {/* Student Selector */}
-                <div className="p-4 bg-base-200 flex gap-2 overflow-x-auto">
-                    {mockResults.map(result => (
-                        <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            key={result.studentName}
-                            onClick={() => setSelectedStudent(result)}
-                            className={`btn btn-sm ${selectedStudent?.studentName === result.studentName ? 'btn-primary' : 'btn-ghost'}`}
-                        >
-                            {result.studentName}
-                        </motion.button>
-                    ))}
-                </div>
+                {/* General Statistics */}
+                {attempts && attempts.length > 0 && (
+                    <div className="p-4">
+                        <table className="table w-full">
+                            <tbody>
+                            {attempts.map(attempt => (
+                                <tr
+                                    key={attempt.id}
+                                    className="hover:bg-base-200 cursor-pointer"
+                                    onClick={() => setSelectedAttempt(attempt)}
+                                >
+                                    <td>{attempt.userAzureOID || 'Anonymous'}</td>
+                                    <td>{attempt.startedAt ? new Date(attempt.startedAt).toLocaleString() : 'N/A'}</td>
+                                    <td>{attempt.completedAt ? new Date(attempt.completedAt).toLocaleString() : 'N/A'}</td>
+                                    <td>
+                                        {((attempt.responses || []).filter((r, i) => {
+                                            const question = selectedPublication?.questions?.[i];
+                                            if (!question || !r) return false;
 
-                {/* Selected Student Details */}
-                {selectedStudent && (
-                    <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="p-8">
-                        <div className="bg-base-100 rounded-xl p-6 shadow-md mb-6">
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-4">
-                                    {getPerformanceEmoji(selectedStudent.score, selectedStudent.totalQuestions)}
+                                            if (question.type === QuestionType.TrueFalse) {
+                                                const tfResponse = r as TrueFalseQuestionResponseDTO;
+                                                const tfQuestion = question as TrueFalseQuestionDTO;
+                                                return tfResponse.selectedAnswer === tfQuestion.correctAnswer;
+                                            }
+                                            return false;
+                                        }).length)} / {selectedPublication?.questions?.length || 0}
+                                    </td>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
+
+                {/* Question Statistics */}
+                {questionStats && (
+                    <div className="p-4">
+                        <h2 className="text-xl font-bold mb-4">Question Statistics</h2>
+                        <div className="space-y-4">
+                            {questionStats.map((stat, index) => (
+                                <div key={stat.question.id} className="card bg-base-100 shadow">
+                                    <div className="card-body">
+                                        <h3 className="card-title">Question {index + 1}</h3>
+                                        <p>{stat.question.questionText}</p>
+                                        <div className="stats shadow">
+                                            <div className="stat">
+                                                <div className="stat-title">Total Responses</div>
+                                                <div className="stat-value">{stat.totalResponses}</div>
+                                            </div>
+                                            <div className="stat">
+                                                <div className="stat-title">Correct Responses</div>
+                                                <div className="stat-value text-success">
+                                                    {stat.correctResponses}
+                                                </div>
+                                            </div>
+                                            <div className="stat">
+                                                <div className="stat-title">Success Rate</div>
+                                                <div className="stat-value">
+                                                    {stat.percentageCorrect.toFixed(1)}%
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* Selected Attempt Details */}
+                {selectedAttempt && (
+                    <div className="p-4">
+                        <h2 className="text-xl font-bold mb-4">Attempt Details</h2>
+                        <div className="card bg-base-100 shadow">
+                            <div className="card-body">
+                                <div className="grid grid-cols-2 gap-4 mb-4">
                                     <div>
-                                        <h2 className="text-xl font-semibold flex items-center gap-2">
-                                            <BsTrophy className="text-primary" />
-                                            {selectedStudent.studentName}
-                                        </h2>
-                                        <p className="text-base-content/70">
-                                            {getPerformanceTitle(selectedStudent.score, selectedStudent.totalQuestions)}
+                                        <h3 className="font-semibold">User</h3>
+                                        <p>{selectedAttempt.userAzureOID || 'Anonymous'}</p>
+                                    </div>
+                                    <div>
+                                        <h3 className="font-semibold">Duration</h3>
+                                        <p>
+                                            {selectedAttempt.startedAt && selectedAttempt.completedAt ?
+                                                `${Math.round((new Date(selectedAttempt.completedAt).getTime() -
+                                                    new Date(selectedAttempt.startedAt).getTime()) / 1000)} seconds`
+                                                : 'N/A'}
                                         </p>
                                     </div>
                                 </div>
 
-                                <div className="text-right">
-                                    <div className="stat">
-                                        <div className="stat-title flex items-center gap-2">
-                                            <BsGraphUp className="text-primary" />
-                                            Score
-                                        </div>
-                                        <div className="stat-value text-primary">
-                                            {selectedStudent.score}/{selectedStudent.totalQuestions}
-                                        </div>
-                                        <div className="stat-desc">Time: {selectedStudent.timeTaken}</div>
-                                    </div>
+                                <h3 className="font-semibold mb-2">Responses</h3>
+                                <div className="space-y-4">
+                                    {selectedAttempt.responses?.map((response, index) => {
+                                        const question = selectedPublication?.questions?.[index];
+                                        if (!question) return null;
+
+                                        const isCorrect = question.type === QuestionType.TrueFalse ?
+                                            (response as TrueFalseQuestionResponseDTO).selectedAnswer ===
+                                            (question as TrueFalseQuestionDTO).correctAnswer :
+                                            question.type === QuestionType.MultipleChoice &&
+                                            JSON.stringify((response as MultipleChoiceQuestionResponseDTO).selectedAnswerIndexes?.sort()) ===
+                                            JSON.stringify((question as MultipleChoiceQuestionDTO).correctAnswerIndexes.sort());
+
+                                        return (
+                                            <div
+                                                key={index}
+                                                className={`p-4 rounded-lg ${isCorrect ? 'bg-success/10' : 'bg-error/10'}`}
+                                            >
+                                                <p className="font-medium">{question.questionText}</p>
+                                                {question.type === QuestionType.TrueFalse ? (
+                                                    <p>Answer: {(response as TrueFalseQuestionResponseDTO).selectedAnswer ? 'True' : 'False'}</p>
+                                                ) : (
+                                                    <p>Selected Answers: {
+                                                        (response as MultipleChoiceQuestionResponseDTO).selectedAnswerIndexes?.map(
+                                                            index => (question as MultipleChoiceQuestionDTO).correctAnswerIndexes[index]
+                                                        ).join(', ')
+                                                    }</p>
+                                                )}
+                                            </div>
+                                        );
+                                    })}
                                 </div>
                             </div>
                         </div>
-
-                        {/* Question Results */}
-                        <div className="space-y-4">
-                            <h3 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                                <BsCheckCircle className="text-primary" />
-                                Answer Details
-                            </h3>
-                            {selectedStudent.questionResults.map(renderQuestionResult)}
-                        </div>
-                    </motion.div>
+                    </div>
                 )}
 
-                {/* Footer */}
-                <div className="bg-base-200 p-6 text-center">
-                    <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="btn btn-primary btn-wide"
-                    >
-                        Download Full Report
-                    </motion.button>
-                </div>
+
+                {/* Individual Attempts */}
+                {attempts && attempts.length > 0 && (
+                    <div className="p-4">
+                        <h2 className="text-xl font-bold mb-4">Individual Attempts</h2>
+                        <div className="overflow-x-auto">
+                            <table className="table w-full">
+                                <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Started At</th>
+                                    <th>Completed At</th>
+                                    <th>Score</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {attempts.map(attempt => (
+                                    <tr
+                                        key={attempt.id}
+                                        className="hover:bg-base-200 cursor-pointer"
+                                        onClick={() => setSelectedAttempt(attempt)}
+                                    >
+                                        <td>{attempt.userAzureOID || 'Anonymous'}</td>
+                                        <td>{new Date(attempt.startedAt!).toLocaleString()}</td>
+                                        <td>{new Date(attempt.completedAt!).toLocaleString()}</td>
+                                        <td>
+                                            {attempt.responses!.filter((r, i) => {
+                                                const question = selectedPublication?.questions?.[i];
+                                                if (!question) return false;
+
+                                                if (question.type === QuestionType.TrueFalse) {
+                                                    return (r as TrueFalseQuestionResponseDTO).selectedAnswer ===
+                                                        (question as TrueFalseQuestionDTO).correctAnswer;
+                                                }
+                                                return false; // Handle other types
+                                            }).length} / {selectedPublication?.questions?.length}
+                                        </td>
+                                    </tr>
+                                ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                )}
             </div>
         </motion.div>
     );
