@@ -9,4 +9,5 @@ public interface IQuizAttemptService {
     QuizAttemptDTO createQuizAttempt(QuizAttemptDTO quizAttemptDTO);
     QuizAttemptDTO getQuizAttemptById(ObjectId attemptId);
     List<QuizAttemptDTO> getQuizAttemptsByPublication(ObjectId publicationId);
+    List<QuizAttemptDTO> getQuizAttemptsByUser(ObjectId userId);
 }

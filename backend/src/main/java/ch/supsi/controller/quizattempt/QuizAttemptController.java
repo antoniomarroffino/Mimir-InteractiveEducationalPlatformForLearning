@@ -26,6 +26,15 @@ public class QuizAttemptController {
     @Inject
     IQuizAttemptService quizAttemptService;
 
+    @GET
+    @Path("/user/{userId}")
+    @Operation(summary = "Get all quiz attempts for a specific user")
+    public Response getQuizAttemptsByUser(@PathParam("userId") String userId) {
+        List<QuizAttemptDTO> attempts = this.quizAttemptService.getQuizAttemptsByUser(new ObjectId(userId));
+        return Response.ok(attempts).build();
+    }
+
+
     @POST
     @Operation(summary = "Create a new quiz attempt")
     @APIResponse(responseCode = "201", description = "Quiz attempt created successfully", content = @Content(

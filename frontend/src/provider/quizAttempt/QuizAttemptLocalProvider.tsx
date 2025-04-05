@@ -62,38 +62,32 @@ export const QuizAttemptLocalProvider: React.FC<{ children: React.ReactNode }> =
         }
     }, [prepareQuizResponses, user, navigate]);
 
-    const completeQuizAttempt = useCallback(async () => {
-        if (currentAttempt) {
-            try {
-                console.log(currentAttempt.responses);
-                const completedAttempt: QuizAttemptDTO = {
-                    quizPublicationId: currentAttempt.quizPublicationId!,
-                    userAzureOID: currentAttempt.userAzureOID,
-                    startedAt: currentAttempt.startedAt,
-                    completedAt: new Date().toISOString(),
-                    responses: currentAttempt.responses || [],
-                };
-
-                const completedQuizAttempt = await createQuizAttempt(completedAttempt);
-                if (!completedQuizAttempt) {
-                    console.error('Failed to create quiz attempt');
-                }
-                navigate(`/quiz/results`, {
-                    state: {
-                        attempt: completedQuizAttempt,
-                        publication: currentAttempt.quizPublication
-                    }
-                });
-
-                setCurrentAttempt(null);
-            } catch (error) {
-                console.error('Errore durante il completamento del tentativo:', error);
-                throw error;
-            }
-        } else {
-            console.warn('Nessun tentativo di quiz corrente');
+    const completeQuizAttempt = useCallback(async (): Promise<QuizAttemptDTO> => {
+        if (!currentAttempt) {
+            throw new Error('Nessun tentativo di quiz corrente');
         }
-    }, [currentAttempt, createQuizAttempt, navigate]);
+
+        try {
+            const completedAttempt: QuizAttemptDTO = {
+                quizPublicationId: currentAttempt.quizPublicationId!,
+                userAzureOID: currentAttempt.userAzureOID,
+                startedAt: currentAttempt.startedAt,
+                completedAt: new Date().toISOString(),
+                responses: currentAttempt.responses || [],
+            };
+
+            const completedQuizAttempt = await createQuizAttempt(completedAttempt);
+            if (!completedQuizAttempt) {
+                throw new Error('Failed to create quiz attempt');
+            }
+
+            setCurrentAttempt(null);
+            return completedQuizAttempt;
+        } catch (error) {
+            console.error('Errore durante il completamento del tentativo:', error);
+            throw error;
+        }
+    }, [currentAttempt, createQuizAttempt]);
 
     const updateQuizAttemptResponses = useCallback((responses: QuestionResponseDTO[]) => {
         setCurrentAttempt(prev => {

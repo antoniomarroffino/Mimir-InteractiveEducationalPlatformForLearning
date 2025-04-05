@@ -14,6 +14,7 @@ import {TrueFalseQuestion} from "../question/TrueFalseQuestion.tsx";
 import {ChevronLeftIcon, ChevronRightIcon} from '@heroicons/react/24/solid';
 import {QuizNavigation} from "../quiz/QuizNavigation.tsx";
 import {useQuizAttemptLocal} from "../../hooks/quizAttempt/useQuizAttemptLocal.ts";
+import {useNavigate} from "react-router-dom";
 
 interface QuizQuestionsProps {
     publication: QuizPublicationDTO;
@@ -26,6 +27,7 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({publication}) => {
         currentAttempt?.responses || new Array(publication.questions?.length || 0).fill(null)
     );
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+    const navigate = useNavigate();
 
     useEffect(() => {
         updateQuizAttemptResponses(userResponses);
@@ -89,11 +91,15 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({publication}) => {
 
     const handleCompleteQuiz = useCallback(async () => {
         try {
-            await completeQuizAttempt();
+            const completedAttempt = await completeQuizAttempt();
+            console.log(completedAttempt);
+            navigate(`/results/${completedAttempt.id!}`, {
+                state: {attempt: completedAttempt, quizPublication: publication}
+            });
         } catch (error) {
             console.error('Errore durante il completamento del quiz:', error);
         }
-    }, [completeQuizAttempt]);
+    }, [completeQuizAttempt, navigate]);
 
     const currentQuestion = publication.questions?.[currentQuestionIndex];
     return (

@@ -1,34 +1,38 @@
-import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import {
-    QuestionType,
-    QuestionDTO,
-    QuestionResponseDTO,
-    TrueFalseQuestionDTO,
-    MultipleChoiceQuestionDTO,
-    TrueFalseQuestionResponseDTO,
-    MultipleChoiceQuestionResponseDTO
-} from '@dti-isin/backend-api-client';
-import {useQuizRetrieve} from "../hooks/useQuizRetrieve.ts";
-import {useQuizAttemptLocal} from "../hooks/quizAttempt/useQuizAttemptLocal.ts";
+import React, {useCallback, useEffect} from 'react';
+import {useLocation, useNavigate} from 'react-router-dom';
 import {QuizResultHeader} from "../components/quiz-results/QuizResultHeader.tsx";
 import {QuizScoreStats} from "../components/quiz-results/QuizScoreStats.tsx";
 import {QuestionResultCard} from "../components/quiz-results/QuestionResultCard.tsx";
 
-const QuizResults: React.FC = () => {
-    const location = useLocation();
-    const navigate = useNavigate();
-    const { quiz } = useQuizRetrieve();
-    const { resetQuizAttempt } = useQuizAttemptLocal();
-    const { attempt } = location.state || {};
+import {
+    MultipleChoiceQuestionDTO,
+    MultipleChoiceQuestionResponseDTO,
+    QuestionDTO,
+    QuestionResponseDTO,
+    QuestionType,
+    QuizAttemptDTO,
+    QuizPublicationDTO,
+    TrueFalseQuestionDTO,
+    TrueFalseQuestionResponseDTO
+} from '@dti-isin/backend-api-client';
+import {useQuizAttemptLocal} from "../hooks/quizAttempt/useQuizAttemptLocal.ts";
 
-    React.useEffect(() => {
-        if (!attempt) {
+const QuizResults: React.FC = () => {
+    const navigate = useNavigate();
+    const location = useLocation();
+    const {resetQuizAttempt} = useQuizAttemptLocal();
+
+    const attempt = location.state?.attempt as QuizAttemptDTO;
+    const quizPublication = location.state?.quizPublication as QuizPublicationDTO;
+
+    useEffect(() => {
+        if (!attempt || !quizPublication) {
+            console.warn('Missing required data in location state');
             navigate('/');
         }
-    }, [quiz, attempt, navigate]);
+    }, [attempt, quizPublication, navigate]);
 
-    const isResponseCorrect = (question: QuestionDTO, response: QuestionResponseDTO): boolean => {
+    const isResponseCorrect = useCallback((question: QuestionDTO, response: QuestionResponseDTO): boolean => {
         if (question.type === QuestionType.TrueFalse) {
             const trueFalseQuestion = question as TrueFalseQuestionDTO;
             const trueFalseResponse = response as TrueFalseQuestionResponseDTO;
@@ -46,21 +50,27 @@ const QuizResults: React.FC = () => {
         }
 
         return false;
-    };
+    }, []);
 
-    const calculateScore = () => {
-        return attempt.responses.filter((response: QuestionResponseDTO, index: number) => {
-            const question = quiz?.questions?.[index];
+    const calculateScore = useCallback(() => {
+        return attempt!.responses!.filter((response: QuestionResponseDTO, index: number) => {
+            const question = quizPublication?.questions?.[index];
             return question ? isResponseCorrect(question, response) : false;
         }).length;
-    };
+    }, [attempt, quizPublication, isResponseCorrect]);
 
-    // Handle loading case
-    if (!quiz || !attempt) {
-        return <div>Loading...</div>;
+    if (!quizPublication || !attempt) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="text-center">
+                    <span className="loading loading-spinner loading-lg"></span>
+                    <p className="mt-4">Loading quiz results...</p>
+                </div>
+            </div>
+        );
     }
 
-    const totalQuestions = quiz.questions?.length || 0;
+    const totalQuestions = quizPublication.questions?.length || 0;
     const score = calculateScore();
 
     const handleRestart = () => {
@@ -73,15 +83,15 @@ const QuizResults: React.FC = () => {
             <div className="container mx-auto px-4">
                 <div className="card bg-base-100 shadow-2xl rounded-2xl overflow-hidden">
                     <div className="card-body space-y-8">
-                        <QuizResultHeader score={score} totalQuestions={totalQuestions} />
-                        <QuizScoreStats score={score} totalQuestions={totalQuestions} />
+                        <QuizResultHeader score={score} totalQuestions={totalQuestions}/>
+                        <QuizScoreStats score={score} totalQuestions={totalQuestions}/>
 
                         <div className="space-y-6">
-                            {quiz.questions?.map((question, index) => (
+                            {quizPublication.questions?.map((question, index) => (
                                 <QuestionResultCard
                                     key={index}
                                     question={question}
-                                    response={attempt.responses[index]}
+                                    response={attempt!.responses![index]}
                                     index={index}
                                 />
                             ))}
