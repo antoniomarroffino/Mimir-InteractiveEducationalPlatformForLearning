@@ -1,14 +1,27 @@
 import React, { useMemo } from "react";
-import { useMutation } from "react-query";
+import {useMutation, useQueryClient} from "react-query";
 import { QuizAttemptDTO } from "@dti-isin/backend-api-client";
 import { quizAttemptApi } from "../../../config/config.ts";
 import { QuizAttemptCRUDContext } from "../../contexts/quizAttempt/QuizAttemptCRUDContext.ts";
 
 export const QuizAttemptCRUDProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
+    const queryClient = useQueryClient();
     const createQuizAttemptMutation = useMutation(
         (quizAttemptDTO: QuizAttemptDTO) =>
-            quizAttemptApi.apiAttemptsPost({quizAttemptDTO: quizAttemptDTO})
-                .then(response => response.data)
+            quizAttemptApi.apiAttemptsPost({ quizAttemptDTO })
+                .then(response => response.data),
+        {
+            onSuccess: (data) => {
+                queryClient.invalidateQueries(['quizAttempts', data.quizPublicationId]);
+                queryClient.setQueryData(
+                    ['quizAttempts', data.quizPublicationId],
+                    (oldData: QuizAttemptDTO[] | undefined) => {
+                        if (!oldData) return [data];
+                        return [...oldData, data];
+                    }
+                );
+            }
+        }
     );
 
     const getQuizAttemptByIdQuery = useMutation(

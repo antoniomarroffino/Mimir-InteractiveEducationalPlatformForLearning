@@ -1,15 +1,19 @@
 import {useQuery} from 'react-query';
-import {quizAttemptApi} from "../../../config/config";
+import {quizAttemptApi} from "../../../config/config.ts";
+
 
 export const useGetQuizAttemptsByPublication = (publicationId: string) => {
+
+
     return useQuery(
         ['quizAttempts', publicationId],
         () => quizAttemptApi.apiAttemptsByPublicationPublicationIdGet({publicationId})
             .then(response => response.data),
         {
             enabled: !!publicationId,
-            refetchInterval: 5000,
+            refetchInterval: 2000,
             refetchIntervalInBackground: false,
+            refetchOnWindowFocus: true,
             onError: (error) => {
                 console.error('Error fetching quiz attempts:', error);
             }
