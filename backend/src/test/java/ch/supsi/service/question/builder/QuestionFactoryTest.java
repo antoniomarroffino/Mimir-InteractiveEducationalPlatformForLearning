@@ -63,4 +63,5 @@ public class QuestionFactoryTest {
         );
 
         assertEquals("Question type not supported: null", exception.getMessage());
-    }}
+    }
+}

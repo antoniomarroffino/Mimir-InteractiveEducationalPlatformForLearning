@@ -34,7 +34,8 @@ public class QuizService implements IQuizService {
 
     @Override
     public List<QuizDTO> getQuizzesInFolder(FolderDTO folderDTO) {
-        return this.folderMapper.toEntity(folderDTO)
+        return this.folderMapper
+                .toEntity(folderDTO)
                 .quizzes.stream()
                 .map(this.quizMapperFacade::toDTO)
                 .collect(Collectors.toList());
@@ -42,7 +43,8 @@ public class QuizService implements IQuizService {
 
     @Override
     public QuizDTO getQuizInFolder(FolderDTO folderDTO, ObjectId quizId) {
-        return this.folderMapper.toEntity(folderDTO)
+        return this.folderMapper
+                .toEntity(folderDTO)
                 .quizzes.stream()
                 .filter(q -> q.id.equals(quizId))
                 .map(this.quizMapperFacade::toDTO)
