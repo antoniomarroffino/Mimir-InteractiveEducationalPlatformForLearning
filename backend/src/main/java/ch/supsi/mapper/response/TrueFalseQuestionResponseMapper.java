@@ -2,6 +2,7 @@ package ch.supsi.mapper.response;
 
 import ch.supsi.model.api.response.TrueFalseQuestionResponse;
 import ch.supsi.model.dto.api.response.TrueFalseQuestionResponseDTO;
+import org.bson.types.ObjectId;
 
 public class TrueFalseQuestionResponseMapper extends AbstractQuestionResponseMapper<TrueFalseQuestionResponse, TrueFalseQuestionResponseDTO> {
     @Override
@@ -23,7 +24,9 @@ public class TrueFalseQuestionResponseMapper extends AbstractQuestionResponseMap
             return null;
         }
 
-        TrueFalseQuestionResponse response = new TrueFalseQuestionResponse();
+        TrueFalseQuestionResponse response = new TrueFalseQuestionResponse(
+                dto.getQuestionId() != null ? new ObjectId(dto.getQuestionId()) : null
+        );
         super.mapCommonFieldsResponseDTOToResponse(dto, response);
 
         response.selectedAnswer = dto.getSelectedAnswer();

@@ -16,6 +16,10 @@ public class MultipleChoiceQuestionResponse extends QuestionResponse {
         super(QuestionType.MULTIPLE_CHOICE);
     }
 
+    public MultipleChoiceQuestionResponse(ObjectId questionId) {
+        super(QuestionType.MULTIPLE_CHOICE, questionId);
+    }
+
     public MultipleChoiceQuestionResponse(List<Integer> selectedAnswerIndexes, ObjectId questionId) {
         super(QuestionType.MULTIPLE_CHOICE, questionId);
         this.selectedAnswerIndexes = selectedAnswerIndexes;

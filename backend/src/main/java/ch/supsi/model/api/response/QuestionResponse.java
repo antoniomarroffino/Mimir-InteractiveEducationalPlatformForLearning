@@ -26,6 +26,11 @@ public abstract class QuestionResponse {
         this.id = new ObjectId();
     }
 
+    protected QuestionResponse(ObjectId questionId) {
+        this();
+        this.questionId = questionId;
+    }
+
     protected QuestionResponse(QuestionType responseType) {
         this();
         this.responseType = responseType;

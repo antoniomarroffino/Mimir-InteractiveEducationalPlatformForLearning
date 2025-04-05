@@ -14,6 +14,10 @@ public class TrueFalseQuestionResponse extends QuestionResponse {
         super(QuestionType.TRUE_FALSE);
     }
 
+    public TrueFalseQuestionResponse(ObjectId questionId) {
+        super(QuestionType.TRUE_FALSE, questionId);
+    }
+
     public TrueFalseQuestionResponse(Boolean selectedAnswer, ObjectId questionId) {
         super(QuestionType.TRUE_FALSE, questionId);
         this.selectedAnswer = selectedAnswer;
