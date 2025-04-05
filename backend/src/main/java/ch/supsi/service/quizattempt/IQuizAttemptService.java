@@ -10,4 +10,5 @@ public interface IQuizAttemptService {
     QuizAttemptDTO getQuizAttemptById(ObjectId attemptId);
     List<QuizAttemptDTO> getQuizAttemptsByPublication(ObjectId publicationId);
     List<QuizAttemptDTO> getQuizAttemptsByUser(ObjectId userId);
+    List<QuizAttemptDTO> getQuizAttemptsByPublicationAndQuestion(ObjectId publicationId, ObjectId questionId);
 }

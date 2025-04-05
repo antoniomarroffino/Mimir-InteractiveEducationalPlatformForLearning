@@ -73,4 +73,17 @@ public class QuizAttemptService implements IQuizAttemptService {
                 .map(this.quizAttemptMapper::toDTO)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<QuizAttemptDTO> getQuizAttemptsByPublicationAndQuestion(ObjectId publicationId, ObjectId questionId) {
+        List<QuizAttempt> attempts = this.quizAttemptRepository.find(
+                "quizPublicationId = ?1 and 'responses.questionId' = ?2",
+                publicationId,
+                questionId
+        ).list();
+
+        return attempts.stream()
+                .map(this.quizAttemptMapper::toDTO)
+                .collect(Collectors.toList());
+    }
 }

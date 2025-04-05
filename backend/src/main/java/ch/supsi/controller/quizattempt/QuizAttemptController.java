@@ -74,4 +74,38 @@ public class QuizAttemptController {
         List<QuizAttemptDTO> attempts = this.quizAttemptService.getQuizAttemptsByPublication(new ObjectId(publicationId));
         return Response.ok(attempts).build();
     }
+
+    @GET
+    @Path("/publications/{publicationId}/stats")
+    @RolesAllowed("TEACHER")
+    @Operation(summary = "Get statistics for a publication including all attempts and responses")
+    @APIResponse(responseCode = "200", description = "Publication statistics retrieved successfully", content = @Content(
+            mediaType = MediaType.APPLICATION_JSON,
+            schema = @Schema(type = SchemaType.ARRAY, implementation = QuizAttemptDTO.class)
+    ))
+    @APIResponse(responseCode = "404", description = "Publication not found")
+    public Response getPublicationStats(@PathParam("publicationId") String publicationId) {
+        List<QuizAttemptDTO> attempts = this.quizAttemptService.getQuizAttemptsByPublication(new ObjectId(publicationId));
+        return Response.ok(attempts).build();
+    }
+
+    @GET
+    @Path("/publications/{publicationId}/questions/{questionId}/stats")
+    @RolesAllowed("TEACHER")
+    @Operation(summary = "Get statistics for a specific question in a publication")
+    @APIResponse(responseCode = "200", description = "Question statistics retrieved successfully", content = @Content(
+            mediaType = MediaType.APPLICATION_JSON,
+            schema = @Schema(type = SchemaType.ARRAY, implementation = QuizAttemptDTO.class)
+    ))
+    @APIResponse(responseCode = "404", description = "Publication or question not found")
+    public Response getQuestionStats(
+            @PathParam("publicationId") String publicationId,
+            @PathParam("questionId") String questionId
+    ) {
+        List<QuizAttemptDTO> attempts = this.quizAttemptService.getQuizAttemptsByPublicationAndQuestion(
+                new ObjectId(publicationId),
+                new ObjectId(questionId)
+        );
+        return Response.ok(attempts).build();
+    }
 }
