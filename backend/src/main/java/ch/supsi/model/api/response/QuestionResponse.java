@@ -20,6 +20,7 @@ public abstract class QuestionResponse {
     public ObjectId id;
     @BsonProperty("responseType")
     public QuestionType responseType;
+    public ObjectId questionId;
 
     protected QuestionResponse() {
         this.id = new ObjectId();
@@ -28,5 +29,11 @@ public abstract class QuestionResponse {
     protected QuestionResponse(QuestionType responseType) {
         this();
         this.responseType = responseType;
+    }
+
+    protected QuestionResponse(QuestionType responseType, ObjectId questionId) {
+        this();
+        this.responseType = responseType;
+        this.questionId = questionId;
     }
 }

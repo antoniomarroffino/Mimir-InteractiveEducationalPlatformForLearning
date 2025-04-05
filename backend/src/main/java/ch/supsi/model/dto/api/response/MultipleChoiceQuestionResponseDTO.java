@@ -18,6 +18,10 @@ public class MultipleChoiceQuestionResponseDTO extends QuestionResponseDTO {
         super(QuestionType.MULTIPLE_CHOICE);
     }
 
+    public MultipleChoiceQuestionResponseDTO(String questionId) {
+        super(QuestionType.MULTIPLE_CHOICE, questionId);
+    }
+
     public List<Integer> getSelectedAnswerIndexes() {
         return selectedAnswerIndexes;
     }

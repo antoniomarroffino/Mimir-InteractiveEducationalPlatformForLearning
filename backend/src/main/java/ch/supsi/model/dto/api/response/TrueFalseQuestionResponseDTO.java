@@ -3,7 +3,6 @@ package ch.supsi.model.dto.api.response;
 import ch.supsi.model.api.question.QuestionType;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.quarkus.runtime.annotations.RegisterForReflection;
-import jakarta.validation.constraints.NotNull;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 @RegisterForReflection
@@ -15,6 +14,11 @@ public class TrueFalseQuestionResponseDTO extends QuestionResponseDTO {
     public TrueFalseQuestionResponseDTO() {
         super(QuestionType.TRUE_FALSE);
     }
+
+    public TrueFalseQuestionResponseDTO(String questionId) {
+        super(QuestionType.TRUE_FALSE, questionId);
+    }
+
     public Boolean getSelectedAnswer() {
         return selectedAnswer;
     }
