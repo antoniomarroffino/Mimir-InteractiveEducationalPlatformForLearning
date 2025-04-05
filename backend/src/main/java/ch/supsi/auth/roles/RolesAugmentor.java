@@ -1,4 +1,4 @@
-package ch.supsi.auth;
+package ch.supsi.auth.roles;
 
 import ch.supsi.model.api.user.Role;
 import ch.supsi.model.api.user.User;
@@ -22,7 +22,7 @@ public class RolesAugmentor implements SecurityIdentityAugmentor {
 
     @Override
     public Uni<SecurityIdentity> augment(SecurityIdentity identity, AuthenticationRequestContext authenticationRequestContext) {
-        return Uni.createFrom().item(build(identity));
+        return Uni.createFrom().item(this.build(identity));
     }
 
     private Supplier<SecurityIdentity> build(SecurityIdentity identity) {

@@ -25,7 +25,6 @@ public class AdminInitializer {
     }
 
     public void onStop(@Observes ShutdownEvent ev) {
-        System.out.println("Shutting down");
         this.adminService.deleteAdmins();
     }
 

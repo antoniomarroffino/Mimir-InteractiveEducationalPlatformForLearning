@@ -5,5 +5,4 @@ import io.quarkus.mongodb.panache.PanacheMongoRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-public class QuestionRepository implements PanacheMongoRepository<Question> {
-}
+public class QuestionRepository implements PanacheMongoRepository<Question> { }
