@@ -56,7 +56,7 @@ export const QuizAttemptLocalProvider: React.FC<{ children: React.ReactNode }> =
                 quizPublication: publication,
                 responses: responses,
                 startedAt: new Date().toISOString(),
-                ...(user && !publication.anonymous ? {userId: user.azureOid} : {})
+                userAzureOID: publication.anonymous ? undefined : user?.azureOid || undefined
             });
 
             navigate(`/quiz/${publication.publicationCode}`);

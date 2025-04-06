@@ -37,7 +37,6 @@ const QuizPreStart: React.FC<QuizPreStartProps> = ({publication}) => {
     }, [quiz, startQuizAttempt]);
 
     const renderQuizPreparation = () => {
-        // Se il quiz è anonimo, il tasto è sempre attivo
         if (publication.anonymous) {
             return (
                 <div className="flex justify-center">
