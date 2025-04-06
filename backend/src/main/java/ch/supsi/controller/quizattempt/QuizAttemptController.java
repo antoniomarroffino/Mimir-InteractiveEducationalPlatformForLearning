@@ -1,6 +1,5 @@
 package ch.supsi.controller.quizattempt;
 
-import ch.supsi.mapper.QuizAttemptMapper;
 import ch.supsi.model.dto.api.QuizAttemptDTO;
 import ch.supsi.service.quizattempt.IQuizAttemptService;
 import jakarta.annotation.security.RolesAllowed;
@@ -27,13 +26,28 @@ public class QuizAttemptController {
     IQuizAttemptService quizAttemptService;
 
     @GET
-    @Path("/user/{userId}")
+    @Path("/user/{userAzureOID}")
     @Operation(summary = "Get all quiz attempts for a specific user")
-    public Response getQuizAttemptsByUser(@PathParam("userId") String userId) {
-        List<QuizAttemptDTO> attempts = this.quizAttemptService.getQuizAttemptsByUser(new ObjectId(userId));
+    @APIResponse(
+            responseCode = "200",
+            description = "List of quiz attempts for the user",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(type = SchemaType.ARRAY, implementation = QuizAttemptDTO.class)
+            )
+    )
+    @APIResponse(
+            responseCode = "400",
+            description = "Invalid user ID format"
+    )
+    @APIResponse(
+            responseCode = "404",
+            description = "User not found"
+    )
+    public Response getQuizAttemptsByUser(@PathParam("userAzureOID") String userAzureOID) {
+        List<QuizAttemptDTO> attempts = this.quizAttemptService.getQuizAttemptsByUser(userAzureOID);
         return Response.ok(attempts).build();
     }
-
 
     @POST
     @Operation(summary = "Create a new quiz attempt")

@@ -1,6 +1,7 @@
 import {Link} from 'react-router-dom';
 import {useAuth} from '../../hooks/useAuth.ts';
 import {QuizSessionComponent} from "../../components/common/QuizSessionComponent.tsx";
+import {QuizHistorySection} from "../../components/quiz-results/QuizHistorySection.tsx";
 
 const PublicHome = () => {
     const {user} = useAuth();
@@ -24,6 +25,8 @@ const PublicHome = () => {
 
             {/* Sezione Partecipa a Quiz */}
             <QuizSessionComponent/>
+
+            {user && <QuizHistorySection />}
         </div>
     );
 };
