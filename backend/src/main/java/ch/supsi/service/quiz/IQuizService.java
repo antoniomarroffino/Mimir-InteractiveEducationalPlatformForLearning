@@ -1,5 +1,6 @@
 package ch.supsi.service.quiz;
 
+import ch.supsi.model.dto.api.CourseDTO;
 import ch.supsi.model.dto.api.FolderDTO;
 import ch.supsi.model.dto.api.QuizDTO;
 import org.bson.types.ObjectId;
@@ -11,9 +12,9 @@ public interface IQuizService {
 
     QuizDTO getQuizInFolder(FolderDTO folderDTO, ObjectId quizId);
 
-    QuizDTO addQuizToFolder(ObjectId courseId, ObjectId folderId, QuizDTO quizDTO);
+    QuizDTO addQuizToFolder(CourseDTO courseDTO, FolderDTO folderDTO, QuizDTO quizDTO);
 
-    QuizDTO updateQuizInFolder(ObjectId courseId, ObjectId folderId, ObjectId quizId, QuizDTO quizDTO);
+    QuizDTO updateQuizInFolder(CourseDTO courseDTO, FolderDTO folderDTO, ObjectId quizId, QuizDTO quizDTO);
 
-    void removeQuizFromFolder(ObjectId courseId, ObjectId folderId, ObjectId quizId);
+    void removeQuizFromFolder(CourseDTO courseDTO, FolderDTO folderDTO, ObjectId quizId);
 }
