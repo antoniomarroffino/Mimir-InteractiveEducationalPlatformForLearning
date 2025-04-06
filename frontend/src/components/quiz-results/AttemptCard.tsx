@@ -1,51 +1,33 @@
-// AttemptCard.tsx
 import React from 'react';
-import {QuizAttemptDTO} from '@dti-isin/backend-api-client';
-import {useGetQuizPublicationById} from "../../hooks/quizPublication/useGetQuizPublicationById.ts";
+import { QuizAttemptDTO } from '@dti-isin/backend-api-client';
 
 interface AttemptCardProps {
     attempt: QuizAttemptDTO;
     onViewDetails: (attemptId: string) => void;
+    isSelected?: boolean;
 }
 
-export const AttemptCard: React.FC<AttemptCardProps> = ({attempt, onViewDetails}) => {
-    const {
-        data: quizPublication,
-        isLoading: isLoadingPublication
-    } = useGetQuizPublicationById(attempt.quizPublicationId);
-
-    const calculateScore = (attempt: QuizAttemptDTO): number => {
-        if (!attempt.responses || !quizPublication?.questions) return 0;
-
-        const correctAnswers = attempt.responses.filter((response) => {
-            const question = quizPublication.questions?.find(q => q.id === response.questionId);
-            if (!question || !response) return false;
-            return true;
-        }).length;
-
-        const totalQuestions = quizPublication.questions?.length || 1;
-        return Math.round((correctAnswers / totalQuestions) * 100);
+export const AttemptCard: React.FC<AttemptCardProps> = ({
+                                                            attempt,
+                                                            onViewDetails,
+                                                            isSelected = false
+                                                        }) => {
+    const calculateScore = (): number => {
+        if (!attempt.responses) return 0;
+        return Math.round((attempt.responses.length / (attempt.responses.length || 1)) * 100);
     };
 
-    if (isLoadingPublication) {
-        return (
-            <div className="card bg-base-100 shadow-lg hover:shadow-xl transition-all">
-                <div className="card-body">
-                    <div className="flex justify-center">
-                        <span className="loading loading-spinner loading-md"></span>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
     return (
-        <div className="card bg-base-100 shadow-lg hover:shadow-xl transition-all">
+        <div className={`card bg-base-100 shadow-lg transition-all ${
+            isSelected
+                ? 'ring-2 ring-primary shadow-xl'
+                : 'hover:shadow-xl'
+        }`}>
             <div className="card-body">
                 <div className="flex justify-between items-center">
                     <div>
                         <h3 className="card-title text-lg">
-                            {quizPublication?.quizId || 'Quiz senza titolo'}
+                            Quiz #{attempt.id?.slice(-6)}
                         </h3>
                         <p className="text-sm text-base-content/70">
                             Completato il {new Date(attempt.completedAt!).toLocaleDateString('it-IT', {
@@ -59,17 +41,19 @@ export const AttemptCard: React.FC<AttemptCardProps> = ({attempt, onViewDetails}
                     </div>
                     <div className="flex gap-3 items-center">
                         <span className={`badge badge-lg ${
-                            calculateScore(attempt) >= 70 ? 'badge-success' :
-                                calculateScore(attempt) >= 50 ? 'badge-warning' :
+                            calculateScore() >= 70 ? 'badge-success' :
+                                calculateScore() >= 50 ? 'badge-warning' :
                                     'badge-error'
                         }`}>
-                            {calculateScore(attempt)}%
+                            {calculateScore()}%
                         </span>
                         <button
-                            className="btn btn-primary btn-sm"
+                            className={`btn btn-sm ${
+                                isSelected ? 'btn-ghost' : 'btn-primary'
+                            }`}
                             onClick={() => onViewDetails(attempt.id!)}
                         >
-                            Dettagli
+                            {isSelected ? 'Nascondi' : 'Dettagli'}
                         </button>
                     </div>
                 </div>
