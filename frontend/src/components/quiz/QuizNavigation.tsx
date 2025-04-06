@@ -35,13 +35,11 @@ export const QuizNavigation: React.FC<QuizNavigationProps> = ({
             switch (question.type) {
                 case QuestionType.TrueFalse: {
                     const trueFalseResponse = response as TrueFalseQuestionResponseDTO;
-                    // Considera risposta solo se è un booleano definito
                     return typeof trueFalseResponse.selectedAnswer === 'boolean';
                 }
 
                 case QuestionType.MultipleChoice: {
                     const multipleChoiceResponse = response as MultipleChoiceQuestionResponseDTO;
-                    // Considera risposta solo se ci sono indici selezionati
                     return Array.isArray(multipleChoiceResponse.selectedAnswerIndexes) &&
                         multipleChoiceResponse.selectedAnswerIndexes.length > 0;
                 }
@@ -55,10 +53,8 @@ export const QuizNavigation: React.FC<QuizNavigationProps> = ({
         }
     };
 
-    // Calcola le risposte date
     const answeredQuestions = questions.map((_, index) => isQuestionAnswered(index));
 
-    // Trova le domande non risposte
     const unansweredQuestions = questions.filter((_, index) => !isQuestionAnswered(index));
 
     const handleCompleteQuizClick = () => {
@@ -75,7 +71,6 @@ export const QuizNavigation: React.FC<QuizNavigationProps> = ({
             <div className="bg-base-100 rounded-xl shadow-xl p-4 space-y-4">
                 <h3 className="text-lg font-bold text-primary mb-4">Domande</h3>
 
-                {/* Griglia delle domande */}
                 <div className="grid grid-cols-5 gap-2">
                     {questions.map((question, index) => {
                         const isCurrentQuestion = index === currentQuestionIndex;
@@ -99,12 +94,10 @@ export const QuizNavigation: React.FC<QuizNavigationProps> = ({
                     })}
                 </div>
 
-                {/* Informazioni sul progresso */}
                 <div className="mt-4 text-sm text-base-content">
                     <p>Domanda {currentQuestionIndex + 1} di {questions.length}</p>
                 </div>
 
-                {/* Pulsante per completare il quiz */}
                 <div className="mt-6">
                     <button
                         onClick={handleCompleteQuizClick}
@@ -119,7 +112,6 @@ export const QuizNavigation: React.FC<QuizNavigationProps> = ({
                 </div>
             </div>
 
-            {/* Modal di conferma */}
             <ConfirmModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}

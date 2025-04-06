@@ -99,7 +99,7 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({publication}) => {
                 state: {attempt: completedAttempt, quizPublication: publication}
             });
         } catch (error) {
-            console.error('Errore durante il completamento del quiz:', error);
+            console.error('Error during completing quiz:', error);
         }
     }, [completeQuizAttempt, navigate]);
 
@@ -109,7 +109,6 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({publication}) => {
             <div className="container mx-auto px-4 py-4">
                 <div className="grid grid-cols-1 md:grid-cols-[1fr_300px] gap-4">
                     <div className="relative w-full max-w-2xl mx-auto">
-                        {/* Navigazione tra domande */}
                         <div className="absolute inset-y-0 left-0 flex items-center md:-left-12">
                             <button
                                 onClick={() => setCurrentQuestionIndex(prev => Math.max(0, prev - 1))}
@@ -131,7 +130,6 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({publication}) => {
                             </button>
                         </div>
 
-                        {/* Rendering dinamico del tipo di domanda */}
                         {isTrueFalseQuestion(currentQuestion!) && (
                             <TrueFalseQuestion
                                 key={currentQuestion.id}
@@ -158,7 +156,6 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({publication}) => {
                         )}
                     </div>
 
-                    {/* Navigazione del quiz */}
                     <div className="hidden md:block">
                         <QuizNavigation
                             questions={publication.questions || []}

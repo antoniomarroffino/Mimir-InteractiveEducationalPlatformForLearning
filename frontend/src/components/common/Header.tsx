@@ -89,7 +89,7 @@ const Header = () => {
                                                 className="flex items-center gap-2 px-4 py-2"
                                                 onClick={() => setIsDropdownOpen(false)}
                                             >
-                                                <FiUser className="w-4 h-4" /> {/* Dimensione più piccola per il menu */}
+                                                <FiUser className="w-4 h-4" />
                                                 Profile
                                             </Link>
                                         </li>

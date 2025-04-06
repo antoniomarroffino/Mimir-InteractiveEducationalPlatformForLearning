@@ -9,14 +9,12 @@ const PublicHome = () => {
 
     return (
         <div className="min-h-screen bg-base-200">
-            {/* Hero Section */}
             <motion.div
                 className="hero min-h-[60vh] bg-gradient-to-r from-primary to-secondary relative overflow-hidden"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5 }}
             >
-                {/* Background Pattern (optional) */}
                 <div className="absolute inset-0 opacity-10 bg-grid-pattern"></div>
 
                 <div className="hero-content text-center text-neutral-content flex flex-col">
@@ -60,10 +58,8 @@ const PublicHome = () => {
                 </div>
             </motion.div>
 
-            {/* Main Content */}
             <div className="container mx-auto px-4 py-12">
                 <div className="space-y-16">
-                    {/* Quiz Session Section */}
                     <motion.section
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -81,7 +77,6 @@ const PublicHome = () => {
                         <QuizSessionComponent />
                     </motion.section>
 
-                    {/* Quiz History Section */}
                     {user && (
                         <motion.section
                             initial={{ opacity: 0, y: 20 }}
@@ -94,7 +89,6 @@ const PublicHome = () => {
                 </div>
             </div>
 
-            {/* About Mimir Section */}
             <motion.section
                 className="py-16 bg-base-100"
                 initial={{ opacity: 0 }}

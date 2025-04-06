@@ -1,23 +1,32 @@
 import React from "react";
-import {FiLogOut} from 'react-icons/fi';
-import {useAuth} from "../hooks/useAuth.ts";
-import {Spinner} from "../components/common/Spinner.tsx";
+import { FiLogOut } from 'react-icons/fi';
+import { useAuth } from "../hooks/useAuth";
+import { Spinner } from "../components/common/Spinner";
 
-const LogoutButton: React.FC<{ className?: string }> = ({className}) => {
-    const {logout, isLoading} = useAuth();
+interface LogoutButtonProps {
+    className?: string;
+}
+
+const LogoutButton: React.FC<LogoutButtonProps> = ({ className }) => {
+    const { logout, isLoading } = useAuth();
 
     return (
         <button
             onClick={logout}
-            className={`btn btn-ghost gap-3 justify-start !min-h-0 h-auto px-3 py-2 ${className || ''}`}
+            className={`
+                flex items-center gap-2 px-4 py-2 w-full
+                text-error hover:bg-error/10 transition-colors
+                ${isLoading ? 'loading' : ''}
+                ${className || ''}
+            `}
             disabled={isLoading}
         >
             {isLoading ? (
-                <Spinner size="sm"/>
+                <Spinner size="sm" />
             ) : (
                 <>
-                    <FiLogOut className="w-4 h-4"/>
-                    <span className="hidden sm:inline">Esci</span>
+                    <FiLogOut className="w-4 h-4" />
+                    <span>Sign Out</span>
                 </>
             )}
         </button>
