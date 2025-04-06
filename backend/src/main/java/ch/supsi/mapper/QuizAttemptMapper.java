@@ -15,6 +15,9 @@ public class QuizAttemptMapper implements IBaseMapper<QuizAttempt, QuizAttemptDT
     @Inject
     IQuestionResponseMapperBuilder questionResponseMapperBuilder;
 
+    @Inject
+    BadgeMapper badgeMapper;
+
     @Override
     public QuizAttemptDTO toDTO(QuizAttempt quizAttempt) {
         if (quizAttempt == null) {
@@ -31,6 +34,12 @@ public class QuizAttemptMapper implements IBaseMapper<QuizAttempt, QuizAttemptDT
         if (quizAttempt.responses != null) {
             dto.setResponses(quizAttempt.responses.stream()
                     .map(question -> this.questionResponseMapperBuilder.getQuestionResponseDTOMapper(question.responseType).toDTO(question))
+                    .collect(Collectors.toList()));
+        }
+
+        if (quizAttempt.badges != null) {
+            dto.setBadges(quizAttempt.badges.stream()
+                    .map(this.badgeMapper::toDTO)
                     .collect(Collectors.toList()));
         }
 
@@ -58,6 +67,11 @@ public class QuizAttemptMapper implements IBaseMapper<QuizAttempt, QuizAttemptDT
                 .map(qDTO -> this.questionResponseMapperBuilder.getQuestionResponseDTOMapper(qDTO.getResponseType()).toEntity(qDTO))
                 .collect(Collectors.toList());
 
+        if (dto.getBadges() != null) {
+            quizAttempt.badges = dto.getBadges().stream()
+                    .map(this.badgeMapper::toEntity)
+                    .collect(Collectors.toList());
+        }
 
         return quizAttempt;
     }

@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @RegisterForReflection
@@ -24,10 +25,11 @@ public class QuizAttemptDTO {
 
     private List<QuestionResponseDTO> responses;
 
+    private List<BadgeDTO> badges = new ArrayList<>();
+
     public QuizAttemptDTO() {
     }
 
-    // Getters and Setters
     public String getId() {
         return id;
     }
@@ -74,5 +76,13 @@ public class QuizAttemptDTO {
 
     public void setResponses(List<QuestionResponseDTO> responses) {
         this.responses = responses;
+    }
+
+    public List<BadgeDTO> getBadges() {
+        return badges;
+    }
+
+    public void setBadges(List<BadgeDTO> badges) {
+        this.badges = badges != null ? badges : new ArrayList<>();
     }
 }

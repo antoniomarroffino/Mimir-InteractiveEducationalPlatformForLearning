@@ -2,6 +2,8 @@ package ch.supsi.service.quizattempt;
 
 import ch.supsi.mapper.QuizAttemptMapper;
 import ch.supsi.model.api.QuizAttempt;
+import ch.supsi.model.api.badge.Badge;
+import ch.supsi.model.api.badge.BadgeType;
 import ch.supsi.model.dto.api.QuizAttemptDTO;
 import ch.supsi.repository.QuizAttemptRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -77,6 +79,30 @@ public class QuizAttemptService implements IQuizAttemptService {
         return this.quizAttemptRepository.findByPublicationIdAndQuestionId(publicationId, questionId).stream()
                 .map(this.quizAttemptMapper::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void assignBadge(ObjectId attemptId, BadgeType badgeType, String teacherAzureOid) {
+        if (attemptId == null || badgeType == null || teacherAzureOid == null) {
+            throw new BadRequestException("Attempt ID, badge type and teacher ID cannot be null");
+        }
+
+        Optional<QuizAttempt> quizAttemptOpt = this.quizAttemptRepository.findByIdOptional(attemptId);
+        if (quizAttemptOpt.isEmpty()) {
+            throw new NotFoundException("Quiz attempt " + attemptId + " not found");
+        }
+
+        QuizAttempt attempt = quizAttemptOpt.get();
+
+        boolean badgeExists = attempt.badges.stream()
+                .anyMatch(badge -> badge.type == badgeType);
+
+        if (badgeExists) {
+            throw new BadRequestException("Badge " + badgeType + " already assigned to this attempt");
+        }
+
+        attempt.badges.add(new Badge(badgeType, teacherAzureOid));
+        this.quizAttemptRepository.update(attempt);
     }
 
     private void verifyQuizAttemptIsValid(QuizAttemptDTO quizAttemptDTO) {

@@ -1,5 +1,6 @@
 package ch.supsi.model.api;
 
+import ch.supsi.model.api.badge.Badge;
 import ch.supsi.model.api.response.QuestionResponse;
 import io.quarkus.mongodb.panache.common.MongoEntity;
 import org.bson.codecs.pojo.annotations.BsonId;
@@ -7,6 +8,7 @@ import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @MongoEntity(collection = "quiz_attempts")
@@ -29,6 +31,9 @@ public class QuizAttempt {
 
     @Schema(description = "List of question responses")
     public List<QuestionResponse> responses;
+
+    @Schema(description = "List of badges")
+    public List<Badge> badges = new ArrayList<>();
 
 
     public QuizAttempt() {
