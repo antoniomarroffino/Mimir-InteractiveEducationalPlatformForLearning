@@ -9,12 +9,23 @@ interface QuizReviewProps {
     attempt: QuizAttemptDTO;
     publication: QuizPublicationDTO;
     onClose?: () => void;
+    showHeader?: boolean;
+    showStats?: boolean;
+    CustomHeader?: React.ComponentType<{
+        attempt: QuizAttemptDTO;
+        publication: QuizPublicationDTO;
+        score: number;
+        totalQuestions: number;
+    }>;
 }
 
 export const QuizReview: React.FC<QuizReviewProps> = ({
                                                           attempt,
                                                           publication,
-                                                          onClose
+                                                          onClose,
+                                                          showHeader = true,
+                                                          showStats = true,
+                                                          CustomHeader
                                                       }) => {
     const calculateScore = () => {
         return attempt.responses?.filter((response, index) => {
@@ -28,8 +39,26 @@ export const QuizReview: React.FC<QuizReviewProps> = ({
 
     return (
         <div className="space-y-8">
-            <QuizResultHeader score={score} totalQuestions={totalQuestions} />
-            <QuizScoreStats score={score} totalQuestions={totalQuestions} />
+            {CustomHeader ? (
+                <CustomHeader
+                    attempt={attempt}
+                    publication={publication}
+                    score={score}
+                    totalQuestions={totalQuestions}
+                />
+            ) : showHeader && (
+                <QuizResultHeader
+                    score={score}
+                    totalQuestions={totalQuestions}
+                />
+            )}
+
+            {showStats && (
+                <QuizScoreStats
+                    score={score}
+                    totalQuestions={totalQuestions}
+                />
+            )}
 
             <div className="space-y-6">
                 {publication.questions?.map((question) => {
@@ -55,7 +84,7 @@ export const QuizReview: React.FC<QuizReviewProps> = ({
                         onClick={onClose}
                         className="btn btn-primary"
                     >
-                        Chiudi revisione
+                        Close revision
                     </button>
                 </div>
             )}

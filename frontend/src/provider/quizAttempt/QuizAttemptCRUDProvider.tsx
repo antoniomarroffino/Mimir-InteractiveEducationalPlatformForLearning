@@ -1,8 +1,14 @@
 import React, { useMemo } from "react";
 import {useMutation, useQueryClient} from "react-query";
-import { QuizAttemptDTO } from "@dti-isin/backend-api-client";
+import { QuizAttemptDTO, BadgeType } from "@dti-isin/backend-api-client";
 import { quizAttemptApi } from "../../../config/config.ts";
 import { QuizAttemptCRUDContext } from "../../contexts/quizAttempt/QuizAttemptCRUDContext.ts";
+
+interface AssignBadgeParams {
+    attemptId: string;
+    badgeType: BadgeType;
+}
+
 
 export const QuizAttemptCRUDProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const queryClient = useQueryClient();
@@ -36,6 +42,21 @@ export const QuizAttemptCRUDProvider: React.FC<{ children: React.ReactNode }> = 
                 .then(response => response.data)
     );
 
+    const assignBadgeMutation = useMutation(
+        ({ attemptId, badgeType }: AssignBadgeParams) =>
+            quizAttemptApi.apiAttemptsAttemptIdBadgesPost({
+                attemptId,
+                type: badgeType
+            }),
+        {
+            onSuccess: (_, variables) => {
+                queryClient.invalidateQueries(['quizAttempt', variables.attemptId]);
+                queryClient.invalidateQueries(['quizAttempts']);
+            }
+        }
+    );
+
+
     const value = useMemo(() => ({
         createQuizAttempt: async (quizAttemptDTO: QuizAttemptDTO) => {
             try {
@@ -61,11 +82,21 @@ export const QuizAttemptCRUDProvider: React.FC<{ children: React.ReactNode }> = 
                 throw err;
             }
         },
+        assignBadge: async (attemptId: string, badgeType: BadgeType) => {
+            try {
+                await assignBadgeMutation.mutateAsync({ attemptId, badgeType });
+            } catch (err) {
+                console.error("Failed to assign badge:", err);
+                throw err;
+            }
+        },
         isCreatingQuizAttempt: createQuizAttemptMutation.isLoading,
         isLoadingAttempt: getQuizAttemptByIdQuery.isLoading || getQuizAttemptsByPublicationQuery.isLoading,
+        isAssigningBadge: assignBadgeMutation.isLoading,
         errorCreateQuizAttempt: createQuizAttemptMutation.error as Error,
         errorLoadAttempt: getQuizAttemptByIdQuery.error as Error || getQuizAttemptsByPublicationQuery.error as Error,
-    }), [createQuizAttemptMutation, getQuizAttemptByIdQuery, getQuizAttemptsByPublicationQuery]);
+        errorAssignBadge: assignBadgeMutation.error as Error,
+    }), [createQuizAttemptMutation, getQuizAttemptByIdQuery, assignBadgeMutation, getQuizAttemptsByPublicationQuery]);
 
     return (
         <QuizAttemptCRUDContext.Provider value={value}>

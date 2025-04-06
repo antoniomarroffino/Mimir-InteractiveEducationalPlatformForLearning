@@ -8,6 +8,7 @@ import {
     MultipleChoiceQuestionResponseDTO
 } from "@dti-isin/backend-api-client";
 import React from "react";
+import {FaTrophy} from "react-icons/fa";
 
 interface AttemptsTableProps {
     attempts: QuizAttemptDTO[];
@@ -73,6 +74,7 @@ export const AttemptsTable: React.FC<AttemptsTableProps> = ({
                         <th className="font-bold">Started At</th>
                         <th className="font-bold">Completed At</th>
                         <th className="font-bold">Score</th>
+                        <th className="font-bold">Badges</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -117,6 +119,13 @@ export const AttemptsTable: React.FC<AttemptsTableProps> = ({
                                             </div>
                                         )}
                                     </div>
+                                </td>
+                                <td>
+                                    {attempt.badges?.map(badge => (
+                                        <div key={badge.type} className="tooltip" data-tip={`Assigned by ${badge.assignedBy}`}>
+                                            <FaTrophy className="text-warning" />
+                                        </div>
+                                    ))}
                                 </td>
                             </tr>
                         );
