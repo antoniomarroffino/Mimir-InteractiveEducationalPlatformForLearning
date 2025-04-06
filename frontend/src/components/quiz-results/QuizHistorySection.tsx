@@ -24,22 +24,31 @@ export const QuizHistorySection: React.FC = () => {
 
     return (
         <div className="container mx-auto px-4 py-8 space-y-8">
-            <div className="bg-base-200 rounded-xl p-6">
-                <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-2xl font-bold">
-                        Quiz history
-                    </h2>
-                    <span className="text-sm text-base-content/70">
-                        Total attempts: {attempts.length}
-                    </span>
+            <div className="bg-gradient-to-r from-primary/5 to-secondary/5 rounded-xl p-6">
+                <div className="flex items-center justify-between mb-8">
+                    <div>
+                        <h2 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                            Your Quiz Journey
+                        </h2>
+                        <p className="text-base-content/70 mt-2">
+                            Track your progress and achievements
+                        </p>
+                    </div>
+                    <div className="stats bg-base-100 shadow">
+                        <div className="stat p-4">
+                            <div className="stat-title">Total Attempts</div>
+                            <div className="stat-value text-primary">{attempts.length}</div>
+                        </div>
+                    </div>
                 </div>
 
                 {isLoadingAttempts ? (
-                    <div className="flex justify-center py-8">
-                        <span className="loading loading-spinner loading-lg"></span>
+                    <div className="flex flex-col items-center justify-center py-12">
+                        <span className="loading loading-spinner loading-lg text-primary"></span>
+                        <p className="mt-4 text-base-content/70">Loading your quiz history...</p>
                     </div>
                 ) : attempts.length > 0 ? (
-                    <div className="grid gap-4">
+                    <div className="grid gap-6">
                         {attempts.map((attempt) => (
                             <AttemptCard
                                 key={attempt.id}
@@ -50,9 +59,13 @@ export const QuizHistorySection: React.FC = () => {
                         ))}
                     </div>
                 ) : (
-                    <div className="text-center py-12 bg-base-300 rounded-lg">
-                        <p className="text-lg text-base-content/70">
-                            You have not completed any quizzes yet
+                    <div className="text-center py-16 bg-base-100 rounded-xl">
+                        <div className="text-6xl mb-4">📚</div>
+                        <p className="text-xl font-medium text-base-content/70">
+                            Start your learning journey
+                        </p>
+                        <p className="text-base-content/50 mt-2">
+                            Complete your first quiz to see your progress here
                         </p>
                     </div>
                 )}
