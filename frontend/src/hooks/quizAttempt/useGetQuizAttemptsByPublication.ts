@@ -11,7 +11,6 @@ export const useGetQuizAttemptsByPublication = (publicationId: string) => {
             .then(response => response.data),
         {
             enabled: !!publicationId,
-            refetchInterval: 2000,
             refetchIntervalInBackground: false,
             refetchOnWindowFocus: true,
             onError: (error) => {

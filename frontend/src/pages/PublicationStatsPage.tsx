@@ -10,7 +10,7 @@ import {
 } from '@dti-isin/backend-api-client';
 import { useParams } from "react-router-dom";
 import { PublicationDetails } from "../components/quizPublication/PublicationDetails.tsx";
-import { motion } from 'framer-motion';
+import {AnimatePresence, motion} from 'framer-motion';
 import { useGetQuizPublicationsByQuizId } from "../hooks/quizPublication/useGetQuizPublicationsByQuizId.ts";
 import NoPublicationsPlaceholder from "../components/quizPublication/NoPublicationsPlaceholder.tsx";
 import {useGetQuizAttemptsByPublication} from "../hooks/quizAttempt/useGetQuizAttemptsByPublication.ts";
@@ -26,8 +26,7 @@ const PublicationStatsPage: React.FC = () => {
     const {
         data: attempts,
         isLoading: isLoadingAttempts,
-        isFetching,
-        refetch
+        isFetching
     } = useGetQuizAttemptsByPublication(selectedPublication?.id || '');
     const [selectedAttempt, setSelectedAttempt] = useState<QuizAttemptDTO | null>(null);
     useEffect(() => {
@@ -52,7 +51,6 @@ const PublicationStatsPage: React.FC = () => {
         if (!attempts || !selectedPublication?.questions) return null;
 
         return selectedPublication.questions.map(question => {
-            // Aggiungi controlli null-safe
             const responses = attempts.flatMap(attempt =>
                 (attempt.responses || []).filter(response =>
                     response.questionId === question.id
@@ -87,8 +85,11 @@ const PublicationStatsPage: React.FC = () => {
 
     if (isGettingPublicationsByQuizId || isLoadingAttempts) {
         return (
-            <div className="flex justify-center items-center min-h-screen">
-                <span className="loading loading-spinner loading-lg"></span>
+            <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-primary/10 to-secondary/10">
+                <div className="text-center">
+                    <span className="loading loading-spinner loading-lg text-primary"></span>
+                    <p className="mt-4 text-base-content/70">Loading analytics...</p>
+                </div>
             </div>
         );
     }
@@ -98,84 +99,86 @@ const PublicationStatsPage: React.FC = () => {
     }
 
     return (
-        <motion.div className="min-h-screen bg-gradient-to-br from-primary/10 to-secondary/10 p-8">
-            <div className="max-w-6xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden">
-                {/* Header con indicatore di aggiornamento */}
-                <div className="bg-primary text-white p-6 flex justify-between items-center">
-                    <motion.h1
-                        initial={{ x: -50, opacity: 0 }}
-                        animate={{ x: 0, opacity: 1 }}
-                        className="text-3xl font-bold"
-                    >
-                        Quiz Performance Analytics
-                    </motion.h1>
-                    <div className="flex items-center gap-4">
-                        {isFetching && (
-                            <div className="flex items-center gap-2 text-sm">
-                                <span className="loading loading-spinner loading-sm"></span>
-                                <span>Updating in real-time...</span>
-                            </div>
-                        )}
-                        <button
-                            onClick={() => refetch()}
-                            className="btn btn-sm btn-ghost btn-circle"
-                            disabled={isFetching}
+        <div className="min-h-screen bg-gradient-to-br from-primary/10 to-secondary/10 py-6 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto">
+                <motion.div
+                    className="bg-base-100 rounded-2xl shadow-xl overflow-hidden"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                >
+                    {/* Header */}
+                    <div className="bg-primary text-primary-content p-4 sm:p-6">
+                        <motion.h1
+                            initial={{ x: -20, opacity: 0 }}
+                            animate={{ x: 0, opacity: 1 }}
+                            className="text-2xl sm:text-3xl font-bold text-center"
                         >
-                            <svg
-                                className={`h-5 w-5 ${isFetching ? 'animate-spin' : ''}`}
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
+                            Quiz Performance Analytics
+                        </motion.h1>
+                    </div>
+
+                    {/* Publication Selector */}
+                    <div className="p-4 sm:p-6 border-b">
+                        <PublicationSelector
+                            publications={publications || []}
+                            selectedPublication={selectedPublication}
+                            onPublicationChange={setSelectedPublication}
+                        />
+                    </div>
+
+                    {/* Content */}
+                    <AnimatePresence mode="wait">
+                        {selectedPublication && (
+                            <motion.div
+                                key={selectedPublication.id}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                className="divide-y divide-base-200"
                             >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                                />
-                            </svg>
-                        </button>
-                    </div>
-                </div>
+                                <div className="p-4 sm:p-6">
+                                    <PublicationDetails publication={selectedPublication} />
+                                </div>
 
-                <PublicationSelector
-                    publications={publications}
-                    selectedPublication={selectedPublication}
-                    onPublicationChange={setSelectedPublication}
-                />
+                                {questionStats && (
+                                    <div className="p-4 sm:p-6">
+                                        <QuestionStatistics questionStats={questionStats} />
+                                    </div>
+                                )}
 
-                {selectedPublication && (
-                    <div className="relative">
-                        {isFetching && (
-                            <div className="absolute top-2 right-2 z-10">
-                                <span className="badge badge-primary gap-2">
-                                    <span className="loading loading-spinner loading-xs"></span>
-                                    Updating...
-                                </span>
-                            </div>
+                                {attempts && attempts.length > 0 && (
+                                    <div className="p-4 sm:p-6">
+                                        <AttemptsTable
+                                            attempts={attempts}
+                                            publication={selectedPublication}
+                                            onAttemptSelect={setSelectedAttempt}
+                                            isUpdating={isFetching}
+                                        />
+                                    </div>
+                                )}
+
+                                <AnimatePresence>
+                                    {selectedAttempt && (
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 20 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0, y: 20 }}
+                                            className="p-4 sm:p-6 bg-base-200"
+                                        >
+                                            <AttemptDetails
+                                                attempt={selectedAttempt}
+                                                publication={selectedPublication}
+                                                onClose={() => setSelectedAttempt(null)}
+                                            />
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </motion.div>
                         )}
-                        <PublicationDetails publication={selectedPublication} />
-                        {questionStats && (
-                            <QuestionStatistics questionStats={questionStats} />
-                        )}
-                        {attempts && attempts.length > 0 && (
-                            <AttemptsTable
-                                attempts={attempts}
-                                publication={selectedPublication}
-                                onAttemptSelect={setSelectedAttempt}
-                                isUpdating={isFetching}
-                            />
-                        )}
-                        {selectedAttempt && (
-                            <AttemptDetails
-                                attempt={selectedAttempt}
-                                publication={selectedPublication}
-                            />
-                        )}
-                    </div>
-                )}
+                    </AnimatePresence>
+                </motion.div>
             </div>
-        </motion.div>
+        </div>
     );
 };
 export default PublicationStatsPage;

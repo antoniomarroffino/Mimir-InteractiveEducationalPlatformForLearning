@@ -22,7 +22,6 @@ export const AttemptDetails: React.FC<AttemptDetailsProps> = ({
 
     return (
         <div className="p-4">
-            {/* Header con pulsante di chiusura */}
             <div className="relative mb-8">
                 {onClose && (
                     <button
@@ -37,7 +36,6 @@ export const AttemptDetails: React.FC<AttemptDetailsProps> = ({
                 </h2>
             </div>
 
-            {/* Sezione Badge */}
             <div className="mb-8">
                 <div className="card bg-base-200 shadow-lg">
                     <div className="card-body">
@@ -61,13 +59,11 @@ export const AttemptDetails: React.FC<AttemptDetailsProps> = ({
                                     </div>
                                 )}
                             </div>
-                            {/* Spazio per altri badge futuri */}
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* Contenuto della revisione */}
             <div className="mt-8">
                 <QuizReview
                     attempt={attempt}
