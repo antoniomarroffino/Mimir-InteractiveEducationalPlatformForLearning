@@ -1,9 +1,9 @@
 import React from 'react';
-import { QuizAttemptDTO } from '@dti-isin/backend-api-client';
+import {QuizAttemptDTO} from '@dti-isin/backend-api-client';
 
 interface AttemptCardProps {
     attempt: QuizAttemptDTO;
-    onViewDetails: (attemptId: string) => void;
+    onViewDetails: (attemptId: string | null) => void;
     isSelected?: boolean;
 }
 
@@ -15,6 +15,14 @@ export const AttemptCard: React.FC<AttemptCardProps> = ({
     const calculateScore = (): number => {
         if (!attempt.responses) return 0;
         return Math.round((attempt.responses.length / (attempt.responses.length || 1)) * 100);
+    };
+
+    const handleClick = () => {
+        if (isSelected) {
+            onViewDetails(null);
+        } else {
+            onViewDetails(attempt.id!);
+        }
     };
 
     return (
@@ -30,7 +38,7 @@ export const AttemptCard: React.FC<AttemptCardProps> = ({
                             Quiz #{attempt.id?.slice(-6)}
                         </h3>
                         <p className="text-sm text-base-content/70">
-                            Completato il {new Date(attempt.completedAt!).toLocaleDateString('it-IT', {
+                            Completed at {new Date(attempt.completedAt!).toLocaleDateString('it-IT', {
                             day: '2-digit',
                             month: '2-digit',
                             year: 'numeric',
@@ -51,9 +59,9 @@ export const AttemptCard: React.FC<AttemptCardProps> = ({
                             className={`btn btn-sm ${
                                 isSelected ? 'btn-ghost' : 'btn-primary'
                             }`}
-                            onClick={() => onViewDetails(attempt.id!)}
+                            onClick={handleClick}
                         >
-                            {isSelected ? 'Nascondi' : 'Dettagli'}
+                            {isSelected ? 'Hide' : 'Details'}
                         </button>
                     </div>
                 </div>
