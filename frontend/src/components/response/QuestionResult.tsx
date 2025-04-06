@@ -19,35 +19,34 @@ export const QuestionResult: React.FC<QuestionResultProps> = ({
     const strategy = ResponseStrategyFactory.createStrategy(question.type);
 
     return (
-        <div className="card bg-base-100 shadow-lg hover:shadow-xl transition-shadow">
+        <div className={`card ${
+            isAnswered
+                ? isCorrect
+                    ? 'bg-success/5 border-2 border-success/20'
+                    : 'bg-error/5 border-2 border-error/20'
+                : 'bg-warning/5 border-2 border-warning/20'
+        } shadow-lg hover:shadow-xl transition-all duration-300`}>
             <div className="card-body">
-                <div className="flex justify-between items-start gap-4">
-                    <h3 className="card-title flex-1">{question.questionText}</h3>
-                    {isAnswered ? (
-                        <div className={`badge ${
-                            isCorrect ? 'badge-success' : 'badge-error'
-                        } gap-1`}>
-                            {isCorrect ? (
-                                <>
-                                    <BsCheckCircle/>
-                                    Correct
-                                </>
-                            ) : (
-                                <>
-                                    <BsXCircle/>
-                                    Incorrect
-                                </>
-                            )}
+                <div className="flex items-start gap-4">
+                    <div className={`text-2xl ${
+                        isAnswered
+                            ? isCorrect
+                                ? 'text-success'
+                                : 'text-error'
+                            : 'text-warning'
+                    }`}>
+                        {isAnswered
+                            ? isCorrect
+                                ? <BsCheckCircle/>
+                                : <BsXCircle/>
+                            : <BsQuestionCircle/>}
+                    </div>
+                    <div className="flex-1">
+                        <h3 className="text-lg font-medium mb-2">{question.questionText}</h3>
+                        <div className="mt-4">
+                            {strategy.renderResponse({question, response, isAnswered})}
                         </div>
-                    ) : (
-                        <div className="badge badge-warning gap-1">
-                            <BsQuestionCircle/>
-                            No Response
-                        </div>
-                    )}
-                </div>
-                <div className="mt-4">
-                    {strategy.renderResponse({question, response, isAnswered})}
+                    </div>
                 </div>
             </div>
         </div>

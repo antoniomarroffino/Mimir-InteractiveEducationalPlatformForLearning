@@ -1,18 +1,19 @@
-import React from 'react';
-import {BsCheckCircle, BsQuestionCircle, BsXCircle} from 'react-icons/bs';
+import {BsCheckCircle} from "react-icons/bs";
 
 interface MultipleChoiceResponseViewProps {
     choices: string[];
     selectedIndexes: number[];
     correctIndexes: number[];
+    showCorrect?: boolean;
 }
 
 export const MultipleChoiceResponseView: React.FC<MultipleChoiceResponseViewProps> = ({
                                                                                           choices,
                                                                                           selectedIndexes,
-                                                                                          correctIndexes
+                                                                                          correctIndexes,
+                                                                                          showCorrect = false // Di default non mostriamo le risposte corrette
                                                                                       }) => (
-    <div className="grid gap-2">
+    <div className="grid gap-3">
         {choices.map((choice, index) => {
             const isSelected = selectedIndexes.includes(index);
             const isCorrect = correctIndexes.includes(index);
@@ -20,36 +21,32 @@ export const MultipleChoiceResponseView: React.FC<MultipleChoiceResponseViewProp
             return (
                 <div
                     key={index}
-                    className={`p-3 rounded-lg flex items-center gap-2 ${
-                        isSelected
-                            ? isCorrect
-                                ? 'bg-success/20'
-                                : 'bg-error/20'
-                            : isCorrect
-                                ? 'bg-success/10'
-                                : 'bg-base-200'
-                    }`}
+                    className={`
+                        p-4 rounded-lg flex items-center gap-3 border transition-all
+                        ${showCorrect
+                        ? isCorrect
+                            ? 'bg-success/10 border-success'
+                            : 'bg-base-200 border-base-200'
+                        : isSelected
+                            ? 'bg-primary/10 border-primary'
+                            : 'bg-base-200 border-base-200'
+                    }
+                    `}
                 >
-                    <div className={`text-xl ${
-                        isSelected
-                            ? isCorrect
-                                ? 'text-success'
-                                : 'text-error'
-                            : isCorrect
-                                ? 'text-success/50'
-                                : 'text-base-content/30'
-                    }`}>
-                        {isSelected
-                            ? isCorrect
-                                ? <BsCheckCircle/>
-                                : <BsXCircle/>
-                            : <BsQuestionCircle/>}
+                    <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center">
+                        {showCorrect ? (
+                            isCorrect && <BsCheckCircle className="text-xl text-success" />
+                        ) : (
+                            isSelected && (
+                                <div className="w-3 h-3 rounded-full bg-primary" />
+                            )
+                        )}
                     </div>
-                    <span className={`font-medium ${
-                        isSelected && !isCorrect ? 'text-error' : ''
-                    }`}>
-                        {choice}
-                    </span>
+                    <div className="flex-1">
+                        <span className="font-medium">
+                            {choice}
+                        </span>
+                    </div>
                 </div>
             );
         })}
