@@ -48,7 +48,7 @@ export const QuizNavigation: React.FC<QuizNavigationProps> = ({
                     return false;
             }
         } catch (error) {
-            console.error('Errore nel verificare la risposta:', error);
+            console.error('Error in verification response:', error);
             return false;
         }
     };
@@ -69,23 +69,21 @@ export const QuizNavigation: React.FC<QuizNavigationProps> = ({
     return (
         <>
             <div className="bg-base-100 rounded-xl shadow-xl p-4 space-y-4">
-                <h3 className="text-lg font-bold text-primary mb-4">Domande</h3>
+                <h3 className="text-lg font-bold text-primary mb-4">Questions</h3>
 
-                <div className="grid grid-cols-5 gap-2">
+                <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
                     {questions.map((question, index) => {
                         const isCurrentQuestion = index === currentQuestionIndex;
                         const isAnswered = isQuestionAnswered(index);
 
-                        const buttonClasses = `
-                            btn btn-xs 
-                            ${isCurrentQuestion ? 'btn-primary' : 'btn-outline'}
-                            ${isAnswered ? 'btn-success' : ''}
-                        `;
-
                         return (
                             <button
                                 key={question.id}
-                                className={buttonClasses}
+                                className={`
+                                    btn btn-xs 
+                                    ${isCurrentQuestion ? 'btn-primary' : 'btn-outline'}
+                                    ${isAnswered ? 'btn-success' : ''}
+                                `}
                                 onClick={() => onQuestionChange(index)}
                             >
                                 {index + 1}
@@ -94,47 +92,47 @@ export const QuizNavigation: React.FC<QuizNavigationProps> = ({
                     })}
                 </div>
 
-                <div className="mt-4 text-sm text-base-content">
-                    <p>Domanda {currentQuestionIndex + 1} di {questions.length}</p>
+                <div className="mt-4 text-sm">
+                    <p>Question {currentQuestionIndex + 1} of {questions.length}</p>
+                    <p className="text-success">
+                        {answeredQuestions.filter(Boolean).length} answered
+                    </p>
                 </div>
 
-                <div className="mt-6">
-                    <button
-                        onClick={handleCompleteQuizClick}
-                        className="btn btn-primary btn-block
-                            transition-all duration-300"
-                    >
-                        Termina Quiz
-                        <span className="ml-2 badge badge-success">
-                            {answeredQuestions.filter(Boolean).length}/{questions.length}
-                        </span>
-                    </button>
-                </div>
+                <button
+                    onClick={handleCompleteQuizClick}
+                    className="btn btn-primary w-full mt-6"
+                >
+                    Complete Quiz
+                    <span className="ml-2 badge badge-success">
+                        {answeredQuestions.filter(Boolean).length}/{questions.length}
+                    </span>
+                </button>
             </div>
 
             <ConfirmModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 onConfirm={handleConfirmComplete}
-                title="Conferma Consegna Quiz"
+                title="Confirm Quiz Submission"
             >
                 {unansweredQuestions.length > 0 ? (
                     <div>
                         <p className="text-error font-bold mb-4">
-                            Attenzione: {unansweredQuestions.length} domanda/e non ancora risposte!
+                            Warning: {unansweredQuestions.length} unanswered question(s)!
                         </p>
-                        <p>Domande non risposte:</p>
+                        <p>Unanswered questions:</p>
                         <ul className="list-disc list-inside text-error">
                             {unansweredQuestions.map((question) => (
                                 <li key={question.id}>
-                                    Domanda {questions.indexOf(question) + 1}
+                                    Question {questions.indexOf(question) + 1}
                                 </li>
                             ))}
                         </ul>
-                        <p className="mt-4">Sei sicuro di voler consegnare il quiz?</p>
+                        <p className="mt-4">Are you sure you want to submit the quiz?</p>
                     </div>
                 ) : (
-                    <p>Sei sicuro di voler consegnare il quiz?</p>
+                    <p>Are you sure you want to submit the quiz?</p>
                 )}
             </ConfirmModal>
         </>
