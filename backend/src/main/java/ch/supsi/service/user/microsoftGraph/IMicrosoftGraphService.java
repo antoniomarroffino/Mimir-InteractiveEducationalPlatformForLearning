@@ -8,6 +8,4 @@ public interface IMicrosoftGraphService {
     User getUserByOid(String oid);
 
     User getUserByEmail(String email);
-
-    List<User> getAllUsers();
 }

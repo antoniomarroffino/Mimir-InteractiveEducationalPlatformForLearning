@@ -56,18 +56,4 @@ public class MicrosoftGraphService implements IMicrosoftGraphService {
 
         return microsoftUser.get();
     }
-
-    @Override
-    public List<User> getAllUsers() {
-        UserCollectionPage response = this.graphServiceClient.users()
-                .buildRequest()
-                .get();
-
-        if (response == null)
-            throw new InternalServerErrorException("Error calling MicrosoftGraphService");
-
-        return response.getCurrentPage()
-                .stream()
-                .toList();
-    }
 }
