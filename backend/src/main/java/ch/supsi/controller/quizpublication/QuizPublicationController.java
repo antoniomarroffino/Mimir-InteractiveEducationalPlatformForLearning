@@ -1,7 +1,10 @@
 package ch.supsi.controller.quizpublication;
 
+import ch.supsi.model.dto.api.CourseDTO;
 import ch.supsi.model.dto.api.QuizDTO;
 import ch.supsi.model.dto.api.QuizPublicationDTO;
+import ch.supsi.service.course.ICourseService;
+import ch.supsi.service.folder.IFolderService;
 import ch.supsi.service.quiz.IQuizService;
 import ch.supsi.service.quizpublication.IQuizPublicationService;
 import jakarta.annotation.security.RolesAllowed;
@@ -34,6 +37,12 @@ public class QuizPublicationController {
     @Inject
     IQuizService quizService;
 
+    @Inject
+    ICourseService courseService;
+
+    @Inject
+    IFolderService folderService;
+
     @POST
     @RolesAllowed("TEACHER")
     @Operation(summary = "Publish a quiz")
@@ -44,9 +53,9 @@ public class QuizPublicationController {
     @APIResponse(responseCode = "400", description = "Invalid input data")
     @APIResponse(responseCode = "404", description = "Resource not found")
     public Response publishQuiz(@Valid QuizPublicationDTO quizPublicationDTO) {
+        CourseDTO courseDTO = this.courseService.getCourseById(new ObjectId(quizPublicationDTO.getCourseId()));
         QuizDTO quizDTO = this.quizService.getQuizInFolder(
-                new ObjectId(quizPublicationDTO.getCourseId()),
-                new ObjectId(quizPublicationDTO.getFolderId()),
+                this.folderService.getFolderInCourse(courseDTO, new ObjectId(quizPublicationDTO.getFolderId())),
                 new ObjectId(quizPublicationDTO.getQuizId())
         );
         quizPublicationDTO.setQuestions(quizDTO.getQuestions());
