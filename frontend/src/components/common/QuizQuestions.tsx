@@ -16,6 +16,7 @@ import {QuizNavigation} from "../quiz/QuizNavigation.tsx";
 import {useQuizAttemptLocal} from "../../hooks/quizAttempt/useQuizAttemptLocal.ts";
 import {useNavigate} from "react-router-dom";
 import {MobileNavigation} from "./MobileNavigation.tsx";
+import {QuestionResponseFactory} from "../question/QuestionResponseFactory.tsx";
 
 interface QuizQuestionsProps {
     publication: QuizPublicationDTO;
@@ -50,26 +51,18 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({publication}) => {
         setUserResponses(prevResponses => {
             const updatedResponses = [...prevResponses];
 
-            switch (currentQuestion.type) {
-                case QuestionType.TrueFalse:
-                    if (typeof answer === 'boolean' || answer === null) {
-                        updatedResponses[currentQuestionIndex] = {
-                            responseType: QuestionType.TrueFalse,
-                            questionId: currentQuestion.id,
-                            selectedAnswer: answer
-                        } as TrueFalseQuestionResponseDTO;
-                    }
-                    break;
-
-                case QuestionType.MultipleChoice:
-                    if (Array.isArray(answer) || answer === null) {
-                        updatedResponses[currentQuestionIndex] = {
-                            responseType: QuestionType.MultipleChoice,
-                            questionId: currentQuestion.id,
-                            selectedAnswerIndexes: answer || []
-                        } as MultipleChoiceQuestionResponseDTO;
-                    }
-                    break;
+            if (currentQuestion.type === QuestionType.TrueFalse && (typeof answer === 'boolean' || answer === null)) {
+                updatedResponses[currentQuestionIndex] = QuestionResponseFactory.createResponse(
+                    QuestionType.TrueFalse,
+                    currentQuestion.id!,
+                    answer ?? undefined
+                );
+            } else if (currentQuestion.type === QuestionType.MultipleChoice && (Array.isArray(answer) || answer === null)) {
+                updatedResponses[currentQuestionIndex] = QuestionResponseFactory.createResponse(
+                    QuestionType.MultipleChoice,
+                    currentQuestion.id!,
+                    answer || []
+                );
             }
 
             return updatedResponses;

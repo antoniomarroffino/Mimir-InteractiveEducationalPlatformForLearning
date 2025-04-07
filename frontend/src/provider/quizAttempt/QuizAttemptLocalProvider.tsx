@@ -11,6 +11,7 @@ import {useQuizAttemptCRUD} from '../../hooks/quizAttempt/useQuizAttemptCRUD';
 import {useAuth} from '../../hooks/useAuth';
 import {QuizAttemptLocalContext} from '../../contexts/quizAttempt/QuizAttemptLocalContext';
 import {useNavigate} from "react-router-dom";
+import {useQueryClient} from "react-query";
 
 export const QuizAttemptLocalProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const [currentAttempt, setCurrentAttempt] = useState<Partial<QuizAttemptDTO> & {
@@ -19,6 +20,7 @@ export const QuizAttemptLocalProvider: React.FC<{ children: React.ReactNode }> =
     const {createQuizAttempt} = useQuizAttemptCRUD();
     const {user} = useAuth();
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
 
     const prepareQuizResponses = useCallback((publication: QuizPublicationDTO) => {
         return publication.questions?.map(question => {
@@ -85,6 +87,8 @@ export const QuizAttemptLocalProvider: React.FC<{ children: React.ReactNode }> =
             if (!completedQuizAttempt) {
                 console.error('Failed to create quiz attempt');
             }
+            await queryClient.invalidateQueries(['quizAttempts']);
+            await queryClient.invalidateQueries(['quizAttempts', currentAttempt.userAzureOID]);
 
             setCurrentAttempt(null);
             return completedQuizAttempt;
@@ -92,7 +96,7 @@ export const QuizAttemptLocalProvider: React.FC<{ children: React.ReactNode }> =
             console.error('Errore durante il completamento del tentativo:', error);
             throw error;
         }
-    }, [currentAttempt, createQuizAttempt]);
+    }, [currentAttempt, createQuizAttempt, queryClient]);
 
     const updateQuizAttemptResponses = useCallback((responses: QuestionResponseDTO[]) => {
         setCurrentAttempt(prev => {
