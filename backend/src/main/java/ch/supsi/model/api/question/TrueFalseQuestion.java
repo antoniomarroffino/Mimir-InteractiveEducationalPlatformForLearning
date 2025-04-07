@@ -6,7 +6,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 @MongoEntity(collection = "questions")
 @Schema(description = "True/False Question model", name = "TrueFalseQuestion")
-@BsonDiscriminator(value = "TRUE_FALSE")
+@BsonDiscriminator(key = "_questionClass", value = "TrueFalseQuestion")
 public class TrueFalseQuestion extends Question {
     public Boolean correctAnswer;
 

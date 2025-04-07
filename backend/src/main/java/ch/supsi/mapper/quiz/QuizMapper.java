@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class QuizMapper {
@@ -32,7 +33,9 @@ public class QuizMapper {
 
         quiz.description = dto.getDescription();
 
-        quiz.questionsId = questionIdList;
+        quiz.questionsId = questionIdList.stream()
+                .map(ObjectId::new)
+                .collect(Collectors.toSet());
 
         quiz.createdAt = dto.getCreatedAt() != null ? dto.getCreatedAt() : LocalDateTime.now();
         quiz.updatedAt = dto.getUpdatedAt() != null ? dto.getUpdatedAt() : LocalDateTime.now();

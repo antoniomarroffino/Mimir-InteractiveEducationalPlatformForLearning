@@ -2,6 +2,7 @@ package ch.supsi.mapper.response;
 
 import ch.supsi.model.api.response.MultipleChoiceQuestionResponse;
 import ch.supsi.model.dto.api.response.MultipleChoiceQuestionResponseDTO;
+import org.bson.types.ObjectId;
 
 public class MultipleChoiceQuestionResponseMapper extends AbstractQuestionResponseMapper<MultipleChoiceQuestionResponse, MultipleChoiceQuestionResponseDTO> {
     @Override
@@ -22,7 +23,9 @@ public class MultipleChoiceQuestionResponseMapper extends AbstractQuestionRespon
             return null;
         }
 
-        MultipleChoiceQuestionResponse response = new MultipleChoiceQuestionResponse();
+        MultipleChoiceQuestionResponse response = new MultipleChoiceQuestionResponse(
+                dto.getQuestionId() != null ? new ObjectId(dto.getQuestionId()) : null
+        );
         super.mapCommonFieldsResponseDTOToResponse(dto, response);
         response.selectedAnswerIndexes = dto.getSelectedAnswerIndexes();
         return response;

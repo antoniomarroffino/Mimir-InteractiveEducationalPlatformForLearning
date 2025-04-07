@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @RegisterForReflection
@@ -16,7 +17,7 @@ public class QuizAttemptDTO {
     @NotNull(message = "Quiz publication ID cannot be null")
     private String quizPublicationId;
 
-    private String userId;
+    private String userAzureOID;
 
     private LocalDateTime startedAt;
 
@@ -24,10 +25,11 @@ public class QuizAttemptDTO {
 
     private List<QuestionResponseDTO> responses;
 
+    private List<BadgeDTO> badges = new ArrayList<>();
+
     public QuizAttemptDTO() {
     }
 
-    // Getters and Setters
     public String getId() {
         return id;
     }
@@ -44,12 +46,12 @@ public class QuizAttemptDTO {
         this.quizPublicationId = quizPublicationId;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getUserAzureOID() {
+        return userAzureOID;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setUserAzureOID(String userAzureOID) {
+        this.userAzureOID = userAzureOID;
     }
 
     public LocalDateTime getStartedAt() {
@@ -74,5 +76,13 @@ public class QuizAttemptDTO {
 
     public void setResponses(List<QuestionResponseDTO> responses) {
         this.responses = responses;
+    }
+
+    public List<BadgeDTO> getBadges() {
+        return badges;
+    }
+
+    public void setBadges(List<BadgeDTO> badges) {
+        this.badges = badges != null ? badges : new ArrayList<>();
     }
 }

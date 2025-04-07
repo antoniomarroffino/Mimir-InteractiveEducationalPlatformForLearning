@@ -1,12 +1,18 @@
 package ch.supsi.model.dto.api;
 
+import ch.supsi.model.dto.api.question.QuestionDTO;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.validation.constraints.NotBlank;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RegisterForReflection
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class QuizPublicationDTO {
 
     @Schema(description = "ID univoco della pubblicazione (generato dal backend)", readOnly = true)
@@ -23,6 +29,8 @@ public class QuizPublicationDTO {
     @NotBlank(message = "Quiz ID cannot be null or empty")
     @Schema(description = "ID del quiz associato", required = true)
     private String quizId;
+
+    private List<QuestionDTO> questions;
 
     @Schema(description = "Codice di pubblicazione generato dal backend", readOnly = true)
     private String publicationCode;
@@ -41,12 +49,13 @@ public class QuizPublicationDTO {
         this.createdAt = LocalDateTime.now();
     }
 
-    public QuizPublicationDTO(String id, String courseId, String folderId, String quizId, String publicationCode) {
+    public QuizPublicationDTO(String id, String courseId, String folderId, String quizId, List<QuestionDTO> questions, String publicationCode) {
         this();
         this.id = id;
         this.courseId = courseId;
         this.folderId = folderId;
         this.quizId = quizId;
+        this.questions = questions;
         this.publicationCode = publicationCode;
     }
 
@@ -120,5 +129,13 @@ public class QuizPublicationDTO {
 
     public void setClosedAt(LocalDateTime closedAt) {
         this.closedAt = closedAt;
+    }
+
+    public List<QuestionDTO> getQuestions() {
+        return this.questions;
+    }
+
+    public void setQuestions(List<QuestionDTO> questions) {
+        this.questions = questions;
     }
 }

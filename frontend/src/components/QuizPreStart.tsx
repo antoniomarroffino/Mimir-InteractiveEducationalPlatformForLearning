@@ -26,7 +26,7 @@ const QuizPreStart: React.FC<QuizPreStartProps> = ({publication}) => {
             try {
                 setIsLoading(true);
 
-                await startQuizAttempt(publication, quiz);
+                await startQuizAttempt(publication);
                 setIsQuizStarted(true);
             } catch (error) {
                 console.error('Errore durante l\'avvio del quiz:', error);
@@ -37,7 +37,6 @@ const QuizPreStart: React.FC<QuizPreStartProps> = ({publication}) => {
     }, [quiz, startQuizAttempt]);
 
     const renderQuizPreparation = () => {
-        // Se il quiz è anonimo, il tasto è sempre attivo
         if (publication.anonymous) {
             return (
                 <div className="flex justify-center">
@@ -160,7 +159,7 @@ const QuizPreStart: React.FC<QuizPreStartProps> = ({publication}) => {
                 <div className="container mx-auto px-4">
                     {!isQuizStarted ? renderQuizPreparation() : (
                         <QuizQuestions
-                            quiz={quiz!}
+                            publication={publication!}
                         />
                     )}
                 </div>

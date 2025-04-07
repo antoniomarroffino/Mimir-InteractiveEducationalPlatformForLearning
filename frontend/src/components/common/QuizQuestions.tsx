@@ -5,7 +5,7 @@ import {
     QuestionDTO,
     QuestionResponseDTO,
     QuestionType,
-    QuizDTO,
+    QuizPublicationDTO,
     TrueFalseQuestionDTO,
     TrueFalseQuestionResponseDTO
 } from '@dti-isin/backend-api-client';
@@ -14,18 +14,23 @@ import {TrueFalseQuestion} from "../question/TrueFalseQuestion.tsx";
 import {ChevronLeftIcon, ChevronRightIcon} from '@heroicons/react/24/solid';
 import {QuizNavigation} from "../quiz/QuizNavigation.tsx";
 import {useQuizAttemptLocal} from "../../hooks/quizAttempt/useQuizAttemptLocal.ts";
+import {useNavigate} from "react-router-dom";
+import {MobileNavigation} from "./MobileNavigation.tsx";
+import {QuestionResponseFactory} from "../question/QuestionResponseFactory.tsx";
 
 interface QuizQuestionsProps {
-    quiz: QuizDTO;
+    publication: QuizPublicationDTO;
 }
 
-export const QuizQuestions: React.FC<QuizQuestionsProps> = ({quiz}) => {
+export const QuizQuestions: React.FC<QuizQuestionsProps> = ({publication}) => {
     const {currentAttempt, updateQuizAttemptResponses, completeQuizAttempt} = useQuizAttemptLocal();
+    const [showMobileNav, setShowMobileNav] = useState(false);
 
     const [userResponses, setUserResponses] = useState<QuestionResponseDTO[]>(
-        currentAttempt?.responses || new Array(quiz.questions?.length || 0).fill(null)
+        currentAttempt?.responses || new Array(publication.questions?.length || 0).fill(null)
     );
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+    const navigate = useNavigate();
 
     useEffect(() => {
         updateQuizAttemptResponses(userResponses);
@@ -40,35 +45,29 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({quiz}) => {
     };
 
     const handleAnswer = useCallback((answer: boolean | number[] | null) => {
-        const currentQuestion = quiz.questions?.[currentQuestionIndex];
+        const currentQuestion = publication.questions?.[currentQuestionIndex];
         if (!currentQuestion) return;
 
         setUserResponses(prevResponses => {
             const updatedResponses = [...prevResponses];
 
-            switch (currentQuestion.type) {
-                case QuestionType.TrueFalse:
-                    if (typeof answer === 'boolean' || answer === null) {
-                        updatedResponses[currentQuestionIndex] = {
-                            responseType: QuestionType.TrueFalse,
-                            selectedAnswer: answer
-                        } as TrueFalseQuestionResponseDTO;
-                    }
-                    break;
-
-                case QuestionType.MultipleChoice:
-                    if (Array.isArray(answer) || answer === null) {
-                        updatedResponses[currentQuestionIndex] = {
-                            responseType: QuestionType.MultipleChoice,
-                            selectedAnswerIndexes: answer || []
-                        } as MultipleChoiceQuestionResponseDTO;
-                    }
-                    break;
+            if (currentQuestion.type === QuestionType.TrueFalse && (typeof answer === 'boolean' || answer === null)) {
+                updatedResponses[currentQuestionIndex] = QuestionResponseFactory.createResponse(
+                    QuestionType.TrueFalse,
+                    currentQuestion.id!,
+                    answer ?? undefined
+                );
+            } else if (currentQuestion.type === QuestionType.MultipleChoice && (Array.isArray(answer) || answer === null)) {
+                updatedResponses[currentQuestionIndex] = QuestionResponseFactory.createResponse(
+                    QuestionType.MultipleChoice,
+                    currentQuestion.id!,
+                    answer || []
+                );
             }
 
             return updatedResponses;
         });
-    }, [currentQuestionIndex, quiz.questions]);
+    }, [currentQuestionIndex, publication.questions]);
 
     const getCurrentQuestionResponse = useCallback(() => {
         const response = userResponses[currentQuestionIndex];
@@ -89,20 +88,48 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({quiz}) => {
 
     const handleCompleteQuiz = useCallback(async () => {
         try {
-            await completeQuizAttempt();
+            const completedAttempt = await completeQuizAttempt();
+            navigate(`/results/${completedAttempt.id!}`, {
+                state: {attempt: completedAttempt, quizPublication: publication}
+            });
         } catch (error) {
-            console.error('Errore durante il completamento del quiz:', error);
+            console.error('Error during completing quiz:', error);
         }
-    }, [completeQuizAttempt]);
+    }, [completeQuizAttempt, navigate]);
 
-    const currentQuestion = quiz.questions?.[currentQuestionIndex];
+    const currentQuestion = publication.questions?.[currentQuestionIndex];
+
     return (
         <div className="flex grow bg-gradient-to-br from-primary/5 to-secondary/5">
             <div className="container mx-auto px-4 py-4">
+                {/* Mobile Navigation Bar */}
+                <div className="md:hidden flex items-center justify-between mb-4">
+                    <span className="text-sm font-medium">
+                        Question {currentQuestionIndex + 1} of {publication.questions?.length}
+                    </span>
+                    <button
+                        onClick={() => setShowMobileNav(true)}
+                        className="btn btn-primary btn-sm"
+                    >
+                        Show Navigation
+                    </button>
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-[1fr_300px] gap-4">
+                    {/* Question Section */}
                     <div className="relative w-full max-w-2xl mx-auto">
-                        {/* Navigazione tra domande */}
-                        <div className="absolute inset-y-0 left-0 flex items-center md:-left-12">
+                        {/* Progress Bar for Mobile */}
+                        <div className="h-2 w-full bg-base-200 rounded-full mb-4 md:hidden">
+                            <div
+                                className="h-full bg-primary rounded-full transition-all"
+                                style={{
+                                    width: `${((currentQuestionIndex + 1) / (publication.questions?.length || 1)) * 100}%`
+                                }}
+                            />
+                        </div>
+
+                        {/* Navigation Buttons */}
+                        <div className="flex justify-between items-center mb-4 md:absolute md:inset-y-0 md:left-0 md:right-0 md:-mx-12">
                             <button
                                 onClick={() => setCurrentQuestionIndex(prev => Math.max(0, prev - 1))}
                                 disabled={currentQuestionIndex === 0}
@@ -110,56 +137,63 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({quiz}) => {
                             >
                                 <ChevronLeftIcon className="h-5 w-5 md:h-6 md:w-6"/>
                             </button>
-                        </div>
-                        <div className="absolute inset-y-0 right-0 flex items-center md:-right-12">
+
                             <button
                                 onClick={() => setCurrentQuestionIndex(prev =>
-                                    Math.min((quiz.questions?.length || 0) - 1, prev + 1)
+                                    Math.min((publication.questions?.length || 0) - 1, prev + 1)
                                 )}
-                                disabled={currentQuestionIndex === (quiz.questions?.length || 0) - 1}
+                                disabled={currentQuestionIndex === (publication.questions?.length || 0) - 1}
                                 className="btn btn-circle btn-sm md:btn-md btn-outline btn-primary"
                             >
                                 <ChevronRightIcon className="h-5 w-5 md:h-6 md:w-6"/>
                             </button>
                         </div>
 
-                        {/* Rendering dinamico del tipo di domanda */}
-                        {isTrueFalseQuestion(currentQuestion!) && (
-                            <TrueFalseQuestion
-                                key={currentQuestion.id}
-                                question={currentQuestion}
-                                onAnswer={(selectedAnswer) => {
-                                    handleAnswer(selectedAnswer);
-                                }}
-                                initialAnswer={
-                                    getCurrentQuestionResponse() as boolean | null
-                                }
-                            />
-                        )}
-                        {isMultipleChoiceQuestion(currentQuestion!) && (
-                            <MultipleChoiceQuestion
-                                key={currentQuestion.id}
-                                question={currentQuestion}
-                                onAnswer={(selectedIndexes) => {
-                                    handleAnswer(selectedIndexes);
-                                }}
-                                initialAnswer={
-                                    getCurrentQuestionResponse() as number[] | null
-                                }
-                            />
-                        )}
+                        {/* Question Content */}
+                        <div className="bg-base-100 rounded-xl shadow-lg p-4 md:p-6">
+                            {isTrueFalseQuestion(currentQuestion!) && (
+                                <TrueFalseQuestion
+                                    key={currentQuestion.id}
+                                    question={currentQuestion}
+                                    onAnswer={handleAnswer}
+                                    initialAnswer={getCurrentQuestionResponse() as boolean | null}
+                                />
+                            )}
+                            {isMultipleChoiceQuestion(currentQuestion!) && (
+                                <MultipleChoiceQuestion
+                                    key={currentQuestion.id}
+                                    question={currentQuestion}
+                                    onAnswer={handleAnswer}
+                                    initialAnswer={getCurrentQuestionResponse() as number[] | null}
+                                />
+                            )}
+                        </div>
                     </div>
 
-                    {/* Navigazione del quiz */}
+                    {/* Desktop Navigation */}
                     <div className="hidden md:block">
                         <QuizNavigation
-                            questions={quiz.questions || []}
+                            questions={publication.questions || []}
                             currentQuestionIndex={currentQuestionIndex}
-                            onQuestionChange={(index) => setCurrentQuestionIndex(index)}
+                            onQuestionChange={setCurrentQuestionIndex}
                             onCompleteQuiz={handleCompleteQuiz}
                             userResponses={userResponses}
                         />
                     </div>
+
+                    {/* Mobile Navigation Modal */}
+                    <MobileNavigation
+                        isOpen={showMobileNav}
+                        onClose={() => setShowMobileNav(false)}
+                        questions={publication.questions || []}
+                        currentQuestionIndex={currentQuestionIndex}
+                        onQuestionChange={(index) => {
+                            setCurrentQuestionIndex(index);
+                            setShowMobileNav(false);
+                        }}
+                        onCompleteQuiz={handleCompleteQuiz}
+                        userResponses={userResponses}
+                    />
                 </div>
             </div>
         </div>

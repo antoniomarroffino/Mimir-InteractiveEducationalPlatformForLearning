@@ -19,9 +19,8 @@ public class MultipleChoiceQuestionDTO extends QuestionDTO {
     private List<Integer> correctAnswerIndexes;
 
     public MultipleChoiceQuestionDTO() {
-        this.setType(QuestionType.MULTIPLE_CHOICE);
+        super(QuestionType.MULTIPLE_CHOICE);
     }
-
     public List<String> getChoices() {
         return choices;
     }

@@ -145,7 +145,7 @@ const App = () => {
                                         element={<QuizScreen/>}
                                     />
                                     <Route
-                                        path="/quiz/results"
+                                        path="/results/:quizAttemptId"
                                         element={<QuizResults/>}
                                     />
                                 </Routes>

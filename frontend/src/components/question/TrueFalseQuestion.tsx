@@ -1,16 +1,16 @@
-import React, {useEffect, useState} from 'react';
-import {TrueFalseQuestionDTO} from '@dti-isin/backend-api-client';
+import React, { useEffect, useState } from 'react';
+import { TrueFalseQuestionDTO } from '@dti-isin/backend-api-client';
 
 interface TrueFalseQuestionProps {
     question: TrueFalseQuestionDTO;
     onAnswer: (selectedAnswer: boolean | null) => void;
-    initialAnswer?: boolean | null;
+    initialAnswer: boolean | null;
 }
 
 export const TrueFalseQuestion: React.FC<TrueFalseQuestionProps> = ({
                                                                         question,
                                                                         onAnswer,
-                                                                        initialAnswer = null
+                                                                        initialAnswer
                                                                     }) => {
     const [selectedAnswer, setSelectedAnswer] = useState<boolean | null>(initialAnswer);
 
@@ -19,18 +19,13 @@ export const TrueFalseQuestion: React.FC<TrueFalseQuestionProps> = ({
     }, [question.id, initialAnswer]);
 
     const handleAnswer = (answer: boolean) => {
-        // Se clicco lo stesso bottone, rimuovo la selezione
         const newAnswer = selectedAnswer === answer ? null : answer;
-
-        // Aggiorna lo stato locale
         setSelectedAnswer(newAnswer);
-
-        // Passa il valore selezionato
         onAnswer(newAnswer);
     };
 
     return (
-        <div className="card bg-base-100 shadow-xl">
+        <div className="card bg-base-100">
             <div className="card-body">
                 <h2 className="card-title text-2xl text-center text-primary mb-6">
                     {question.questionText}

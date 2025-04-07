@@ -22,6 +22,8 @@ export const FolderCRUDProvider: React.FC<{ children: React.ReactNode }> = ({chi
                     ["folders", params.courseId],
                     (old) => old ? [...old, newFolder] : [newFolder]
                 );
+                queryClient.invalidateQueries(["course", params.courseId]);
+                queryClient.invalidateQueries(["folders", params.courseId]);
             },
             onError: (error: Error) => {
                 console.error("Folder creation error:", error);
@@ -47,6 +49,9 @@ export const FolderCRUDProvider: React.FC<{ children: React.ReactNode }> = ({chi
                         f.id === updatedFolder.id ? updatedFolder : f
                     ) || [updatedFolder]
                 );
+                queryClient.invalidateQueries(["course", params.courseId]);
+                queryClient.invalidateQueries(["folder", params.folderId]);
+                queryClient.invalidateQueries(["folders", params.courseId]);
             },
             onError: (error: Error) => {
                 console.error("Folder update error:", error);
@@ -68,6 +73,8 @@ export const FolderCRUDProvider: React.FC<{ children: React.ReactNode }> = ({chi
                     ["folders", params.courseId],
                     (old) => old?.filter(f => f.id !== params.folderId) || []
                 );
+                queryClient.invalidateQueries(["course", params.courseId]);
+                queryClient.invalidateQueries(["folders", params.courseId]);
             },
             onError: (error: Error) => {
                 console.error("Folder delete error:", error);
