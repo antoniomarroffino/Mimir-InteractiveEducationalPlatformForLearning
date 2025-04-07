@@ -3,6 +3,7 @@ package ch.supsi.controller.quizattempt;
 import ch.supsi.model.api.badge.BadgeType;
 import ch.supsi.model.dto.api.QuizAttemptDTO;
 import ch.supsi.service.quizattempt.IQuizAttemptService;
+import ch.supsi.service.user.IUserService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -27,6 +28,9 @@ public class QuizAttemptController {
 
     @Inject
     IQuizAttemptService quizAttemptService;
+
+    @Inject
+    IUserService userService;
 
     @GET
     @Path("/user/{userAzureOID}")
@@ -144,19 +148,16 @@ public class QuizAttemptController {
     )
     public Response assignBadge(
             @PathParam("attemptId") String attemptId,
-            @QueryParam("type") @Schema(implementation = BadgeType.class) BadgeType badgeType,
-            @Context SecurityContext securityContext
+            @QueryParam("type") @Schema(implementation = BadgeType.class) BadgeType badgeType
     ) {
         if (badgeType == null) {
             throw new BadRequestException("Badge type must be specified");
         }
 
-        String teacherAzureOid = securityContext.getUserPrincipal().getName();
-
         this.quizAttemptService.assignBadge(
                 new ObjectId(attemptId),
                 badgeType,
-                teacherAzureOid
+                this.userService.getOidFromJWT()
         );
 
         return Response.ok().build();

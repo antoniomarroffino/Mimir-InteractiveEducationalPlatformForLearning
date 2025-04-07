@@ -1,6 +1,7 @@
 package ch.supsi.service.quizattempt;
 
-import ch.supsi.mapper.QuizAttemptMapper;
+import ch.supsi.mapper.quizAttempt.QuizAttemptMapper;
+import ch.supsi.mapper.quizAttempt.facade.IQuizAttemptMapperFacade;
 import ch.supsi.model.api.QuizAttempt;
 import ch.supsi.model.api.badge.Badge;
 import ch.supsi.model.api.badge.BadgeType;
@@ -25,84 +26,89 @@ public class QuizAttemptService implements IQuizAttemptService {
     QuizAttemptRepository quizAttemptRepository;
 
     @Inject
-    QuizAttemptMapper quizAttemptMapper;
+    IQuizAttemptMapperFacade quizAttemptMapperFacade;
 
     @Override
     public QuizAttemptDTO createQuizAttempt(QuizAttemptDTO quizAttemptDTO) {
         this.verifyQuizAttemptIsValid(quizAttemptDTO);
 
-        QuizAttempt quizAttempt = this.quizAttemptMapper.toEntity(quizAttemptDTO);
-        quizAttempt.startedAt = LocalDateTime.now();
+        QuizAttempt quizAttempt = this.quizAttemptMapperFacade.toEntity(quizAttemptDTO);
         quizAttempt.completedAt = LocalDateTime.now();
 
         this.quizAttemptRepository.persist(quizAttempt);
-        return this.quizAttemptMapper.toDTO(quizAttempt);
+        return this.quizAttemptMapperFacade.toDTO(quizAttempt);
     }
 
     @Override
     public QuizAttemptDTO getQuizAttemptById(ObjectId attemptId) {
-        Optional<QuizAttempt> quizAttemptOpt = this.quizAttemptRepository.findByIdOptional(attemptId);
-        if (quizAttemptOpt.isEmpty()) {
-            throw new NotFoundException("Quiz attempt " + attemptId + " not found");
-        }
-        return this.quizAttemptMapper.toDTO(quizAttemptOpt.get());
+        QuizAttempt quizAttempt = this.findQuizAttemptById(attemptId);
+        return this.quizAttemptMapperFacade.toDTO(quizAttempt);
     }
 
     @Override
     public List<QuizAttemptDTO> getQuizAttemptsByUser(String userAzureOID) {
-        if (userAzureOID == null) {
-            throw new InternalServerErrorException("User Azure OID cannot be null");
-        }
+        this.verifyUserOIDIsValid(userAzureOID);
 
         return this.quizAttemptRepository.findByUserAzureOID(userAzureOID).stream()
-                .map(this.quizAttemptMapper::toDTO)
+                .map(this.quizAttemptMapperFacade::toDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<QuizAttemptDTO> getQuizAttemptsByPublication(ObjectId publicationId) {
         if (publicationId == null) {
-            throw new InternalServerErrorException("Publication ID cannot be null");
+            throw new BadRequestException("Publication ID cannot be null");
         }
 
         return this.quizAttemptRepository.findByPublicationId(publicationId).stream()
-                .map(this.quizAttemptMapper::toDTO)
+                .map(this.quizAttemptMapperFacade::toDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<QuizAttemptDTO> getQuizAttemptsByPublicationAndQuestion(ObjectId publicationId, ObjectId questionId) {
         if (publicationId == null || questionId == null) {
-            throw new InternalServerErrorException("Publication ID and Question ID cannot be null");
+            throw new BadRequestException("Publication ID and Question ID cannot be null");
         }
 
         return this.quizAttemptRepository.findByPublicationIdAndQuestionId(publicationId, questionId).stream()
-                .map(this.quizAttemptMapper::toDTO)
+                .map(this.quizAttemptMapperFacade::toDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
     public void assignBadge(ObjectId attemptId, BadgeType badgeType, String teacherAzureOid) {
-        if (attemptId == null || badgeType == null || teacherAzureOid == null) {
-            throw new BadRequestException("Attempt ID, badge type and teacher ID cannot be null");
+        if (attemptId == null || badgeType == null) {
+            throw new BadRequestException("Attempt ID and badge type cannot be null");
         }
 
-        Optional<QuizAttempt> quizAttemptOpt = this.quizAttemptRepository.findByIdOptional(attemptId);
-        if (quizAttemptOpt.isEmpty()) {
-            throw new NotFoundException("Quiz attempt " + attemptId + " not found");
-        }
+        this.verifyUserOIDIsValid(teacherAzureOid);
 
-        QuizAttempt attempt = quizAttemptOpt.get();
+        QuizAttempt quizAttempt = this.findQuizAttemptById(attemptId);
 
-        boolean badgeExists = attempt.badges.stream()
-                .anyMatch(badge -> badge.type == badgeType);
+        this.verifyBadgeIsUnique(quizAttempt, badgeType);
 
-        if (badgeExists) {
+        quizAttempt.badges.add(new Badge(badgeType, teacherAzureOid));
+        this.quizAttemptRepository.update(quizAttempt);
+    }
+
+    private void verifyBadgeIsUnique(QuizAttempt quizAttempt, BadgeType badgeType) {
+        boolean badgeExists = quizAttempt.badges.stream()
+                .anyMatch(badge -> badge.type.equals(badgeType));
+
+        if (badgeExists)
             throw new BadRequestException("Badge " + badgeType + " already assigned to this attempt");
-        }
+    }
 
-        attempt.badges.add(new Badge(badgeType, teacherAzureOid));
-        this.quizAttemptRepository.update(attempt);
+    private void verifyUserOIDIsValid(String userOID) {
+        if(userOID == null || userOID.isEmpty())
+            throw new InternalServerErrorException("User Azure OID cannot be null");
+    }
+
+    private QuizAttempt findQuizAttemptById(ObjectId quizAttemptId) {
+        return this.quizAttemptRepository
+                .findByIdOptional(quizAttemptId)
+                .orElseThrow(() -> new NotFoundException("Quiz attempt with id " + quizAttemptId + " not found"));
     }
 
     private void verifyQuizAttemptIsValid(QuizAttemptDTO quizAttemptDTO) {

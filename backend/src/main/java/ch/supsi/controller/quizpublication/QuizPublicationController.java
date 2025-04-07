@@ -114,8 +114,7 @@ public class QuizPublicationController {
     public Response updateQuizPublication(
             @PathParam("id") String id,
             @Valid QuizPublicationDTO quizPublicationDTO) {
-        quizPublicationDTO.setId(id);
-        QuizPublicationDTO updatedDTO = this.quizPublicationService.updateQuizPublication(quizPublicationDTO);
+        QuizPublicationDTO updatedDTO = this.quizPublicationService.updateQuizPublication(new ObjectId(id), quizPublicationDTO);
 
         return Response.ok(updatedDTO).build();
     }

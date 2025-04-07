@@ -13,7 +13,7 @@ public interface IQuizPublicationService {
 
     QuizPublicationDTO getPublicationByCode(String code);
 
-    QuizPublicationDTO updateQuizPublication(QuizPublicationDTO quizPublicationDTO);
+    QuizPublicationDTO updateQuizPublication(ObjectId publicationId, QuizPublicationDTO quizPublicationDTO);
 
     QuizPublicationDTO deactivateQuizPublication(ObjectId publicationId);
 

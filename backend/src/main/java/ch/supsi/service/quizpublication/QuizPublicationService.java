@@ -1,17 +1,8 @@
 package ch.supsi.service.quizpublication;
 
-import ch.supsi.mapper.IBaseMapper;
-import ch.supsi.mapper.QuizPublicationMapper;
-import ch.supsi.mapper.question.builder.IQuestionMapperBuilder;
-import ch.supsi.mapper.question.builder.QuestionMapperBuilder;
+import ch.supsi.mapper.quizPublication.facade.IQuizPublicationMapperFacade;
 import ch.supsi.model.api.QuizPublication;
-import ch.supsi.model.api.question.MultipleChoiceQuestion;
-import ch.supsi.model.api.question.Question;
-import ch.supsi.model.api.question.TrueFalseQuestion;
 import ch.supsi.model.dto.api.QuizPublicationDTO;
-import ch.supsi.model.dto.api.question.MultipleChoiceQuestionDTO;
-import ch.supsi.model.dto.api.question.QuestionDTO;
-import ch.supsi.model.dto.api.question.TrueFalseQuestionDTO;
 import ch.supsi.repository.QuizPublicationRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -34,91 +25,62 @@ public class QuizPublicationService implements IQuizPublicationService {
     QuizPublicationRepository quizPublicationRepository;
 
     @Inject
-    QuizPublicationMapper quizPublicationMapper;
+    IQuizPublicationMapperFacade quizPublicationMapperFacade;
 
-    @Inject
-    IQuestionMapperBuilder questionMapperBuilder;
 
     @Override
     public QuizPublicationDTO publishQuiz(QuizPublicationDTO quizPublicationDTO) {
-        List<Question> questions = quizPublicationDTO.getQuestions().stream()
-                .map(qDTO -> this.questionMapperBuilder.getQuestionDTOMapper(qDTO.getType()).toEntity(qDTO))
-                .collect(Collectors.toList());
-        QuizPublication newQuizPublication = new QuizPublication(
-                new ObjectId(quizPublicationDTO.getCourseId()),
-                new ObjectId(quizPublicationDTO.getFolderId()),
-                new ObjectId(quizPublicationDTO.getQuizId()),
-                questions,
-                generateUniqueCode()
-        );
-        newQuizPublication.published = true;
+        QuizPublication newQuizPublication = this.quizPublicationMapperFacade.toEntity(quizPublicationDTO);
         newQuizPublication.createdAt = LocalDateTime.now();
-        newQuizPublication.anonymous = quizPublicationDTO.getAnonymous();
+        newQuizPublication.published = true;
+        newQuizPublication.publicationCode = this.generateUniqueCode();
 
         this.quizPublicationRepository.persist(newQuizPublication);
-        return this.quizPublicationMapper.toDTO(newQuizPublication);
+        return this.quizPublicationMapperFacade.toDTO(newQuizPublication);
     }
 
     @Override
     public QuizPublicationDTO getQuizPublicationById(ObjectId publicationID) {
-        Optional<QuizPublication> quizPublicationOpt = this.quizPublicationRepository.findByIdOptional(publicationID);
-        if (quizPublicationOpt.isEmpty()) {
-            throw new NotFoundException("Quiz publication with id " + publicationID + " not found");
-        }
-
-        return this.quizPublicationMapper.toDTO(quizPublicationOpt.get());
+        QuizPublication quizPublication = this.findQuizPublicationById(publicationID);
+        return this.quizPublicationMapperFacade.toDTO(quizPublication);
     }
 
     @Override
     public QuizPublicationDTO getPublicationByCode(String code) {
         Optional<QuizPublication> quizPublicationOpt = this.quizPublicationRepository.findByCodeOptional(code);
-        if (quizPublicationOpt.isEmpty()) {
+        if (quizPublicationOpt.isEmpty())
             throw new NotFoundException("Quiz publication with code " + code + " not found");
-        }
-        return this.quizPublicationMapper.toDTO(quizPublicationOpt.get());
+
+        return this.quizPublicationMapperFacade.toDTO(quizPublicationOpt.get());
     }
 
     @Override
-    public QuizPublicationDTO updateQuizPublication(QuizPublicationDTO quizPublicationDTO) {
-        Optional<QuizPublication> quizPublicationOpt = this.quizPublicationRepository.findByIdOptional(new ObjectId(quizPublicationDTO.getId()));
-        if (quizPublicationOpt.isEmpty()) {
-            throw new NotFoundException("Quiz publication with id " + quizPublicationDTO.getId() + " not found");
-        }
-
-        QuizPublication existingPublication = quizPublicationOpt.get();
+    public QuizPublicationDTO updateQuizPublication(ObjectId publicationId, QuizPublicationDTO quizPublicationDTO) {
+        QuizPublication existingPublication = this.findQuizPublicationById(publicationId);
+/*
         existingPublication.courseId = new ObjectId(quizPublicationDTO.getCourseId());
         existingPublication.folderId = new ObjectId(quizPublicationDTO.getFolderId());
         existingPublication.quizId = new ObjectId(quizPublicationDTO.getQuizId());
         existingPublication.published = quizPublicationDTO.getPublished();
         existingPublication.anonymous = quizPublicationDTO.getAnonymous();
-
+*/
         quizPublicationRepository.update(existingPublication);
-        return quizPublicationMapper.toDTO(existingPublication);
+        return quizPublicationMapperFacade.toDTO(existingPublication);
     }
 
     @Override
     public QuizPublicationDTO deactivateQuizPublication(ObjectId publicationId) {
-        Optional<QuizPublication> quizPublicationOpt = this.quizPublicationRepository.findByIdOptional(publicationId);
-        if (quizPublicationOpt.isEmpty()) {
-            throw new NotFoundException("Quiz publication with id " + publicationId + " not found");
-        }
-
-        QuizPublication quizPublication = quizPublicationOpt.get();
+        QuizPublication quizPublication = this.findQuizPublicationById(publicationId);
         quizPublication.published = false;
         quizPublication.closedAt = LocalDateTime.now();
         this.quizPublicationRepository.update(quizPublication);
-        return this.quizPublicationMapper.toDTO(quizPublication);
+        return this.quizPublicationMapperFacade.toDTO(quizPublication);
     }
 
     @Override
     public boolean deleteQuizPublication(ObjectId publicationId) {
-        Optional<QuizPublication> publicationOpt = this.quizPublicationRepository.findByIdOptional(publicationId);
-
-        if (publicationOpt.isEmpty()) {
-            throw new NotFoundException("QUiz publication not found");
-        }
-
-        quizPublicationRepository.delete(publicationOpt.get());
+        QuizPublication quizPublication = this.findQuizPublicationById(publicationId);
+        quizPublicationRepository.delete(quizPublication);
         return true;
     }
 
@@ -127,8 +89,14 @@ public class QuizPublicationService implements IQuizPublicationService {
         List<QuizPublication> publications = this.quizPublicationRepository.findPublicationsByQuizId(quizId);
 
         return publications.stream()
-                .map(this.quizPublicationMapper::toDTO)
+                .map(this.quizPublicationMapperFacade::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    private QuizPublication findQuizPublicationById(ObjectId id) {
+        return this.quizPublicationRepository
+                .findByIdOptional(id)
+                .orElseThrow(() -> new NotFoundException("Quiz publication with id " + id + " not found"));
     }
 
     private String generateUniqueCode() {

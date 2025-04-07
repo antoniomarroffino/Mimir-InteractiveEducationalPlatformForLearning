@@ -2,7 +2,7 @@ package ch.supsi.repository.quizPublication;
 
 import ch.supsi.model.api.QuizPublication;
 import ch.supsi.repository.QuizPublicationRepository;
-import ch.supsi.service.quizPublication.QuizPublicationServiceTest;
+import ch.supsi.service.quizpublication.QuizPublicationServiceTest;
 import ch.supsi.testContainersResource.MongoTestResource;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
