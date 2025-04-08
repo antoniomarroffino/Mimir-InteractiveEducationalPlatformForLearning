@@ -1,8 +1,5 @@
 package ch.supsi.mapper.quizAttempt;
 
-import ch.supsi.mapper.BadgeMapper;
-import ch.supsi.mapper.IBaseMapper;
-import ch.supsi.mapper.response.builder.IQuestionResponseMapperBuilder;
 import ch.supsi.model.api.QuizAttempt;
 import ch.supsi.model.api.badge.Badge;
 import ch.supsi.model.api.response.QuestionResponse;
@@ -10,11 +7,9 @@ import ch.supsi.model.dto.api.BadgeDTO;
 import ch.supsi.model.dto.api.QuizAttemptDTO;
 import ch.supsi.model.dto.api.response.QuestionResponseDTO;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import org.bson.types.ObjectId;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class QuizAttemptMapper {

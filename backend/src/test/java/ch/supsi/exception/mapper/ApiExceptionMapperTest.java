@@ -21,13 +21,6 @@ public class ApiExceptionMapperTest {
     @Inject
     ApiExceptionMapper apiExceptionMapper;
 
-    static class MyTestException extends ApiException {
-        private static final Response.Status status = Response.Status.NOT_IMPLEMENTED;
-        public MyTestException(String message) {
-            super(message, status);
-        }
-    }
-
     @Test
     @DisplayName("Should return a RestResponse with an ErrorResponse as Entity")
     void test01HandleApiException_ShouldMapCorrectlyForBadRequest() {
@@ -41,5 +34,13 @@ public class ApiExceptionMapperTest {
                 () -> assertEquals("My test error message", response.getEntity().getMessage()),
                 () -> assertIterableEquals(List.of(MyTestException.status.getReasonPhrase()), response.getEntity().getDetails())
         );
+    }
+
+    static class MyTestException extends ApiException {
+        private static final Response.Status status = Response.Status.NOT_IMPLEMENTED;
+
+        public MyTestException(String message) {
+            super(message, status);
+        }
     }
 }

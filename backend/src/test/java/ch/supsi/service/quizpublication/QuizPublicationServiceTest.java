@@ -16,8 +16,10 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
-import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -34,6 +36,43 @@ public class QuizPublicationServiceTest {
 
     @InjectMock
     IQuizPublicationMapperFacade quizPublicationMapperFacade;
+
+    public static QuizPublication createTestQuizPublication() {
+        ObjectId courseId = new ObjectId();
+        ObjectId folderId = new ObjectId();
+        ObjectId quizId = new ObjectId();
+
+        QuizPublication quizPublication = new QuizPublication(
+                courseId,
+                folderId,
+                quizId,
+                new ArrayList<>(),
+                ""
+        );
+        quizPublication.id = new ObjectId();
+
+        return quizPublication;
+    }
+
+    public static QuizPublication createTestQuizPublication(ObjectId quizId, String publicationCode) {
+        ObjectId courseId = new ObjectId();
+        ObjectId folderId = new ObjectId();
+        return new QuizPublication(courseId, folderId, quizId, new ArrayList<>(), publicationCode);
+    }
+
+    public static QuizPublicationDTO convertToDTO(QuizPublication quizPublication) {
+        QuizPublicationDTO quizPublicationDTO = new QuizPublicationDTO();
+        quizPublicationDTO.setId(quizPublication.id.toString());
+        quizPublicationDTO.setCourseId(quizPublication.courseId.toString());
+        quizPublicationDTO.setFolderId(quizPublication.folderId.toString());
+        quizPublicationDTO.setQuizId(quizPublication.quizId.toString());
+        quizPublicationDTO.setPublicationCode(quizPublication.publicationCode);
+        quizPublicationDTO.setAnonymous(quizPublication.anonymous);
+        quizPublicationDTO.setPublished(quizPublication.published);
+        quizPublicationDTO.setCreatedAt(quizPublication.createdAt);
+        quizPublicationDTO.setClosedAt(quizPublication.closedAt);
+        return quizPublicationDTO;
+    }
 
     @Test
     @DisplayName("Should publish new quiz and return a QuizPublicationDTO anonymous")
@@ -257,43 +296,5 @@ public class QuizPublicationServiceTest {
 
         verify(this.quizPublicationRepository, times(1)).findPublicationsByQuizId(any(ObjectId.class));
         verify(this.quizPublicationMapperFacade, never()).toDTO(any(QuizPublication.class));
-    }
-
-
-    public static QuizPublication createTestQuizPublication() {
-        ObjectId courseId = new ObjectId();
-        ObjectId folderId = new ObjectId();
-        ObjectId quizId = new ObjectId();
-
-        QuizPublication quizPublication = new QuizPublication(
-                courseId,
-                folderId,
-                quizId,
-                new ArrayList<>(),
-                ""
-        );
-        quizPublication.id = new ObjectId();
-
-        return quizPublication;
-    }
-
-    public static QuizPublication createTestQuizPublication(ObjectId quizId, String publicationCode) {
-        ObjectId courseId = new ObjectId();
-        ObjectId folderId = new ObjectId();
-        return new QuizPublication(courseId, folderId, quizId, new ArrayList<>(), publicationCode);
-    }
-
-    public static QuizPublicationDTO convertToDTO(QuizPublication quizPublication) {
-        QuizPublicationDTO quizPublicationDTO = new QuizPublicationDTO();
-        quizPublicationDTO.setId(quizPublication.id.toString());
-        quizPublicationDTO.setCourseId(quizPublication.courseId.toString());
-        quizPublicationDTO.setFolderId(quizPublication.folderId.toString());
-        quizPublicationDTO.setQuizId(quizPublication.quizId.toString());
-        quizPublicationDTO.setPublicationCode(quizPublication.publicationCode);
-        quizPublicationDTO.setAnonymous(quizPublication.anonymous);
-        quizPublicationDTO.setPublished(quizPublication.published);
-        quizPublicationDTO.setCreatedAt(quizPublication.createdAt);
-        quizPublicationDTO.setClosedAt(quizPublication.closedAt);
-        return quizPublicationDTO;
     }
 }

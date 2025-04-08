@@ -41,6 +41,20 @@ public class FolderServiceTest {
     @InjectMock
     CourseMapper courseMapper;
 
+    public static Folder createTestFolder(String name) {
+        Folder folder = new Folder();
+        folder.id = new ObjectId();
+        folder.name = name;
+        return folder;
+    }
+
+    public static FolderDTO convertToDTO(Folder folder) {
+        FolderDTO folderDTO = new FolderDTO();
+        folderDTO.setId(folder.id.toString());
+        folderDTO.setName(folder.name);
+        return folderDTO;
+    }
+
     @Test
     @DisplayName("Should throw BadRequestError 400 because CourseDTO passed is null")
     void test01GetFoldersInCourse_ThrowBadRequestExceptionCourseDTOPassedIsNull() {
@@ -400,19 +414,5 @@ public class FolderServiceTest {
 
         verify(this.courseMapper, times(1)).toEntity(courseDTO);
         verify(this.courseRepository, times(1)).update(course);
-    }
-
-    public static Folder createTestFolder(String name) {
-        Folder folder = new Folder();
-        folder.id = new ObjectId();
-        folder.name = name;
-        return folder;
-    }
-
-    public static FolderDTO convertToDTO(Folder folder) {
-        FolderDTO folderDTO = new FolderDTO();
-        folderDTO.setId(folder.id.toString());
-        folderDTO.setName(folder.name);
-        return folderDTO;
     }
 }

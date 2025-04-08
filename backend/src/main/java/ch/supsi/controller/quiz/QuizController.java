@@ -1,10 +1,8 @@
 package ch.supsi.controller.quiz;
 
 import ch.supsi.model.dto.api.CourseDTO;
-import ch.supsi.model.dto.api.FolderDTO;
 import ch.supsi.model.dto.api.QuizDTO;
 import ch.supsi.service.course.ICourseService;
-import ch.supsi.service.folder.IFolderService;
 import ch.supsi.service.quiz.IQuizService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
@@ -30,9 +28,6 @@ public class QuizController {
     IQuizService quizService;
 
     @Inject
-    IFolderService folderService;
-
-    @Inject
     ICourseService courseService;
 
     @GET
@@ -50,10 +45,8 @@ public class QuizController {
             @PathParam("courseId") String courseId,
             @PathParam("folderId") String folderId) {
         List<QuizDTO> quizzesDTO = this.quizService.getQuizzesInFolder(
-                this.folderService.getFolderInCourse(
-                        this.getCourseDTOFromCourseService(new ObjectId(courseId)),
-                        new ObjectId(folderId)
-                )
+                this.getCourseDTOFromCourseService(new ObjectId(courseId)),
+                new ObjectId(folderId)
         );
         return Response.ok(quizzesDTO).build();
     }
@@ -73,10 +66,9 @@ public class QuizController {
             @PathParam("courseId") String courseId,
             @PathParam("folderId") String folderId,
             @PathParam("quizId") String quizId) {
-        CourseDTO courseDTO = this.getCourseDTOFromCourseService(new ObjectId(courseId));
-        FolderDTO folderDTO = this.getFolderDTOFromFolderService(courseDTO, new ObjectId(folderId));
         QuizDTO quizDTO = this.quizService.getQuizInFolder(
-                folderDTO,
+                this.getCourseDTOFromCourseService(new ObjectId(courseId)),
+                new ObjectId(folderId),
                 new ObjectId(quizId)
         );
         return Response.ok(quizDTO).build();
@@ -97,12 +89,9 @@ public class QuizController {
             @PathParam("courseId") String courseId,
             @PathParam("folderId") String folderId,
             @Valid QuizDTO quizDTO) {
-
-        CourseDTO courseDTO = this.getCourseDTOFromCourseService(new ObjectId(courseId));
-        FolderDTO folderDTO = this.getFolderDTOFromFolderService(courseDTO, new ObjectId(folderId));
         QuizDTO createdQuizDTO = this.quizService.addQuizToFolder(
-                courseDTO,
-                folderDTO,
+                this.getCourseDTOFromCourseService(new ObjectId(courseId)),
+                new ObjectId(folderId),
                 quizDTO
         );
         return Response.status(Response.Status.CREATED)
@@ -127,11 +116,9 @@ public class QuizController {
             @PathParam("folderId") String folderId,
             @PathParam("quizId") String quizId,
             @Valid QuizDTO quizDTO) {
-        CourseDTO courseDTO = this.getCourseDTOFromCourseService(new ObjectId(courseId));
-        FolderDTO folderDTO = this.getFolderDTOFromFolderService(courseDTO, new ObjectId(folderId));
         QuizDTO updatedQuizDTO = this.quizService.updateQuizInFolder(
-                courseDTO,
-                folderDTO,
+                this.getCourseDTOFromCourseService(new ObjectId(courseId)),
+                new ObjectId(folderId),
                 new ObjectId(quizId),
                 quizDTO
         );
@@ -150,11 +137,9 @@ public class QuizController {
             @PathParam("courseId") String courseId,
             @PathParam("folderId") String folderId,
             @PathParam("quizId") String quizId) {
-        CourseDTO courseDTO = this.getCourseDTOFromCourseService(new ObjectId(courseId));
-        FolderDTO folderDTO = this.getFolderDTOFromFolderService(courseDTO, new ObjectId(folderId));
         this.quizService.removeQuizFromFolder(
-                courseDTO,
-                folderDTO,
+                this.getCourseDTOFromCourseService(new ObjectId(courseId)),
+                new ObjectId(folderId),
                 new ObjectId(quizId)
         );
         return Response.noContent().build();
@@ -162,9 +147,5 @@ public class QuizController {
 
     private CourseDTO getCourseDTOFromCourseService(ObjectId courseId) {
         return this.courseService.getCourseById(courseId);
-    }
-
-    private FolderDTO getFolderDTOFromFolderService(CourseDTO courseDTO, ObjectId folderId) {
-        return this.folderService.getFolderInCourse(courseDTO, folderId);
     }
 }

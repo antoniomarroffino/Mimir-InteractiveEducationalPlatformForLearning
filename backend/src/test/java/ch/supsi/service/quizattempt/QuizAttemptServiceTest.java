@@ -5,7 +5,6 @@ import ch.supsi.model.api.QuizAttempt;
 import ch.supsi.model.api.badge.Badge;
 import ch.supsi.model.api.badge.BadgeType;
 import ch.supsi.model.api.response.QuestionResponse;
-import ch.supsi.model.api.response.TrueFalseQuestionResponse;
 import ch.supsi.model.dto.api.QuizAttemptDTO;
 import ch.supsi.model.dto.api.response.QuestionResponseDTO;
 import ch.supsi.model.dto.api.response.TrueFalseQuestionResponseDTO;
@@ -21,10 +20,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.mockito.Mockito;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -44,6 +41,34 @@ public class QuizAttemptServiceTest {
 
     @InjectMock
     IQuizAttemptMapperFacade quizAttemptMapperFacade;
+
+    public static QuizAttempt createTestQuizAttempt() {
+        QuizAttempt quizAttempt = new QuizAttempt();
+        quizAttempt.id = new ObjectId();
+        quizAttempt.quizPublicationId = new ObjectId();
+        quizAttempt.startedAt = LocalDateTime.now();
+        return quizAttempt;
+    }
+
+    public static QuizAttempt createTestQuizAttempt(String userOid, ObjectId publicationId, List<QuestionResponse> responses) {
+        QuizAttempt quizAttempt = new QuizAttempt();
+        quizAttempt.id = new ObjectId();
+        quizAttempt.quizPublicationId = publicationId;
+        quizAttempt.startedAt = LocalDateTime.now();
+        quizAttempt.responses = responses;
+        quizAttempt.userAzureOID = userOid;
+        return quizAttempt;
+    }
+
+    public static QuizAttemptDTO convertToDTO(QuizAttempt quizAttempt) {
+        QuizAttemptDTO quizAttemptDTO = new QuizAttemptDTO();
+        quizAttemptDTO.setId(quizAttempt.id.toString());
+        quizAttemptDTO.setQuizPublicationId(quizAttempt.quizPublicationId.toString());
+        quizAttemptDTO.setUserAzureOID(quizAttempt.userAzureOID);
+        quizAttemptDTO.setStartedAt(quizAttempt.startedAt);
+        quizAttemptDTO.setCompletedAt(quizAttempt.completedAt);
+        return quizAttemptDTO;
+    }
 
     @Test
     @DisplayName("Should create new QuizAttempt and return new QuizAttemptDTO")
@@ -294,33 +319,5 @@ public class QuizAttemptServiceTest {
         verify(this.quizAttemptRepository, times(1)).findByIdOptional(quizAttempt.id);
         verify(this.quizAttemptRepository, times(1)).update(quizAttempt);
 
-    }
-
-    public static QuizAttempt createTestQuizAttempt() {
-        QuizAttempt quizAttempt = new QuizAttempt();
-        quizAttempt.id = new ObjectId();
-        quizAttempt.quizPublicationId = new ObjectId();
-        quizAttempt.startedAt = LocalDateTime.now();
-        return quizAttempt;
-    }
-
-    public static QuizAttempt createTestQuizAttempt(String userOid, ObjectId publicationId, List<QuestionResponse> responses) {
-        QuizAttempt quizAttempt = new QuizAttempt();
-        quizAttempt.id = new ObjectId();
-        quizAttempt.quizPublicationId = publicationId;
-        quizAttempt.startedAt = LocalDateTime.now();
-        quizAttempt.responses = responses;
-        quizAttempt.userAzureOID = userOid;
-        return quizAttempt;
-    }
-
-    public static QuizAttemptDTO convertToDTO(QuizAttempt quizAttempt) {
-        QuizAttemptDTO quizAttemptDTO = new QuizAttemptDTO();
-        quizAttemptDTO.setId(quizAttempt.id.toString());
-        quizAttemptDTO.setQuizPublicationId(quizAttempt.quizPublicationId.toString());
-        quizAttemptDTO.setUserAzureOID(quizAttempt.userAzureOID);
-        quizAttemptDTO.setStartedAt(quizAttempt.startedAt);
-        quizAttemptDTO.setCompletedAt(quizAttempt.completedAt);
-        return quizAttemptDTO;
     }
 }

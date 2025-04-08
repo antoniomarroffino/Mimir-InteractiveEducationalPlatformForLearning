@@ -1,6 +1,5 @@
 package ch.supsi.exception.mapper;
 
-import ch.supsi.exception.api.ApiException;
 import ch.supsi.model.dto.error.ErrorResponse;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;

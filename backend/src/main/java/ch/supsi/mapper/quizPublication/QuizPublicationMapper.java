@@ -30,7 +30,8 @@ public class QuizPublicationMapper {
 
     public QuizPublication toEntity(@NotNull QuizPublicationDTO dto, List<Question> questionList) {
         QuizPublication quizPublication = new QuizPublication();
-        quizPublication.id = new ObjectId(dto.getId());
+        if (dto.getId() != null)
+            quizPublication.id = new ObjectId(dto.getId());
         quizPublication.courseId = new ObjectId(dto.getCourseId());
         quizPublication.folderId = new ObjectId(dto.getFolderId());
         quizPublication.quizId = new ObjectId(dto.getQuizId());

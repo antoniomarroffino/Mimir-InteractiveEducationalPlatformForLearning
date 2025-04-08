@@ -2,6 +2,7 @@ package ch.supsi.model.dto.api;
 
 import ch.supsi.model.api.badge.BadgeType;
 import io.quarkus.runtime.annotations.RegisterForReflection;
+
 import java.time.LocalDateTime;
 
 @RegisterForReflection

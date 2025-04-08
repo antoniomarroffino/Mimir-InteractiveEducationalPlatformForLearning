@@ -55,7 +55,8 @@ public class QuizPublicationController {
     public Response publishQuiz(@Valid QuizPublicationDTO quizPublicationDTO) {
         CourseDTO courseDTO = this.courseService.getCourseById(new ObjectId(quizPublicationDTO.getCourseId()));
         QuizDTO quizDTO = this.quizService.getQuizInFolder(
-                this.folderService.getFolderInCourse(courseDTO, new ObjectId(quizPublicationDTO.getFolderId())),
+                courseDTO,
+                new ObjectId(quizPublicationDTO.getFolderId()),
                 new ObjectId(quizPublicationDTO.getQuizId())
         );
         quizPublicationDTO.setQuestions(quizDTO.getQuestions());
@@ -102,6 +103,7 @@ public class QuizPublicationController {
                     .build();
         }
     }
+
     @PUT
     @RolesAllowed("TEACHER")
     @Path("/{id}")

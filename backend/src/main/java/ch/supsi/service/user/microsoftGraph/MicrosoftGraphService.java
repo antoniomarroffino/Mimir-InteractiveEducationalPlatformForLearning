@@ -11,7 +11,6 @@ import jakarta.ws.rs.InternalServerErrorException;
 import jakarta.ws.rs.NotFoundException;
 import okhttp3.Request;
 
-import java.util.List;
 import java.util.Optional;
 
 @ApplicationScoped

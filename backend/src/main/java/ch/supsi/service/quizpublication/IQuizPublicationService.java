@@ -1,6 +1,5 @@
 package ch.supsi.service.quizpublication;
 
-import ch.supsi.model.api.QuizPublication;
 import ch.supsi.model.dto.api.QuizPublicationDTO;
 import org.bson.types.ObjectId;
 

@@ -4,18 +4,14 @@ import ch.supsi.config.GraphClientConfig;
 import com.microsoft.graph.models.User;
 import com.microsoft.graph.requests.*;
 import io.quarkus.test.InjectMock;
-import io.quarkus.test.Mock;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.InternalServerErrorException;
 import jakarta.ws.rs.NotFoundException;
 import okhttp3.Request;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
-import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,16 +23,13 @@ import static org.mockito.Mockito.*;
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class MicrosoftGraphServiceTest {
-    @Inject
-    MicrosoftGraphService microsoftGraphService;
-
-    @InjectMock
-    GraphClientConfig graphClientConfig;
-
-    private GraphServiceClient<Request> graphServiceClient;
-
     private static final String TEST_OID = "test-oid-123";
     private static final String TEST_EMAIL = "test@example.com";
+    @Inject
+    MicrosoftGraphService microsoftGraphService;
+    @InjectMock
+    GraphClientConfig graphClientConfig;
+    private GraphServiceClient<Request> graphServiceClient;
 
     @BeforeEach
     @SuppressWarnings("unchecked")

@@ -19,15 +19,12 @@ import static org.mockito.Mockito.*;
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class DemoteStrategyTest {
+    private static final User TEST_MICROSOFT_USER = new User();
+    private static final String TEST_OID = "oid-123";
     @Inject
     DemoteStrategy demoteStrategy;
-
     @InjectMock
     UserRepository userRepository;
-
-    private static final User TEST_MICROSOFT_USER = new User();
-
-    private static final String TEST_OID = "oid-123";
 
     @BeforeEach
     public void setup() {

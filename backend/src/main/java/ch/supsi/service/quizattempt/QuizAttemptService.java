@@ -1,6 +1,5 @@
 package ch.supsi.service.quizattempt;
 
-import ch.supsi.mapper.quizAttempt.QuizAttemptMapper;
 import ch.supsi.mapper.quizAttempt.facade.IQuizAttemptMapperFacade;
 import ch.supsi.model.api.QuizAttempt;
 import ch.supsi.model.api.badge.Badge;
@@ -16,7 +15,6 @@ import org.bson.types.ObjectId;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -101,7 +99,7 @@ public class QuizAttemptService implements IQuizAttemptService {
     }
 
     private void verifyUserOIDIsValid(String userOID) {
-        if(userOID == null || userOID.isEmpty())
+        if (userOID == null || userOID.isEmpty())
             throw new InternalServerErrorException("User Azure OID cannot be null");
     }
 

@@ -11,7 +11,6 @@ import org.junit.jupiter.api.*;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -20,20 +19,16 @@ import static org.mockito.Mockito.*;
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class AdminInitializerTest {
 
-    @Inject
-    AdminInitializer adminInitializer;
-
-    @InjectMock
-    IMicrosoftGraphService microsoftGraphService;
-
-    @InjectMock
-    IAdminService adminService;
-
-    @InjectMock
-    AdminConfig adminConfig;
-
     private static final List<String> TEST_EMAILS = List.of("admin1@test.com", "admin2@test.com");
     private static final com.microsoft.graph.models.User MOCK_USER = new com.microsoft.graph.models.User();
+    @Inject
+    AdminInitializer adminInitializer;
+    @InjectMock
+    IMicrosoftGraphService microsoftGraphService;
+    @InjectMock
+    IAdminService adminService;
+    @InjectMock
+    AdminConfig adminConfig;
 
     @BeforeEach
     void setUp() {

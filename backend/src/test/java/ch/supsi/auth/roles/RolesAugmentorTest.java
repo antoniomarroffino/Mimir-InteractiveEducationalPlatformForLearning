@@ -23,16 +23,13 @@ import static org.mockito.Mockito.when;
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class RolesAugmentorTest {
 
+    private static final String TEST_OID = "test-oid-123";
     @Inject
     RolesAugmentor rolesAugmentor;
-
     @InjectMock
     IUserService userService;
-
     @InjectMock
     JsonWebToken jwt;
-
-    private static final String TEST_OID = "test-oid-123";
 
     @Test
     @DisplayName("Should add Student Role because user is not founded by his azure oid in DB")

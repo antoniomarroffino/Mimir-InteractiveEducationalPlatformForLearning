@@ -8,9 +8,14 @@ import java.util.List;
 
 public interface IQuizAttemptService {
     QuizAttemptDTO createQuizAttempt(QuizAttemptDTO quizAttemptDTO);
+
     QuizAttemptDTO getQuizAttemptById(ObjectId attemptId);
+
     List<QuizAttemptDTO> getQuizAttemptsByPublication(ObjectId publicationId);
+
     List<QuizAttemptDTO> getQuizAttemptsByUser(String userAzureOID);
+
     List<QuizAttemptDTO> getQuizAttemptsByPublicationAndQuestion(ObjectId publicationId, ObjectId questionId);
+
     void assignBadge(ObjectId attemptId, BadgeType badgeType, String teacherAzureOid);
 }

@@ -14,7 +14,6 @@ import jakarta.ws.rs.NotFoundException;
 import org.bson.types.ObjectId;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -69,7 +68,7 @@ public class FolderService implements IFolderService {
 
         Folder folderToUpdate = this.findFolderInCourseById(course, folderId);
 
-        this.verifyFolderNameIsDuplicated(course, folderDTO.getName(), folderId);
+        this.verifyFolderNameIsDuplicated(course, folderDTO.getName());
 
         folderToUpdate.name = folderDTO.getName();
 
@@ -98,7 +97,7 @@ public class FolderService implements IFolderService {
     }
 
     private void verifyCourseDTOIsValid(CourseDTO courseDTO) {
-        if(courseDTO == null)
+        if (courseDTO == null)
             throw new BadRequestException("Course passed is null");
     }
 
@@ -112,10 +111,10 @@ public class FolderService implements IFolderService {
             throw new BadRequestException("Folder name cannot be empty");
         }
 
-        this.verifyFolderNameIsDuplicated(course, folderDTO.getName(), new ObjectId(folderDTO.getId()));
+        this.verifyFolderNameIsDuplicated(course, folderDTO.getName());
     }
 
-    private void verifyFolderNameIsDuplicated(Course course, String folderName, ObjectId excludeFolderId) {
+    private void verifyFolderNameIsDuplicated(Course course, String folderName) {
         boolean isNameDuplicated = course.folders.stream()
                 .anyMatch(f -> f.name.equalsIgnoreCase(folderName.trim()));
 

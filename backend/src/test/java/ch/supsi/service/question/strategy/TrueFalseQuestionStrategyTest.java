@@ -18,7 +18,7 @@ public class TrueFalseQuestionStrategyTest {
 
     @Test
     @DisplayName("Should return a TrueFalseQuestion")
-    void test01CreateQuestion(){
+    void test01CreateQuestion() {
         Question question = this.strategy.createQuestion();
 
         assertInstanceOf(TrueFalseQuestion.class, question);
@@ -26,7 +26,7 @@ public class TrueFalseQuestionStrategyTest {
 
     @Test
     @DisplayName("Should not update anything because entity passed is null")
-    void test02UpdateQuestion_NotUpdateEntityBecauseEntityPassedIsNull(){
+    void test02UpdateQuestion_NotUpdateEntityBecauseEntityPassedIsNull() {
         TrueFalseQuestion trueFalseQuestion = new TrueFalseQuestion();
         trueFalseQuestion.correctAnswer = false;
         trueFalseQuestion.questionText = "Question text";
@@ -43,7 +43,7 @@ public class TrueFalseQuestionStrategyTest {
 
     @Test
     @DisplayName("Should not update anything because DTO passed is null")
-    void test03UpdateQuestion_NotUpdateEntityBecauseDTOPassedIsNull(){
+    void test03UpdateQuestion_NotUpdateEntityBecauseDTOPassedIsNull() {
         TrueFalseQuestion trueFalseQuestion = new TrueFalseQuestion();
         trueFalseQuestion.correctAnswer = false;
         trueFalseQuestion.questionText = "Question text";
@@ -56,7 +56,7 @@ public class TrueFalseQuestionStrategyTest {
 
     @Test
     @DisplayName("Should update passed entity given new TrueFalseQuestionDTO")
-    void test04UpdateQuestion(){
+    void test04UpdateQuestion() {
         TrueFalseQuestion trueFalseQuestion = new TrueFalseQuestion();
         trueFalseQuestion.correctAnswer = false;
         trueFalseQuestion.questionText = "Question text";

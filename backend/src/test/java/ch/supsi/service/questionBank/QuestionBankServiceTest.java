@@ -37,6 +37,13 @@ public class QuestionBankServiceTest {
     @InjectMock
     IQuestionBankMapperFacade questionBankMapperFacade;
 
+    public static QuestionBank createTestQuestionBank(String name) {
+        QuestionBank qb = new QuestionBank();
+        qb.name = name;
+        qb.questions = new HashSet<>();
+        return qb;
+    }
+
     @Test
     @DisplayName("Should return empty list of Question Banks")
     void test01GetAllQuestionBanks_EmptyList() {
@@ -257,7 +264,7 @@ public class QuestionBankServiceTest {
         when(this.questionBankRepository.findByIdOptional(any(ObjectId.class))).thenReturn(Optional.empty());
 
         NotFoundException exception = assertThrows(
-            NotFoundException.class,
+                NotFoundException.class,
                 () -> this.questionBankService.deleteQuestionBank(id)
         );
         assertEquals("Question bank with id " + id + " not found", exception.getMessage());
@@ -278,13 +285,5 @@ public class QuestionBankServiceTest {
 
         verify(this.questionBankRepository, times(1)).findByIdOptional(questionBank.id);
         verify(this.questionBankRepository, times(1)).delete(questionBank);
-    }
-
-
-    public static QuestionBank createTestQuestionBank(String name) {
-        QuestionBank qb = new QuestionBank();
-        qb.name = name;
-        qb.questions = new HashSet<>();
-        return qb;
     }
 }

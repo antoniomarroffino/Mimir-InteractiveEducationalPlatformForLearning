@@ -27,7 +27,7 @@ public class QuizAttemptMapperFacade implements IQuizAttemptMapperFacade {
 
     @Override
     public QuizAttemptDTO toDTO(QuizAttempt entity) {
-        if(entity == null) return null;
+        if (entity == null) return null;
 
         List<QuestionResponseDTO> questionResponseDTOList = this.getQuestionResponsesDTOFromQuestionResponseEntity(entity.responses);
         List<BadgeDTO> badgeDTOList = this.getBadgesDTOFromBadgesEntity(entity.badges);
@@ -37,7 +37,7 @@ public class QuizAttemptMapperFacade implements IQuizAttemptMapperFacade {
 
     @Override
     public QuizAttempt toEntity(QuizAttemptDTO dto) {
-        if(dto == null) return null;
+        if (dto == null) return null;
 
         List<QuestionResponse> questionResponseList = this.getQuestionResponsesFromQuestionResponsesDTO(dto.getResponses());
         List<Badge> badges = this.getBadgesFromBadgesDTO(dto.getBadges());

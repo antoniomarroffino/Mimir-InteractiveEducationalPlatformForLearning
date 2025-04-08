@@ -2,13 +2,10 @@ package ch.supsi.mapper.folder;
 
 import ch.supsi.mapper.FolderMapper;
 import ch.supsi.mapper.quiz.facade.IQuizMapperFacade;
-import ch.supsi.model.api.Course;
 import ch.supsi.model.api.Folder;
 import ch.supsi.model.api.Quiz;
-import ch.supsi.model.dto.api.CourseDTO;
 import ch.supsi.model.dto.api.FolderDTO;
 import ch.supsi.model.dto.api.QuizDTO;
-import ch.supsi.service.course.CourseServiceTest;
 import ch.supsi.service.folder.FolderServiceTest;
 import ch.supsi.service.quiz.QuizServiceTest;
 import io.quarkus.test.InjectMock;
@@ -23,10 +20,8 @@ import org.junit.jupiter.api.TestMethodOrder;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.times;
 
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.MethodName.class)

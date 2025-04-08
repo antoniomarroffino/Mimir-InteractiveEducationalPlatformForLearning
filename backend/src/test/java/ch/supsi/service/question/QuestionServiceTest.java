@@ -1,10 +1,8 @@
 package ch.supsi.service.question;
 
-import ch.supsi.mapper.CourseMapper;
 import ch.supsi.mapper.IBaseMapper;
 import ch.supsi.mapper.question.MultipleChoiceQuestionMapper;
 import ch.supsi.mapper.question.TrueFalseQuestionMapper;
-import ch.supsi.mapper.question.builder.IQuestionMapperBuilder;
 import ch.supsi.mapper.question.builder.QuestionMapperBuilder;
 import ch.supsi.model.api.QuestionBank;
 import ch.supsi.model.api.question.MultipleChoiceQuestion;
@@ -31,7 +29,6 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.mockito.InOrder;
-import org.mockito.internal.matchers.Not;
 
 import java.util.Optional;
 
@@ -42,23 +39,18 @@ import static org.mockito.Mockito.*;
 @TestMethodOrder(MethodOrderer.MethodName.class)
 @SuppressWarnings("unchecked")
 public class QuestionServiceTest {
-    @Inject
-    QuestionService questionService;
-
-    @InjectMock
-    QuestionRepository questionRepository;
-
-    @InjectMock
-    QuestionBankRepository questionBankRepository;
-
-    @InjectMock
-    QuestionFactory questionFactory;
-
-    @InjectMock
-    QuestionMapperBuilder questionMapperBuilder;
-
     private static final ObjectId TEST_QUESTION_ID = new ObjectId();
     private static final String TEST_QUESTION_BANK_ID = new ObjectId().toString();
+    @Inject
+    QuestionService questionService;
+    @InjectMock
+    QuestionRepository questionRepository;
+    @InjectMock
+    QuestionBankRepository questionBankRepository;
+    @InjectMock
+    QuestionFactory questionFactory;
+    @InjectMock
+    QuestionMapperBuilder questionMapperBuilder;
 
     @Test
     @DisplayName("Should create a TrueFalseQuestion template")

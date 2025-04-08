@@ -132,7 +132,7 @@ public class CourseService implements ICourseService {
 
     private Course findCourseById(ObjectId courseId) {
         Optional<Course> courseOpt = this.courseRepository.findByIdOptional(courseId);
-        if(courseOpt.isEmpty())
+        if (courseOpt.isEmpty())
             throw new NotFoundException("Course " + courseId + " not found");
         return courseOpt.get();
     }

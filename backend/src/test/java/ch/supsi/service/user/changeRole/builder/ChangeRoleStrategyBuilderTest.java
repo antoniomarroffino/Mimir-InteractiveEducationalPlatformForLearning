@@ -1,9 +1,6 @@
 package ch.supsi.service.user.changeRole.builder;
 
-import ch.supsi.model.api.question.QuestionType;
 import ch.supsi.model.api.user.Role;
-import ch.supsi.service.question.strategy.MultipleChoiceQuestionStrategy;
-import ch.supsi.service.question.strategy.TrueFalseQuestionStrategy;
 import ch.supsi.service.user.changeRole.strategy.DemoteStrategy;
 import ch.supsi.service.user.changeRole.strategy.IChangeRoleStrategy;
 import ch.supsi.service.user.changeRole.strategy.InvalidAdminStrategy;
@@ -16,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.MethodName.class)

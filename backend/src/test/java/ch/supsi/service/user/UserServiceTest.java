@@ -28,28 +28,29 @@ import static org.mockito.Mockito.*;
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class UserServiceTest {
-    @Inject
-    UserService userService;
-
-    @InjectMock
-    UserRepository userRepository;
-
-    @InjectMock
-    SecurityIdentity securityIdentity;
-
-    @InjectMock
-    JsonWebToken jwt;
-
-    @InjectMock
-    ChangeRoleStrategyBuilder changeRoleStrategyBuilder;
-
     private static final String TEST_OID = "test-oid-123";
     private static final String TEST_NAME = "Test User";
     private static final String TEST_EMAIL = "test@example.com";
-
     private static final String OID_CLAIM_KEY = "oid";
     private static final String NAME_CLAIM_KEY = "name";
     private static final String EMAIL_CLAIM_KEY = "preferred_username";
+    @Inject
+    UserService userService;
+    @InjectMock
+    UserRepository userRepository;
+    @InjectMock
+    SecurityIdentity securityIdentity;
+    @InjectMock
+    JsonWebToken jwt;
+    @InjectMock
+    ChangeRoleStrategyBuilder changeRoleStrategyBuilder;
+
+    public static User createTestUser(String azureOid, Role role) {
+        User user = new User();
+        user.azureOid = azureOid;
+        user.role = role;
+        return user;
+    }
 
     @Test
     @DisplayName("Should return list of teachers from repository")
@@ -263,13 +264,5 @@ public class UserServiceTest {
 
         verify(this.securityIdentity, times(1)).getPrincipal();
         verify(this.jwt, times(1)).getClaim(EMAIL_CLAIM_KEY);
-    }
-
-
-    public static User createTestUser(String azureOid, Role role) {
-        User user = new User();
-        user.azureOid = azureOid;
-        user.role = role;
-        return user;
     }
 }

@@ -1,8 +1,8 @@
 package ch.supsi.service.user.changeRole.builder;
 
 import ch.supsi.model.api.user.Role;
-import ch.supsi.service.user.changeRole.strategy.IChangeRoleStrategy;
 import ch.supsi.service.user.changeRole.strategy.DemoteStrategy;
+import ch.supsi.service.user.changeRole.strategy.IChangeRoleStrategy;
 import ch.supsi.service.user.changeRole.strategy.InvalidAdminStrategy;
 import ch.supsi.service.user.changeRole.strategy.PromoteStrategy;
 import jakarta.enterprise.context.ApplicationScoped;

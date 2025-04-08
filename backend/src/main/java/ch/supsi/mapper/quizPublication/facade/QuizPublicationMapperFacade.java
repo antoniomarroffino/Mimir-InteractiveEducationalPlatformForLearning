@@ -1,7 +1,7 @@
 package ch.supsi.mapper.quizPublication.facade;
 
-import ch.supsi.mapper.quizPublication.QuizPublicationMapper;
 import ch.supsi.mapper.question.builder.IQuestionMapperBuilder;
+import ch.supsi.mapper.quizPublication.QuizPublicationMapper;
 import ch.supsi.model.api.QuizPublication;
 import ch.supsi.model.api.question.Question;
 import ch.supsi.model.dto.api.QuizPublicationDTO;
@@ -21,7 +21,7 @@ public class QuizPublicationMapperFacade implements IQuizPublicationMapperFacade
 
     @Override
     public QuizPublicationDTO toDTO(QuizPublication entity) {
-        if(entity == null) return null;
+        if (entity == null) return null;
 
         List<QuestionDTO> questionDTOList = this.getQuestionsDTOListFromQuestionsList(entity.questions);
 
@@ -30,7 +30,7 @@ public class QuizPublicationMapperFacade implements IQuizPublicationMapperFacade
 
     @Override
     public QuizPublication toEntity(QuizPublicationDTO dto) {
-        if(dto == null) return null;
+        if (dto == null) return null;
 
         List<Question> questionList = this.getQuestionsFromDTOList(dto.getQuestions());
 

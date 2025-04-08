@@ -20,7 +20,10 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -39,6 +42,22 @@ public class CourseServiceTest {
 
     @InjectMock
     CourseMapper courseMapperMocked;
+
+    public static Course createTestCourse(String courseName, String description) {
+        Course course = new Course();
+        course.id = new ObjectId();
+        course.name = courseName;
+        course.description = description;
+        return course;
+    }
+
+    public static CourseDTO convertToDTO(Course course) {
+        CourseDTO courseDTO = new CourseDTO();
+        courseDTO.setId(course.id.toString());
+        courseDTO.setName(course.name);
+        courseDTO.setDescription(course.description);
+        return courseDTO;
+    }
 
     @Test
     @DisplayName("Should throw InternalServerError 500 because user logged is null")
@@ -134,13 +153,13 @@ public class CourseServiceTest {
 
         when(this.courseRepositoryMocked.findByIdOptional(any(ObjectId.class))).thenReturn(Optional.empty());
 
-       NotFoundException exception = assertThrows(
-               NotFoundException.class,
-               () -> this.courseService.getCourseById(id)
-       );
+        NotFoundException exception = assertThrows(
+                NotFoundException.class,
+                () -> this.courseService.getCourseById(id)
+        );
 
-       assertEquals(Response.Status.NOT_FOUND.getStatusCode(), exception.getResponse().getStatus());
-       assertEquals("Course " + id + " not found", exception.getMessage());
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), exception.getResponse().getStatus());
+        assertEquals("Course " + id + " not found", exception.getMessage());
 
         verify(this.courseRepositoryMocked, times(1)).findByIdOptional(any(ObjectId.class));
         verify(this.courseMapperMocked, never()).toDTO(any(Course.class));
@@ -582,21 +601,5 @@ public class CourseServiceTest {
         verify(this.courseRepositoryMocked, times(1)).findByIdOptional(course.id);
         verify(this.courseRepositoryMocked, times(1)).delete(any(Course.class));
         verify(this.userRepositoryMocked, times(1)).removeCourseFromUser(course.id.toString(), user.azureOid);
-    }
-
-    public static Course createTestCourse(String courseName, String description) {
-        Course course = new Course();
-        course.id = new ObjectId();
-        course.name = courseName;
-        course.description = description;
-        return course;
-    }
-
-    public static CourseDTO convertToDTO(Course course) {
-        CourseDTO courseDTO = new CourseDTO();
-        courseDTO.setId(course.id.toString());
-        courseDTO.setName(course.name);
-        courseDTO.setDescription(course.description);
-        return courseDTO;
     }
 }

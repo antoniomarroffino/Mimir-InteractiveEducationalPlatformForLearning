@@ -22,16 +22,13 @@ import static org.mockito.Mockito.*;
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class AdminServiceTest {
+    private static final User testMsUser = new User();
     @Inject
     AdminService adminService;
-
     @InjectMock
     AdminConfig adminConfig;
-
     @InjectMock
     UserRepository userRepository;
-
-    private static final User testMsUser = new User();
 
     @Test
     @DisplayName("Should throw InternalServerError because Microsoft user passed is null")
@@ -104,7 +101,8 @@ public class AdminServiceTest {
         verify(this.adminConfig, times(1)).getAdminNames();
         verify(this.adminConfig, times(1)).getAdminEmails();
         verify(this.userRepository, times(1)).findByAzureOidOptional(anyString());
-        verify(this.userRepository, times(1)).persist(any(ch.supsi.model.api.user.User.class));    }
+        verify(this.userRepository, times(1)).persist(any(ch.supsi.model.api.user.User.class));
+    }
 
     @Test
     @DisplayName("Should remove all admins")

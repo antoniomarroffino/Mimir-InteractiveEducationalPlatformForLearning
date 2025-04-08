@@ -7,7 +7,6 @@ import ch.supsi.testContainersResource.MongoTestResource;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
-import org.junit.After;
 import org.junit.jupiter.api.*;
 
 import java.util.Optional;

@@ -6,27 +6,21 @@ import com.microsoft.graph.models.User;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.ForbiddenException;
 import org.junit.jupiter.api.*;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class PromoteStrategyTest {
+    private static final User TEST_MICROSOFT_USER = new User();
+    private static final String TEST_OID = "oid-123";
     @Inject
     PromoteStrategy promoteStrategy;
-
     @InjectMock
     UserRepository userRepository;
-
-    private static final User TEST_MICROSOFT_USER = new User();
-
-    private static final String TEST_OID = "oid-123";
 
     @BeforeEach
     public void setup() {
