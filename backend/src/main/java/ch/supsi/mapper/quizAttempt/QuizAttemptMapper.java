@@ -8,12 +8,13 @@ import ch.supsi.model.dto.api.QuizAttemptDTO;
 import ch.supsi.model.dto.api.response.QuestionResponseDTO;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.bson.types.ObjectId;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 @ApplicationScoped
 public class QuizAttemptMapper {
-    public QuizAttemptDTO toDTO(QuizAttempt quizAttempt, List<QuestionResponseDTO> questionResponseDTOList, List<BadgeDTO> badgeDTOList) {
+    public QuizAttemptDTO toDTO(@NotNull QuizAttempt quizAttempt, List<QuestionResponseDTO> questionResponseDTOList, List<BadgeDTO> badgeDTOList) {
         QuizAttemptDTO dto = new QuizAttemptDTO();
         dto.setId(quizAttempt.id.toString());
         dto.setQuizPublicationId(quizAttempt.quizPublicationId.toString());
@@ -25,7 +26,7 @@ public class QuizAttemptMapper {
         return dto;
     }
 
-    public QuizAttempt toEntity(QuizAttemptDTO dto, List<QuestionResponse> questionResponseList, List<Badge> badgeList) {
+    public QuizAttempt toEntity(@NotNull QuizAttemptDTO dto, List<QuestionResponse> questionResponseList, List<Badge> badgeList) {
         QuizAttempt quizAttempt = new QuizAttempt();
 
         if (dto.getId() != null) {

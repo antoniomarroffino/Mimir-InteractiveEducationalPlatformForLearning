@@ -37,43 +37,6 @@ public class QuizPublicationServiceTest {
     @InjectMock
     IQuizPublicationMapperFacade quizPublicationMapperFacade;
 
-    public static QuizPublication createTestQuizPublication() {
-        ObjectId courseId = new ObjectId();
-        ObjectId folderId = new ObjectId();
-        ObjectId quizId = new ObjectId();
-
-        QuizPublication quizPublication = new QuizPublication(
-                courseId,
-                folderId,
-                quizId,
-                new ArrayList<>(),
-                ""
-        );
-        quizPublication.id = new ObjectId();
-
-        return quizPublication;
-    }
-
-    public static QuizPublication createTestQuizPublication(ObjectId quizId, String publicationCode) {
-        ObjectId courseId = new ObjectId();
-        ObjectId folderId = new ObjectId();
-        return new QuizPublication(courseId, folderId, quizId, new ArrayList<>(), publicationCode);
-    }
-
-    public static QuizPublicationDTO convertToDTO(QuizPublication quizPublication) {
-        QuizPublicationDTO quizPublicationDTO = new QuizPublicationDTO();
-        quizPublicationDTO.setId(quizPublication.id.toString());
-        quizPublicationDTO.setCourseId(quizPublication.courseId.toString());
-        quizPublicationDTO.setFolderId(quizPublication.folderId.toString());
-        quizPublicationDTO.setQuizId(quizPublication.quizId.toString());
-        quizPublicationDTO.setPublicationCode(quizPublication.publicationCode);
-        quizPublicationDTO.setAnonymous(quizPublication.anonymous);
-        quizPublicationDTO.setPublished(quizPublication.published);
-        quizPublicationDTO.setCreatedAt(quizPublication.createdAt);
-        quizPublicationDTO.setClosedAt(quizPublication.closedAt);
-        return quizPublicationDTO;
-    }
-
     @Test
     @DisplayName("Should publish new quiz and return a QuizPublicationDTO anonymous")
     void test01PublishQuiz_ReturnAQuizPublicationDTOAnonymous() {
@@ -86,6 +49,7 @@ public class QuizPublicationServiceTest {
         quizPublication.questions.add(multipleChoiceQuestion);
 
         when(this.quizPublicationMapperFacade.toEntity(any(QuizPublicationDTO.class))).thenReturn(quizPublication);
+        when(this.quizPublicationRepository.findByCodeOptional(any(String.class))).thenReturn(Optional.empty());
         when(this.quizPublicationMapperFacade.toDTO(quizPublication)).thenReturn(new QuizPublicationDTO());
 
         this.quizPublicationService.publishQuiz(new QuizPublicationDTO());
@@ -98,6 +62,7 @@ public class QuizPublicationServiceTest {
 
 
         verify(this.quizPublicationMapperFacade, times(1)).toEntity(any(QuizPublicationDTO.class));
+        verify(this.quizPublicationRepository, times(1)).findByCodeOptional(any(String.class));
         verify(this.quizPublicationRepository, times(1)).persist(quizPublication);
         verify(this.quizPublicationMapperFacade, times(1)).toDTO(quizPublication);
     }
@@ -296,5 +261,42 @@ public class QuizPublicationServiceTest {
 
         verify(this.quizPublicationRepository, times(1)).findPublicationsByQuizId(any(ObjectId.class));
         verify(this.quizPublicationMapperFacade, never()).toDTO(any(QuizPublication.class));
+    }
+
+    public static QuizPublication createTestQuizPublication() {
+        ObjectId courseId = new ObjectId();
+        ObjectId folderId = new ObjectId();
+        ObjectId quizId = new ObjectId();
+
+        QuizPublication quizPublication = new QuizPublication(
+                courseId,
+                folderId,
+                quizId,
+                new ArrayList<>(),
+                ""
+        );
+        quizPublication.id = new ObjectId();
+
+        return quizPublication;
+    }
+
+    public static QuizPublication createTestQuizPublication(ObjectId quizId, String publicationCode) {
+        ObjectId courseId = new ObjectId();
+        ObjectId folderId = new ObjectId();
+        return new QuizPublication(courseId, folderId, quizId, new ArrayList<>(), publicationCode);
+    }
+
+    public static QuizPublicationDTO convertToDTO(QuizPublication quizPublication) {
+        QuizPublicationDTO quizPublicationDTO = new QuizPublicationDTO();
+        quizPublicationDTO.setId(quizPublication.id.toString());
+        quizPublicationDTO.setCourseId(quizPublication.courseId.toString());
+        quizPublicationDTO.setFolderId(quizPublication.folderId.toString());
+        quizPublicationDTO.setQuizId(quizPublication.quizId.toString());
+        quizPublicationDTO.setPublicationCode(quizPublication.publicationCode);
+        quizPublicationDTO.setAnonymous(quizPublication.anonymous);
+        quizPublicationDTO.setPublished(quizPublication.published);
+        quizPublicationDTO.setCreatedAt(quizPublication.createdAt);
+        quizPublicationDTO.setClosedAt(quizPublication.closedAt);
+        return quizPublicationDTO;
     }
 }

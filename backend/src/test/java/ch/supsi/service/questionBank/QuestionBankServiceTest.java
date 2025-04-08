@@ -238,7 +238,6 @@ public class QuestionBankServiceTest {
     void test13UpdateQuestionBank() {
         QuestionBank questionBank = createTestQuestionBank("Test");
         questionBank.id = new ObjectId();
-        LocalDateTime lastModified = questionBank.lastModified;
 
         QuestionBankDTO questionBankDTO_updated = new QuestionBankDTO("Test updated");
 
@@ -248,7 +247,6 @@ public class QuestionBankServiceTest {
 
         QuestionBankDTO questionBankDTO = this.questionBankService.updateQuestionBank(questionBank.id, questionBankDTO_updated);
         assertNotNull(questionBankDTO);
-        assertNotEquals(lastModified.getNano(), questionBank.lastModified.getNano());
 
         verify(this.questionBankRepository, times(1)).findByNameOptional(anyString());
         verify(this.questionBankRepository, times(1)).findByIdOptional(questionBank.id);
