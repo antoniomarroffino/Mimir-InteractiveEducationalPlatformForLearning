@@ -10,16 +10,15 @@ import java.util.Set;
 @Schema(description = "Quiz model", name = "Quiz")
 public class Quiz {
     public ObjectId id;
-
     public String name;
-
     public String description;
-    public Set<ObjectId> questionsId = new HashSet<>();
+    public Set<ObjectId> questionsId;
     public LocalDateTime createdAt;
     public LocalDateTime updatedAt;
 
     public Quiz() {
         this.id = new ObjectId();
+        this.questionsId = new HashSet<>();
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
@@ -27,5 +26,11 @@ public class Quiz {
     public Quiz(String name) {
         this();
         this.name = name;
+    }
+
+    public Quiz(String name, String description) {
+        this();
+        this.name = name;
+        this.description = description;
     }
 }

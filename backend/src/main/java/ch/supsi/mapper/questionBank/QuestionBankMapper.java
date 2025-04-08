@@ -4,14 +4,15 @@ package ch.supsi.mapper.questionBank;
 import ch.supsi.model.api.QuestionBank;
 import ch.supsi.model.dto.api.QuestionBankDTO;
 import ch.supsi.model.dto.api.question.QuestionDTO;
+import jakarta.enterprise.context.ApplicationScoped;
 import org.bson.types.ObjectId;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Set;
 
+@ApplicationScoped
 public class QuestionBankMapper {
-
     public QuestionBankDTO toDTO(@NotNull QuestionBank questionBank, List<QuestionDTO> questionDTOList) {
         QuestionBankDTO dto = new QuestionBankDTO();
         dto.setId(questionBank.id.toString());
