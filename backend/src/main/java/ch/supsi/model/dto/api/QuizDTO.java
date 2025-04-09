@@ -23,6 +23,8 @@ public class QuizDTO {
 
     private LocalDateTime updatedAt;
 
+    private Integer timeLimitMinutes;
+
     public QuizDTO() {
     }
 
@@ -72,5 +74,13 @@ public class QuizDTO {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Integer getTimeLimitMinutes() {
+        return timeLimitMinutes;
+    }
+
+    public void setTimeLimitMinutes(Integer timeLimitMinutes) {
+        this.timeLimitMinutes = timeLimitMinutes;
     }
 }

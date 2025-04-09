@@ -19,6 +19,7 @@ public class QuizMapper {
         dto.setDescription(quiz.description);
         dto.setQuestions(questionDTOList);
         dto.setUpdatedAt(quiz.updatedAt);
+        dto.setTimeLimitMinutes(quiz.timeLimitMinutes);
         return dto;
     }
 
@@ -30,6 +31,7 @@ public class QuizMapper {
         }
 
         quiz.description = dto.getDescription();
+        quiz.timeLimitMinutes = dto.getTimeLimitMinutes();
 
         quiz.questionsId = questionIdList.stream()
                 .map(ObjectId::new)
