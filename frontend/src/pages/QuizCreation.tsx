@@ -6,7 +6,6 @@ import {BsLayoutSidebar, BsListTask, BsListUl, BsPencil, BsQuestionDiamond} from
 import {useQuizCRUD} from "../hooks/quiz/useQuizCRUD.ts";
 import {useQuestionBankList} from "../hooks/questionBank/useQuestionBankList.ts";
 import {QuestionBankList} from "../components/quiz/QuestionBankList.tsx";
-import {LightBulbIcon} from "@heroicons/react/24/outline";
 import {format} from "date-fns";
 import {CheckIcon, XMarkIcon} from "@heroicons/react/16/solid";
 import {QuestionsList} from "../components/question/QuestionList.tsx";
@@ -16,6 +15,7 @@ import {useGetQuizById} from "../hooks/quiz/useGetQuizById.ts";
 import {useGetCourseById} from "../hooks/course/useGetCourseById.ts";
 import {useGetFolderById} from "../hooks/folder/useGetFolderById.ts";
 import {LoadingSpinner} from "../components/common/LoadingSpinner.tsx";
+import {QuizTimeLimit} from "../components/quiz/QuizTimeLimit.tsx";
 
 export const QuizCreation: React.FC = () => {
     const {courseId, folderId, quizId} = useParams();
@@ -27,6 +27,7 @@ export const QuizCreation: React.FC = () => {
     const [isEditingQuizName, setIsEditingQuizName] = useState(false);
     const [editedQuizName, setEditedQuizName] = useState(currentQuiz?.name || '');
     const {updateQuiz, isUpdatingQuiz} = useQuizCRUD();
+    const [isUpdatingTimeLimit, setIsUpdatingTimeLimit] = useState(false);
     const {questionBanks, isLoadingQuestionBanks, errorQuestionBanks} = useQuestionBankList();
     const {
         selectedQuestionType,
@@ -41,6 +42,22 @@ export const QuizCreation: React.FC = () => {
     useEffect(() => {
         setEditedQuizName(currentQuiz?.name || '');
     }, [currentQuiz?.name]);
+
+    const handleTimeLimitChange = async (minutes: number | undefined) => {
+        if (!currentQuiz) return;
+
+        setIsUpdatingTimeLimit(true);
+        try {
+            await updateQuiz(courseId!, folderId!, quizId!, {
+                ...currentQuiz,
+                timeLimitMinutes: minutes
+            });
+        } catch (error) {
+            console.error('Failed to update time limit:', error);
+        } finally {
+            setIsUpdatingTimeLimit(false);
+        }
+    };
 
     const saveNewQuestion = async (questionDTO: SpecificQuestionDTO) => {
         if (questionDTO) {
@@ -211,24 +228,33 @@ export const QuizCreation: React.FC = () => {
                             </div>
                         </div>
                         <div className="flex items-center gap-3 text-sm text-base-content/60 mt-1">
-                            <span className="flex items-center gap-1">
-                                <BsQuestionDiamond/>
-                                {currentQuiz!.questions?.length || 0} questions
-                            </span>
+    <span className="flex items-center gap-1">
+        <BsQuestionDiamond/>
+        {currentQuiz!.questions?.length || 0} questions
+    </span>
+                            <span>•</span>
                             <span>•</span>
                             <span>
-                                Last modified: {format(new Date(currentQuiz!.updatedAt!), 'dd MMM yyyy HH:mm')}
-                            </span>
+        Last modified: {format(new Date(currentQuiz!.updatedAt!), 'dd MMM yyyy HH:mm')}
+    </span>
                         </div>
                     </div>
                 </div>
 
+
                 <div
                     className="bg-primary/5 p-4 rounded-xl border border-primary/10 flex items-center gap-3 flex-1 max-w-lg mx-4">
+                    <QuizTimeLimit
+                        timeLimit={currentQuiz?.timeLimitMinutes}
+                        onTimeChange={handleTimeLimitChange}
+                        disabled={isUpdatingTimeLimit}
+                    />
+                    {/*
                     <LightBulbIcon className="w-6 h-6 text-primary shrink-0"/>
                     <div className="text-base-content/70 text-sm">
                         Pick questions from the question banks!
                     </div>
+                    */}
                 </div>
             </div>
 
