@@ -4,6 +4,7 @@ import {QuizReview} from "../quiz-results/QuizReview.tsx";
 import {BadgeAssignment} from "../badge/BadgeAssignment.tsx";
 import {FaTimes} from 'react-icons/fa';
 import {AttemptHeader} from "../publication-stats/AttemptHeader.tsx";
+import {useAuth} from "../../hooks/useAuth.ts";
 
 interface AttemptDetailsProps {
     attempt: QuizAttemptDTO;
@@ -18,13 +19,15 @@ export const AttemptDetails: React.FC<AttemptDetailsProps> = ({
                                                                   onClose,
                                                                   showBadgeAssignment = true
                                                               }) => {
+    const {user} = useAuth();
     const hasBestAttemptBadge = (attempt.badges ?? []).length > 0;
 
     return (
         <div className="flex flex-col h-full">
             <div className="flex items-center justify-between p-4 border-b border-base-200">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-primary-content">
+                    <div
+                        className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-primary-content">
                         📝
                     </div>
                     <div>
@@ -39,7 +42,7 @@ export const AttemptDetails: React.FC<AttemptDetailsProps> = ({
                         className="btn btn-ghost btn-sm btn-circle"
                         onClick={onClose}
                     >
-                        <FaTimes />
+                        <FaTimes/>
                     </button>
                 )}
             </div>
@@ -57,6 +60,8 @@ export const AttemptDetails: React.FC<AttemptDetailsProps> = ({
                             <div className="flex items-center gap-2">
                                 <BadgeAssignment
                                     attemptId={attempt.id!}
+                                    azureOID={attempt.userAzureOID!}
+                                    assignedBy={user!.azureOid!}
                                     hasBadge={hasBestAttemptBadge}
                                 />
                                 {hasBestAttemptBadge && (

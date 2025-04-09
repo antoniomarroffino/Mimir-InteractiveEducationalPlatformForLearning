@@ -1,23 +1,38 @@
 import React from 'react';
 import { FaTrophy } from 'react-icons/fa';
 import { BadgeType } from '@dti-isin/backend-api-client';
-import {useQuizAttemptCRUD} from "../../hooks/quizAttempt/useQuizAttemptCRUD.ts";
+import { useQuizAttemptCRUD } from "../../hooks/quizAttempt/useQuizAttemptCRUD.ts";
+import {useBadgeHolderCRUD} from "../../hooks/badgeholder/useBadgeHolderCRUD.ts";
 
 interface BadgeAssignmentProps {
     attemptId: string;
+    azureOID: string;
     hasBadge: boolean | undefined;
+    assignedBy: string;
 }
 
 export const BadgeAssignment: React.FC<BadgeAssignmentProps> = ({
                                                                     attemptId,
-                                                                    hasBadge
+                                                                    azureOID,
+                                                                    hasBadge,
+                                                                    assignedBy
                                                                 }) => {
     const { assignBadge, isAssigningBadge } = useQuizAttemptCRUD();
+    const { assignBadgeToHolder, isAssigningBadge: isAssigningBadgeToHolder } = useBadgeHolderCRUD();
     const [showConfirm, setShowConfirm] = React.useState(false);
+
+    const isLoading = isAssigningBadge || isAssigningBadgeToHolder;
 
     const handleAssignBadge = async () => {
         try {
-            await assignBadge(attemptId, BadgeType.BestAttempt);
+            await Promise.all([
+                assignBadge(attemptId, BadgeType.BestAttempt),
+                assignBadgeToHolder({
+                    azureOID,
+                    badgeType: BadgeType.BestAttempt,
+                    assignedBy
+                })
+            ]);
             setShowConfirm(false);
         } catch (error) {
             console.error('Failed to assign badge:', error);
@@ -26,11 +41,17 @@ export const BadgeAssignment: React.FC<BadgeAssignmentProps> = ({
 
     if (hasBadge) {
         return (
-            <div className="tooltip" data-tip="Best Attempt Badge">
-                <FaTrophy
-                    className="text-4xl text-warning animate-pulse"
-                    style={{ filter: 'drop-shadow(0 0 8px rgb(234 179 8))' }}
-                />
+            <div className="tooltip tooltip-bottom" data-tip="Best Attempt Badge">
+                <div className="relative">
+                    <FaTrophy
+                        className="text-4xl text-warning animate-pulse"
+                        style={{ filter: 'drop-shadow(0 0 8px rgb(234 179 8))' }}
+                    />
+                    <div className="absolute -top-1 -right-1">
+                        <div className="w-3 h-3 bg-success rounded-full animate-ping" />
+                        <div className="w-3 h-3 bg-success rounded-full absolute top-0" />
+                    </div>
+                </div>
             </div>
         );
     }
@@ -38,9 +59,9 @@ export const BadgeAssignment: React.FC<BadgeAssignmentProps> = ({
     return (
         <>
             <button
-                className="group relative p-4 rounded-full transition-all duration-300 hover:bg-base-300"
+                className="group relative p-4 rounded-full transition-all duration-300 hover:bg-base-300 focus:outline-none focus:ring-2 focus:ring-warning focus:ring-offset-2"
                 onClick={() => setShowConfirm(true)}
-                disabled={isAssigningBadge}
+                disabled={isLoading}
             >
                 <FaTrophy
                     className="text-4xl text-base-content/30 group-hover:text-warning transition-colors duration-300"
@@ -50,28 +71,46 @@ export const BadgeAssignment: React.FC<BadgeAssignmentProps> = ({
 
             {showConfirm && (
                 <dialog className="modal modal-open">
-                    <div className="modal-box text-center">
-                        <FaTrophy className="text-6xl text-warning mx-auto mb-4" />
-                        <h3 className="font-bold text-lg mb-2">
-                            Assign Best Attempt Badge
+                    <div className="modal-box text-center p-6 max-w-md">
+                        <div className="relative inline-block">
+                            <FaTrophy className="text-7xl text-warning mx-auto mb-6" />
+                            <div className="absolute top-0 left-0 w-full h-full animate-ping opacity-30">
+                                <FaTrophy className="text-7xl text-warning" />
+                            </div>
+                        </div>
+
+                        <h3 className="font-bold text-xl mb-3">
+                            Award Best Attempt Badge
                         </h3>
-                        <p className="py-4">
-                            This badge recognizes outstanding performance in this quiz attempt.
-                            Are you sure you want to award it?
+
+                        <div className="divider"></div>
+
+                        <p className="py-4 text-base-content/80">
+                            This badge recognizes outstanding performance and will be permanently
+                            associated with this attempt and the student's profile.
                         </p>
-                        <div className="modal-action justify-center gap-2">
+
+                        <div className="modal-action justify-center gap-3 mt-6">
                             <button
-                                className="btn btn-ghost"
+                                className="btn btn-ghost btn-lg"
                                 onClick={() => setShowConfirm(false)}
+                                disabled={isLoading}
                             >
                                 Cancel
                             </button>
                             <button
-                                className={`btn btn-primary ${isAssigningBadge ? 'loading' : ''}`}
+                                className={`btn btn-warning btn-lg ${isLoading ? 'loading' : ''}`}
                                 onClick={handleAssignBadge}
-                                disabled={isAssigningBadge}
+                                disabled={isLoading}
                             >
-                                {isAssigningBadge ? 'Assigning...' : 'Award Badge'}
+                                {isLoading ? (
+                                    <>
+                                        <span className="loading loading-spinner"></span>
+                                        Awarding...
+                                    </>
+                                ) : (
+                                    'Award Badge'
+                                )}
                             </button>
                         </div>
                     </div>

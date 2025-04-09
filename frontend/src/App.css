@@ -63,9 +63,23 @@
     @apply transition-[max-height] duration-300 ease-in-out overflow-hidden;
 }
 
-/* Utility classes personalizzate se necessarie */
 @layer utilities {
     .bg-info-custom {
         @apply bg-gradient-to-r from-primary to-secondary;
     }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fadeIn {
+    animation: fadeIn 0.5s ease-out;
 }

@@ -7,11 +7,11 @@ import {
     QuizControllerApi,
     QuizPublicationControllerApi,
     UserControllerApi,
-    QuizAttemptControllerApi
+    QuizAttemptControllerApi,
+    BadgeHolderControllerApi
 } from '@dti-isin/backend-api-client';
 import axios from 'axios';
 
-// Creare un'istanza Axios correttamente configurata
 const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_BACKEND_URL,
     headers: {
@@ -19,7 +19,6 @@ const axiosInstance = axios.create({
     }
 });
 
-// Funzione per impostare il token nell'istanza Axios
 export const setAuthToken = (token: string | null) => {
     if (token) {
         axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
@@ -28,7 +27,6 @@ export const setAuthToken = (token: string | null) => {
     }
 };
 
-// Configurare il client API con le opzioni dell'istanza Axios
 const config = new Configuration({
     basePath: import.meta.env.VITE_BACKEND_URL,
     baseOptions: axiosInstance.defaults
@@ -42,3 +40,4 @@ export const userApi = new UserControllerApi(config);
 export const quizPublicationApi = new QuizPublicationControllerApi(config);
 export const quizAttemptApi = new QuizAttemptControllerApi(config);
 export const questionBankApi = new QuestionBankControllerApi(config);
+export const badgeHolderApi = new BadgeHolderControllerApi(config);
