@@ -16,8 +16,8 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
                                                        onConfirm,
                                                        title,
                                                        children,
-                                                       confirmText = 'Conferma',
-                                                       cancelText = 'Annulla'
+                                                       confirmText = 'Confirm',
+                                                       cancelText = 'Cancel'
                                                    }) => {
     return (
         <dialog className={`modal ${isOpen ? 'modal-open' : ''}`}>

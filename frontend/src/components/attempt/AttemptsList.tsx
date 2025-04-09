@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { QuizAttemptDTO } from "@dti-isin/backend-api-client";
-import { AttemptCard } from "../quiz-results/AttemptCard";
+import { AttemptCard } from "./AttemptCard.tsx";
 import SearchAttempts from "./SearchAttempts.tsx";
 
 interface AttemptsListProps {

@@ -3,7 +3,7 @@ import {BadgeType, QuizAttemptDTO, QuizPublicationDTO} from '@dti-isin/backend-a
 import {QuizReview} from "../quiz-results/QuizReview.tsx";
 import {BadgeAssignment} from "../badge/BadgeAssignment.tsx";
 import {FaTimes} from 'react-icons/fa';
-import {AttemptHeader} from "./AttemptHeader.tsx";
+import {AttemptHeader} from "../publication-stats/AttemptHeader.tsx";
 
 interface AttemptDetailsProps {
     attempt: QuizAttemptDTO;

@@ -16,7 +16,7 @@ import NoPublicationsPlaceholder from "../components/quizPublication/NoPublicati
 import {useGetQuizAttemptsByPublication} from "../hooks/quizAttempt/useGetQuizAttemptsByPublication.ts";
 import {QuestionStatistics} from "../components/publication-stats/QuestionStatistics.tsx";
 import {AttemptsTable} from "../components/publication-stats/AttemptsTable.tsx";
-import {AttemptDetails} from "../components/publication-stats/AttemptDetails.tsx";
+import {AttemptDetails} from "../components/attempt/AttemptDetails.tsx";
 import {PublicationSelector} from "../components/publication-stats/PublicationSelector.tsx";
 
 const PublicationStatsPage: React.FC = () => {

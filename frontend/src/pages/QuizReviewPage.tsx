@@ -1,4 +1,4 @@
-import {AttemptDetails} from "../components/publication-stats/AttemptDetails.tsx";
+import {AttemptDetails} from "../components/attempt/AttemptDetails.tsx";
 import {AttemptsList} from "../components/attempt/AttemptsList.tsx";
 import {ReviewHeader} from "../components/attempt/ReviewHeader.tsx";
 import {useAuth} from "../hooks/useAuth.ts";
