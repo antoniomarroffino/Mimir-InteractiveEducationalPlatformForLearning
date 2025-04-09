@@ -57,131 +57,95 @@ export const AttemptsTable: React.FC<AttemptsTableProps> = ({
         };
     };
 
+    if (attempts.length === 0) {
+        return (
+            <div className="flex flex-col items-center justify-center h-full p-8 text-center">
+                <div className="text-6xl mb-4">📝</div>
+                <h3 className="text-xl font-bold text-base-content/70">No Attempts Yet</h3>
+                <p className="text-base-content/50 mt-2">
+                    Waiting for students to take the quiz
+                </p>
+            </div>
+        );
+    }
+
     return (
-        <div className="p-4">
-            <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-base-content/80">
-                    Student Attempts
-                </h2>
+        <div className="flex flex-col h-full">
+            <div className="flex items-center justify-between p-4 border-b border-base-200">
+                <h3 className="font-bold text-lg flex items-center gap-2">
+                    <span>Student Attempts</span>
+                    <span className="badge badge-primary">{attempts.length}</span>
+                </h3>
                 {isUpdating && (
-                    <div className="flex items-center gap-2 text-primary animate-pulse">
+                    <div className="flex items-center gap-2 text-primary">
                         <span className="loading loading-spinner loading-sm"></span>
-                        <span className="text-sm font-medium">Refreshing data...</span>
+                        <span className="text-sm">Updating...</span>
                     </div>
                 )}
             </div>
 
-            <div className="rounded-xl shadow-lg bg-base-100">
-                <div className="overflow-x-visible">
-                    <table className="table w-full">
-                        <thead>
-                        <tr className="border-b border-base-200">
-                            <th className="bg-base-100 text-base-content/60 font-medium px-6 py-4">Student</th>
-                            <th className="bg-base-100 text-base-content/60 font-medium px-6 py-4 hidden md:table-cell">Timing</th>
-                            <th className="bg-base-100 text-base-content/60 font-medium px-6 py-4">Performance</th>
-                            <th className="bg-base-100 text-base-content/60 font-medium px-6 py-4">Recognition</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {attempts.map(attempt => {
-                            const score = calculateScore(attempt);
-                            const isSelected = attempt.id === selectedAttemptId;
+            <div className="overflow-y-auto flex-1">
+                {attempts.map(attempt => {
+                    const score = calculateScore(attempt);
+                    const isSelected = attempt.id === selectedAttemptId;
 
-                            return (
-                                <tr
-                                    key={attempt.id}
-                                    onClick={() => {
-                                        setSelectedAttemptId(attempt.id!);
-                                        onAttemptSelect(attempt);
-                                    }}
-                                    className={`
-                                            border-b border-base-200 cursor-pointer
-                                            transition-all duration-200
-                                            hover:bg-base-200/50
-                                            ${isSelected ? 'bg-primary/5 hover:bg-primary/10' : ''}
-                                        `}
-                                >
-                                    <td className="px-6 py-4">
-                                        <div className="flex items-center gap-3">
-                                            <div className="avatar placeholder">
-                                                <div className="bg-neutral text-neutral-content rounded-full w-8">
-                                                        <span className="text-xs">
-                                                            {attempt.userAzureOID?.slice(0, 2).toUpperCase() || 'A'}
-                                                        </span>
-                                                </div>
-                                            </div>
-                                            <div className="font-medium">
-                                                {attempt.userAzureOID || 'Anonymous'}
-                                            </div>
+                    return (
+                        <button
+                            key={attempt.id}
+                            onClick={() => {
+                                setSelectedAttemptId(attempt.id!);
+                                onAttemptSelect(attempt);
+                            }}
+                            className={`
+                                w-full text-left p-4 border-b border-base-200
+                                hover:bg-base-200/50 transition-all duration-200
+                                ${isSelected ? 'bg-primary/5 hover:bg-primary/10' : ''}
+                            `}
+                        >
+                            <div className="flex items-center justify-between gap-4">
+                                <div className="flex items-center gap-3">
+                                    <div className="avatar placeholder">
+                                        <div className="bg-neutral text-neutral-content rounded-full w-10">
+                                            <span>
+                                                {attempt.userAzureOID?.slice(0, 2).toUpperCase() || 'A'}
+                                            </span>
                                         </div>
-                                    </td>
-                                    <td className="px-6 py-4 hidden md:table-cell">
-                                        <div className="flex flex-col gap-1">
-                                            <div className="text-sm text-base-content/70">
-                                                Started: {new Date(attempt.startedAt!).toLocaleTimeString()}
-                                            </div>
-                                            <div className="text-sm text-base-content/70">
-                                                Completed: {new Date(attempt.completedAt!).toLocaleTimeString()}
-                                            </div>
+                                    </div>
+                                    <div>
+                                        <div className="font-medium">
+                                            {attempt.userAzureOID || 'Anonymous'}
                                         </div>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <div className="flex items-center gap-3">
-                                            <div className={`radial-progress ${
-                                                score.percentage >= 70 ? 'text-success' :
-                                                    score.percentage >= 50 ? 'text-warning' :
-                                                        'text-error'
-                                            }`} style={{"--value": score.percentage, "--size": "2.5rem"} as never}>
-                                                <span className="text-xs font-bold">{score.percentage}%</span>
-                                            </div>
-                                            <div className="flex flex-col">
-                                                    <span className="font-medium">
-                                                        {score.correctAnswers}/{score.totalQuestions} correct
-                                                    </span>
-                                                {score.answeredQuestions < score.totalQuestions && (
-                                                    <span className="text-sm text-base-content/70">
-                                                            {score.answeredQuestions} answered
-                                                        </span>
-                                                )}
-                                            </div>
+                                        <div className="text-sm text-base-content/70">
+                                            {new Date(attempt.completedAt!).toLocaleString()}
                                         </div>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <div className="flex items-center gap-2">
-                                            {attempt.badges?.map(badge => (
-                                                <div
-                                                    key={badge.type}
-                                                    className="tooltip"
-                                                    data-tip={`Awarded by ${badge.assignedBy}`}
-                                                >
-                                                    <FaTrophy className="text-2xl text-warning" />
-                                                </div>
-                                            ))}
-                                            {!attempt.badges?.length && (
-                                                <span className="text-sm text-base-content/50">
-                                                        No badges yet
-                                                    </span>
-                                            )}
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center gap-4">
+                                    <div className="text-right">
+                                        <div className={`text-lg font-bold ${
+                                            score.percentage >= 70 ? 'text-success' :
+                                                score.percentage >= 50 ? 'text-warning' :
+                                                    'text-error'
+                                        }`}>
+                                            {score.percentage}%
                                         </div>
-                                    </td>
-                                </tr>
-                            );
-                        })}
-                        </tbody>
-                    </table>
-                </div>
+                                        <div className="text-sm text-base-content/70">
+                                            {score.correctAnswers}/{score.totalQuestions} correct
+                                        </div>
+                                    </div>
+
+                                    {(attempt.badges ?? []).length > 0 && (
+                                        <div className="text-warning">
+                                            <FaTrophy className="text-xl" />
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </button>
+                    );
+                })}
             </div>
-
-            {attempts.length === 0 && (
-                <div className="text-center py-12 bg-base-200 rounded-xl mt-6">
-                    <div className="text-base-content/50 font-medium">
-                        No attempts recorded yet
-                    </div>
-                    <p className="text-sm text-base-content/40 mt-1">
-                        Students haven't taken this quiz yet
-                    </p>
-                </div>
-            )}
         </div>
     );
 };

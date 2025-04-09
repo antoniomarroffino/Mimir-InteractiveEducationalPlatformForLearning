@@ -44,8 +44,14 @@ const PublicationStatsPage: React.FC = () => {
     useEffect(() => {
         if (attempts && attempts.length > 0) {
             setSelectedAttempt(attempts[0]);
+        } else {
+            setSelectedAttempt(null);
         }
     }, [attempts]);
+
+    useEffect(() => {
+        setSelectedAttempt(null);
+    }, [selectedPublication]);
 
     const questionStats = useMemo(() => {
         if (!attempts || !selectedPublication?.questions) return null;
@@ -85,11 +91,8 @@ const PublicationStatsPage: React.FC = () => {
 
     if (isGettingPublicationsByQuizId || isLoadingAttempts) {
         return (
-            <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-primary/10 to-secondary/10">
-                <div className="text-center">
-                    <span className="loading loading-spinner loading-lg text-primary"></span>
-                    <p className="mt-4 text-base-content/70">Loading analytics...</p>
-                </div>
+            <div className="h-[calc(100vh-4rem)] flex justify-center items-center">
+                <span className="loading loading-spinner loading-lg"></span>
             </div>
         );
     }
@@ -99,86 +102,100 @@ const PublicationStatsPage: React.FC = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-primary/10 to-secondary/10 py-6 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-7xl mx-auto">
-                <motion.div
-                    className="bg-base-100 rounded-2xl shadow-xl overflow-hidden"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                >
-                    {/* Header */}
-                    <div className="bg-primary text-primary-content p-4 sm:p-6">
-                        <motion.h1
-                            initial={{ x: -20, opacity: 0 }}
-                            animate={{ x: 0, opacity: 1 }}
-                            className="text-2xl sm:text-3xl font-bold text-center"
-                        >
-                            Quiz Performance Analytics
-                        </motion.h1>
-                    </div>
+        <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-br from-base-200 to-base-300">
+            <div className="container mx-auto p-4 h-full">
+                <div className="bg-base-100 rounded-xl shadow-lg">
+                    <div className="h-full flex flex-col">
+                        {/* Header */}
+                        <div className="p-4 border-b border-base-200">
+                            <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+                                <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                                    Quiz Analytics
+                                </h1>
+                                <PublicationSelector
+                                    publications={publications || []}
+                                    selectedPublication={selectedPublication}
+                                    onPublicationChange={setSelectedPublication}
+                                />
+                            </div>
+                        </div>
 
-                    {/* Publication Selector */}
-                    <div className="p-4 sm:p-6 border-b">
-                        <PublicationSelector
-                            publications={publications || []}
-                            selectedPublication={selectedPublication}
-                            onPublicationChange={setSelectedPublication}
-                        />
-                    </div>
+                        {/* Content */}
+                        <div className="flex-1 overflow-y-auto">
+                            <AnimatePresence mode="wait">
+                                {selectedPublication && (
+                                    <motion.div
+                                        key={selectedPublication.id}
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0 }}
+                                        className="p-4 space-y-6"
+                                    >
+                                        <div className="card bg-base-200">
+                                            <div className="card-body">
+                                                <PublicationDetails publication={selectedPublication} />
+                                            </div>
+                                        </div>
 
-                    {/* Content */}
-                    <AnimatePresence mode="wait">
-                        {selectedPublication && (
-                            <motion.div
-                                key={selectedPublication.id}
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                className="divide-y divide-base-200"
-                            >
-                                <div className="p-4 sm:p-6">
-                                    <PublicationDetails publication={selectedPublication} />
-                                </div>
+                                        {questionStats && (
+                                            <div className="card bg-base-200">
+                                                <div className="card-body">
+                                                    <QuestionStatistics questionStats={questionStats} />
+                                                </div>
+                                            </div>
+                                        )}
 
-                                {questionStats && (
-                                    <div className="p-4 sm:p-6">
-                                        <QuestionStatistics questionStats={questionStats} />
-                                    </div>
+                                        {attempts && (
+                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                                <div className="card bg-base-200">
+                                                    <div className="card-body p-0">
+                                                        <AttemptsTable
+                                                            attempts={attempts}
+                                                            publication={selectedPublication}
+                                                            onAttemptSelect={setSelectedAttempt}
+                                                            isUpdating={isFetching}
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                                <div className="md:col-span-2">
+                                                    {selectedAttempt && attempts.some(a => a.id === selectedAttempt.id) ? (
+                                                        <div className="card bg-base-200">
+                                                            <div className="card-body">
+                                                                <AttemptDetails
+                                                                    attempt={selectedAttempt}
+                                                                    publication={selectedPublication}
+                                                                    onClose={() => setSelectedAttempt(null)}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    ) : (
+                                                        <div className="card bg-base-200">
+                                                            <div className="card-body flex items-center justify-center text-center">
+                                                                <div className="text-6xl mb-4">👆</div>
+                                                                <h3 className="text-xl font-bold text-base-content/70">
+                                                                    Select an Attempt
+                                                                </h3>
+                                                                <p className="text-base-content/50 mt-2">
+                                                                    Click on any attempt to see detailed information
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                    </motion.div>
                                 )}
-
-                                {attempts && attempts.length > 0 && (
-                                    <div className="p-4 sm:p-6">
-                                        <AttemptsTable
-                                            attempts={attempts}
-                                            publication={selectedPublication}
-                                            onAttemptSelect={setSelectedAttempt}
-                                            isUpdating={isFetching}
-                                        />
-                                    </div>
-                                )}
-
-                                <AnimatePresence>
-                                    {selectedAttempt && (
-                                        <motion.div
-                                            initial={{ opacity: 0, y: 20 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            exit={{ opacity: 0, y: 20 }}
-                                            className="p-4 sm:p-6 bg-base-200"
-                                        >
-                                            <AttemptDetails
-                                                attempt={selectedAttempt}
-                                                publication={selectedPublication}
-                                                onClose={() => setSelectedAttempt(null)}
-                                            />
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-                </motion.div>
+                            </AnimatePresence>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );
 };
+
+
 export default PublicationStatsPage;
