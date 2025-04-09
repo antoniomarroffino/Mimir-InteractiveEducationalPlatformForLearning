@@ -43,66 +43,43 @@ export const AttemptCard: React.FC<AttemptCardProps> = ({
         };
     }, [attempt]);
 
-    const handleClick = () => {
-        onViewDetails(isSelected ? null : attempt.id!);
-    };
-
     return (
         <div
             className={`
-                relative overflow-hidden
-                card bg-base-100 shadow-lg transition-all duration-300
-                ${isSelected ? 'ring-2 ring-primary shadow-xl' : 'hover:shadow-xl'}
+                relative cursor-pointer
+                bg-base-100 transition-all duration-300
+                p-4 border-l-4 hover:bg-base-200
+                ${isSelected ? 'border-l-primary bg-base-200' : 'border-l-transparent'}
             `}
+            onClick={() => onViewDetails(isSelected ? null : attempt.id!)}
         >
-            {attempt.badges && attempt.badges.length > 0 && (
-                <div className="absolute top-0 right-0 -mr-8 -mt-8 w-24 h-24">
-                    <div
-                        className="absolute transform rotate-45 bg-warning text-warning-content py-1 px-8 text-xs font-bold right-0 top-8">
-                        🏆 Best Attempt
-                    </div>
+            <div className="flex flex-col gap-2">
+                <div className="flex items-start justify-between">
+                    <h3 className="font-medium flex items-center gap-2">
+                        Quiz #{attempt.id?.slice(-6)}
+                        {attempt.badges?.map(badge => (
+                            <div
+                                key={badge.type}
+                                className="tooltip"
+                                data-tip={`Awarded ${new Date(badge.assignedAt!).toLocaleDateString()}`}
+                            >
+                                <FaTrophy className="text-warning text-sm"/>
+                            </div>
+                        ))}
+                    </h3>
+                    <span className="text-sm font-medium text-primary">
+                        {score.answered}/{score.total}
+                    </span>
                 </div>
-            )}
 
-            <div className="card-body">
-                <div className="flex justify-between items-start">
-                    <div>
-                        <h3 className="card-title text-lg flex items-center gap-2">
-                            Quiz #{attempt.id?.slice(-6)}
-                            {attempt.badges?.map(badge => (
-                                <div
-                                    key={badge.type}
-                                    className="tooltip"
-                                    data-tip={`Awarded ${new Date(badge.assignedAt!).toLocaleDateString()}`}
-                                >
-                                    <FaTrophy className="text-warning text-xl"/>
-                                </div>
-                            ))}
-                        </h3>
-                        <p className="text-sm text-base-content/70">
-                            Completed {new Date(attempt.completedAt!).toLocaleDateString('it-IT', {
-                            day: '2-digit',
-                            month: '2-digit',
-                            year: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                        })}
-                        </p>
-                    </div>
-
-                    <div className="flex items-center gap-4">
-                        <div className="text-sm">
-                            <span className="font-medium">
-                                {score.answered}/{score.total}
-                            </span> {score.answered === 1 ? 'question' : 'questions'} answered
-                        </div>
-                        <button
-                            className={`btn btn-sm ${isSelected ? 'btn-ghost' : 'btn-primary'}`}
-                            onClick={handleClick}
-                        >
-                            {isSelected ? 'Hide' : 'Details'}
-                        </button>
-                    </div>
+                <div className="text-sm text-base-content/70">
+                    {new Date(attempt.completedAt!).toLocaleDateString('it-IT', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    })}
                 </div>
             </div>
         </div>

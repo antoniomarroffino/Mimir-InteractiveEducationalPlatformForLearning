@@ -29,6 +29,7 @@ import {QuizAttemptLocalProvider} from "../provider/quizAttempt/QuizAttemptLocal
 import QuizResults from "./QuizResults.tsx";
 import QuizScreen from "./QuizScreen.tsx";
 import PublicationStatsPage from "./PublicationStatsPage.tsx";
+import QuizReviewPage from "./QuizReviewPage.tsx";
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -136,6 +137,15 @@ const App = () => {
                                         element={
                                             <ProtectedRoute allowedRoles={[Role.Admin, Role.Student, Role.Teacher]}>
                                                 <UserProfile/>
+                                            </ProtectedRoute>
+                                        }
+                                    />
+
+                                    <Route
+                                        path="/quiz-review"
+                                        element={
+                                            <ProtectedRoute allowedRoles={[Role.Student, Role.Teacher]}>
+                                                <QuizReviewPage />
                                             </ProtectedRoute>
                                         }
                                     />

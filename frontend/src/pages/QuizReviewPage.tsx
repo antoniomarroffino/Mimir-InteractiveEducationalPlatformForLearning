@@ -1,15 +1,15 @@
-import React, {useState} from 'react';
-import {useGetQuizAttemptsByUser} from "../../hooks/quizAttempt/useGetQuizAttemptsByUser";
-import {useAuth} from "../../hooks/useAuth";
-import {AttemptCard} from "./AttemptCard";
+import React from 'react';
 import {QuizAttemptDTO} from "@dti-isin/backend-api-client";
-import {AttemptDetails} from "../publication-stats/AttemptDetails.tsx";
-import {useGetQuizPublicationById} from "../../hooks/quizPublication/useGetQuizPublicationById.ts";
+import {AttemptCard} from "../components/quiz-results/AttemptCard.tsx";
+import {useAuth} from "../hooks/useAuth.ts";
+import {useGetQuizAttemptsByUser} from "../hooks/quizAttempt/useGetQuizAttemptsByUser.ts";
+import {useGetQuizPublicationById} from "../hooks/quizPublication/useGetQuizPublicationById.ts";
+import {AttemptDetails} from "../components/publication-stats/AttemptDetails.tsx";
 
-export const QuizHistorySection: React.FC = () => {
+const QuizReviewPage: React.FC = () => {
     const {user} = useAuth();
     const {data: attempts = [], isLoading: isLoadingAttempts} = useGetQuizAttemptsByUser(user?.azureOid);
-    const [selectedAttempt, setSelectedAttempt] = useState<QuizAttemptDTO | null | undefined>(null);
+    const [selectedAttempt, setSelectedAttempt] = React.useState<QuizAttemptDTO | null | undefined>(null);
 
     const {data: publication, isLoading: isLoadingPublication} = useGetQuizPublicationById(
         selectedAttempt?.quizPublicationId || '',
@@ -23,10 +23,9 @@ export const QuizHistorySection: React.FC = () => {
     if (!user) return null;
 
     return (
-        <div className="container mx-auto px-4 py-8 space-y-8">
-            <div className="bg-gradient-to-r from-primary/5 to-secondary/5 rounded-xl p-4 sm:p-6">
+        <div className="h-[calc(100vh-4rem)]">
+            <div className="h-full bg-gradient-to-r from-primary/5 to-secondary/5 p-4 sm:p-6">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-
                     <div>
                         <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                             Your Quiz Journey
@@ -48,8 +47,9 @@ export const QuizHistorySection: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="flex gap-6">
-                    <div className="w-96 h-[calc(100vh-300px)] overflow-y-auto overflow-x-hidden flex-shrink-0">
+                <div className="h-[calc(100%-8rem)] flex gap-6">
+                    {/* Lista dei tentativi */}
+                    <div className="w-96 overflow-y-auto overflow-x-hidden flex-shrink-0">
                         {isLoadingAttempts ? (
                             <div className="flex flex-col items-center justify-center py-8">
                                 <span className="loading loading-spinner loading-lg text-primary"></span>
@@ -72,11 +72,15 @@ export const QuizHistorySection: React.FC = () => {
                                 <p className="text-lg font-medium text-base-content/70">
                                     Start your learning journey
                                 </p>
+                                <p className="text-sm text-base-content/50 mt-2">
+                                    Complete your first quiz to see your progress here
+                                </p>
                             </div>
                         )}
                     </div>
 
-                    <div className="flex-grow h-[calc(100vh-300px)] overflow-y-auto overflow-x-hidden bg-base-200 rounded-xl">
+                    {/* Dettagli del tentativo */}
+                    <div className="flex-grow overflow-y-auto overflow-x-hidden bg-base-200 rounded-xl">
                         {selectedAttempt ? (
                             isLoadingPublication ? (
                                 <div className="flex justify-center items-center h-full">
@@ -89,13 +93,18 @@ export const QuizHistorySection: React.FC = () => {
                                     showBadgeAssignment={false}
                                 />
                             ) : (
-                                <div className="text-center py-4 text-error">
+                                <div className="flex justify-center items-center h-full text-error">
                                     Error loading quiz details
                                 </div>
                             )
                         ) : (
                             <div className="flex items-center justify-center h-full text-base-content/70">
-                                Select an attempt to view details
+                                <div className="text-center">
+                                    <div className="text-4xl mb-4">👆</div>
+                                    <p className="text-lg font-medium">
+                                        Select an attempt to view details
+                                    </p>
+                                </div>
                             </div>
                         )}
                     </div>
@@ -104,3 +113,5 @@ export const QuizHistorySection: React.FC = () => {
         </div>
     );
 };
+
+export default QuizReviewPage;

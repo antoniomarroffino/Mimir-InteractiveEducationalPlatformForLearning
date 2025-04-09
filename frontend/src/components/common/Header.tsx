@@ -1,23 +1,34 @@
-import { Link } from 'react-router-dom';
-import { FiHome, FiMenu, FiUser, FiX, FiBook, FiDatabase, FiLayout } from 'react-icons/fi';
+import {Link} from 'react-router-dom';
+import {FiBook, FiCheckSquare, FiDatabase, FiHome, FiLayout, FiMenu, FiUser, FiX} from 'react-icons/fi';
 import LogoutButton from "../../auth/LogoutButton";
-import { useState } from "react";
-import { useAuth } from "../../hooks/useAuth";
-import { Role } from "@dti-isin/backend-api-client";
+import {useState} from "react";
+import {useAuth} from "../../hooks/useAuth";
+import {Role} from "@dti-isin/backend-api-client";
 import LoginButton from "../../auth/LoginButton";
 import mimirLogo from '../../assets/mimir-logo.png';
 
 const Header = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const { user } = useAuth();
+    const {user} = useAuth();
 
     const navigationLinks = [
-        { name: 'Home', path: '/', icon: <FiHome className="text-xl" />, roles: [Role.Admin, Role.Teacher, Role.Student] },
-        { name: 'Admin', path: '/admin', icon: <FiLayout className="text-xl" />, roles: [Role.Admin] },
-        { name: 'Courses', path: '/courses', icon: <FiBook className="text-xl" />, roles: [Role.Teacher] },
-        { name: 'Question Bank', path: '/question_banks', icon: <FiDatabase className="text-xl" />, roles: [Role.Teacher] },
-        { name: 'Dashboard', path: '/dashboard', icon: <FiLayout className="text-xl" />, roles: [Role.Student] },
+        {name: 'Home', path: '/', icon: <FiHome className="text-xl"/>, roles: [Role.Admin, Role.Teacher, Role.Student]},
+        {name: 'Admin', path: '/admin', icon: <FiLayout className="text-xl"/>, roles: [Role.Admin]},
+        {name: 'Courses', path: '/courses', icon: <FiBook className="text-xl"/>, roles: [Role.Teacher]},
+        {
+            name: 'Question Bank',
+            path: '/question_banks',
+            icon: <FiDatabase className="text-xl"/>,
+            roles: [Role.Teacher]
+        },
+        {name: 'Dashboard', path: '/dashboard', icon: <FiLayout className="text-xl"/>, roles: [Role.Student]},
+        {
+            name: 'Quiz Review',
+            path: '/quiz-review',
+            icon: <FiCheckSquare className="text-xl"/>,
+            roles: [Role.Student, Role.Teacher]
+        }
     ];
 
     const filteredLinks = navigationLinks.filter(link =>
@@ -49,7 +60,7 @@ const Header = () => {
                             className="btn btn-ghost btn-circle"
                             onClick={() => setIsOpen(!isOpen)}
                         >
-                            {isOpen ? <FiX className="text-2xl" /> : <FiMenu className="text-2xl" />}
+                            {isOpen ? <FiX className="text-2xl"/> : <FiMenu className="text-2xl"/>}
                         </button>
                     </div>
 
@@ -76,8 +87,9 @@ const Header = () => {
                                     className="btn btn-ghost btn-circle"
                                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                                 >
-                                    <div className="w-10 h-10 rounded-full bg-primary/10 grid place-items-center"> {/* Cambiato qui */}
-                                        <FiUser className="w-5 h-5" />
+                                    <div
+                                        className="w-10 h-10 rounded-full bg-primary/10 grid place-items-center"> {/* Cambiato qui */}
+                                        <FiUser className="w-5 h-5"/>
                                     </div>
                                 </button>
 
@@ -89,18 +101,19 @@ const Header = () => {
                                                 className="flex items-center gap-2 px-4 py-2"
                                                 onClick={() => setIsDropdownOpen(false)}
                                             >
-                                                <FiUser className="w-4 h-4" />
+                                                <FiUser className="w-4 h-4"/>
                                                 Profile
                                             </Link>
                                         </li>
                                         <li>
-                                            <LogoutButton className="flex items-center gap-2 px-4 py-2 text-error hover:bg-error/10" />
+                                            <LogoutButton
+                                                className="flex items-center gap-2 px-4 py-2 text-error hover:bg-error/10"/>
                                         </li>
                                     </ul>
                                 )}
                             </div>
                         ) : (
-                            <LoginButton className="btn btn-primary btn-sm" />
+                            <LoginButton className="btn btn-primary btn-sm"/>
                         )}
                     </div>
                 </nav>
