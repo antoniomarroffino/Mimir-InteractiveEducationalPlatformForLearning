@@ -17,14 +17,19 @@ import {useQuizAttemptLocal} from "../../hooks/quizAttempt/useQuizAttemptLocal.t
 import {useNavigate} from "react-router-dom";
 import {MobileNavigation} from "./MobileNavigation.tsx";
 import {QuestionResponseFactory} from "../question/QuestionResponseFactory.tsx";
+import {ClockIcon} from "@heroicons/react/24/outline";
 
 interface QuizQuestionsProps {
     publication: QuizPublicationDTO;
+    timeLimit?: number;
 }
 
-export const QuizQuestions: React.FC<QuizQuestionsProps> = ({publication}) => {
+export const QuizQuestions: React.FC<QuizQuestionsProps> = ({publication, timeLimit}) => {
     const {currentAttempt, updateQuizAttemptResponses, completeQuizAttempt} = useQuizAttemptLocal();
     const [showMobileNav, setShowMobileNav] = useState(false);
+    const [timeRemaining, setTimeRemaining] = useState<number | null>(
+        timeLimit ? timeLimit * 60 : null
+    );
 
     const [userResponses, setUserResponses] = useState<QuestionResponseDTO[]>(
         currentAttempt?.responses || new Array(publication.questions?.length || 0).fill(null)
@@ -33,8 +38,31 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({publication}) => {
     const navigate = useNavigate();
 
     useEffect(() => {
+        if (!timeRemaining) return;
+
+        const timer = setInterval(() => {
+            setTimeRemaining(prev => {
+                if (!prev || prev <= 0) {
+                    clearInterval(timer);
+                    handleCompleteQuiz();
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [timeRemaining]);
+
+    useEffect(() => {
         updateQuizAttemptResponses(userResponses);
     }, [userResponses, updateQuizAttemptResponses]);
+
+    const formatTimeRemaining = (seconds: number): string => {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+    };
 
     const isTrueFalseQuestion = (question: QuestionDTO): question is TrueFalseQuestionDTO => {
         return question.type === QuestionType.TrueFalse;
@@ -95,13 +123,25 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({publication}) => {
         } catch (error) {
             console.error('Error during completing quiz:', error);
         }
-    }, [completeQuizAttempt, navigate]);
+    }, [completeQuizAttempt, navigate, publication]);
 
     const currentQuestion = publication.questions?.[currentQuestionIndex];
 
     return (
         <div className="flex grow bg-gradient-to-br from-primary/5 to-secondary/5">
             <div className="container mx-auto px-4 py-4">
+                {/* Timer Display */}
+                {timeRemaining !== null && (
+                    <div className="sticky top-4 z-10 w-fit ml-auto mb-4">
+                        <div className="bg-base-100 p-3 rounded-xl shadow-lg flex items-center gap-2">
+                            <ClockIcon className="w-5 h-5 text-primary"/>
+                            <span className={`font-mono text-lg ${timeRemaining < 60 ? 'text-error' : ''}`}>
+                                {formatTimeRemaining(timeRemaining)}
+                            </span>
+                        </div>
+                    </div>
+                )}
+
                 {/* Mobile Navigation Bar */}
                 <div className="md:hidden flex items-center justify-between mb-4">
                     <span className="text-sm font-medium">

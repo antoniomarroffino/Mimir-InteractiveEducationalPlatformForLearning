@@ -5,6 +5,7 @@ import {LoadingSpinner} from './common/LoadingSpinner.tsx';
 import {useAuth} from "../hooks/useAuth.ts";
 import {QuizPublicationDTO} from '@dti-isin/backend-api-client';
 import {useGetQuizById} from "../hooks/quiz/useGetQuizById.ts";
+import {ClockIcon} from "@heroicons/react/24/outline";
 
 interface QuizPreStartProps {
     publication: QuizPublicationDTO;
@@ -21,11 +22,18 @@ const QuizPreStart: React.FC<QuizPreStartProps> = ({publication}) => {
     const [isQuizStarted, setIsQuizStarted] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
+    const formatTimeLimit = (minutes: number | undefined | null) => {
+        if (!minutes) return null;
+        if (minutes < 60) return `${minutes} minutes`;
+        const hours = Math.floor(minutes / 60);
+        const remainingMinutes = minutes % 60;
+        return `${hours}h${remainingMinutes ? ` ${remainingMinutes}m` : ''}`;
+    };
+
     const handleStartQuiz = useCallback(async () => {
         if (quiz) {
             try {
                 setIsLoading(true);
-
                 await startQuizAttempt(publication);
                 setIsQuizStarted(true);
             } catch (error) {
@@ -37,6 +45,16 @@ const QuizPreStart: React.FC<QuizPreStartProps> = ({publication}) => {
     }, [quiz, startQuizAttempt]);
 
     const renderQuizPreparation = () => {
+        const renderTimeLimit = () => {
+            if (!quiz?.timeLimitMinutes) return null;
+            return (
+                <div className="flex items-center justify-center gap-2 mt-4 text-base-content/80">
+                    <ClockIcon className="w-5 h-5"/>
+                    <span>Time limit: {formatTimeLimit(quiz.timeLimitMinutes)}</span>
+                </div>
+            );
+        };
+
         if (publication.anonymous) {
             return (
                 <div className="flex justify-center">
@@ -49,6 +67,7 @@ const QuizPreStart: React.FC<QuizPreStartProps> = ({publication}) => {
                             </svg>
                             <h3 className="card-title text-primary">Pronto per iniziare?</h3>
                             <p className="text-base-content mt-2">Preparati a metterti alla prova!</p>
+                            {renderTimeLimit()}
                             <div className="card-actions justify-center mt-4">
                                 <button
                                     onClick={handleStartQuiz}
@@ -91,7 +110,6 @@ const QuizPreStart: React.FC<QuizPreStartProps> = ({publication}) => {
             );
         }
 
-        // Se il quiz non è anonimo e l'utente è loggato
         return (
             <div className="flex justify-center">
                 <div className="card w-96 bg-primary/20 shadow-xl backdrop-blur-sm">
@@ -103,6 +121,7 @@ const QuizPreStart: React.FC<QuizPreStartProps> = ({publication}) => {
                         </svg>
                         <h3 className="card-title text-primary">Pronto per iniziare?</h3>
                         <p className="text-base-content mt-2">Preparati a metterti alla prova!</p>
+                        {renderTimeLimit()}
                         <div className="card-actions justify-center mt-4">
                             <button
                                 onClick={handleStartQuiz}
@@ -140,30 +159,39 @@ const QuizPreStart: React.FC<QuizPreStartProps> = ({publication}) => {
     }
 
     return (
-        <div className="min-h-screen bg-base-200">
-            {/* Hero Section con gradiente */}
-            <div className="hero py-16 bg-gradient-to-r from-primary to-secondary">
-                <div className="hero-content text-center text-neutral-content">
-                    <div>
-                        <h1 className="text-5xl font-bold mb-4">{quiz.name}</h1>
-                        <p className="text-xl mb-8">{quiz.description}</p>
+        <div className="min-h-screen bg-base-200 flex flex-col">
+            {/* Header più compatto */}
+            <div className="bg-gradient-to-r from-primary to-secondary">
+                <div className="container mx-auto px-4 py-8">
+                    <div className="text-center text-neutral-content">
+                        <h1 className="text-4xl font-bold mb-2">{quiz.name}</h1>
+                        <p className="text-lg mb-4">{quiz.description}</p>
+                        {quiz.timeLimitMinutes && (
+                            <div className="flex items-center justify-center gap-2">
+                                <ClockIcon className="w-5 h-5"/>
+                                <span>Time limit: {formatTimeLimit(quiz.timeLimitMinutes)}</span>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
 
-            {/* Quiz Preparation Section */}
-            <section className="py-16 relative">
-                {/* Ombra superiore */}
+            <div className="flex-1 relative">
                 <div className="absolute top-0 left-0 right-0 h-4 bg-gradient-to-b from-black/10"></div>
 
-                <div className="container mx-auto px-4">
-                    {!isQuizStarted ? renderQuizPreparation() : (
+                <div className="container mx-auto px-4 py-8">
+                    {!isQuizStarted ? (
+                        <div className="flex items-center justify-center min-h-[400px]">
+                            {renderQuizPreparation()}
+                        </div>
+                    ) : (
                         <QuizQuestions
                             publication={publication!}
+                            timeLimit={quiz.timeLimitMinutes}
                         />
                     )}
                 </div>
-            </section>
+            </div>
         </div>
     );
 };
