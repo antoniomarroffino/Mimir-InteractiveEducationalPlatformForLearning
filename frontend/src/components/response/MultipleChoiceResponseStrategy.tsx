@@ -10,10 +10,10 @@ export class MultipleChoiceResponseStrategy implements ResponseStrategy {
         const mcResponse = response as MultipleChoiceQuestionResponseDTO;
 
         return (
-            <div className="space-y-6">
+            <div className="space-y-4">
                 {isAnswered && (
                     <div>
-                        <h4 className="font-medium mb-3">Your Response</h4>
+                        <h4 className="text-sm font-medium text-base-content/70 mb-2">Your Response</h4>
                         <MultipleChoiceResponseView
                             choices={mcQuestion.choices}
                             selectedIndexes={mcResponse.selectedAnswerIndexes || []}
@@ -23,7 +23,7 @@ export class MultipleChoiceResponseStrategy implements ResponseStrategy {
                     </div>
                 )}
                 <div>
-                    <h4 className="font-medium mb-3">
+                    <h4 className="text-sm font-medium text-base-content/70 mb-2">
                         {isAnswered ? 'Correct Response' : 'You did not respond - Correct responses were:'}
                     </h4>
                     <MultipleChoiceResponseView

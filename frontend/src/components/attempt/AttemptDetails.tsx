@@ -1,5 +1,5 @@
 import React from 'react';
-import {BadgeType, QuizAttemptDTO, QuizPublicationDTO} from '@dti-isin/backend-api-client';
+import {QuizAttemptDTO, QuizPublicationDTO} from '@dti-isin/backend-api-client';
 import {QuizReview} from "../quiz-results/QuizReview.tsx";
 import {BadgeAssignment} from "../badge/BadgeAssignment.tsx";
 import {FaTimes} from 'react-icons/fa';
@@ -18,69 +18,61 @@ export const AttemptDetails: React.FC<AttemptDetailsProps> = ({
                                                                   onClose,
                                                                   showBadgeAssignment = true
                                                               }) => {
-    const hasBestAttemptBadge = attempt.badges?.some(
-        badge => badge.type === BadgeType.BestAttempt
-    );
+    const hasBestAttemptBadge = (attempt.badges ?? []).length > 0;
 
     return (
-        <div className="p-4">
-            <div className="relative mb-8">
+        <div className="flex flex-col h-full">
+            <div className="flex items-center justify-between p-4 border-b border-base-200">
+                <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-primary-content">
+                        📝
+                    </div>
+                    <div>
+                        <h2 className="font-bold">Attempt Review</h2>
+                        <p className="text-sm text-base-content/70">
+                            {new Date(attempt.completedAt!).toLocaleString()}
+                        </p>
+                    </div>
+                </div>
                 {onClose && (
                     <button
-                        className="absolute right-0 top-0 btn btn-ghost btn-circle"
+                        className="btn btn-ghost btn-sm btn-circle"
                         onClick={onClose}
                     >
-                        <FaTimes className="text-lg"/>
+                        <FaTimes />
                     </button>
                 )}
-                <h2 className="text-2xl font-bold text-center">
-                    Attempt Details
-                </h2>
             </div>
 
-            <div className="mb-8">
-                <div className="card bg-base-200 shadow-lg">
+            <div className="flex-1 overflow-y-auto">
+                <div className="p-4 space-y-4">
                     {showBadgeAssignment && (
-                        <div className="mb-8">
-                            <div className="card bg-base-200 shadow-lg">
-                                <div className="card-body">
-                                    <h3 className="card-title text-center justify-center mb-4">
-                                        Achievement Badges
-                                    </h3>
-                                    <div className="flex justify-center items-center gap-8">
-                                        <div className="text-center">
-                                            <div className="mb-2 text-base-content/70">
-                                                Best Attempt Badge
-                                            </div>
-                                            <div className="p-4 bg-base-100 rounded-lg shadow-inner">
-                                                <BadgeAssignment
-                                                    attemptId={attempt.id!}
-                                                    hasBadge={hasBestAttemptBadge}
-                                                />
-                                            </div>
-                                            {hasBestAttemptBadge && (
-                                                <div className="mt-2 text-sm text-success">
-                                                    Awarded!
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
+                        <div className="flex items-center gap-4 p-3 bg-base-100 rounded-lg">
+                            <div className="flex-1">
+                                <h3 className="font-medium text-sm">Best Attempt Badge</h3>
+                                <p className="text-xs text-base-content/70">
+                                    Awarded for outstanding performance
+                                </p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <BadgeAssignment
+                                    attemptId={attempt.id!}
+                                    hasBadge={hasBestAttemptBadge}
+                                />
+                                {hasBestAttemptBadge && (
+                                    <span className="badge badge-success badge-sm">Awarded</span>
+                                )}
                             </div>
                         </div>
                     )}
 
-
+                    <QuizReview
+                        attempt={attempt}
+                        publication={publication}
+                        CustomHeader={AttemptHeader}
+                        showStats={true}
+                    />
                 </div>
-            </div>
-
-            <div className="mt-8">
-                <QuizReview
-                    attempt={attempt}
-                    publication={publication}
-                    CustomHeader={AttemptHeader}
-                    showStats={true}
-                />
             </div>
         </div>
     );

@@ -11,25 +11,28 @@ export class TrueFalseResponseStrategy implements ResponseStrategy {
             trueFalseResponse.selectedAnswer === trueFalseQuestion.correctAnswer;
 
         return (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {isAnswered && (
-                    <div>
-                        <h4 className="font-medium mb-2">Your Response</h4>
+            <div className="space-y-3">
+                <div className="flex gap-4">
+                    {isAnswered && (
                         <TrueFalseResponseView
                             isCorrect={isCorrect}
                             answer={trueFalseResponse.selectedAnswer!}
+                            label="Your answer"
                         />
-                    </div>
-                )}
-                <div>
-                    <h4 className="font-medium mb-2">
-                        {isAnswered ? 'Correct Response' : 'You did not respond - Correct was:'}
-                    </h4>
+                    )}
                     <TrueFalseResponseView
                         isCorrect={true}
                         answer={trueFalseQuestion.correctAnswer}
+                        label="Correct answer"
+                        highlight={!isAnswered || !isCorrect}
                     />
                 </div>
+                {isAnswered && !isCorrect && (
+                    <div className="text-xs text-error/70 flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-error animate-pulse"></span>
+                        Your answer was incorrect
+                    </div>
+                )}
             </div>
         );
     }

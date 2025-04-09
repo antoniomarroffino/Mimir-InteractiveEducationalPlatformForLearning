@@ -19,16 +19,16 @@ export const QuestionResult: React.FC<QuestionResultProps> = ({
     const strategy = ResponseStrategyFactory.createStrategy(question.type);
 
     return (
-        <div className={`card ${
+        <div className={`bg-base-100 rounded-lg border-l-4 ${
             isAnswered
                 ? isCorrect
-                    ? 'bg-success/5 border-2 border-success/20'
-                    : 'bg-error/5 border-2 border-error/20'
-                : 'bg-warning/5 border-2 border-warning/20'
-        } shadow-lg hover:shadow-xl transition-all duration-300`}>
-            <div className="card-body">
-                <div className="flex items-start gap-4">
-                    <div className={`text-2xl ${
+                    ? 'border-l-success'
+                    : 'border-l-error'
+                : 'border-l-warning'
+        } hover:shadow-md transition-all duration-300`}>
+            <div className="p-4">
+                <div className="flex items-start gap-3">
+                    <div className={`text-lg ${
                         isAnswered
                             ? isCorrect
                                 ? 'text-success'
@@ -41,9 +41,9 @@ export const QuestionResult: React.FC<QuestionResultProps> = ({
                                 : <BsXCircle/>
                             : <BsQuestionCircle/>}
                     </div>
-                    <div className="flex-1">
-                        <h3 className="text-lg font-medium mb-2">{question.questionText}</h3>
-                        <div className="mt-4">
+                    <div className="flex-1 space-y-3">
+                        <h3 className="text-sm font-medium">{question.questionText}</h3>
+                        <div className="text-sm">
                             {strategy.renderResponse({question, response, isAnswered})}
                         </div>
                     </div>
