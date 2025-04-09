@@ -1,14 +1,13 @@
 import React from 'react';
-import { useGetQuizAttemptsByUser } from "../../hooks/quizAttempt/useGetQuizAttemptsByUser";
-import { useAuth } from "../../hooks/useAuth";
-import { Link } from 'react-router-dom';
-import { FiClock, FiArrowRight } from 'react-icons/fi';
+import {useGetQuizAttemptsByUser} from "../../hooks/quizAttempt/useGetQuizAttemptsByUser";
+import {useAuth} from "../../hooks/useAuth";
+import {Link} from 'react-router-dom';
+import {FiArrowRight} from 'react-icons/fi';
+import {RecentAttempts} from "../attempt/RecentAttempts.tsx";
 
 export const QuizHistorySection: React.FC = () => {
-    const { user } = useAuth();
-    const { data: attempts = [], isLoading: isLoadingAttempts } = useGetQuizAttemptsByUser(user?.azureOid);
-
-    const recentAttempts = attempts.slice(0, 3);
+    const {user} = useAuth();
+    const {data: attempts = [], isLoading: isLoadingAttempts} = useGetQuizAttemptsByUser(user?.azureOid);
 
     if (!user) return null;
 
@@ -43,37 +42,7 @@ export const QuizHistorySection: React.FC = () => {
                     </div>
                 ) : attempts.length > 0 ? (
                     <div className="space-y-6">
-                        <div className="bg-base-100 rounded-xl p-4">
-                            <h3 className="font-medium text-lg mb-4 flex items-center gap-2">
-                                <FiClock className="text-primary" />
-                                Recent Attempts
-                            </h3>
-                            <div className="space-y-3">
-                                {recentAttempts.map(attempt => (
-                                    <div key={attempt.id} className="p-3 bg-base-200 rounded-lg">
-                                        <div className="flex justify-between items-center">
-                                            <div>
-                                                <p className="font-medium">Quiz #{attempt.id?.slice(-6)}</p>
-                                                <p className="text-sm text-base-content/70">
-                                                    {new Date(attempt.completedAt!).toLocaleDateString('it-IT', {
-                                                        day: '2-digit',
-                                                        month: '2-digit',
-                                                        year: 'numeric',
-                                                        hour: '2-digit',
-                                                        minute: '2-digit'
-                                                    })}
-                                                </p>
-                                            </div>
-                                            {(attempt.badges ?? []).length > 0 && (
-                                                <div className="badge badge-warning gap-1">
-                                                    🏆 Best Attempt
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
+                        <RecentAttempts attempts={attempts} limit={3}/>
 
                         <div className="flex justify-center">
                             <Link
@@ -81,7 +50,7 @@ export const QuizHistorySection: React.FC = () => {
                                 className="btn btn-primary gap-2"
                             >
                                 View All Attempts
-                                <FiArrowRight />
+                                <FiArrowRight/>
                             </Link>
                         </div>
                     </div>
