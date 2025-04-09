@@ -1,32 +1,21 @@
-import React, {useState} from 'react';
-import {useGetQuizAttemptsByUser} from "../../hooks/quizAttempt/useGetQuizAttemptsByUser";
-import {useAuth} from "../../hooks/useAuth";
-import {AttemptCard} from "./AttemptCard";
-import {QuizAttemptDTO} from "@dti-isin/backend-api-client";
-import {AttemptDetails} from "../publication-stats/AttemptDetails.tsx";
-import {useGetQuizPublicationById} from "../../hooks/quizPublication/useGetQuizPublicationById.ts";
+import React from 'react';
+import { useGetQuizAttemptsByUser } from "../../hooks/quizAttempt/useGetQuizAttemptsByUser";
+import { useAuth } from "../../hooks/useAuth";
+import { Link } from 'react-router-dom';
+import { FiClock, FiArrowRight } from 'react-icons/fi';
 
 export const QuizHistorySection: React.FC = () => {
-    const {user} = useAuth();
-    const {data: attempts = [], isLoading: isLoadingAttempts} = useGetQuizAttemptsByUser(user?.azureOid);
-    const [selectedAttempt, setSelectedAttempt] = useState<QuizAttemptDTO | null | undefined>(null);
+    const { user } = useAuth();
+    const { data: attempts = [], isLoading: isLoadingAttempts } = useGetQuizAttemptsByUser(user?.azureOid);
 
-    const {data: publication, isLoading: isLoadingPublication} = useGetQuizPublicationById(
-        selectedAttempt?.quizPublicationId || '',
-        {enabled: !!selectedAttempt}
-    );
-
-    const handleViewDetails = (attemptId: string | null) => {
-        setSelectedAttempt(attemptId ? attempts.find(a => a.id === attemptId) : null);
-    };
+    const recentAttempts = attempts.slice(0, 3);
 
     if (!user) return null;
 
     return (
-        <div className="container mx-auto px-4 py-8 space-y-8">
+        <div className="container mx-auto px-4 py-8">
             <div className="bg-gradient-to-r from-primary/5 to-secondary/5 rounded-xl p-4 sm:p-6">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-
                     <div>
                         <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                             Your Quiz Journey
@@ -48,58 +37,65 @@ export const QuizHistorySection: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="flex gap-6">
-                    <div className="w-96 h-[calc(100vh-300px)] overflow-y-auto overflow-x-hidden flex-shrink-0">
-                        {isLoadingAttempts ? (
-                            <div className="flex flex-col items-center justify-center py-8">
-                                <span className="loading loading-spinner loading-lg text-primary"></span>
-                                <p className="mt-4 text-base-content/70">Loading your quiz history...</p>
-                            </div>
-                        ) : attempts.length > 0 ? (
-                            <div className="flex flex-col gap-4">
-                                {attempts.map((attempt) => (
-                                    <AttemptCard
-                                        key={attempt.id}
-                                        attempt={attempt}
-                                        onViewDetails={handleViewDetails}
-                                        isSelected={selectedAttempt?.id === attempt.id}
-                                    />
+                {isLoadingAttempts ? (
+                    <div className="flex justify-center py-8">
+                        <span className="loading loading-spinner loading-lg text-primary"></span>
+                    </div>
+                ) : attempts.length > 0 ? (
+                    <div className="space-y-6">
+                        <div className="bg-base-100 rounded-xl p-4">
+                            <h3 className="font-medium text-lg mb-4 flex items-center gap-2">
+                                <FiClock className="text-primary" />
+                                Recent Attempts
+                            </h3>
+                            <div className="space-y-3">
+                                {recentAttempts.map(attempt => (
+                                    <div key={attempt.id} className="p-3 bg-base-200 rounded-lg">
+                                        <div className="flex justify-between items-center">
+                                            <div>
+                                                <p className="font-medium">Quiz #{attempt.id?.slice(-6)}</p>
+                                                <p className="text-sm text-base-content/70">
+                                                    {new Date(attempt.completedAt!).toLocaleDateString('it-IT', {
+                                                        day: '2-digit',
+                                                        month: '2-digit',
+                                                        year: 'numeric',
+                                                        hour: '2-digit',
+                                                        minute: '2-digit'
+                                                    })}
+                                                </p>
+                                            </div>
+                                            {(attempt.badges ?? []).length > 0 && (
+                                                <div className="badge badge-warning gap-1">
+                                                    🏆 Best Attempt
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
                                 ))}
                             </div>
-                        ) : (
-                            <div className="text-center py-12 bg-base-100 rounded-xl">
-                                <div className="text-4xl mb-4">📚</div>
-                                <p className="text-lg font-medium text-base-content/70">
-                                    Start your learning journey
-                                </p>
-                            </div>
-                        )}
-                    </div>
+                        </div>
 
-                    <div className="flex-grow h-[calc(100vh-300px)] overflow-y-auto overflow-x-hidden bg-base-200 rounded-xl">
-                        {selectedAttempt ? (
-                            isLoadingPublication ? (
-                                <div className="flex justify-center items-center h-full">
-                                    <span className="loading loading-spinner loading-lg"></span>
-                                </div>
-                            ) : publication ? (
-                                <AttemptDetails
-                                    attempt={selectedAttempt}
-                                    publication={publication}
-                                    showBadgeAssignment={false}
-                                />
-                            ) : (
-                                <div className="text-center py-4 text-error">
-                                    Error loading quiz details
-                                </div>
-                            )
-                        ) : (
-                            <div className="flex items-center justify-center h-full text-base-content/70">
-                                Select an attempt to view details
-                            </div>
-                        )}
+                        <div className="flex justify-center">
+                            <Link
+                                to="/quiz-review"
+                                className="btn btn-primary gap-2"
+                            >
+                                View All Attempts
+                                <FiArrowRight />
+                            </Link>
+                        </div>
                     </div>
-                </div>
+                ) : (
+                    <div className="text-center py-12 bg-base-100 rounded-xl">
+                        <div className="text-4xl mb-4">📚</div>
+                        <p className="text-lg font-medium text-base-content/70">
+                            Start your learning journey
+                        </p>
+                        <p className="text-sm text-base-content/50 mt-2">
+                            Complete your first quiz to see your progress here
+                        </p>
+                    </div>
+                )}
             </div>
         </div>
     );
