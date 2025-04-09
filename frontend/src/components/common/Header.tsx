@@ -6,6 +6,7 @@ import {useAuth} from "../../hooks/useAuth";
 import {Role} from "@dti-isin/backend-api-client";
 import LoginButton from "../../auth/LoginButton";
 import mimirLogo from '../../assets/mimir-logo.png';
+import {FaTrophy} from "react-icons/fa";
 
 const Header = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -27,6 +28,12 @@ const Header = () => {
             name: 'Quiz Review',
             path: '/quiz-review',
             icon: <FiCheckSquare className="text-xl"/>,
+            roles: [Role.Student, Role.Teacher]
+        },
+        {
+            name: 'Badges',
+            path: '/badges',
+            icon: <FaTrophy className="text-xl text-warning"/>,
             roles: [Role.Student, Role.Teacher]
         }
     ];

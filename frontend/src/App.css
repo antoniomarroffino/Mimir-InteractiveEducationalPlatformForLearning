@@ -83,3 +83,25 @@
 .animate-fadeIn {
     animation: fadeIn 0.5s ease-out;
 }
+
+.perspective-1000 {
+    perspective: 1000px;
+}
+
+.rotate-y-180 {
+    transform: rotateY(180deg);
+}
+
+.backface-hidden {
+    backface-visibility: hidden;
+}
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+
+.hover\:float:hover {
+    animation: float 2s ease-in-out infinite;
+}

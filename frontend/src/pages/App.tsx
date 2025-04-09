@@ -30,6 +30,7 @@ import QuizResults from "./QuizResults.tsx";
 import QuizScreen from "./QuizScreen.tsx";
 import PublicationStatsPage from "./PublicationStatsPage.tsx";
 import QuizReviewPage from "./QuizReviewPage.tsx";
+import BadgesPage from "./BadgesPage.tsx";
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -149,7 +150,15 @@ const App = () => {
                                             </ProtectedRoute>
                                         }
                                     />
-                                    {/* Quiz Screen Route */}
+
+                                    <Route
+                                        path="/badges"
+                                        element={
+                                            <ProtectedRoute allowedRoles={[Role.Student, Role.Teacher]}>
+                                                <BadgesPage />
+                                            </ProtectedRoute>
+                                        }
+                                    />
                                     <Route
                                         path="/quiz/:accessCode"
                                         element={<QuizScreen/>}
