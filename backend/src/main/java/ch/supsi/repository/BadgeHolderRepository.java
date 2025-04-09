@@ -1,0 +1,20 @@
+package ch.supsi.repository;
+
+import ch.supsi.model.api.BadgeHolder;
+import io.quarkus.mongodb.panache.PanacheMongoRepository;
+import jakarta.enterprise.context.ApplicationScoped;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+@ApplicationScoped
+public class BadgeHolderRepository implements PanacheMongoRepository<BadgeHolder> {
+    public List<BadgeHolder> listAll() {
+        return mongoCollection().find().into(new ArrayList<>());
+    }
+
+    public Optional<BadgeHolder> findByAzureOIDOptional(String azureOID) {
+        return find("{'azureOID': ?1}", azureOID).firstResultOptional();
+    }
+}
