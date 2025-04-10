@@ -25,7 +25,8 @@ export const QuizAttemptLocalProvider: React.FC<{ children: React.ReactNode }> =
     const prepareQuizResponses = useCallback((publication: QuizPublicationDTO) => {
         return publication.questions?.map(question => {
             const baseResponse = {
-                questionId: question.id
+                questionId: question.id,
+                timeSpent: 0
             };
 
             switch (question.type) {
@@ -110,12 +111,14 @@ export const QuizAttemptLocalProvider: React.FC<{ children: React.ReactNode }> =
                         ...response,
                         questionId: question.id,
                         responseType: QuestionType.TrueFalse,
+                        timeSpent: response.timeSpent || 0
                     } as TrueFalseQuestionResponseDTO;
                 } else if (response.responseType === QuestionType.MultipleChoice) {
                     return {
                         ...response,
                         questionId: question.id,
                         responseType: QuestionType.MultipleChoice,
+                        timeSpent: response.timeSpent || 0
                     } as MultipleChoiceQuestionResponseDTO;
                 }
 

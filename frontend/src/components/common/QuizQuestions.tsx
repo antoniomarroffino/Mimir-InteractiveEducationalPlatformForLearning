@@ -38,6 +38,23 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({publication, timeLi
     const navigate = useNavigate();
 
     useEffect(() => {
+        const timer = setInterval(() => {
+            setUserResponses(prevResponses => {
+                const newResponses = [...prevResponses];
+                if (newResponses[currentQuestionIndex]) {
+                    newResponses[currentQuestionIndex] = {
+                        ...newResponses[currentQuestionIndex],
+                        timeSpent: (newResponses[currentQuestionIndex].timeSpent || 0) + 1
+                    };
+                }
+                return newResponses;
+            });
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [currentQuestionIndex]);
+
+    useEffect(() => {
         if (!timeRemaining) return;
 
         const timer = setInterval(() => {
@@ -78,19 +95,26 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({publication, timeLi
 
         setUserResponses(prevResponses => {
             const updatedResponses = [...prevResponses];
+            const currentTimeSpent = updatedResponses[currentQuestionIndex]?.timeSpent || 0;
 
             if (currentQuestion.type === QuestionType.TrueFalse && (typeof answer === 'boolean' || answer === null)) {
-                updatedResponses[currentQuestionIndex] = QuestionResponseFactory.createResponse(
-                    QuestionType.TrueFalse,
-                    currentQuestion.id!,
-                    answer ?? undefined
-                );
+                updatedResponses[currentQuestionIndex] = {
+                    ...QuestionResponseFactory.createResponse(
+                        QuestionType.TrueFalse,
+                        currentQuestion.id!,
+                        answer ?? undefined
+                    ),
+                    timeSpent: currentTimeSpent
+                };
             } else if (currentQuestion.type === QuestionType.MultipleChoice && (Array.isArray(answer) || answer === null)) {
-                updatedResponses[currentQuestionIndex] = QuestionResponseFactory.createResponse(
-                    QuestionType.MultipleChoice,
-                    currentQuestion.id!,
-                    answer || []
-                );
+                updatedResponses[currentQuestionIndex] = {
+                    ...QuestionResponseFactory.createResponse(
+                        QuestionType.MultipleChoice,
+                        currentQuestion.id!,
+                        answer || []
+                    ),
+                    timeSpent: currentTimeSpent
+                };
             }
 
             return updatedResponses;
@@ -142,7 +166,6 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({publication, timeLi
                     </div>
                 )}
 
-                {/* Mobile Navigation Bar */}
                 <div className="md:hidden flex items-center justify-between mb-4">
                     <span className="text-sm font-medium">
                         Question {currentQuestionIndex + 1} of {publication.questions?.length}
@@ -168,7 +191,6 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({publication, timeLi
                             />
                         </div>
 
-                        {/* Navigation Buttons */}
                         <div className="flex justify-between items-center mb-4 md:absolute md:inset-y-0 md:left-0 md:right-0 md:-mx-12">
                             <button
                                 onClick={() => setCurrentQuestionIndex(prev => Math.max(0, prev - 1))}
@@ -189,7 +211,6 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({publication, timeLi
                             </button>
                         </div>
 
-                        {/* Question Content */}
                         <div className="bg-base-100 rounded-xl shadow-lg p-4 md:p-6">
                             {isTrueFalseQuestion(currentQuestion!) && (
                                 <TrueFalseQuestion
@@ -210,7 +231,6 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({publication, timeLi
                         </div>
                     </div>
 
-                    {/* Desktop Navigation */}
                     <div className="hidden md:block">
                         <QuizNavigation
                             questions={publication.questions || []}
@@ -221,7 +241,6 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({publication, timeLi
                         />
                     </div>
 
-                    {/* Mobile Navigation Modal */}
                     <MobileNavigation
                         isOpen={showMobileNav}
                         onClose={() => setShowMobileNav(false)}

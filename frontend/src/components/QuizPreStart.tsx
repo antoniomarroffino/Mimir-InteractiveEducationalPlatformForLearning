@@ -42,7 +42,7 @@ const QuizPreStart: React.FC<QuizPreStartProps> = ({publication}) => {
                 setIsLoading(false);
             }
         }
-    }, [quiz, startQuizAttempt]);
+    }, [publication, quiz, startQuizAttempt]);
 
     const renderQuizPreparation = () => {
         const renderTimeLimit = () => {
@@ -160,7 +160,6 @@ const QuizPreStart: React.FC<QuizPreStartProps> = ({publication}) => {
 
     return (
         <div className="min-h-screen bg-base-200 flex flex-col">
-            {/* Header più compatto */}
             <div className="bg-gradient-to-r from-primary to-secondary">
                 <div className="container mx-auto px-4 py-8">
                     <div className="text-center text-neutral-content">
