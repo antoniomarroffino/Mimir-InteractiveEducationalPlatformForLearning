@@ -40,6 +40,10 @@ public class CourseController {
                     schema = @Schema(type = SchemaType.ARRAY, implementation = CourseDTO.class)
             )
     )
+    @APIResponse(
+            responseCode = "500",
+            description = "Internal Server Error: Authentication failure"
+    )
     public Response getTeacherCourses() {
         List<CourseDTO> coursesDTO = this.courseService.getTeacherCourses(this.userService.getCurrentLoggedUser());
         return Response.ok(coursesDTO).build();
@@ -90,6 +94,14 @@ public class CourseController {
                     schema = @Schema(implementation = CourseDTO.class)
             )
     )
+    @APIResponse(
+            responseCode = "400",
+            description = "Bad Request: Invalid course data or duplicate name"
+    )
+    @APIResponse(
+            responseCode = "500",
+            description = "Internal Server Error: Authentication failure"
+    )
     public Response createCourse(@Valid CourseDTO courseDTO) {
         CourseDTO createdCourseDTO = this.courseService.createCourse(courseDTO, this.userService.getCurrentLoggedUser());
         return Response.status(Response.Status.CREATED)
@@ -111,6 +123,14 @@ public class CourseController {
     @APIResponse(
             responseCode = "404",
             description = "Course not found"
+    )
+    @APIResponse(
+            responseCode = "403",
+            description = "Forbidden: User is not the course owner"
+    )
+    @APIResponse(
+            responseCode = "500",
+            description = "Internal Server Error: Authentication failure"
     )
     public Response updateCourse(
             @PathParam("id") String id,
@@ -136,6 +156,14 @@ public class CourseController {
             responseCode = "404",
             description = "Course not found"
     )
+    @APIResponse(
+            responseCode = "403",
+            description = "Forbidden: User is not the course owner"
+    )
+    @APIResponse(
+            responseCode = "500",
+            description = "Internal Server Error: Authentication failure"
+    )
     public Response deleteCourse(@PathParam("id") String id) {
         this.courseService.deleteCourse(
                 new ObjectId(id),
@@ -152,6 +180,14 @@ public class CourseController {
             responseCode = "204",
             description = "Assign course to logged user given courseID"
     )
+    @APIResponse(
+            responseCode = "404",
+            description = "Course not found"
+    )
+    @APIResponse(
+            responseCode = "500",
+            description = "Internal Server Error: Authentication failure"
+    )
     public Response assignCourse(@PathParam("id") String id) {
         this.courseService.assignCourse(new ObjectId(id), this.userService.getCurrentLoggedUser());
         return Response.status(Response.Status.NO_CONTENT)
@@ -164,6 +200,14 @@ public class CourseController {
     @APIResponse(
             responseCode = "204",
             description = "Remove course to logged user given courseID"
+    )
+    @APIResponse(
+            responseCode = "404",
+            description = "Course not found"
+    )
+    @APIResponse(
+            responseCode = "500",
+            description = "Internal Server Error: Authentication failure"
     )
     public Response leftCourse(@PathParam("id") String id) {
         this.courseService.leftCourse(new ObjectId(id), this.userService.getCurrentLoggedUser());

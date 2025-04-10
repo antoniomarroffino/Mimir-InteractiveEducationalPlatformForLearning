@@ -78,10 +78,9 @@ public class QuizPublicationService implements IQuizPublicationService {
     }
 
     @Override
-    public boolean deleteQuizPublication(ObjectId publicationId) {
+    public void deleteQuizPublication(ObjectId publicationId) {
         QuizPublication quizPublication = this.findQuizPublicationById(publicationId);
         quizPublicationRepository.delete(quizPublication);
-        return true;
     }
 
     @Override

@@ -31,6 +31,7 @@ public class QuizAttemptController {
     IUserService userService;
 
     @GET
+    @RolesAllowed({"USER","TEACHER"})
     @Path("/user/{userAzureOID}")
     @Operation(summary = "Get all quiz attempts for a specific user")
     @APIResponse(
@@ -55,6 +56,7 @@ public class QuizAttemptController {
     }
 
     @POST
+    @RolesAllowed({"USER","TEACHER"})
     @Operation(summary = "Create a new quiz attempt")
     @APIResponse(responseCode = "201", description = "Quiz attempt created successfully", content = @Content(
             mediaType = MediaType.APPLICATION_JSON,
@@ -94,6 +96,8 @@ public class QuizAttemptController {
         return Response.ok(attempts).build();
     }
 
+
+    //TODO: Da levare questo metodo doppione "getPublicationStats"
     @GET
     @Path("/publications/{publicationId}/stats")
     @RolesAllowed("TEACHER")
@@ -148,10 +152,6 @@ public class QuizAttemptController {
             @PathParam("attemptId") String attemptId,
             @QueryParam("type") @Schema(implementation = BadgeType.class) BadgeType badgeType
     ) {
-        if (badgeType == null) {
-            throw new BadRequestException("Badge type must be specified");
-        }
-
         this.quizAttemptService.assignBadge(
                 new ObjectId(attemptId),
                 badgeType,

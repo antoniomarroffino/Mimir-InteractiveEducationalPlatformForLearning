@@ -32,8 +32,7 @@ public class CourseService implements ICourseService {
 
     @Override
     public List<CourseDTO> getTeacherCourses(User user) {
-        if (user == null)
-            throw new InternalServerErrorException("User logged is null");
+        this.verifyUserIsValid(user);
 
         return user.coursesId.stream()
                 .map(ObjectId::new)
@@ -56,8 +55,7 @@ public class CourseService implements ICourseService {
 
     @Override
     public CourseDTO createCourse(CourseDTO courseDTO, User currentUser) {
-        if (currentUser == null)
-            throw new InternalServerErrorException("User logged is null");
+        this.verifyUserIsValid(currentUser);
 
         this.verifyCourseIsValid(courseDTO);
 
@@ -71,8 +69,7 @@ public class CourseService implements ICourseService {
 
     @Override
     public void assignCourse(ObjectId id, User currentUser) {
-        if (currentUser == null)
-            throw new InternalServerErrorException("User logged is null");
+        this.verifyUserIsValid(currentUser);
 
         Course course = this.findCourseById(id);
 
@@ -81,8 +78,7 @@ public class CourseService implements ICourseService {
 
     @Override
     public void leftCourse(ObjectId id, User currentUser) {
-        if (currentUser == null)
-            throw new InternalServerErrorException("User logged is null");
+        this.verifyUserIsValid(currentUser);
 
         Course course = this.findCourseById(id);
 
@@ -91,8 +87,7 @@ public class CourseService implements ICourseService {
 
     @Override
     public CourseDTO updateCourse(ObjectId id, CourseDTO courseDTO, User currentUser) {
-        if (currentUser == null)
-            throw new InternalServerErrorException("User logged is null");
+        this.verifyUserIsValid(currentUser);
 
         this.verifyCourseIsValid(courseDTO);
 
@@ -114,8 +109,7 @@ public class CourseService implements ICourseService {
 
     @Override
     public void deleteCourse(ObjectId id, User currentUser) {
-        if (currentUser == null)
-            throw new InternalServerErrorException("User logged is null");
+        this.verifyUserIsValid(currentUser);
 
         Course course = this.findCourseById(id);
 
@@ -124,6 +118,12 @@ public class CourseService implements ICourseService {
         this.userRepository.removeCourseFromUser(id.toString(), currentUser.azureOid);
         this.courseRepository.delete(course);
     }
+
+    private void verifyUserIsValid(User user){
+        if (user == null)
+            throw new InternalServerErrorException("User logged is null");
+    }
+
 
     private void verifyUserIsOwner(ObjectId courseId, User user) {
         if (!user.coursesId.contains(courseId.toString()))

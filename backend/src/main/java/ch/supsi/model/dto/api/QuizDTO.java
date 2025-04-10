@@ -26,6 +26,10 @@ public class QuizDTO {
     public QuizDTO() {
     }
 
+    public QuizDTO(String name) {
+        this.name = name;
+    }
+
     public String getId() {
         return id;
     }

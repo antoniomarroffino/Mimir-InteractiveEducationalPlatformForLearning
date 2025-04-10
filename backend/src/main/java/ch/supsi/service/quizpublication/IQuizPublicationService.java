@@ -16,7 +16,7 @@ public interface IQuizPublicationService {
 
     QuizPublicationDTO deactivateQuizPublication(ObjectId publicationId);
 
-    boolean deleteQuizPublication(ObjectId publicationId);
+    void deleteQuizPublication(ObjectId publicationId);
 
     List<QuizPublicationDTO> getPublicationsByQuizId(ObjectId quizId);
 }
