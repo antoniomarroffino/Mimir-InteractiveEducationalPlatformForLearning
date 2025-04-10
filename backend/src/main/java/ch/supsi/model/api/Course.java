@@ -15,13 +15,20 @@ public class Course {
     public ObjectId id;
     public String name;
     public String description;
-    public List<Folder> folders = new ArrayList<>();
+    public List<Folder> folders;
 
     public Course() {
-
+        this.folders = new ArrayList<>();
     }
 
     public Course(String name) {
+        this();
         this.name = name;
+    }
+
+    public Course(String name, String description) {
+        this();
+        this.name = name;
+        this.description = description;
     }
 }

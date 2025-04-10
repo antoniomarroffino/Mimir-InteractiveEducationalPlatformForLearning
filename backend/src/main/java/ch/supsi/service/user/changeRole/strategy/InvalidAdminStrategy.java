@@ -4,7 +4,7 @@ import jakarta.enterprise.context.Dependent;
 import jakarta.ws.rs.ForbiddenException;
 
 @Dependent
-public class InvalidAdminStrategy implements ChangeRoleStrategy {
+public class InvalidAdminStrategy implements IChangeRoleStrategy {
     @Override
     public void changeRole(com.microsoft.graph.models.User microsoftUser) {
         throw new ForbiddenException("Cannot change role to admin");

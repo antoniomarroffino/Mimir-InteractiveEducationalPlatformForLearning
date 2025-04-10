@@ -25,18 +25,11 @@ public class AdminInitializer {
     }
 
     public void onStop(@Observes ShutdownEvent ev) {
-        System.out.println("Shutting down");
         this.adminService.deleteAdmins();
     }
 
     private void createAdmins() {
-        for (String mail : this.adminConfig.getAdminEmails()) {
-            try {
-                this.adminService.createAdmin(this.microsoftGraphService.getUserByEmail(mail));
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-                e.printStackTrace();
-            }
-        }
+        for (String mail : this.adminConfig.getAdminEmails())
+            this.adminService.createAdmin(this.microsoftGraphService.getUserByEmail(mail));
     }
 }

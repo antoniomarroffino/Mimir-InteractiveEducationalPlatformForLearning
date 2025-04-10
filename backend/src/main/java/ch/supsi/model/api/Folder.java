@@ -15,10 +15,11 @@ public class Folder {
     @NotBlank(message = "Folder name cannot be null or empty")
     public String name;
 
-    public List<Quiz> quizzes = new ArrayList<>();
+    public List<Quiz> quizzes;
 
     public Folder() {
         this.id = new ObjectId();
+        this.quizzes = new ArrayList<>();
     }
 
     public Folder(String name) {

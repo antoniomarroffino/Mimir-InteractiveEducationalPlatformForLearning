@@ -29,11 +29,6 @@ public abstract class QuestionResponse {
         this.timeSpent = 0;
     }
 
-    protected QuestionResponse(ObjectId questionId) {
-        this();
-        this.questionId = questionId;
-    }
-
     protected QuestionResponse(QuestionType responseType) {
         this();
         this.responseType = responseType;

@@ -12,7 +12,6 @@ import org.bson.types.ObjectId;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @ApplicationScoped
 public class QuestionBankService implements IQuestionBankService {
@@ -34,7 +33,7 @@ public class QuestionBankService implements IQuestionBankService {
     @Override
     public List<QuestionBankDTO> getAllQuestionBanks() {
         return this.questionBankRepository
-                .findAll()
+                .listAll()
                 .stream()
                 .map(this.questionBankMapperFacade::toDTO)
                 .toList();
@@ -42,25 +41,19 @@ public class QuestionBankService implements IQuestionBankService {
 
     @Override
     public QuestionBankDTO getQuestionBankById(ObjectId id) {
-        Optional<QuestionBank> questionBankOpt = this.questionBankRepository.findByIdOptional(id);
-
-        if (questionBankOpt.isEmpty())
-            throw new NotFoundException("QuestionBank not found");
-
-        return this.questionBankMapperFacade.toDTO(questionBankOpt.get());
+        return this.questionBankMapperFacade
+                .toDTO(
+                        this.findQuestionBankById(id)
+                );
     }
 
     @Override
     public QuestionBankDTO updateQuestionBank(ObjectId id, QuestionBankDTO questionBankDTO) {
         this.verifyQuestionBankIsValid(questionBankDTO);
 
-        Optional<QuestionBank> questionBankOpt = this.questionBankRepository.findByIdOptional(id);
-        if (questionBankOpt.isEmpty())
-            throw new NotFoundException("QuestionBank not found");
+        QuestionBank questionBank = this.findQuestionBankById(id);
 
-        QuestionBank questionBank = questionBankOpt.get();
-        if (!questionBank.name.equalsIgnoreCase(questionBankDTO.getName()))
-            questionBank.name = questionBankDTO.getName();
+        questionBank.name = questionBankDTO.getName();
 
         questionBank.lastModified = LocalDateTime.now();
         this.questionBankRepository.update(questionBank);
@@ -69,23 +62,25 @@ public class QuestionBankService implements IQuestionBankService {
 
     @Override
     public void deleteQuestionBank(ObjectId id) {
-        Optional<QuestionBank> questionBankOpt = this.questionBankRepository.findByIdOptional(id);
-        if (questionBankOpt.isEmpty())
-            throw new NotFoundException("QuestionBank not found");
+        QuestionBank questionBank = this.findQuestionBankById(id);
+        this.questionBankRepository.delete(questionBank);
+    }
 
-        this.questionBankRepository.delete(questionBankOpt.get());
+    private QuestionBank findQuestionBankById(ObjectId id) {
+        return this.questionBankRepository.findByIdOptional(id)
+                .orElseThrow(() -> new NotFoundException("Question bank with id " + id + " not found"));
     }
 
     private void verifyQuestionBankIsValid(QuestionBankDTO questionBankDTO) {
         if (questionBankDTO == null)
-            throw new BadRequestException("QuestionBank is null");
+            throw new BadRequestException("QuestionBankDTO is null");
 
         String questionBankName = questionBankDTO.getName().trim();
         if (questionBankName.isEmpty())
-            throw new BadRequestException("QuestionBank name is empty");
+            throw new BadRequestException("QuestionBankDTO name is empty");
 
         if (this.isQuestionBankNameDuplicated(questionBankDTO.getName()))
-            throw new BadRequestException("QuestionBank name already exists");
+            throw new BadRequestException("QuestionBankDTO name already exists");
     }
 
     private boolean isQuestionBankNameDuplicated(String questionBankName) {

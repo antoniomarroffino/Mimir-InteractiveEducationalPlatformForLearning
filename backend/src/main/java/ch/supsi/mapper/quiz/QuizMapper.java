@@ -3,6 +3,7 @@ package ch.supsi.mapper.quiz;
 import ch.supsi.model.api.Quiz;
 import ch.supsi.model.dto.api.QuizDTO;
 import ch.supsi.model.dto.api.question.QuestionDTO;
+import jakarta.enterprise.context.ApplicationScoped;
 import org.bson.types.ObjectId;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@ApplicationScoped
 public class QuizMapper {
     public QuizDTO toDTO(@NotNull Quiz quiz, List<QuestionDTO> questionDTOList) {
         QuizDTO dto = new QuizDTO();

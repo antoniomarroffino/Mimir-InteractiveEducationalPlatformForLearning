@@ -1,12 +1,12 @@
 package ch.supsi.config;
 
 
-import jakarta.inject.Singleton;
+import jakarta.enterprise.context.ApplicationScoped;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import java.util.List;
 
-@Singleton
+@ApplicationScoped
 public class AdminConfig {
     @ConfigProperty(name = "app.admin.names")
     List<String> adminNames;

@@ -11,7 +11,6 @@ import jakarta.ws.rs.InternalServerErrorException;
 import jakarta.ws.rs.NotFoundException;
 import okhttp3.Request;
 
-import java.util.List;
 import java.util.Optional;
 
 @ApplicationScoped
@@ -55,19 +54,5 @@ public class MicrosoftGraphService implements IMicrosoftGraphService {
             throw new NotFoundException("User with mail " + email + " does not exist in microsoft graph");
 
         return microsoftUser.get();
-    }
-
-    @Override
-    public List<User> getAllUsers() {
-        UserCollectionPage response = this.graphServiceClient.users()
-                .buildRequest()
-                .get();
-
-        if (response == null)
-            throw new InternalServerErrorException("Error calling MicrosoftGraphService");
-
-        return response.getCurrentPage()
-                .stream()
-                .toList();
     }
 }

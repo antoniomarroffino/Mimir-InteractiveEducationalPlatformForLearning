@@ -31,15 +31,17 @@ public class QuizPublication {
     @Schema(required = true)
     public String publicationCode;
 
-    public Boolean published = false;
+    public Boolean published;
 
-    public Boolean anonymous = true;
+    public Boolean anonymous;
 
     public LocalDateTime createdAt;
 
     public LocalDateTime closedAt;
 
     public QuizPublication() {
+        this.published = false;
+        this.anonymous = true;
         this.createdAt = LocalDateTime.now();
     }
 

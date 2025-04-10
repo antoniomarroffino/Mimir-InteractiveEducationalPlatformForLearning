@@ -1,7 +1,9 @@
 package ch.supsi.controller.quizpublication;
 
+import ch.supsi.model.dto.api.CourseDTO;
 import ch.supsi.model.dto.api.QuizDTO;
 import ch.supsi.model.dto.api.QuizPublicationDTO;
+import ch.supsi.service.course.ICourseService;
 import ch.supsi.service.quiz.IQuizService;
 import ch.supsi.service.quizpublication.IQuizPublicationService;
 import jakarta.annotation.security.RolesAllowed;
@@ -17,11 +19,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-
-import static io.smallrye.config._private.ConfigLogging.log;
 
 @Path("/publications")
 @Produces(MediaType.APPLICATION_JSON)
@@ -34,6 +32,9 @@ public class QuizPublicationController {
     @Inject
     IQuizService quizService;
 
+    @Inject
+    ICourseService courseService;
+
     @POST
     @RolesAllowed("TEACHER")
     @Operation(summary = "Publish a quiz")
@@ -44,8 +45,9 @@ public class QuizPublicationController {
     @APIResponse(responseCode = "400", description = "Invalid input data")
     @APIResponse(responseCode = "404", description = "Resource not found")
     public Response publishQuiz(@Valid QuizPublicationDTO quizPublicationDTO) {
+        CourseDTO courseDTO = this.courseService.getCourseById(new ObjectId(quizPublicationDTO.getCourseId()));
         QuizDTO quizDTO = this.quizService.getQuizInFolder(
-                new ObjectId(quizPublicationDTO.getCourseId()),
+                courseDTO,
                 new ObjectId(quizPublicationDTO.getFolderId()),
                 new ObjectId(quizPublicationDTO.getQuizId())
         );
@@ -78,21 +80,10 @@ public class QuizPublicationController {
     ))
     @APIResponse(responseCode = "404", description = "Publication not found")
     public Response getPublicationByCode(@PathParam("code") String code) {
-        try {
-            QuizPublicationDTO publicationDTO = this.quizPublicationService.getPublicationByCode(code);
-            return Response.ok(publicationDTO).build();
-        } catch (Exception e) {
-            log.error("Errore nel recupero della pubblicazione", e);
-
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(Map.of(
-                            "message", e.getMessage(),
-                            "type", e.getClass().getName(),
-                            "details", Arrays.toString(e.getStackTrace())
-                    ))
-                    .build();
-        }
+        QuizPublicationDTO publicationDTO = this.quizPublicationService.getPublicationByCode(code);
+        return Response.ok(publicationDTO).build();
     }
+
     @PUT
     @RolesAllowed("TEACHER")
     @Path("/{id}")
@@ -105,8 +96,7 @@ public class QuizPublicationController {
     public Response updateQuizPublication(
             @PathParam("id") String id,
             @Valid QuizPublicationDTO quizPublicationDTO) {
-        quizPublicationDTO.setId(id);
-        QuizPublicationDTO updatedDTO = this.quizPublicationService.updateQuizPublication(quizPublicationDTO);
+        QuizPublicationDTO updatedDTO = this.quizPublicationService.updateQuizPublication(new ObjectId(id), quizPublicationDTO);
 
         return Response.ok(updatedDTO).build();
     }
@@ -133,7 +123,7 @@ public class QuizPublicationController {
     @APIResponse(responseCode = "204", description = "Quiz publication deleted successfully")
     @APIResponse(responseCode = "404", description = "Publication not found")
     public Response deleteQuizPublication(@PathParam("id") String id) {
-        boolean deleted = this.quizPublicationService.deleteQuizPublication(new ObjectId(id));
+        this.quizPublicationService.deleteQuizPublication(new ObjectId(id));
 
         return Response.noContent().build();
     }

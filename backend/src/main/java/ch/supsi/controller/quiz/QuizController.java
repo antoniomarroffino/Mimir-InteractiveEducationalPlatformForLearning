@@ -1,6 +1,8 @@
 package ch.supsi.controller.quiz;
 
+import ch.supsi.model.dto.api.CourseDTO;
 import ch.supsi.model.dto.api.QuizDTO;
+import ch.supsi.service.course.ICourseService;
 import ch.supsi.service.quiz.IQuizService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
@@ -25,6 +27,9 @@ public class QuizController {
     @Inject
     IQuizService quizService;
 
+    @Inject
+    ICourseService courseService;
+
     @GET
     @RolesAllowed("TEACHER")
     @Operation(summary = "Get all quizzes in a folder")
@@ -40,7 +45,7 @@ public class QuizController {
             @PathParam("courseId") String courseId,
             @PathParam("folderId") String folderId) {
         List<QuizDTO> quizzesDTO = this.quizService.getQuizzesInFolder(
-                new ObjectId(courseId),
+                this.getCourseDTOFromCourseService(new ObjectId(courseId)),
                 new ObjectId(folderId)
         );
         return Response.ok(quizzesDTO).build();
@@ -62,7 +67,7 @@ public class QuizController {
             @PathParam("folderId") String folderId,
             @PathParam("quizId") String quizId) {
         QuizDTO quizDTO = this.quizService.getQuizInFolder(
-                new ObjectId(courseId),
+                this.getCourseDTOFromCourseService(new ObjectId(courseId)),
                 new ObjectId(folderId),
                 new ObjectId(quizId)
         );
@@ -84,9 +89,8 @@ public class QuizController {
             @PathParam("courseId") String courseId,
             @PathParam("folderId") String folderId,
             @Valid QuizDTO quizDTO) {
-
         QuizDTO createdQuizDTO = this.quizService.addQuizToFolder(
-                new ObjectId(courseId),
+                this.getCourseDTOFromCourseService(new ObjectId(courseId)),
                 new ObjectId(folderId),
                 quizDTO
         );
@@ -113,7 +117,7 @@ public class QuizController {
             @PathParam("quizId") String quizId,
             @Valid QuizDTO quizDTO) {
         QuizDTO updatedQuizDTO = this.quizService.updateQuizInFolder(
-                new ObjectId(courseId),
+                this.getCourseDTOFromCourseService(new ObjectId(courseId)),
                 new ObjectId(folderId),
                 new ObjectId(quizId),
                 quizDTO
@@ -134,10 +138,14 @@ public class QuizController {
             @PathParam("folderId") String folderId,
             @PathParam("quizId") String quizId) {
         this.quizService.removeQuizFromFolder(
-                new ObjectId(courseId),
+                this.getCourseDTOFromCourseService(new ObjectId(courseId)),
                 new ObjectId(folderId),
                 new ObjectId(quizId)
         );
         return Response.noContent().build();
+    }
+
+    private CourseDTO getCourseDTOFromCourseService(ObjectId courseId) {
+        return this.courseService.getCourseById(courseId);
     }
 }

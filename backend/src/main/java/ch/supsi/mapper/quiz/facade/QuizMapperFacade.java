@@ -18,7 +18,8 @@ import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class QuizMapperFacade implements IQuizMapperFacade {
-    private final QuizMapper quizMapper = new QuizMapper();
+    @Inject
+    QuizMapper quizMapper;
 
     @Inject
     IQuestionMapperBuilder questionMapperBuilder;

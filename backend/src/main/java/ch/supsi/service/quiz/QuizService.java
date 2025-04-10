@@ -1,9 +1,11 @@
 package ch.supsi.service.quiz;
 
+import ch.supsi.mapper.CourseMapper;
 import ch.supsi.mapper.quiz.facade.IQuizMapperFacade;
 import ch.supsi.model.api.Course;
 import ch.supsi.model.api.Folder;
 import ch.supsi.model.api.Quiz;
+import ch.supsi.model.dto.api.CourseDTO;
 import ch.supsi.model.dto.api.QuizDTO;
 import ch.supsi.repository.CourseRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -14,7 +16,6 @@ import org.bson.types.ObjectId;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -26,63 +27,47 @@ public class QuizService implements IQuizService {
     @Inject
     IQuizMapperFacade quizMapperFacade;
 
+    @Inject
+    CourseMapper courseMapper;
+
+
     @Override
-    public List<QuizDTO> getQuizzesInFolder(ObjectId courseId, ObjectId folderId) {
-        Folder folder = getFolderFromCourse(courseId, folderId);
+    public List<QuizDTO> getQuizzesInFolder(CourseDTO courseDTO, ObjectId folderId) {
+        Course course = this.courseMapper.toEntity(courseDTO);
+        Folder folder = this.findFolderInCourse(course, folderId);
         return folder.quizzes.stream()
                 .map(this.quizMapperFacade::toDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public QuizDTO getQuizInFolder(ObjectId courseId, ObjectId folderId, ObjectId quizId) {
-        Folder folder = this.getFolderFromCourse(courseId, folderId);
-
-        return folder.quizzes.stream()
-                .filter(q -> q.id.equals(quizId))
-                .map(this.quizMapperFacade::toDTO)
-                .findFirst()
-                .orElseThrow(() -> new NotFoundException("Quiz not found in folder"));
+    public QuizDTO getQuizInFolder(CourseDTO courseDTO, ObjectId folderId, ObjectId quizId) {
+        Course course = this.courseMapper.toEntity(courseDTO);
+        Folder folder = this.findFolderInCourse(course, folderId);
+        Quiz quiz = this.findQuizInFolder(folder, quizId);
+        return this.quizMapperFacade.toDTO(quiz);
     }
 
     @Override
-    public QuizDTO addQuizToFolder(ObjectId courseId, ObjectId folderId, QuizDTO quizDTO) {
-        Optional<Course> courseOpt = this.courseRepository.findByIdOptional(courseId);
-        if (courseOpt.isEmpty()) {
-            throw new NotFoundException("Course not found");
-        }
-
-        Folder folder = courseOpt.get().folders.stream()
-                .filter(f -> f.id.equals(folderId))
-                .findFirst()
-                .orElseThrow(() -> new NotFoundException("Folder not found in course"));
+    public QuizDTO addQuizToFolder(CourseDTO courseDTO, ObjectId folderId, QuizDTO quizDTO) {
+        Course course = this.courseMapper.toEntity(courseDTO);
+        Folder folder = this.findFolderInCourse(course, folderId);
 
         Quiz quiz = this.quizMapperFacade.toEntity(quizDTO);
 
         folder.quizzes.add(quiz);
-        this.courseRepository.update(courseOpt.get());
+        this.courseRepository.update(course);
 
         return this.quizMapperFacade.toDTO(quiz);
     }
 
     @Override
-    public QuizDTO updateQuizInFolder(ObjectId courseId, ObjectId folderId, ObjectId quizId, QuizDTO quizDTO) {
+    public QuizDTO updateQuizInFolder(CourseDTO courseDTOd, ObjectId folderId, ObjectId quizId, QuizDTO quizDTO) {
         if (quizDTO == null) throw new BadRequestException("QuizDTO is null");
 
-        Optional<Course> courseOpt = this.courseRepository.findByIdOptional(courseId);
-        if (courseOpt.isEmpty()) {
-            throw new NotFoundException("Course not found");
-        }
-
-        Folder folder = courseOpt.get().folders.stream()
-                .filter(f -> f.id.equals(folderId))
-                .findFirst()
-                .orElseThrow(() -> new NotFoundException("Folder not found in course"));
-
-        Quiz existingQuiz = folder.quizzes.stream()
-                .filter(q -> q.id.equals(quizId))
-                .findFirst()
-                .orElseThrow(() -> new NotFoundException("Quiz not found in folder"));
+        Course course = this.courseMapper.toEntity(courseDTOd);
+        Folder folder = this.findFolderInCourse(course, folderId);
+        Quiz existingQuiz = this.findQuizInFolder(folder, quizId);
 
         Quiz updatedQuiz = this.quizMapperFacade.toEntity(quizDTO);
         updatedQuiz.createdAt = quizDTO.getCreatedAt();
@@ -94,40 +79,33 @@ public class QuizService implements IQuizService {
 
         int index = folder.quizzes.indexOf(existingQuiz);
         folder.quizzes.set(index, updatedQuiz);
-        this.courseRepository.update(courseOpt.get());
+        this.courseRepository.update(course);
 
         return this.quizMapperFacade.toDTO(updatedQuiz);
     }
 
     @Override
-    public void removeQuizFromFolder(ObjectId courseId, ObjectId folderId, ObjectId quizId) {
-        Optional<Course> courseOpt = this.courseRepository.findByIdOptional(courseId);
-        if (courseOpt.isEmpty()) {
-            throw new NotFoundException("Course not found");
-        }
+    public void removeQuizFromFolder(CourseDTO courseDTO, ObjectId folderId, ObjectId quizId) {
+        Course course = this.courseMapper.toEntity(courseDTO);
+        Folder folder = this.findFolderInCourse(course, folderId);
+        Quiz quiz = this.findQuizInFolder(folder, quizId);
+        folder.quizzes.remove(quiz);
+        this.courseRepository.update(course);
 
-        Folder folder = courseOpt.get().folders.stream()
-                .filter(f -> f.id.equals(folderId))
-                .findFirst()
-                .orElseThrow(() -> new NotFoundException("Folder not found in course"));
-
-        boolean removed = folder.quizzes.removeIf(q -> q.id.equals(quizId));
-        if (!removed) {
-            throw new NotFoundException("Quiz not found in folder");
-        }
-
-        this.courseRepository.update(courseOpt.get());
     }
 
-    private Folder getFolderFromCourse(ObjectId courseId, ObjectId folderId) {
-        Optional<Course> courseOpt = this.courseRepository.findByIdOptional(courseId);
-        if (courseOpt.isEmpty()) {
-            throw new NotFoundException("Course not found");
-        }
-
-        return courseOpt.get().folders.stream()
+    private Folder findFolderInCourse(Course course, ObjectId folderId) {
+        return course.folders.stream()
                 .filter(f -> f.id.equals(folderId))
                 .findFirst()
-                .orElseThrow(() -> new NotFoundException("Folder not found in course"));
+                .orElseThrow(() -> new NotFoundException("Folder with id " + folderId + " not found in course"));
+    }
+
+    private Quiz findQuizInFolder(Folder folder, ObjectId quizId) {
+        return folder.quizzes
+                .stream()
+                .filter(q -> q.id.equals(quizId))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("Quiz with id " + quizId + " not found in folder"));
     }
 }

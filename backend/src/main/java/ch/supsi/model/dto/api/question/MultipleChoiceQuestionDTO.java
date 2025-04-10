@@ -21,6 +21,7 @@ public class MultipleChoiceQuestionDTO extends QuestionDTO {
     public MultipleChoiceQuestionDTO() {
         super(QuestionType.MULTIPLE_CHOICE);
     }
+
     public List<String> getChoices() {
         return choices;
     }

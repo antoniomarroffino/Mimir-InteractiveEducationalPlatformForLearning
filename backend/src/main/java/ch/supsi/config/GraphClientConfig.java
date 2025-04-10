@@ -5,13 +5,13 @@ import com.azure.identity.ClientSecretCredentialBuilder;
 import com.microsoft.graph.authentication.TokenCredentialAuthProvider;
 import com.microsoft.graph.requests.GraphServiceClient;
 import io.quarkus.runtime.annotations.RegisterForReflection;
-import jakarta.inject.Singleton;
+import jakarta.enterprise.context.ApplicationScoped;
 import okhttp3.Request;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import java.util.Collections;
 
-@Singleton
+@ApplicationScoped
 @RegisterForReflection(
         targets = {
                 com.microsoft.graph.requests.UserCollectionRequest.class,

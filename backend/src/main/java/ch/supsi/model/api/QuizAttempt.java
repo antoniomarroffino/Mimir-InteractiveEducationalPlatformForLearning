@@ -33,11 +33,11 @@ public class QuizAttempt {
     public List<QuestionResponse> responses;
 
     @Schema(description = "List of badges")
-    public List<Badge> badges = new ArrayList<>();
+    public List<Badge> badges;
 
 
     public QuizAttempt() {
-
+        this.badges = new ArrayList<>();
     }
 
     public QuizAttempt(ObjectId quizPublicationId, String userAzureOID, LocalDateTime startedAt, LocalDateTime completedAt, List<QuestionResponse> responses) {

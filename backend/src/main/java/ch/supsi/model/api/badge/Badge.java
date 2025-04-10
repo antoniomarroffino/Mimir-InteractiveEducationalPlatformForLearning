@@ -11,11 +11,12 @@ public class Badge {
     public String assignedBy;
 
     public Badge() {
+        this.assignedAt = LocalDateTime.now();
     }
 
     public Badge(BadgeType type, String assignedBy) {
+        this();
         this.type = type;
         this.assignedBy = assignedBy;
-        this.assignedAt = LocalDateTime.now();
     }
 }

@@ -32,36 +32,30 @@ public class CourseService implements ICourseService {
 
     @Override
     public List<CourseDTO> getTeacherCourses(User user) {
-        if (user == null)
-            throw new InternalServerErrorException();
+        this.verifyUserIsValid(user);
 
         return user.coursesId.stream()
-                .map(courseId -> this.courseRepository.findByIdOptional(new ObjectId(courseId)))
-                .map(Optional::orElseThrow)
+                .map(ObjectId::new)
+                .map(this::findCourseById)
                 .map(this.courseMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<CourseDTO> getAllCourses() {
-        return this.courseRepository.findAll().stream()
+        return this.courseRepository.listAll().stream()
                 .map(this.courseMapper::toDTO)
                 .toList();
     }
 
     @Override
     public CourseDTO getCourseById(ObjectId id) {
-        Optional<Course> courseOpt = this.courseRepository.findByIdOptional(id);
-        if (courseOpt.isEmpty()) {
-            throw new NotFoundException("Course " + id + " not found");
-        }
-        return this.courseMapper.toDTO(courseOpt.get());
+        return this.courseMapper.toDTO(this.findCourseById(id));
     }
 
     @Override
     public CourseDTO createCourse(CourseDTO courseDTO, User currentUser) {
-        if (currentUser == null)
-            throw new InternalServerErrorException();
+        this.verifyUserIsValid(currentUser);
 
         this.verifyCourseIsValid(courseDTO);
 
@@ -75,67 +69,72 @@ public class CourseService implements ICourseService {
 
     @Override
     public void assignCourse(ObjectId id, User currentUser) {
-        if (currentUser == null)
-            throw new InternalServerErrorException();
+        this.verifyUserIsValid(currentUser);
 
-        Optional<Course> courseOpt = this.courseRepository.findByIdOptional(id);
-        if (courseOpt.isEmpty())
-            throw new NotFoundException("Course " + id + " not found");
+        Course course = this.findCourseById(id);
 
-        this.userRepository.addCourseToUser(courseOpt.get().id.toString(), currentUser.azureOid);
+        this.userRepository.addCourseToUser(course.id.toString(), currentUser.azureOid);
     }
 
     @Override
     public void leftCourse(ObjectId id, User currentUser) {
-        if (currentUser == null)
-            throw new InternalServerErrorException();
+        this.verifyUserIsValid(currentUser);
 
-        this.userRepository.removeCourseFromUser(id.toString(), currentUser.azureOid);
+        Course course = this.findCourseById(id);
+
+        this.userRepository.removeCourseFromUser(course.id.toString(), currentUser.azureOid);
     }
 
     @Override
     public CourseDTO updateCourse(ObjectId id, CourseDTO courseDTO, User currentUser) {
-        if (currentUser == null)
-            throw new InternalServerErrorException();
+        this.verifyUserIsValid(currentUser);
 
         this.verifyCourseIsValid(courseDTO);
 
-        Optional<Course> courseOpt = this.courseRepository.findByIdOptional(id);
-        if (courseOpt.isEmpty())
-            throw new NotFoundException("Course " + id + " not found");
+        Course course = this.findCourseById(id);
 
-        if (!currentUser.coursesId.contains(id.toString()))
-            throw new ForbiddenException("You are not authorized to update this course");
-
-        Course existingCourse = courseOpt.get();
+        this.verifyUserIsOwner(id, currentUser);
 
         String newName = courseDTO.getName();
-        if (!existingCourse.name.equalsIgnoreCase(newName)) {
-            existingCourse.name = courseDTO.getName();
+        if (!course.name.equalsIgnoreCase(newName)) {
+            course.name = courseDTO.getName();
         }
 
-        existingCourse.description = courseDTO.getDescription();
+        course.description = courseDTO.getDescription();
 
-        this.courseRepository.update(existingCourse);
+        this.courseRepository.update(course);
 
-        return this.courseMapper.toDTO(existingCourse);
+        return this.courseMapper.toDTO(course);
     }
 
     @Override
     public void deleteCourse(ObjectId id, User currentUser) {
-        if (currentUser == null)
-            throw new InternalServerErrorException();
+        this.verifyUserIsValid(currentUser);
 
-        Optional<Course> courseOpt = this.courseRepository.findByIdOptional(id);
-        if (courseOpt.isEmpty())
-            throw new NotFoundException("Course " + id + " not found");
+        Course course = this.findCourseById(id);
 
-        if (!currentUser.coursesId.contains(id.toString()))
-            throw new ForbiddenException("You are not authorized to delete this course");
-
+        this.verifyUserIsOwner(id, currentUser);
 
         this.userRepository.removeCourseFromUser(id.toString(), currentUser.azureOid);
-        this.courseRepository.delete(courseOpt.get());
+        this.courseRepository.delete(course);
+    }
+
+    private void verifyUserIsValid(User user){
+        if (user == null)
+            throw new InternalServerErrorException("User logged is null");
+    }
+
+
+    private void verifyUserIsOwner(ObjectId courseId, User user) {
+        if (!user.coursesId.contains(courseId.toString()))
+            throw new ForbiddenException("You are not authorized to update or delete this course");
+    }
+
+    private Course findCourseById(ObjectId courseId) {
+        Optional<Course> courseOpt = this.courseRepository.findByIdOptional(courseId);
+        if (courseOpt.isEmpty())
+            throw new NotFoundException("Course " + courseId + " not found");
+        return courseOpt.get();
     }
 
     private void verifyCourseIsValid(CourseDTO courseDTO) {
@@ -149,7 +148,7 @@ public class CourseService implements ICourseService {
         }
 
         if (this.isCourseNameDuplicated(courseDTO.getName())) {
-            throw new BadRequestException("Course name '" + courseName + "' already exists");
+            throw new BadRequestException("Course name " + courseName + " already exists");
         }
     }
 

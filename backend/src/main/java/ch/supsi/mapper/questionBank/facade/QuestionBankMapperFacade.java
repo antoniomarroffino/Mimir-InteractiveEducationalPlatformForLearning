@@ -19,7 +19,8 @@ import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class QuestionBankMapperFacade implements IQuestionBankMapperFacade {
-    private final QuestionBankMapper questionBankMapper = new QuestionBankMapper();
+    @Inject
+    QuestionBankMapper questionBankMapper;
 
     @Inject
     IQuestionMapperBuilder questionMapperBuilder;

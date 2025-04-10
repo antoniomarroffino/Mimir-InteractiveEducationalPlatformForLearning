@@ -1,6 +1,5 @@
 package ch.supsi.service.quizpublication;
 
-import ch.supsi.model.api.QuizPublication;
 import ch.supsi.model.dto.api.QuizPublicationDTO;
 import org.bson.types.ObjectId;
 
@@ -13,11 +12,11 @@ public interface IQuizPublicationService {
 
     QuizPublicationDTO getPublicationByCode(String code);
 
-    QuizPublicationDTO updateQuizPublication(QuizPublicationDTO quizPublicationDTO);
+    QuizPublicationDTO updateQuizPublication(ObjectId publicationId, QuizPublicationDTO quizPublicationDTO);
 
     QuizPublicationDTO deactivateQuizPublication(ObjectId publicationId);
 
-    boolean deleteQuizPublication(ObjectId publicationId);
+    void deleteQuizPublication(ObjectId publicationId);
 
     List<QuizPublicationDTO> getPublicationsByQuizId(ObjectId quizId);
 }

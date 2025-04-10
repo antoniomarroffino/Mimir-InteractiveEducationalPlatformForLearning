@@ -1,18 +1,19 @@
 package ch.supsi.service.folder;
 
+import ch.supsi.model.dto.api.CourseDTO;
 import ch.supsi.model.dto.api.FolderDTO;
 import org.bson.types.ObjectId;
 
 import java.util.List;
 
 public interface IFolderService {
-    List<FolderDTO> getFoldersInCourse(ObjectId courseId);
+    List<FolderDTO> getFoldersInCourse(CourseDTO courseDTO);
 
-    FolderDTO getFolderInCourse(ObjectId courseId, ObjectId folderId);
+    FolderDTO getFolderInCourse(CourseDTO courseDTO, ObjectId folderId);
 
-    FolderDTO addFolderToCourse(ObjectId courseId, FolderDTO folderDTO);
+    FolderDTO addFolderToCourse(CourseDTO courseDTO, FolderDTO folderDTO);
 
-    FolderDTO updateFolder(ObjectId courseId, ObjectId folderId, FolderDTO folderDTO);
+    FolderDTO updateFolder(CourseDTO courseDTO, ObjectId folderId, FolderDTO folderDTO);
 
-    void deleteFolder(ObjectId courseId, ObjectId folderId);
+    void deleteFolder(CourseDTO courseDTO, ObjectId folderId);
 }

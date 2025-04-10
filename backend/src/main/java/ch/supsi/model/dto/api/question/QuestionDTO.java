@@ -24,16 +24,14 @@ public abstract class QuestionDTO {
 
     @Schema(required = true)
     @NotNull(message = "Question type cannot be null")
-    private QuestionType type;
+    private final QuestionType type;
 
     private String questionBankId;
-
-    public QuestionDTO() {
-    }
 
     public QuestionDTO(QuestionType type) {
         this.type = type;
     }
+
     public String getId() {
         return this.id;
     }
@@ -52,10 +50,6 @@ public abstract class QuestionDTO {
 
     public QuestionType getType() {
         return this.type;
-    }
-
-    public void setType(QuestionType type) {
-        this.type = type;
     }
 
     public String getQuestionBankId() {

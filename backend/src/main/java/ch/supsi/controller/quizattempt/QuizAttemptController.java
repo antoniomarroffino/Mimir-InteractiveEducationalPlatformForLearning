@@ -3,14 +3,13 @@ package ch.supsi.controller.quizattempt;
 import ch.supsi.model.api.badge.BadgeType;
 import ch.supsi.model.dto.api.QuizAttemptDTO;
 import ch.supsi.service.quizattempt.IQuizAttemptService;
+import ch.supsi.service.user.IUserService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
-import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.SecurityContext;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
@@ -28,7 +27,11 @@ public class QuizAttemptController {
     @Inject
     IQuizAttemptService quizAttemptService;
 
+    @Inject
+    IUserService userService;
+
     @GET
+    @RolesAllowed({"USER","TEACHER"})
     @Path("/user/{userAzureOID}")
     @Operation(summary = "Get all quiz attempts for a specific user")
     @APIResponse(
@@ -53,6 +56,7 @@ public class QuizAttemptController {
     }
 
     @POST
+    @RolesAllowed({"USER","TEACHER"})
     @Operation(summary = "Create a new quiz attempt")
     @APIResponse(responseCode = "201", description = "Quiz attempt created successfully", content = @Content(
             mediaType = MediaType.APPLICATION_JSON,
@@ -92,6 +96,8 @@ public class QuizAttemptController {
         return Response.ok(attempts).build();
     }
 
+
+    //TODO: Da levare questo metodo doppione "getPublicationStats"
     @GET
     @Path("/publications/{publicationId}/stats")
     @RolesAllowed("TEACHER")
@@ -144,19 +150,12 @@ public class QuizAttemptController {
     )
     public Response assignBadge(
             @PathParam("attemptId") String attemptId,
-            @QueryParam("type") @Schema(implementation = BadgeType.class) BadgeType badgeType,
-            @Context SecurityContext securityContext
+            @QueryParam("type") @Schema(implementation = BadgeType.class) BadgeType badgeType
     ) {
-        if (badgeType == null) {
-            throw new BadRequestException("Badge type must be specified");
-        }
-
-        String teacherAzureOid = securityContext.getUserPrincipal().getName();
-
         this.quizAttemptService.assignBadge(
                 new ObjectId(attemptId),
                 badgeType,
-                teacherAzureOid
+                this.userService.getOidFromJWT()
         );
 
         return Response.ok().build();

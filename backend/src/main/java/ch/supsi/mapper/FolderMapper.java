@@ -25,11 +25,9 @@ public class FolderMapper implements IBaseMapper<Folder, FolderDTO> {
         dto.setId(folder.id.toString());
         dto.setName(folder.name);
 
-        if (folder.quizzes != null) {
-            dto.setQuizzes(folder.quizzes.stream()
-                    .map(this.quizMapperFacade::toDTO)
-                    .collect(Collectors.toList()));
-        }
+        dto.setQuizzes(folder.quizzes.stream()
+                .map(this.quizMapperFacade::toDTO)
+                .collect(Collectors.toList()));
 
         return dto;
     }
@@ -46,11 +44,9 @@ public class FolderMapper implements IBaseMapper<Folder, FolderDTO> {
             folder.id = new ObjectId(dto.getId());
         }
 
-        if (dto.getQuizzes() != null) {
-            folder.quizzes = dto.getQuizzes().stream()
-                    .map(this.quizMapperFacade::toEntity)
-                    .collect(Collectors.toList());
-        }
+        folder.quizzes = dto.getQuizzes().stream()
+                .map(this.quizMapperFacade::toEntity)
+                .collect(Collectors.toList());
 
         return folder;
     }
