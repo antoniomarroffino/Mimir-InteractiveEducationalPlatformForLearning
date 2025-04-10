@@ -10,7 +10,6 @@ public abstract class AbstractQuestionMapper<E extends Question, D extends Quest
     protected void mapCommonFieldsQuestionToQuestionDTO(Question question, QuestionDTO dto) {
         dto.setId(question.id != null ? question.id.toString() : null);
         dto.setQuestionText(question.questionText);
-        dto.setType(question.type);
         dto.setQuestionBankId(question.questionBankId);
     }
 

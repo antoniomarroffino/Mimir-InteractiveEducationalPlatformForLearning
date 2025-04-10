@@ -23,22 +23,14 @@ public abstract class QuestionResponseDTO {
 
     @Schema(required = true)
     @NotNull(message = "Response type cannot be null")
-    private QuestionType responseType;
+    private final QuestionType responseType;
 
     @Schema(required = true, description = "ID of the question this response is for")
     @NotNull(message = "Question ID cannot be null")
     private String questionId;
 
-    public QuestionResponseDTO() {
-    }
-
     public QuestionResponseDTO(QuestionType responseType) {
         this.responseType = responseType;
-    }
-
-    public QuestionResponseDTO(QuestionType responseType, String questionId) {
-        this.responseType = responseType;
-        this.questionId = questionId;
     }
 
     public String getId() {
@@ -51,10 +43,6 @@ public abstract class QuestionResponseDTO {
 
     public QuestionType getResponseType() {
         return responseType;
-    }
-
-    public void setResponseType(QuestionType responseType) {
-        this.responseType = responseType;
     }
 
     public String getQuestionId() {

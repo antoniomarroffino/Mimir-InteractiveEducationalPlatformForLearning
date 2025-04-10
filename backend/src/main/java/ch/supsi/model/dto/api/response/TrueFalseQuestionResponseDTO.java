@@ -15,10 +15,6 @@ public class TrueFalseQuestionResponseDTO extends QuestionResponseDTO {
         super(QuestionType.TRUE_FALSE);
     }
 
-    public TrueFalseQuestionResponseDTO(String questionId) {
-        super(QuestionType.TRUE_FALSE, questionId);
-    }
-
     public Boolean getSelectedAnswer() {
         return selectedAnswer;
     }
