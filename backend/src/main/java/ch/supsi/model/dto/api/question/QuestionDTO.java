@@ -28,6 +28,10 @@ public abstract class QuestionDTO {
 
     private String questionBankId;
 
+    @Schema(description = "Points awarded for correct answer", defaultValue = "1")
+    @NotNull(message = "Points cannot be null")
+    private Integer points = 1;
+
     public QuestionDTO() {
     }
 
@@ -64,5 +68,13 @@ public abstract class QuestionDTO {
 
     public void setQuestionBankId(String questionBankId) {
         this.questionBankId = questionBankId;
+    }
+
+    public Integer getPoints() {
+        return this.points;
+    }
+
+    public void setPoints(Integer points) {
+        this.points = points != null ? points : 1;
     }
 }
