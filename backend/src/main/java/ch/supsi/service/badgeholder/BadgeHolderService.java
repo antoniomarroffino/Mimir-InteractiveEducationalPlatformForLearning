@@ -25,7 +25,7 @@ public class BadgeHolderService implements IBadgeHolderService {
 
     @Override
     public List<BadgeHolderDTO> getAllBadgeHolders() {
-        return this.badgeHolderRepository.findAll().stream()
+        return this.badgeHolderRepository.listAll().stream()
                 .map(this.badgeHolderMapper::toDTO)
                 .toList();
     }
@@ -89,12 +89,8 @@ public class BadgeHolderService implements IBadgeHolderService {
         Optional<BadgeHolder> badgeHolderOpt = this.badgeHolderRepository.findByAzureOIDOptional(azureOID);
         BadgeHolder badgeHolder;
 
-        if (badgeHolderOpt.isEmpty()) {
-            // Create new badge holder if it doesn't exist
-            badgeHolder = new BadgeHolder(azureOID);
-        } else {
-            badgeHolder = badgeHolderOpt.get();
-        }
+        // Create new badge holder if it doesn't exist
+        badgeHolder = badgeHolderOpt.orElseGet(() -> new BadgeHolder(azureOID));
 
         badgeHolder.badges.add(badge);
 

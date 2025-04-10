@@ -15,12 +15,14 @@ public class BadgeHolder {
     @BsonId
     public ObjectId id;
     public String azureOID;
-    public List<Badge> badges = new ArrayList<>();
+    public List<Badge> badges;
 
     public BadgeHolder() {
+        this.badges = new ArrayList<>();
     }
 
     public BadgeHolder(String azureOID) {
+        this();
         this.azureOID = azureOID;
     }
 }

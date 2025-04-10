@@ -32,11 +32,8 @@ public abstract class QuestionResponseDTO {
     @Schema(description = "Time spent on this question in seconds")
     private Integer timeSpent;
 
-    public QuestionResponseDTO() {
-        this.timeSpent = 0;
-    }
-
     public QuestionResponseDTO(QuestionType responseType) {
+        this.timeSpent = 0;
         this.responseType = responseType;
     }
 

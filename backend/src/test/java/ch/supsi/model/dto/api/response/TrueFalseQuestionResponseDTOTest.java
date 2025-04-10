@@ -21,6 +21,7 @@ public class TrueFalseQuestionResponseDTOTest {
         assertNull(question.getSelectedAnswer());
         assertNull(question.getId());
         assertNull(question.getQuestionId());
+        assertEquals(0, question.getTimeSpent());
     }
 
     @Test
@@ -28,15 +29,18 @@ public class TrueFalseQuestionResponseDTOTest {
     void test02SetAllFieldsCorrectly() {
         String id = new ObjectId().toString();
         String questionId = new ObjectId().toString();
+        Integer timeSpent = 10;
 
         TrueFalseQuestionResponseDTO question = new TrueFalseQuestionResponseDTO();
         question.setId(id);
         question.setQuestionId(questionId);
         question.setSelectedAnswer(true);
+        question.setTimeSpent(timeSpent);
 
         assertEquals(QuestionType.TRUE_FALSE, question.getResponseType());
         assertEquals(id, question.getId());
         assertEquals(questionId, question.getQuestionId());
         assertTrue(question.getSelectedAnswer());
+        assertEquals(timeSpent, question.getTimeSpent());
     }
 }

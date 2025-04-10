@@ -14,12 +14,14 @@ public class BadgeHolderDTO {
     @NotBlank(message = "Azure OID cannot be null or empty")
     private String azureOID;
 
-    private List<Badge> badges = new ArrayList<>();
+    private List<Badge> badges;
 
     public BadgeHolderDTO() {
+        this.badges = new ArrayList<>();
     }
 
     public BadgeHolderDTO(String azureOID) {
+        this();
         this.azureOID = azureOID;
     }
 

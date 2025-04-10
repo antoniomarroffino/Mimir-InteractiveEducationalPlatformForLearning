@@ -15,7 +15,7 @@ public class BadgeHolderMapper implements IBaseMapper<BadgeHolder, BadgeHolderDT
         }
 
         BadgeHolderDTO dto = new BadgeHolderDTO();
-        dto.setId(badgeHolder.id != null ? badgeHolder.id.toString() : null);
+        dto.setId(badgeHolder.id.toString());
         dto.setAzureOID(badgeHolder.azureOID);
         dto.setBadges(badgeHolder.badges);
 

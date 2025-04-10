@@ -33,18 +33,21 @@ public class MultipleChoiceQuestionResponseDTOTest {
         String id = new ObjectId().toString();
         String questionId = new ObjectId().toString();
         Integer selectedAnswerIndex = 1;
+        Integer timeSpent = 10;
         List<Integer> selectedAnswerIndexes = List.of(selectedAnswerIndex);
 
         MultipleChoiceQuestionResponseDTO multipleChoiceQuestionResponseDTO = new MultipleChoiceQuestionResponseDTO();
         multipleChoiceQuestionResponseDTO.setId(id);
         multipleChoiceQuestionResponseDTO.setQuestionId(questionId);
         multipleChoiceQuestionResponseDTO.setSelectedAnswerIndexes(selectedAnswerIndexes);
+        multipleChoiceQuestionResponseDTO.setTimeSpent(timeSpent);
 
         assertEquals(QuestionType.MULTIPLE_CHOICE, multipleChoiceQuestionResponseDTO.getResponseType());
         assertEquals(id, multipleChoiceQuestionResponseDTO.getId());
         assertEquals(questionId, multipleChoiceQuestionResponseDTO.getQuestionId());
         assertEquals(selectedAnswerIndexes.size(), multipleChoiceQuestionResponseDTO.getSelectedAnswerIndexes().size());
         assertEquals(selectedAnswerIndex, multipleChoiceQuestionResponseDTO.getSelectedAnswerIndexes().getFirst());
+        assertEquals(timeSpent, multipleChoiceQuestionResponseDTO.getTimeSpent());
     }
 
 }

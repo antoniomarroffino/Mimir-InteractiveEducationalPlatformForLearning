@@ -26,9 +26,6 @@ public class BadgeHolderController {
     @Inject
     IBadgeHolderService badgeHolderService;
 
-    @Inject
-    IUserService userService;
-
     @GET
     @RolesAllowed("TEACHER")
     @Operation(summary = "Get all badge holders")

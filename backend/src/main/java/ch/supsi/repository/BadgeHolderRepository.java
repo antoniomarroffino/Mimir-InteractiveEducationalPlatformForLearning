@@ -10,10 +10,6 @@ import java.util.Optional;
 
 @ApplicationScoped
 public class BadgeHolderRepository implements PanacheMongoRepository<BadgeHolder> {
-    public List<BadgeHolder> listAll() {
-        return mongoCollection().find().into(new ArrayList<>());
-    }
-
     public Optional<BadgeHolder> findByAzureOIDOptional(String azureOID) {
         return find("{'azureOID': ?1}", azureOID).firstResultOptional();
     }
