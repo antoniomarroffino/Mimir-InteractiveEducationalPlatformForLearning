@@ -105,3 +105,15 @@
 .hover\:float:hover {
     animation: float 2s ease-in-out infinite;
 }
+
+.profile-field {
+    @apply grid grid-cols-1 md:grid-cols-4 gap-4 items-center p-4 rounded-lg hover:bg-base-200 transition-all duration-200;
+}
+
+.profile-label {
+    @apply flex items-center gap-2 text-base-content/70 md:col-span-1;
+}
+
+.profile-value {
+    @apply md:col-span-3 p-3 bg-base-200 rounded-lg font-medium md:bg-transparent md:p-0;
+}
