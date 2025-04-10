@@ -7,7 +7,9 @@ import ch.supsi.model.dto.api.question.TrueFalseQuestionDTO;
 public class TrueFalseQuestionStrategy extends AbstractQuestionStrategy<TrueFalseQuestion, TrueFalseQuestionDTO> {
     @Override
     public Question createQuestion() {
-        return new TrueFalseQuestion();
+        TrueFalseQuestion question = new TrueFalseQuestion();
+        question.points = 1;
+        return question;
     }
 
     @Override

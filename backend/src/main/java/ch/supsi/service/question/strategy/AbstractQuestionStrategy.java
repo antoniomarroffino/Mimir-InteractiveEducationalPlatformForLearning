@@ -11,5 +11,8 @@ public abstract class AbstractQuestionStrategy<E extends Question, D extends Que
 
         if (!entity.questionText.equals(questionDTOUpdated.getQuestionText()))
             entity.questionText = questionDTOUpdated.getQuestionText();
+
+        if (!entity.points.equals(questionDTOUpdated.getPoints()))
+            entity.points = questionDTOUpdated.getPoints();
     }
 }

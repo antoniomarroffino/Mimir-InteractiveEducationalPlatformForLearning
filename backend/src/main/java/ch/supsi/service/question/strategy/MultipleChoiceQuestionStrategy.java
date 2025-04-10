@@ -7,7 +7,9 @@ import ch.supsi.model.dto.api.question.MultipleChoiceQuestionDTO;
 public class MultipleChoiceQuestionStrategy extends AbstractQuestionStrategy<MultipleChoiceQuestion, MultipleChoiceQuestionDTO> {
     @Override
     public Question createQuestion() {
-        return new MultipleChoiceQuestion();
+        MultipleChoiceQuestion question = new MultipleChoiceQuestion();
+        question.points = 1;
+        return question;
     }
 
     @Override
