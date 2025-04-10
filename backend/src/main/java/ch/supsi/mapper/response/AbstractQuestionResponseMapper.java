@@ -11,6 +11,7 @@ public abstract class AbstractQuestionResponseMapper<E extends QuestionResponse,
         dto.setId(response.id.toString());
         dto.setResponseType(response.responseType);
         dto.setQuestionId(response.questionId.toString());
+        dto.setTimeSpent(response.timeSpent);
     }
 
     protected void mapCommonFieldsResponseDTOToResponse(QuestionResponseDTO dto, QuestionResponse response) {
@@ -20,5 +21,6 @@ public abstract class AbstractQuestionResponseMapper<E extends QuestionResponse,
         if (dto.getQuestionId() != null) {
             response.questionId = new ObjectId(dto.getQuestionId());
         }
+        response.timeSpent = dto.getTimeSpent();
     }
 }

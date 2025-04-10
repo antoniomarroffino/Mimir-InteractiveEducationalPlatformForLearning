@@ -21,9 +21,12 @@ public abstract class QuestionResponse {
     @BsonProperty("responseType")
     public QuestionType responseType;
     public ObjectId questionId;
+    @BsonProperty("timeSpent")
+    public Integer timeSpent;
 
     protected QuestionResponse() {
         this.id = new ObjectId();
+        this.timeSpent = 0;
     }
 
     protected QuestionResponse(ObjectId questionId) {

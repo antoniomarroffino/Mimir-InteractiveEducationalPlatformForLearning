@@ -29,7 +29,11 @@ public abstract class QuestionResponseDTO {
     @NotNull(message = "Question ID cannot be null")
     private String questionId;
 
+    @Schema(description = "Time spent on this question in seconds")
+    private Integer timeSpent;
+
     public QuestionResponseDTO() {
+        this.timeSpent = 0;
     }
 
     public QuestionResponseDTO(QuestionType responseType) {
@@ -63,5 +67,13 @@ public abstract class QuestionResponseDTO {
 
     public void setQuestionId(String questionId) {
         this.questionId = questionId;
+    }
+
+    public Integer getTimeSpent() {
+        return timeSpent;
+    }
+
+    public void setTimeSpent(Integer timeSpent) {
+        this.timeSpent = timeSpent;
     }
 }
