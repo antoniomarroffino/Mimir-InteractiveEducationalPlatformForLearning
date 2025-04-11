@@ -1,13 +1,17 @@
 import React from 'react';
 
 interface QuizResultHeaderProps {
-    score: number;
+    earnedPoints: number;
+    totalPoints: number;
     totalQuestions: number;
 }
 
-export const QuizResultHeader: React.FC<QuizResultHeaderProps> = ({ score, totalQuestions }) => {
-    const getScoreEmoji = (score: number, total: number) => {
-        const percentage = (score / total) * 100;
+export const QuizResultHeader: React.FC<QuizResultHeaderProps> = ({
+                                                                      earnedPoints,
+                                                                      totalPoints
+                                                                  }) => {
+    const getScoreEmoji = (earned: number, total: number) => {
+        const percentage = (earned / total) * 100;
         if (percentage === 100) return '🏆';
         if (percentage >= 90) return '🌟';
         if (percentage >= 70) return '👍';
@@ -21,7 +25,7 @@ export const QuizResultHeader: React.FC<QuizResultHeaderProps> = ({ score, total
                 Quiz Results
             </h2>
             <div className="text-6xl mb-4">
-                {getScoreEmoji(score, totalQuestions)}
+                {getScoreEmoji(earnedPoints, totalPoints)}
             </div>
         </div>
     );
