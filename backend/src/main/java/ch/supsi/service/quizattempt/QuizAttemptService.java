@@ -4,8 +4,13 @@ import ch.supsi.mapper.QuizAttemptMapper;
 import ch.supsi.model.api.QuizAttempt;
 import ch.supsi.model.api.badge.Badge;
 import ch.supsi.model.api.badge.BadgeType;
+import ch.supsi.model.api.question.Question;
+import ch.supsi.model.api.question.QuestionType;
+import ch.supsi.model.api.response.QuestionResponse;
 import ch.supsi.model.dto.api.QuizAttemptDTO;
+import ch.supsi.repository.QuestionRepository;
 import ch.supsi.repository.QuizAttemptRepository;
+import ch.supsi.service.response.IPointsCalculator;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.BadRequestException;
@@ -15,6 +20,7 @@ import org.bson.types.ObjectId;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -27,6 +33,12 @@ public class QuizAttemptService implements IQuizAttemptService {
     @Inject
     QuizAttemptMapper quizAttemptMapper;
 
+    @Inject
+    QuestionRepository questionRepository;
+
+    @Inject
+    Map<QuestionType, IPointsCalculator> pointsCalculators;
+
     @Override
     public QuizAttemptDTO createQuizAttempt(QuizAttemptDTO quizAttemptDTO) {
         this.verifyQuizAttemptIsValid(quizAttemptDTO);
@@ -34,6 +46,8 @@ public class QuizAttemptService implements IQuizAttemptService {
         QuizAttempt quizAttempt = this.quizAttemptMapper.toEntity(quizAttemptDTO);
         quizAttempt.startedAt = LocalDateTime.now();
         quizAttempt.completedAt = LocalDateTime.now();
+
+        calculateAndAssignPoints(quizAttempt);
 
         this.quizAttemptRepository.persist(quizAttempt);
         return this.quizAttemptMapper.toDTO(quizAttempt);
@@ -118,4 +132,23 @@ public class QuizAttemptService implements IQuizAttemptService {
             throw new BadRequestException("Quiz responses cannot be null or empty");
         }
     }
+
+    private void calculateAndAssignPoints(QuizAttempt quizAttempt) {
+        for (QuestionResponse response : quizAttempt.responses) {
+            Question question = questionRepository.findById(response.questionId);
+
+            if (question == null) {
+                throw new NotFoundException("Question not found: " + response.questionId);
+            }
+
+            IPointsCalculator calculator = pointsCalculators.get(response.responseType);
+            if (calculator == null) {
+                throw new IllegalStateException("No points calculator found for response type: " + response.responseType);
+            }
+
+            response.earnedPoints = calculator.calculatePoints(response, question);
+        }
+    }
+
+
 }

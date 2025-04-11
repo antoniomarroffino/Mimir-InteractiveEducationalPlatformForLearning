@@ -32,6 +32,10 @@ public abstract class QuestionResponseDTO {
     @Schema(description = "Time spent on this question in seconds")
     private Integer timeSpent;
 
+    @Schema(description = "Points earned for this response")
+    private Integer earnedPoints = 0;
+
+
     public QuestionResponseDTO() {
         this.timeSpent = 0;
     }
@@ -75,5 +79,13 @@ public abstract class QuestionResponseDTO {
 
     public void setTimeSpent(Integer timeSpent) {
         this.timeSpent = timeSpent;
+    }
+
+    public Integer getEarnedPoints() {
+        return earnedPoints;
+    }
+
+    public void setEarnedPoints(Integer earnedPoints) {
+        this.earnedPoints = earnedPoints != null ? earnedPoints : 0;
     }
 }
