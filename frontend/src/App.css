@@ -84,18 +84,6 @@
     animation: fadeIn 0.5s ease-out;
 }
 
-.perspective-1000 {
-    perspective: 1000px;
-}
-
-.rotate-y-180 {
-    transform: rotateY(180deg);
-}
-
-.backface-hidden {
-    backface-visibility: hidden;
-}
-
 @keyframes float {
     0% {
         transform: translateY(0px);
@@ -151,4 +139,25 @@
 .bg-pattern {
     background-image: radial-gradient(circle at 2px 2px, currentColor 1px, transparent 0);
     background-size: 24px 24px;
+}
+
+.perspective-1000 {
+    perspective: 1000px;
+}
+
+.rotate-y-180 {
+    transform: rotateY(180deg);
+}
+
+.backface-hidden {
+    backface-visibility: hidden;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+.animate-float {
+    animation: float 3s ease-in-out infinite;
 }
