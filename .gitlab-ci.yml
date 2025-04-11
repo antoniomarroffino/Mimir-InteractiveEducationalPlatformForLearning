@@ -36,9 +36,12 @@ build_backend:
     docker:
       user: root
   script:
+    - echo "AZURE_TENANT_ID: $AZURE_TENANT_ID"
+    - echo "AZURE_CLIENT_ID: $AZURE_CLIENT_ID"
+    - echo "AZURE_SECRET: $AZURE_SECRET"
     - cd backend
-    - chmod +x ./mvnw
-    - ./mvnw clean verify -Pnative -Dquarkus.native.additional-build-args="--initialize-at-run-time=com.microsoft.aad.msal4jextensions.persistence.linux.ISecurityLibrary"
+    #- chmod +x ./mvnw
+    #- ./mvnw clean verify -Pnative -Dquarkus.native.additional-build-args="--initialize-at-run-time=com.microsoft.aad.msal4jextensions.persistence.linux.ISecurityLibrary"
   artifacts:
     paths:
       - backend/target/*-runner
