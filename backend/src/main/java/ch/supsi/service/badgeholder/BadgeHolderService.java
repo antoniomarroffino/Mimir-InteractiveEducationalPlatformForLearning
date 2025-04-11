@@ -25,7 +25,9 @@ public class BadgeHolderService implements IBadgeHolderService {
 
     @Override
     public List<BadgeHolderDTO> getAllBadgeHolders() {
-        return this.badgeHolderRepository.listAll().stream()
+        return this.badgeHolderRepository
+                .listAll()
+                .stream()
                 .map(this.badgeHolderMapper::toDTO)
                 .toList();
     }

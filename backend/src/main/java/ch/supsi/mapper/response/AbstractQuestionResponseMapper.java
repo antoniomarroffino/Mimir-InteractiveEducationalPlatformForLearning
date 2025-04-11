@@ -17,9 +17,8 @@ public abstract class AbstractQuestionResponseMapper<E extends QuestionResponse,
         if (dto.getId() != null) {
             response.id = new ObjectId(dto.getId());
         }
-        if (dto.getQuestionId() != null) {
-            response.questionId = new ObjectId(dto.getQuestionId());
-        }
+        response.questionId = new ObjectId(dto.getQuestionId());
+
         response.timeSpent = dto.getTimeSpent();
     }
 }

@@ -8,7 +8,7 @@ import org.bson.types.ObjectId;
 public abstract class AbstractQuestionMapper<E extends Question, D extends QuestionDTO> implements IBaseMapper<E, D> {
 
     protected void mapCommonFieldsQuestionToQuestionDTO(Question question, QuestionDTO dto) {
-        dto.setId(question.id != null ? question.id.toString() : null);
+        dto.setId(question.id.toString());
         dto.setQuestionText(question.questionText);
         dto.setQuestionBankId(question.questionBankId);
     }

@@ -24,9 +24,7 @@ public class TrueFalseQuestionResponseMapper extends AbstractQuestionResponseMap
             return null;
         }
 
-        TrueFalseQuestionResponse response = new TrueFalseQuestionResponse(
-                dto.getQuestionId() != null ? new ObjectId(dto.getQuestionId()) : null
-        );
+        TrueFalseQuestionResponse response = new TrueFalseQuestionResponse();
         super.mapCommonFieldsResponseDTOToResponse(dto, response);
 
         response.selectedAnswer = dto.getSelectedAnswer();

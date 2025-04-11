@@ -25,6 +25,10 @@ public class QuestionResponseMapperBuilder implements IQuestionResponseMapperBui
     @Override
     @SuppressWarnings("unchecked")
     public IBaseMapper<? extends QuestionResponse, ? extends QuestionResponseDTO> getQuestionResponseDTOMapper(QuestionType responseType) {
+        QuestionResponseMapperHolder<? extends QuestionResponse, ? extends QuestionResponseDTO> questionResponseMapperHolder = this.mapperMap.get(responseType);
+        if(questionResponseMapperHolder == null) {
+            throw new UnsupportedOperationException("Question type not supported: " + responseType);
+        }
         return this.mapperMap.get(responseType).mapper();
     }
 }
