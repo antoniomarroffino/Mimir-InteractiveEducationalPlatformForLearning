@@ -12,6 +12,7 @@ structure:
     - '[ -d frontend ] || exit 1'
   only:
     - dev
+    - bug/96-fix-test-pipeline
 
 
 services:
@@ -25,6 +26,7 @@ variables:
   TESTCONTAINERS_HOST_OVERRIDE: dockerhost
   NPM_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/npm/"
   NPM_SCOPE: "@dti-isin"
+  AZURE_DOMAIN_NAME: "@testforprojectsupsi.onmicrosoft.com"
 
 build_backend:
   stage: build_backend
@@ -43,6 +45,8 @@ build_backend:
       - backend/target/backend-api-client
   only:
     - dev
+    - bug/96-fix-test-pipeline
+
 
 publish_npm_package:
   stage: publish_npm_package
