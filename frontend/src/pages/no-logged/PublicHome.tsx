@@ -3,148 +3,199 @@ import { QuizSessionComponent } from "../../components/common/QuizSessionCompone
 import { QuizHistorySection } from "../../components/quiz-results/QuizHistorySection";
 import { motion } from 'framer-motion';
 import mimirLogo from '../../assets/mimir-logo.png';
+import { FaBrain, FaTrophy, FaChartLine, FaRocket, FaGraduationCap } from 'react-icons/fa';
 
 const PublicHome = () => {
     const { user } = useAuth();
 
     return (
         <div className="min-h-screen bg-base-200">
+            {/* Hero Section */}
             <motion.div
-                className="hero min-h-[60vh] bg-gradient-to-r from-primary to-secondary relative overflow-hidden"
+                className="relative min-h-[80vh] bg-gradient-to-br from-primary via-secondary to-accent overflow-hidden"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ duration: 0.5 }}
+                transition={{ duration: 0.8 }}
             >
-                <div className="absolute inset-0 opacity-10 bg-grid-pattern"></div>
+                {/* Animated Background Pattern */}
+                <div className="absolute inset-0">
+                    <div className="absolute inset-0 bg-pattern opacity-10"></div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-base-200/50 to-transparent"></div>
+                </div>
 
-                <div className="hero-content text-center text-neutral-content flex flex-col">
-                    <motion.div
-                        initial={{ scale: 0.5, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ duration: 0.5 }}
-                        className="mb-8"
-                    >
-                        <img
-                            src={mimirLogo}
-                            alt="Mimir Logo"
-                            className="h-32 md:h-40 mx-auto"
-                        />
-                    </motion.div>
-                    <div className="max-w-3xl">
-                        <motion.h1
-                            className="text-5xl md:text-6xl font-bold mb-6"
-                            initial={{ y: -20 }}
-                            animate={{ y: 0 }}
+                <div className="relative container mx-auto px-4 h-full flex items-center">
+                    <div className="grid md:grid-cols-2 gap-12 items-center py-16">
+                        <motion.div
+                            initial={{ x: -50, opacity: 0 }}
+                            animate={{ x: 0, opacity: 1 }}
+                            transition={{ delay: 0.3, duration: 0.8 }}
+                            className="text-primary-content"
                         >
-                            Welcome to Mimir
-                        </motion.h1>
-                        <motion.p
-                            className="text-xl mb-8 opacity-90"
-                            initial={{ y: 20 }}
-                            animate={{ y: 0 }}
+                            <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+                                Transform Your Learning Journey
+                            </h1>
+                            <p className="text-xl md:text-2xl mb-8 opacity-90 leading-relaxed">
+                                Dive into an interactive learning experience with real-time feedback and personalized insights.
+                            </p>
+                            <div className="flex flex-wrap gap-4">
+                                <button className="btn btn-primary btn-lg gap-2 group">
+                                    Join in a quiz
+                                    <FaRocket className="transform group-hover:translate-x-1 transition-transform" />
+                                </button>
+                                <button className="btn btn-ghost btn-lg text-primary-content">
+                                    Learn More
+                                </button>
+                            </div>
+                        </motion.div>
+                        <motion.div
+                            initial={{ scale: 0.8, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            transition={{ delay: 0.5, duration: 0.8 }}
+                            className="flex justify-center"
                         >
-                            Enhance your learning journey through interactive quizzes and real-time feedback
-                        </motion.p>
-                        {!user && (
-                            <motion.div
-                                initial={{ scale: 0.9, opacity: 0 }}
-                                animate={{ scale: 1, opacity: 1 }}
-                                transition={{ delay: 0.2 }}
-                            >
-
-                            </motion.div>
-                        )}
+                            <img
+                                src={mimirLogo}
+                                alt="Mimir Logo"
+                                className="h-64 md:h-80 filter drop-shadow-2xl"
+                            />
+                        </motion.div>
                     </div>
                 </div>
             </motion.div>
 
-            <div className="container mx-auto px-4 py-12">
-                <div className="space-y-16">
-                    <motion.section
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.3 }}
-                        className="bg-base-100 rounded-3xl shadow-xl p-8"
-                    >
-                        <div className="text-center mb-8">
-                            <h2 className="text-3xl font-bold mb-4">
+            {/* Stats Section */}
+            <motion.div
+                initial={{ y: 50, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.8 }}
+                className="container mx-auto px-4 -mt-16 relative z-10"
+            >
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    {[
+                        { value: "10K+", label: "Students" },
+                        { value: "500+", label: "Quizzes" },
+                        { value: "95%", label: "Success Rate" },
+                        { value: "24/7", label: "Support" }
+                    ].map((stat, index) => (
+                        <div key={index}
+                             className="bg-base-100 rounded-2xl p-6 shadow-xl text-center
+                                      transform hover:-translate-y-1 transition-transform duration-300">
+                            <div className="text-3xl font-bold text-primary mb-2">{stat.value}</div>
+                            <div className="text-base-content/70">{stat.label}</div>
+                        </div>
+                    ))}
+                </div>
+            </motion.div>
+
+            {/* Quiz Session Section */}
+            <div className="container mx-auto px-4 py-24">
+                <motion.section
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 1 }}
+                    className="bg-base-100 rounded-3xl shadow-xl p-12 relative overflow-hidden"
+                >
+                    <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-secondary/5"></div>
+                    <div className="relative">
+                        <div className="text-center mb-12">
+                            <FaGraduationCap className="text-5xl text-primary mx-auto mb-6" />
+                            <h2 className="text-4xl font-bold mb-4">
                                 Join a Quiz Session
                             </h2>
-                            <p className="text-base-content/70">
-                                Enter the access code to participate in a quiz session
+                            <p className="text-xl text-base-content/70 max-w-2xl mx-auto">
+                                Enter your access code below to start your learning journey
                             </p>
                         </div>
                         <QuizSessionComponent />
-                    </motion.section>
+                    </div>
+                </motion.section>
 
-                    {user && (
-                        <motion.section
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.4 }}
-                        >
-                            <QuizHistorySection />
-                        </motion.section>
-                    )}
-                </div>
+                {user && (
+                    <motion.section
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 1.2 }}
+                        className="mt-16"
+                    >
+                        <QuizHistorySection />
+                    </motion.section>
+                )}
             </div>
 
+            {/* Features Section */}
             <motion.section
-                className="py-16 bg-base-100"
+                className="py-24 bg-base-100"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
+                transition={{ delay: 1.4 }}
             >
                 <div className="container mx-auto px-4">
-                    <div className="flex items-center justify-center gap-8 mb-12">
-                        <img
-                            src={mimirLogo}
-                            alt="Mimir Logo"
-                            className="h-12"
-                        />
-                        <h2 className="text-3xl font-bold">
+                    <div className="text-center mb-16">
+                        <h2 className="text-4xl md:text-5xl font-bold mb-6">
                             Why Choose Mimir?
                         </h2>
+                        <p className="text-xl text-base-content/70 max-w-3xl mx-auto">
+                            Experience the future of learning with our innovative features
+                        </p>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {features.map((feature, index) => (
+                        {[
+                            {
+                                icon: <FaBrain className="text-primary" />,
+                                title: "Smart Learning",
+                                description: "Adaptive quizzes that evolve with your progress"
+                            },
+                            {
+                                icon: <FaTrophy className="text-warning" />,
+                                title: "Achievement System",
+                                description: "Earn badges and track your milestones"
+                            },
+                            {
+                                icon: <FaChartLine className="text-success" />,
+                                title: "Detailed Analytics",
+                                description: "Comprehensive insights into your performance"
+                            }
+                        ].map((feature, index) => (
                             <motion.div
                                 key={index}
-                                className="card bg-base-200"
+                                className="bg-base-200 rounded-2xl p-8 shadow-lg hover:shadow-xl
+                                          transform hover:-translate-y-2 transition-all duration-300"
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.6 + index * 0.1 }}
+                                transition={{ delay: 1.6 + index * 0.1 }}
                             >
-                                <div className="card-body items-center text-center">
-                                    <div className="text-4xl mb-4">{feature.icon}</div>
-                                    <h3 className="card-title">{feature.title}</h3>
-                                    <p className="text-base-content/70">{feature.description}</p>
-                                </div>
+                                <div className="text-4xl mb-6">{feature.icon}</div>
+                                <h3 className="text-2xl font-bold mb-4">{feature.title}</h3>
+                                <p className="text-base-content/70 leading-relaxed">
+                                    {feature.description}
+                                </p>
                             </motion.div>
                         ))}
                     </div>
                 </div>
             </motion.section>
+
+            {/* Footer CTA */}
+            <motion.section
+                className="py-24 bg-gradient-to-br from-primary to-secondary text-primary-content"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1.8 }}
+            >
+                <div className="container mx-auto px-4 text-center">
+                    <h2 className="text-4xl font-bold mb-6">
+                        Ready to Start Your Learning Journey?
+                    </h2>
+                    <p className="text-xl mb-8 opacity-90">
+                        Join thousands of students who are already experiencing the future of learning
+                    </p>
+                    <button className="btn btn-lg btn-primary glass">
+                        Get Started Now
+                    </button>
+                </div>
+            </motion.section>
         </div>
     );
 };
-
-const features = [
-    {
-        icon: "📚",
-        title: "Smart Learning",
-        description: "Experience intelligent quiz adaptation and personalized feedback"
-    },
-    {
-        icon: "🏆",
-        title: "Achievement System",
-        description: "Earn badges and track your progress with Mimir's reward system"
-    },
-    {
-        icon: "📊",
-        title: "Detailed Analytics",
-        description: "Get comprehensive insights into your learning journey"
-    }
-];
 
 export default PublicHome;
