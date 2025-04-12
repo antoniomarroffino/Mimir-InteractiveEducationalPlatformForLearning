@@ -28,7 +28,8 @@ public class QuizAttemptTest {
         assertNull(quizAttempt.userAzureOID);
         assertNull(quizAttempt.startedAt);
         assertNull(quizAttempt.completedAt);
-        assertNull(quizAttempt.responses);
+        assertNotNull(quizAttempt.responses);
+        assertTrue(quizAttempt.responses.isEmpty());
         assertNotNull(quizAttempt.badges);
         assertTrue(quizAttempt.badges.isEmpty());
     }

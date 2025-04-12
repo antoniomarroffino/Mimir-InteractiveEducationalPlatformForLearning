@@ -27,6 +27,7 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
                                                                   isEditingExistingQuestion = false,
                                                                   isPreview = false,
                                                               }) => {
+    const [points, setPoints] = useState(template.points || 1);
     const [questionText, setQuestionText] = useState(template.questionText || '');
     const [isQuestionValid, setIsQuestionValid] = useState(false);
     const [correctAnswer, setCorrectAnswer] = useState<boolean>(
@@ -41,6 +42,7 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
 
     useEffect(() => {
         setQuestionText(template.questionText || '');
+        setPoints(template.points || 1);
 
         if (questionType === QuestionType.TrueFalse) {
             setCorrectAnswer((template as TrueFalseQuestionDTO).correctAnswer ?? true);
@@ -68,7 +70,8 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
                     ...template,
                     questionText: questionText?.trim(),
                     type: QuestionType.TrueFalse,
-                    correctAnswer
+                    correctAnswer,
+                    points
                 };
                 break;
 
@@ -80,7 +83,8 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
                     choices: choices.filter(c => c.trim() !== ''),
                     correctAnswerIndexes: correctChoices
                         .filter(idx => idx < choices.length && choices[idx].trim() !== '')
-                        .map(idx => choices.indexOf(choices[idx]))
+                        .map(idx => choices.indexOf(choices[idx])),
+                    points
                 };
                 break;
 
@@ -132,8 +136,7 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
     }
 
     return (
-        <div
-            className={`bg-base-100 rounded-lg p-6 shadow transition-all duration-200 ${disabled ? 'opacity-50' : ''}`}>
+        <div className={`bg-base-100 rounded-lg p-6 shadow transition-all duration-200 ${disabled ? 'opacity-50' : ''}`}>
             <h2 className="text-xl font-semibold mb-4 capitalize">
                 {isPreview ? (
                     <>Previewing {questionType.toLowerCase()} Question</>
@@ -154,6 +157,41 @@ export const QuestionEditor: React.FC<QuestionEditorProps> = ({
                         required
                         disabled={disabled || isPreview}
                     />
+                </div>
+
+                <div className="form-control w-full max-w-xs">
+                    <label className="label">
+                        <span className="label-text">Points</span>
+                        <span className="label-text-alt">
+                            Points awarded for correct answer
+                        </span>
+                    </label>
+                    <div className="join">
+                        <button
+                            type="button"
+                            className="btn join-item"
+                            onClick={() => setPoints(prev => Math.max(1, prev - 1))}
+                            disabled={points <= 1 || disabled || isPreview}
+                        >
+                            -
+                        </button>
+                        <input
+                            type="number"
+                            min="1"
+                            value={points}
+                            onChange={(e) => setPoints(Math.max(1, parseInt(e.target.value) || 1))}
+                            className="input input-bordered join-item w-20 text-center"
+                            disabled={disabled || isPreview}
+                        />
+                        <button
+                            type="button"
+                            className="btn join-item"
+                            onClick={() => setPoints(prev => prev + 1)}
+                            disabled={disabled || isPreview}
+                        >
+                            +
+                        </button>
+                    </div>
                 </div>
 
                 {renderSpecificFields()}

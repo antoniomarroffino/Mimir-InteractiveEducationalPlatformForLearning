@@ -31,6 +31,7 @@ import QuizScreen from "./QuizScreen.tsx";
 import PublicationStatsPage from "./PublicationStatsPage.tsx";
 import QuizReviewPage from "./QuizReviewPage.tsx";
 import BadgesPage from "./BadgesPage.tsx";
+import ScrollToTop from "../utils/ScrollToTop.tsx";
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -47,6 +48,7 @@ const queryClient = new QueryClient({
 const App = () => {
     return (
         <QueryClientProvider client={queryClient}>
+            <ScrollToTop />
             <AuthProvider>
                 <QuizPublicationProviders>
                     <QuizRetrieveProvider>

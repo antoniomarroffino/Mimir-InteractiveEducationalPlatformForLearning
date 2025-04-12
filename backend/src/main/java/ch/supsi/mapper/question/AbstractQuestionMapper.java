@@ -11,6 +11,7 @@ public abstract class AbstractQuestionMapper<E extends Question, D extends Quest
         dto.setId(question.id.toString());
         dto.setQuestionText(question.questionText);
         dto.setQuestionBankId(question.questionBankId);
+        dto.setPoints(question.points);
     }
 
     protected void mapCommonFieldsQuestionDTOToQuestion(QuestionDTO dto, Question question) {
@@ -19,6 +20,7 @@ public abstract class AbstractQuestionMapper<E extends Question, D extends Quest
         }
         question.questionText = dto.getQuestionText();
         question.questionBankId = dto.getQuestionBankId();
+        question.points = dto.getPoints();
     }
 }
 

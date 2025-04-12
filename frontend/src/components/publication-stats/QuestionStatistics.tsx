@@ -1,17 +1,51 @@
-import { QuestionDTO } from "@dti-isin/backend-api-client";
-import React from "react";
-import { FaCheckCircle, FaUsers, FaChartLine } from 'react-icons/fa';
+import { QuestionDTO, QuizAttemptDTO } from "@dti-isin/backend-api-client";
+import React, { useMemo } from "react";
+import { FaCheckCircle, FaUsers, FaChartLine, FaClock } from 'react-icons/fa';
+import { isResponseCorrect } from "../../utils/responseUtils.ts";
 
 interface QuestionStatisticsProps {
-    questionStats: {
-        question: QuestionDTO;
-        totalResponses: number;
-        correctResponses: number;
-        percentageCorrect: number;
-    }[];
+    questions: QuestionDTO[];
+    attempts: QuizAttemptDTO[];
 }
 
-export const QuestionStatistics: React.FC<QuestionStatisticsProps> = ({ questionStats }) => {
+const formatTime = (seconds: number): string => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = Math.round(seconds % 60);
+    return minutes > 0
+        ? `${minutes}m ${remainingSeconds}s`
+        : `${remainingSeconds}s`;
+};
+
+export const QuestionStatistics: React.FC<QuestionStatisticsProps> = ({ questions, attempts }) => {
+    const questionStats = useMemo(() => {
+        return questions.map(question => {
+            const responses = attempts.flatMap(attempt =>
+                attempt.responses?.filter(response =>
+                    response.questionId === question.id
+                ) || []
+            );
+
+            const totalResponses = responses.length;
+            const correctResponses = responses.filter(response =>
+                isResponseCorrect(question, response)
+            ).length;
+
+            const averageTimeSpent = responses.reduce((acc, response) =>
+                acc + (response.timeSpent || 0), 0
+            ) / (totalResponses || 1);
+
+            return {
+                question,
+                totalResponses,
+                correctResponses,
+                percentageCorrect: totalResponses > 0
+                    ? (correctResponses * 100) / totalResponses
+                    : 0,
+                averageTimeSpent
+            };
+        });
+    }, [questions, attempts]);
+
     return (
         <div className="space-y-6">
             <div className="bg-gradient-to-r from-primary/10 to-secondary/10 rounded-xl p-4">
@@ -63,6 +97,11 @@ export const QuestionStatistics: React.FC<QuestionStatisticsProps> = ({ question
                                     <div className="absolute -right-1 top-1/2 -translate-y-1/2 bg-secondary text-secondary-content text-xs px-2 py-1 rounded-full transform translate-x-full opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
                                         {stat.percentageCorrect.toFixed(1)}%
                                     </div>
+                                </div>
+
+                                <div className="mt-3 text-sm text-base-content/70 flex items-center gap-2">
+                                    <FaClock className="text-primary"/>
+                                    Average response time: {formatTime(stat.averageTimeSpent)}
                                 </div>
                             </div>
 

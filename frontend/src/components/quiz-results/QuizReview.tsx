@@ -1,9 +1,15 @@
 import React from 'react';
-import { QuizAttemptDTO, QuizPublicationDTO } from '@dti-isin/backend-api-client';
-import { QuizResultHeader } from './QuizResultHeader';
-import { QuizScoreStats } from './QuizScoreStats';
-import { QuestionResult } from '../response/QuestionResult';
-import { checkIfAnswered, isResponseCorrect } from '../../utils/responseUtils';
+import {QuizAttemptDTO, QuizPublicationDTO} from '@dti-isin/backend-api-client';
+import {QuizResultHeader} from './QuizResultHeader';
+import {QuizScoreStats} from './QuizScoreStats';
+import {QuestionResult} from '../response/QuestionResult';
+import {checkIfAnswered, isResponseCorrect} from '../../utils/responseUtils';
+import {
+    calculateEarnedPoints,
+    calculateTotalAvailablePoints,
+    getQuestionEarnedPoints,
+    getQuestionTotalPoints
+} from '../../utils/scoreUtils';
 
 interface QuizReviewProps {
     attempt: QuizAttemptDTO;
@@ -27,15 +33,9 @@ export const QuizReview: React.FC<QuizReviewProps> = ({
                                                           showStats = true,
                                                           CustomHeader
                                                       }) => {
-    const calculateScore = () => {
-        return attempt.responses?.filter((response, index) => {
-            const question = publication.questions?.[index];
-            return question ? isResponseCorrect(question, response) : false;
-        }).length || 0;
-    };
-
+    const earnedPoints = calculateEarnedPoints(attempt);
+    const totalPoints = calculateTotalAvailablePoints(publication);
     const totalQuestions = publication.questions?.length || 0;
-    const score = calculateScore();
 
     return (
         <div className="space-y-8">
@@ -43,19 +43,21 @@ export const QuizReview: React.FC<QuizReviewProps> = ({
                 <CustomHeader
                     attempt={attempt}
                     publication={publication}
-                    score={score}
+                    score={earnedPoints}
                     totalQuestions={totalQuestions}
                 />
             ) : showHeader && (
                 <QuizResultHeader
-                    score={score}
+                    earnedPoints={earnedPoints}
+                    totalPoints={totalPoints}
                     totalQuestions={totalQuestions}
                 />
             )}
 
             {showStats && (
                 <QuizScoreStats
-                    score={score}
+                    earnedPoints={earnedPoints}
+                    totalPoints={totalPoints}
                     totalQuestions={totalQuestions}
                 />
             )}
@@ -73,6 +75,8 @@ export const QuizReview: React.FC<QuizReviewProps> = ({
                             response={response}
                             isAnswered={isAnswered}
                             isCorrect={correct}
+                            earnedPoints={getQuestionEarnedPoints(response)}
+                            totalPoints={getQuestionTotalPoints(question)}
                         />
                     );
                 })}
@@ -80,10 +84,7 @@ export const QuizReview: React.FC<QuizReviewProps> = ({
 
             {onClose && (
                 <div className="text-center">
-                    <button
-                        onClick={onClose}
-                        className="btn btn-primary"
-                    >
+                    <button onClick={onClose} className="btn btn-primary">
                         Close revision
                     </button>
                 </div>
