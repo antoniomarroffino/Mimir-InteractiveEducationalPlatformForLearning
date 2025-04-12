@@ -23,6 +23,8 @@ public abstract class QuestionResponse {
     public ObjectId questionId;
     @BsonProperty("timeSpent")
     public Integer timeSpent;
+    @BsonProperty("earnedPoints")
+    public Integer earnedPoints = 0;
 
     protected QuestionResponse() {
         this.id = new ObjectId();
@@ -38,5 +40,10 @@ public abstract class QuestionResponse {
         this();
         this.responseType = responseType;
         this.questionId = questionId;
+    }
+
+    protected QuestionResponse(QuestionType responseType, ObjectId questionId, Integer earnedPoints) {
+        this(responseType, questionId);
+        this.earnedPoints = earnedPoints;
     }
 }

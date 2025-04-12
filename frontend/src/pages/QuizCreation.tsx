@@ -334,7 +334,8 @@ export const QuizCreation: React.FC = () => {
                                 template={questionTemplate || {
                                     questionText: '',
                                     type: QuestionType.TrueFalse,
-                                    correctAnswer: true
+                                    correctAnswer: true,
+                                    points: 1
                                 }}
                                 onSave={saveNewQuestion}
                                 onCancel={resetQuestionCreation}

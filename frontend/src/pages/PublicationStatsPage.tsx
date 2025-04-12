@@ -18,6 +18,7 @@ import {QuestionStatistics} from "../components/publication-stats/QuestionStatis
 import {AttemptsTable} from "../components/publication-stats/AttemptsTable.tsx";
 import {AttemptDetails} from "../components/attempt/AttemptDetails.tsx";
 import {PublicationSelector} from "../components/publication-stats/PublicationSelector.tsx";
+import {ResponseTimeChart} from "../components/publication-stats/ResponseTimeChart.tsx";
 
 const PublicationStatsPage: React.FC = () => {
     const { quizId } = useParams();
@@ -80,11 +81,16 @@ const PublicationStatsPage: React.FC = () => {
                 return false;
             }).length;
 
+            const averageTimeSpent = responses.reduce((acc, response) =>
+                acc + (response.timeSpent || 0), 0
+            ) / (totalResponses || 1);
+
             return {
                 question,
                 totalResponses,
                 correctResponses,
-                percentageCorrect: totalResponses > 0 ? (correctResponses / totalResponses) * 100 : 0
+                percentageCorrect: totalResponses > 0 ? (correctResponses / totalResponses) * 100 : 0,
+                averageTimeSpent
             };
         });
     }, [attempts, selectedPublication]);
@@ -138,9 +144,20 @@ const PublicationStatsPage: React.FC = () => {
                                         </div>
 
                                         {questionStats && (
-                                            <div className="card bg-base-200">
-                                                <div className="card-body">
-                                                    <QuestionStatistics questionStats={questionStats} />
+                                            <div className="space-y-6">
+                                                <div className="card bg-base-200">
+                                                    <div className="card-body">
+                                                        <ResponseTimeChart questionStats={questionStats} />
+                                                    </div>
+                                                </div>
+
+                                                <div className="card bg-base-200">
+                                                    <div className="card-body">
+                                                        <QuestionStatistics
+                                                            questions={selectedPublication.questions || []}
+                                                            attempts={attempts || []}
+                                                        />
+                                                    </div>
                                                 </div>
                                             </div>
                                         )}

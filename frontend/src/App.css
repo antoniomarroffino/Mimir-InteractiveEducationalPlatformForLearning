@@ -84,6 +84,63 @@
     animation: fadeIn 0.5s ease-out;
 }
 
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+.hover\:float:hover {
+    animation: float 2s ease-in-out infinite;
+}
+
+.profile-field {
+    @apply grid grid-cols-1 md:grid-cols-4 gap-4 items-center p-4 rounded-lg hover:bg-base-200 transition-all duration-200;
+}
+
+.profile-label {
+    @apply flex items-center gap-2 text-base-content/70 md:col-span-1;
+}
+
+.profile-value {
+    @apply md:col-span-3 p-3 bg-base-200 rounded-lg font-medium md:bg-transparent md:p-0;
+}
+
+
+.animate-bounce-slow {
+    animation: bounce 3s infinite;
+}
+
+.bg-pattern {
+    background-image: radial-gradient(circle at 2px 2px, rgba(255, 255, 255, 0.15) 2px, transparent 0);
+    background-size: 20px 20px;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(-5%);
+    }
+    50% {
+        transform: translateY(5%);
+    }
+}
+
+.bg-pattern {
+    background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.15) 2px, transparent 0);
+    background-size: 20px 20px;
+}
+
+.bg-pattern {
+    background-image: radial-gradient(circle at 2px 2px, currentColor 1px, transparent 0);
+    background-size: 24px 24px;
+}
+
 .perspective-1000 {
     perspective: 1000px;
 }
@@ -97,11 +154,10 @@
 }
 
 @keyframes float {
-    0% { transform: translateY(0px); }
+    0%, 100% { transform: translateY(0px); }
     50% { transform: translateY(-10px); }
-    100% { transform: translateY(0px); }
 }
 
-.hover\:float:hover {
-    animation: float 2s ease-in-out infinite;
+.animate-float {
+    animation: float 3s ease-in-out infinite;
 }

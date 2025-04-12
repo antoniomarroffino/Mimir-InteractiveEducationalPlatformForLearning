@@ -7,5 +7,6 @@ public abstract class AbstractQuestionStrategy<E extends Question, D extends Que
     @Override
     public void updateQuestion(E entity, D questionDTOUpdated) {
         entity.questionText = questionDTOUpdated.getQuestionText();
+        entity.points = questionDTOUpdated.getPoints();
     }
 }
