@@ -38,6 +38,7 @@ public class QuizAttempt {
 
     public QuizAttempt() {
         this.badges = new ArrayList<>();
+        this.responses = new ArrayList<>();
     }
 
     public QuizAttempt(ObjectId quizPublicationId, String userAzureOID, LocalDateTime startedAt, LocalDateTime completedAt, List<QuestionResponse> responses) {

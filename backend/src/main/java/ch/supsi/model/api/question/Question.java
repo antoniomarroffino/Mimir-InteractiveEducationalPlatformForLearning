@@ -28,9 +28,10 @@ public abstract class Question {
     public String questionBankId;
 
     @BsonProperty("points")
-    public Integer points = 1;
+    public Integer points;
 
     protected Question() {
+        this.points = 1;
     }
 
     protected Question(QuestionType type) {

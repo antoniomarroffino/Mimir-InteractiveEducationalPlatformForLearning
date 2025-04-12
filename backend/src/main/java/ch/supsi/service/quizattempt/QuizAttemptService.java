@@ -5,12 +5,12 @@ import ch.supsi.model.api.QuizAttempt;
 import ch.supsi.model.api.badge.Badge;
 import ch.supsi.model.api.badge.BadgeType;
 import ch.supsi.model.api.question.Question;
-import ch.supsi.model.api.question.QuestionType;
 import ch.supsi.model.api.response.QuestionResponse;
 import ch.supsi.model.dto.api.QuizAttemptDTO;
 import ch.supsi.repository.QuestionRepository;
 import ch.supsi.repository.QuizAttemptRepository;
-import ch.supsi.service.response.IPointsCalculator;
+import ch.supsi.service.quizattempt.points.strategy.IPointsCalculatorStrategy;
+import ch.supsi.service.quizattempt.points.builder.IPointsCalculatorBuilder;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.BadRequestException;
@@ -20,8 +20,6 @@ import org.bson.types.ObjectId;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -37,7 +35,7 @@ public class QuizAttemptService implements IQuizAttemptService {
     QuestionRepository questionRepository;
 
     @Inject
-    Map<QuestionType, IPointsCalculator> pointsCalculators;
+    IPointsCalculatorBuilder pointsCalculatorBuilder;
 
     @Override
     public QuizAttemptDTO createQuizAttempt(QuizAttemptDTO quizAttemptDTO) {
@@ -46,7 +44,7 @@ public class QuizAttemptService implements IQuizAttemptService {
         QuizAttempt quizAttempt = this.quizAttemptMapperFacade.toEntity(quizAttemptDTO);
         quizAttempt.completedAt = LocalDateTime.now();
 
-        calculateAndAssignPoints(quizAttempt);
+        this.calculateAndAssignPoints(quizAttempt);
 
         this.quizAttemptRepository.persist(quizAttempt);
         return this.quizAttemptMapperFacade.toDTO(quizAttempt);
@@ -140,20 +138,10 @@ public class QuizAttemptService implements IQuizAttemptService {
 
     private void calculateAndAssignPoints(QuizAttempt quizAttempt) {
         for (QuestionResponse response : quizAttempt.responses) {
-            Question question = questionRepository.findById(response.questionId);
-
-            if (question == null) {
-                throw new NotFoundException("Question not found: " + response.questionId);
-            }
-
-            IPointsCalculator calculator = pointsCalculators.get(response.responseType);
-            if (calculator == null) {
-                throw new IllegalStateException("No points calculator found for response type: " + response.responseType);
-            }
-
-            response.earnedPoints = calculator.calculatePoints(response, question);
+            Question question = this.questionRepository.findById(response.questionId);
+            response.earnedPoints = this.pointsCalculatorBuilder
+                    .getPointsCalculator(response.responseType)
+                    .calculatePoints(response, question);
         }
     }
-
-
 }

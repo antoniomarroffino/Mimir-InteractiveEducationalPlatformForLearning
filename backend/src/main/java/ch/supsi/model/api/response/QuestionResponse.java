@@ -24,11 +24,12 @@ public abstract class QuestionResponse {
     @BsonProperty("timeSpent")
     public Integer timeSpent;
     @BsonProperty("earnedPoints")
-    public Integer earnedPoints = 0;
+    public Integer earnedPoints;
 
     protected QuestionResponse() {
         this.id = new ObjectId();
         this.timeSpent = 0;
+        this.earnedPoints = 0;
     }
 
     protected QuestionResponse(QuestionType responseType) {
