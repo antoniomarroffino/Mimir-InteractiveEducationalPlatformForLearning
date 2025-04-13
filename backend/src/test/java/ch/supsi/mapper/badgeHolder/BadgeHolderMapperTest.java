@@ -5,6 +5,7 @@ import ch.supsi.model.api.BadgeHolder;
 import ch.supsi.model.api.badge.Badge;
 import ch.supsi.model.api.badge.BadgeType;
 import ch.supsi.model.dto.api.BadgeHolderDTO;
+import ch.supsi.model.dto.api.UserWithoutCoursesDTO;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import org.bson.types.ObjectId;
@@ -44,7 +45,11 @@ public class BadgeHolderMapperTest {
         BadgeHolderDTO dto = this.badgeHolderMapper.toDTO(badgeHolder);
         assertNotNull(dto);
         assertEquals(id.toString(), dto.getId());
-        assertEquals(badgeHolder.azureOID, dto.getAzureOID());
+        assertNotNull(dto.getUser());
+        assertEquals(badgeHolder.azureOID, dto.getUser().getAzureOid());
+        assertNull(dto.getUser().getName());
+        assertNull(dto.getUser().getEmail());
+        assertNull(dto.getUser().getRole());
         assertEquals(badgeHolder.badges, dto.getBadges());
     }
 
@@ -59,11 +64,13 @@ public class BadgeHolderMapperTest {
     @DisplayName("Should return new BadgeHolderEntity passing BadgeHolderDTO with id null")
     void test04ToEntity_ReturnsValidBadgeHolderDTOWithIdIsNull() {
         String azureOid = "test-azure-oid";
+        UserWithoutCoursesDTO userWithoutCoursesDTO = new UserWithoutCoursesDTO();
+        userWithoutCoursesDTO.setAzureOid(azureOid);
         List<Badge> badgeList = List.of(new Badge(BadgeType.BEST_ATTEMPT, azureOid));
 
         BadgeHolderDTO badgeHolderDTO = new BadgeHolderDTO();
         badgeHolderDTO.setId(null);
-        badgeHolderDTO.setAzureOID(azureOid);
+        badgeHolderDTO.setUser(userWithoutCoursesDTO);
         badgeHolderDTO.setBadges(badgeList);
 
         BadgeHolder entity = this.badgeHolderMapper.toEntity(badgeHolderDTO);
@@ -78,11 +85,13 @@ public class BadgeHolderMapperTest {
     void test05ToEntity_ReturnsValidBadgeHolderDTOWithIdNotNull() {
         ObjectId id = new ObjectId();
         String azureOid = "test-azure-oid";
+        UserWithoutCoursesDTO userWithoutCoursesDTO = new UserWithoutCoursesDTO();
+        userWithoutCoursesDTO.setAzureOid(azureOid);
         List<Badge> badgeList = List.of(new Badge(BadgeType.BEST_ATTEMPT, azureOid));
 
         BadgeHolderDTO badgeHolderDTO = new BadgeHolderDTO();
         badgeHolderDTO.setId(id.toString());
-        badgeHolderDTO.setAzureOID(azureOid);
+        badgeHolderDTO.setUser(userWithoutCoursesDTO);
         badgeHolderDTO.setBadges(badgeList);
 
         BadgeHolder entity = this.badgeHolderMapper.toEntity(badgeHolderDTO);

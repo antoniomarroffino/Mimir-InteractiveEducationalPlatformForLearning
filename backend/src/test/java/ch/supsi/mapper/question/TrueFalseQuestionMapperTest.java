@@ -47,15 +47,36 @@ public class TrueFalseQuestionMapperTest {
     }
 
     @Test
+    @DisplayName("Should return TrueFalseQuestionDTO passed entity with id null")
+    void test03ToDTOReturnTrueFalseQuestionDTOPassedEntity_IdEntityNull() {
+        String questionText = "test";
+        ObjectId questionBankId = new ObjectId();
+        Boolean correctAnswer = true;
+
+        TrueFalseQuestion trueFalseQuestion = new TrueFalseQuestion();
+        trueFalseQuestion.id = null;
+        trueFalseQuestion.questionText = questionText;
+        trueFalseQuestion.questionBankId = questionBankId.toString();
+        trueFalseQuestion.correctAnswer = correctAnswer;
+
+        TrueFalseQuestionDTO dto = this.trueFalseQuestionMapper.toDTO(trueFalseQuestion);
+        assertNotNull(dto);
+        assertNull(dto.getId());
+        assertEquals(questionText, dto.getQuestionText());
+        assertEquals(questionBankId.toString(), dto.getQuestionBankId());
+        assertEquals(correctAnswer, dto.getCorrectAnswer());
+    }
+
+    @Test
     @DisplayName("Should return null because TrueFalseQuestionDTO passed is null")
-    void test03ToEntityReturnNull_TrueFalseQuestionDTOPassedIsNull() {
+    void test04ToEntityReturnNull_TrueFalseQuestionDTOPassedIsNull() {
         TrueFalseQuestion entity = this.trueFalseQuestionMapper.toEntity(null);
         assertNull(entity);
     }
 
     @Test
     @DisplayName("Should return TrueFalseQuestion passed DTO")
-    void test04ToEntityReturnTrueFalseQuestionPassedDTO() {
+    void test05ToEntityReturnTrueFalseQuestionPassedDTO() {
         ObjectId id = new ObjectId();
         String questionText = "test";
         ObjectId questionBankId = new ObjectId();
@@ -77,7 +98,7 @@ public class TrueFalseQuestionMapperTest {
 
     @Test
     @DisplayName("Should return TrueFalseQuestion passed DTO with id null")
-    void test05ToEntityReturnTrueFalseQuestionPassedDTOWithIdNull() {
+    void test06ToEntityReturnTrueFalseQuestionPassedDTOWithIdNull() {
         String questionText = "test";
         ObjectId questionBankId = new ObjectId();
         Boolean correctAnswer = true;

@@ -95,10 +95,7 @@ public class CourseService implements ICourseService {
 
         this.verifyUserIsOwner(id, currentUser);
 
-        String newName = courseDTO.getName();
-        if (!course.name.equalsIgnoreCase(newName)) {
-            course.name = courseDTO.getName();
-        }
+        course.name = courseDTO.getName();
 
         course.description = courseDTO.getDescription();
 

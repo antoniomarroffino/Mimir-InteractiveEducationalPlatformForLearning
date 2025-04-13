@@ -34,19 +34,6 @@ public class QuestionFactoryTest {
         assertInstanceOf(MultipleChoiceQuestionStrategy.class, strategy);
     }
 
-    /*@Test
-    @DisplayName("Should throw UnsupportedOperationError because question type is not supported")
-    void test03GetStrategy_ShouldThrowException_WhenTypeIsNotSupported() {
-        QuestionType unsupportedType = QuestionType.THIS_QUESTION_DOES_NOT_EXIST;
-
-        UnsupportedOperationException exception = assertThrows(
-                UnsupportedOperationException.class,
-                () -> this.questionFactory.getStrategy(QuestionType)
-        );
-
-        assertEquals("Question type not supported: " + unsupportedType, exception.getMessage());
-    }*/
-
     @Test
     @DisplayName("Should support all existing question types")
     void test03VerifyAllTypesAreSupported() {

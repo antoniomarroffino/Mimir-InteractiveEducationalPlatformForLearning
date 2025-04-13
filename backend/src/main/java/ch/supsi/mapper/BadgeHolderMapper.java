@@ -2,6 +2,7 @@ package ch.supsi.mapper;
 
 import ch.supsi.model.api.BadgeHolder;
 import ch.supsi.model.dto.api.BadgeHolderDTO;
+import ch.supsi.model.dto.api.UserWithoutCoursesDTO;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.bson.types.ObjectId;
 
@@ -16,7 +17,7 @@ public class BadgeHolderMapper implements IBaseMapper<BadgeHolder, BadgeHolderDT
 
         BadgeHolderDTO dto = new BadgeHolderDTO();
         dto.setId(badgeHolder.id.toString());
-        dto.setAzureOID(badgeHolder.azureOID);
+        dto.setUser(new UserWithoutCoursesDTO(badgeHolder.azureOID, null, null, null));
         dto.setBadges(badgeHolder.badges);
 
         return dto;
@@ -28,7 +29,7 @@ public class BadgeHolderMapper implements IBaseMapper<BadgeHolder, BadgeHolderDT
             return null;
         }
 
-        BadgeHolder badgeHolder = new BadgeHolder(dto.getAzureOID());
+        BadgeHolder badgeHolder = new BadgeHolder(dto.getUser().getAzureOid());
 
         if (dto.getId() != null) {
             badgeHolder.id = new ObjectId(dto.getId());

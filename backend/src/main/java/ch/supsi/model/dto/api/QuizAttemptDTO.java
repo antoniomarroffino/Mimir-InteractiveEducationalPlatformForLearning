@@ -25,9 +25,11 @@ public class QuizAttemptDTO {
 
     private List<QuestionResponseDTO> responses;
 
-    private List<BadgeDTO> badges = new ArrayList<>();
+    private List<BadgeDTO> badges;
 
     public QuizAttemptDTO() {
+        this.responses = new ArrayList<>();
+        this.badges = new ArrayList<>();
     }
 
     public String getId() {
@@ -75,7 +77,7 @@ public class QuizAttemptDTO {
     }
 
     public void setResponses(List<QuestionResponseDTO> responses) {
-        this.responses = responses;
+        this.responses = responses != null? responses : new ArrayList<>();
     }
 
     public List<BadgeDTO> getBadges() {

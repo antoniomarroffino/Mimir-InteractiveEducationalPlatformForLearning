@@ -15,12 +15,14 @@ public class CourseDTO {
 
     private String description;
 
-    private List<FolderDTO> folders = new ArrayList<>();
+    private List<FolderDTO> folders;
 
     public CourseDTO() {
+        this.folders = new ArrayList<>();
     }
 
     public CourseDTO(String name) {
+        this();
         this.name = name;
     }
 

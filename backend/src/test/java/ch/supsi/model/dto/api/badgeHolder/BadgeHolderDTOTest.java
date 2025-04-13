@@ -2,6 +2,7 @@ package ch.supsi.model.dto.api.badgeHolder;
 
 import ch.supsi.model.api.badge.Badge;
 import ch.supsi.model.dto.api.BadgeHolderDTO;
+import ch.supsi.model.dto.api.UserWithoutCoursesDTO;
 import io.quarkus.test.junit.QuarkusTest;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.DisplayName;
@@ -22,18 +23,24 @@ public class BadgeHolderDTOTest {
     void test01CreateBadgeHolder_ConstructorNoParameters() {
         BadgeHolderDTO badgeHolderDTO = new BadgeHolderDTO();
         assertNull(badgeHolderDTO.getId());
-        assertNull(badgeHolderDTO.getAzureOID());
+        assertNull(badgeHolderDTO.getUser());
         assertNotNull(badgeHolderDTO.getBadges());
         assertTrue(badgeHolderDTO.getBadges().isEmpty());
     }
 
     @Test
-    @DisplayName("Should create new BadgeHolderDTO passing azure oid to constructor")
-    void test02CreateBadgeHolder_ConstructorAzureOidToConstructor() {
+    @DisplayName("Should create new BadgeHolderDTO passing UserWithoutCoursesDTO to constructor")
+    void test02CreateBadgeHolder_ConstructorUserWithoutCoursesDTOToConstructor() {
         String azureOid = "fake-azure-oid";
-        BadgeHolderDTO badgeHolderDTO = new BadgeHolderDTO(azureOid);
+        UserWithoutCoursesDTO userWithoutCoursesDTO = new UserWithoutCoursesDTO();
+        userWithoutCoursesDTO.setAzureOid(azureOid);
+        BadgeHolderDTO badgeHolderDTO = new BadgeHolderDTO(userWithoutCoursesDTO);
         assertNull(badgeHolderDTO.getId());
-        assertEquals(azureOid, badgeHolderDTO.getAzureOID());
+        assertNotNull(badgeHolderDTO.getUser());
+        assertEquals(azureOid, badgeHolderDTO.getUser().getAzureOid());
+        assertNull(badgeHolderDTO.getUser().getName());
+        assertNull(badgeHolderDTO.getUser().getEmail());
+        assertNull(badgeHolderDTO.getUser().getRole());
         assertNotNull(badgeHolderDTO.getBadges());
         assertTrue(badgeHolderDTO.getBadges().isEmpty());
     }
@@ -44,14 +51,24 @@ public class BadgeHolderDTOTest {
         String id = new ObjectId().toString();
         String azureOid = "fake-azure-oid";
         List<Badge> badges = List.of(new Badge());
+        UserWithoutCoursesDTO userWithoutCoursesDTO = new UserWithoutCoursesDTO();
+        userWithoutCoursesDTO.setAzureOid(azureOid);
 
         BadgeHolderDTO badgeHolderDTO = new BadgeHolderDTO();
         badgeHolderDTO.setId(id);
-        badgeHolderDTO.setAzureOID(azureOid);
+        badgeHolderDTO.setUser(userWithoutCoursesDTO);
         badgeHolderDTO.setBadges(badges);
 
         assertEquals(id, badgeHolderDTO.getId());
-        assertEquals(azureOid, badgeHolderDTO.getAzureOID());
+        assertNotNull(badgeHolderDTO.getUser());
+        assertEquals(azureOid, badgeHolderDTO.getUser().getAzureOid());
+        assertNull(badgeHolderDTO.getUser().getName());
+        assertNull(badgeHolderDTO.getUser().getEmail());
+        assertNull(badgeHolderDTO.getUser().getRole());
         assertNotNull(badgeHolderDTO.getBadges());
+
+        badgeHolderDTO.setBadges(null);
+        assertNotNull(badgeHolderDTO.getBadges());
+        assertTrue(badgeHolderDTO.getBadges().isEmpty());
     }
 }

@@ -43,9 +43,4 @@ public abstract class Question {
         this(type);
         this.questionText = questionText;
     }
-
-    protected Question(QuestionType type, String questionText, Integer points) {
-        this(type, questionText);
-        this.points = points;
-    }
 }

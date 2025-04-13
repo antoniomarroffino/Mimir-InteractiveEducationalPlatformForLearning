@@ -6,7 +6,6 @@ import ch.supsi.model.api.response.QuestionResponse;
 import ch.supsi.model.api.response.TrueFalseQuestionResponse;
 import jakarta.enterprise.context.ApplicationScoped;
 
-@ApplicationScoped
 public class TrueFalsePointsCalculatorStrategy implements IPointsCalculatorStrategy<TrueFalseQuestionResponse, TrueFalseQuestion> {
     @Override
     public int calculatePoints(TrueFalseQuestionResponse response, TrueFalseQuestion question) {

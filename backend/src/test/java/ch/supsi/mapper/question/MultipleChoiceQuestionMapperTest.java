@@ -59,15 +59,43 @@ public class MultipleChoiceQuestionMapperTest {
     }
 
     @Test
+    @DisplayName("Should return MultipleChoiceQuestionDTO passed entity with id null")
+    void test03ToDTOReturnMultipleChoiceQuestionDTOPassedEntity_WithIdNull() {
+        String questionText = "test";
+        ObjectId questionBankId = new ObjectId();
+        String choice1 = "choice1";
+        String choice2 = "choice2";
+        List<String> choices = List.of(choice1, choice2);
+        Integer correctAnswerIndex = 1;
+        List<Integer> correctAnswersIndexes = List.of(correctAnswerIndex);
+
+        MultipleChoiceQuestion multipleChoiceQuestion = new MultipleChoiceQuestion();
+        multipleChoiceQuestion.id = null;
+        multipleChoiceQuestion.questionText = questionText;
+        multipleChoiceQuestion.questionBankId = questionBankId.toString();
+        multipleChoiceQuestion.choices = choices;
+        multipleChoiceQuestion.correctAnswerIndexes = correctAnswersIndexes;
+
+
+        MultipleChoiceQuestionDTO dto = this.multipleChoiceQuestionMapper.toDTO(multipleChoiceQuestion);
+        assertNotNull(dto);
+        assertNull(dto.getId());
+        assertEquals(questionText, dto.getQuestionText());
+        assertEquals(questionBankId.toString(), dto.getQuestionBankId());
+        assertEquals(choices, dto.getChoices());
+        assertEquals(correctAnswersIndexes, dto.getCorrectAnswerIndexes());
+    }
+
+    @Test
     @DisplayName("Should return null because MultipleChoiceQuestionDTO passed is null")
-    void test03ToEntityReturnNull_MultipleChoiceQuestionDTOPassedIsNull() {
+    void test04ToEntityReturnNull_MultipleChoiceQuestionDTOPassedIsNull() {
         MultipleChoiceQuestion entity = this.multipleChoiceQuestionMapper.toEntity(null);
         assertNull(entity);
     }
 
     @Test
     @DisplayName("Should return MultipleChoiceQuestion passed DTO")
-    void test04ToEntityReturnMultipleChoiceQuestionPassedDTO() {
+    void test05ToEntityReturnMultipleChoiceQuestionPassedDTO() {
         ObjectId id = new ObjectId();
         String questionText = "test";
         ObjectId questionBankId = new ObjectId();
@@ -95,7 +123,7 @@ public class MultipleChoiceQuestionMapperTest {
 
     @Test
     @DisplayName("Should return MultipleChoiceQuestion passed DTO with id null")
-    void test05ToEntityReturnMultipleChoiceQuestionPassedDTOWithIdNull() {
+    void test06ToEntityReturnMultipleChoiceQuestionPassedDTOWithIdNull() {
         String questionText = "test";
         ObjectId questionBankId = new ObjectId();
         String choice1 = "choice1";

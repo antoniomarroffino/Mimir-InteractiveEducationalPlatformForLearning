@@ -23,9 +23,7 @@ public class MultipleChoiceQuestionResponseMapper extends AbstractQuestionRespon
             return null;
         }
 
-        MultipleChoiceQuestionResponse response = new MultipleChoiceQuestionResponse(
-                dto.getQuestionId() != null ? new ObjectId(dto.getQuestionId()) : null
-        );
+        MultipleChoiceQuestionResponse response = new MultipleChoiceQuestionResponse();
         super.mapCommonFieldsResponseDTOToResponse(dto, response);
         response.selectedAnswerIndexes = dto.getSelectedAnswerIndexes();
         return response;

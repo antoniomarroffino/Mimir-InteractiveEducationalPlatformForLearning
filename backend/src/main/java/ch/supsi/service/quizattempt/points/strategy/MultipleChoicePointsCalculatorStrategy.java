@@ -6,7 +6,6 @@ import ch.supsi.model.api.response.MultipleChoiceQuestionResponse;
 import ch.supsi.model.api.response.QuestionResponse;
 import jakarta.enterprise.context.ApplicationScoped;
 
-@ApplicationScoped
 public class MultipleChoicePointsCalculatorStrategy implements IPointsCalculatorStrategy<MultipleChoiceQuestionResponse, MultipleChoiceQuestion> {
     @Override
     public int calculatePoints(MultipleChoiceQuestionResponse response, MultipleChoiceQuestion question) {

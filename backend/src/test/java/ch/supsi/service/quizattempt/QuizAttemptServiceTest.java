@@ -4,11 +4,19 @@ import ch.supsi.mapper.quizAttempt.facade.IQuizAttemptMapperFacade;
 import ch.supsi.model.api.QuizAttempt;
 import ch.supsi.model.api.badge.Badge;
 import ch.supsi.model.api.badge.BadgeType;
+import ch.supsi.model.api.question.Question;
+import ch.supsi.model.api.question.QuestionType;
+import ch.supsi.model.api.question.TrueFalseQuestion;
 import ch.supsi.model.api.response.QuestionResponse;
+import ch.supsi.model.api.response.TrueFalseQuestionResponse;
 import ch.supsi.model.dto.api.QuizAttemptDTO;
 import ch.supsi.model.dto.api.response.QuestionResponseDTO;
 import ch.supsi.model.dto.api.response.TrueFalseQuestionResponseDTO;
+import ch.supsi.repository.QuestionRepository;
 import ch.supsi.repository.QuizAttemptRepository;
+import ch.supsi.service.quizattempt.points.builder.IPointsCalculatorBuilder;
+import ch.supsi.service.quizattempt.points.strategy.IPointsCalculatorStrategy;
+import ch.supsi.service.quizattempt.points.strategy.TrueFalsePointsCalculatorStrategy;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
@@ -42,23 +50,49 @@ public class QuizAttemptServiceTest {
     @InjectMock
     IQuizAttemptMapperFacade quizAttemptMapperFacade;
 
+    @InjectMock
+    QuestionRepository questionRepository;
+
+    @InjectMock
+    IPointsCalculatorBuilder pointsCalculatorBuilder;
+
     @Test
-    @DisplayName("Should create new QuizAttempt and return new QuizAttemptDTO")
+    @DisplayName("Should create new QuizAttempt and return new QuizAttemptDTO and calculate points")
+    @SuppressWarnings("unchecked")
     void test01CreateNewQuizAttempt() {
+        ObjectId questionId = new ObjectId();
+        int expectedPoints = 10;
+
         QuizAttempt quizAttempt = createTestQuizAttempt();
         QuizAttemptDTO dto = convertToDTO(quizAttempt);
-        QuestionResponseDTO questionResponseDTO = new TrueFalseQuestionResponseDTO();
-        dto.setResponses(List.of(questionResponseDTO));
+
+        TrueFalseQuestionResponseDTO trueFalseQuestionResponseDTO = new TrueFalseQuestionResponseDTO();
+        trueFalseQuestionResponseDTO.setQuestionId(questionId.toString());
+        dto.setResponses(List.of(trueFalseQuestionResponseDTO));
+
+        TrueFalseQuestionResponse trueFalseQuestionResponse = new TrueFalseQuestionResponse();
+        trueFalseQuestionResponse.questionId = questionId;
+
+        quizAttempt.responses.add(trueFalseQuestionResponse);
+
+        TrueFalsePointsCalculatorStrategy trueFalsePointsCalculatorStrategy = mock(TrueFalsePointsCalculatorStrategy.class);
 
         when(this.quizAttemptMapperFacade.toEntity(dto)).thenReturn(quizAttempt);
         when(this.quizAttemptMapperFacade.toDTO(quizAttempt)).thenReturn(new QuizAttemptDTO());
+        when(this.questionRepository.findById(questionId)).thenReturn(new TrueFalseQuestion());
+        when(this.pointsCalculatorBuilder.getPointsCalculator(trueFalseQuestionResponse.responseType)).thenReturn((IPointsCalculatorStrategy) trueFalsePointsCalculatorStrategy);
+        when(trueFalsePointsCalculatorStrategy.calculatePoints(any(TrueFalseQuestionResponse.class), any(TrueFalseQuestion.class))).thenReturn(expectedPoints);
 
         this.quizAttemptService.createQuizAttempt(dto);
         QuizAttemptDTO createdQuizAttemptDTO = convertToDTO(quizAttempt);
         assertNotNull(createdQuizAttemptDTO);
         assertNotNull(createdQuizAttemptDTO.getCompletedAt());
+        assertEquals(expectedPoints, quizAttempt.responses.getFirst().earnedPoints);
 
         verify(this.quizAttemptMapperFacade, times(1)).toEntity(any(QuizAttemptDTO.class));
+        verify(this.questionRepository, times(quizAttempt.responses.size())).findById(any(ObjectId.class));
+        verify(this.pointsCalculatorBuilder, times(quizAttempt.responses.size())).getPointsCalculator(any(QuestionType.class));
+        verify(trueFalsePointsCalculatorStrategy, times(quizAttempt.responses.size())).calculatePoints(any(TrueFalseQuestionResponse.class), any(TrueFalseQuestion.class));
         verify(this.quizAttemptRepository, times(1)).persist(quizAttempt);
         verify(this.quizAttemptMapperFacade, times(1)).toDTO(quizAttempt);
     }

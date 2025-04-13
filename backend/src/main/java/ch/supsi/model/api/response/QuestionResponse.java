@@ -42,9 +42,4 @@ public abstract class QuestionResponse {
         this.responseType = responseType;
         this.questionId = questionId;
     }
-
-    protected QuestionResponse(QuestionType responseType, ObjectId questionId, Integer earnedPoints) {
-        this(responseType, questionId);
-        this.earnedPoints = earnedPoints;
-    }
 }

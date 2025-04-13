@@ -17,7 +17,7 @@ public class QuizDTO {
 
     private String description;
 
-    private List<QuestionDTO> questions = new ArrayList<>();
+    private List<QuestionDTO> questions;
 
     private LocalDateTime createdAt;
 
@@ -26,9 +26,11 @@ public class QuizDTO {
     private Integer timeLimitMinutes;
 
     public QuizDTO() {
+        this.questions = new ArrayList<>();
     }
 
     public QuizDTO(String name) {
+        this();
         this.name = name;
     }
 

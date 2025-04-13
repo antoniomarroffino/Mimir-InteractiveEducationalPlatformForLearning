@@ -2,15 +2,16 @@ package ch.supsi.controller.badgeholder;
 
 import ch.supsi.model.api.badge.Badge;
 import ch.supsi.model.dto.api.BadgeHolderDTO;
+import ch.supsi.model.dto.api.UserWithoutCoursesDTO;
 import ch.supsi.service.badgeholder.IBadgeHolderService;
 import ch.supsi.service.user.IUserService;
+import ch.supsi.service.user.microsoftGraph.IMicrosoftGraphService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
@@ -26,6 +27,12 @@ public class BadgeHolderController {
     @Inject
     IBadgeHolderService badgeHolderService;
 
+    @Inject
+    IMicrosoftGraphService microsoftGraphService;
+
+    @Inject
+    IUserService userService;
+
     @GET
     @RolesAllowed("TEACHER")
     @Operation(summary = "Get all badge holders")
@@ -39,6 +46,11 @@ public class BadgeHolderController {
     )
     public Response getAllBadgeHolders() {
         List<BadgeHolderDTO> badgeHoldersDTO = this.badgeHolderService.getAllBadgeHolders();
+        badgeHoldersDTO
+                .forEach(badgeHolderDTO -> badgeHolderDTO.setUser(
+                                this.buildUserWithoutCoursesDTOFromBadgeHolderDTO(badgeHolderDTO)
+                        )
+                );
         return Response.ok(badgeHoldersDTO).build();
     }
 
@@ -59,6 +71,7 @@ public class BadgeHolderController {
     )
     public Response getBadgeHolder(@PathParam("azureOID") String azureOID) {
         BadgeHolderDTO badgeHolderDTO = this.badgeHolderService.getBadgeHolderByAzureOID(azureOID);
+        badgeHolderDTO.setUser(this.buildUserWithoutCoursesDTOFromBadgeHolderDTO(badgeHolderDTO));
         return Response.ok(badgeHolderDTO).build();
     }
 
@@ -76,5 +89,11 @@ public class BadgeHolderController {
     ) {
         this.badgeHolderService.addBadgeToHolder(azureOID, badge);
         return Response.status(Response.Status.NO_CONTENT).build();
+    }
+
+    private UserWithoutCoursesDTO buildUserWithoutCoursesDTOFromBadgeHolderDTO(BadgeHolderDTO badgeHolderDTO) {
+        return this.userService.buildUserWithoutCoursesDTO(
+                this.microsoftGraphService.getUserByOid(badgeHolderDTO.getUser().getAzureOid())
+        );
     }
 }

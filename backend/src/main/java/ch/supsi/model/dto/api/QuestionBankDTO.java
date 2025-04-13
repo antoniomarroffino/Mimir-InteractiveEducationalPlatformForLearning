@@ -56,6 +56,6 @@ public class QuestionBankDTO {
     }
 
     public void setQuestions(List<QuestionDTO> questions) {
-        this.questions = questions;
+        this.questions = questions != null ? questions : new ArrayList<>();
     }
 }

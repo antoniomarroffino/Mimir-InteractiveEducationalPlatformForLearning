@@ -36,4 +36,18 @@ public class PromotionRequestDTOTest {
         assertEquals(validEmail, promotionRequestDTO.getEmail());
         assertEquals(Role.TEACHER, promotionRequestDTO.getRole());
     }
+
+    @Test
+    @DisplayName("Should all setters work correctly")
+    void test03SettersWorkCorrectly() {
+        String email = "valid@email.com";
+        Role role = Role.TEACHER;
+
+        PromotionRequestDTO promotionRequestDTO = new PromotionRequestDTO();
+        promotionRequestDTO.setEmail(email);
+        promotionRequestDTO.setRole(role);
+
+        assertEquals(email, promotionRequestDTO.getEmail());
+        assertEquals(role, promotionRequestDTO.getRole());
+    }
 }

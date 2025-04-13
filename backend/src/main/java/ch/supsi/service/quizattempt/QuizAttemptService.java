@@ -9,7 +9,6 @@ import ch.supsi.model.api.response.QuestionResponse;
 import ch.supsi.model.dto.api.QuizAttemptDTO;
 import ch.supsi.repository.QuestionRepository;
 import ch.supsi.repository.QuizAttemptRepository;
-import ch.supsi.service.quizattempt.points.strategy.IPointsCalculatorStrategy;
 import ch.supsi.service.quizattempt.points.builder.IPointsCalculatorBuilder;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -44,7 +43,7 @@ public class QuizAttemptService implements IQuizAttemptService {
         QuizAttempt quizAttempt = this.quizAttemptMapperFacade.toEntity(quizAttemptDTO);
         quizAttempt.completedAt = LocalDateTime.now();
 
-        this.calculateAndAssignPoints(quizAttempt);
+        quizAttempt.responses.forEach(this::calculatePoints);
 
         this.quizAttemptRepository.persist(quizAttempt);
         return this.quizAttemptMapperFacade.toDTO(quizAttempt);
@@ -136,12 +135,10 @@ public class QuizAttemptService implements IQuizAttemptService {
         }
     }
 
-    private void calculateAndAssignPoints(QuizAttempt quizAttempt) {
-        for (QuestionResponse response : quizAttempt.responses) {
-            Question question = this.questionRepository.findById(response.questionId);
-            response.earnedPoints = this.pointsCalculatorBuilder
-                    .getPointsCalculator(response.responseType)
-                    .calculatePoints(response, question);
-        }
+    private void calculatePoints(QuestionResponse response) {
+        Question question = this.questionRepository.findById(response.questionId);
+        response.earnedPoints = this.pointsCalculatorBuilder
+                .getPointsCalculator(response.responseType)
+                .calculatePoints(response, question);
     }
 }

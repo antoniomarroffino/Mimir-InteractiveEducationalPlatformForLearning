@@ -1,8 +1,10 @@
 package ch.supsi.model.dto.api;
 
 import ch.supsi.model.api.badge.Badge;
+import com.microsoft.graph.models.User;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,8 +13,8 @@ import java.util.List;
 public class BadgeHolderDTO {
     private String id;
 
-    @NotBlank(message = "Azure OID cannot be null or empty")
-    private String azureOID;
+    @NotNull(message = "User cannot be null")
+    private UserWithoutCoursesDTO user;
 
     private List<Badge> badges;
 
@@ -20,9 +22,9 @@ public class BadgeHolderDTO {
         this.badges = new ArrayList<>();
     }
 
-    public BadgeHolderDTO(String azureOID) {
+    public BadgeHolderDTO(UserWithoutCoursesDTO user) {
         this();
-        this.azureOID = azureOID;
+        this.user = user;
     }
 
     public String getId() {
@@ -33,12 +35,12 @@ public class BadgeHolderDTO {
         this.id = id;
     }
 
-    public String getAzureOID() {
-        return this.azureOID;
+    public UserWithoutCoursesDTO getUser() {
+        return this.user;
     }
 
-    public void setAzureOID(String azureOID) {
-        this.azureOID = azureOID;
+    public void setUser(UserWithoutCoursesDTO user) {
+        this.user = user;
     }
 
     public List<Badge> getBadges() {

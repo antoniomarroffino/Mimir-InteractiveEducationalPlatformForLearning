@@ -13,12 +13,14 @@ public class FolderDTO {
     @NotBlank(message = "Folder name cannot be null or empty")
     private String name;
 
-    private List<QuizDTO> quizzes = new ArrayList<>();
+    private List<QuizDTO> quizzes;
 
     public FolderDTO() {
+        this.quizzes = new ArrayList<>();
     }
 
     public FolderDTO(String name) {
+        this();
         this.name = name;
     }
 
