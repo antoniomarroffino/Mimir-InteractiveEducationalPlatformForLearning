@@ -1,13 +1,13 @@
 import React from "react";
-import { QuizAttemptListProvider } from "./QuizAttemptListProvider.tsx";
-import { QuizAttemptCRUDProvider } from "./QuizAttemptCRUDProvider.tsx";
+import {QuizAttemptCRUDProvider} from "./QuizAttemptCRUDProvider.tsx";
+import {QuizAttemptLocalProvider} from "./QuizAttemptLocalProvider.tsx";
 
 export const QuizAttemptProviders: React.FC<{ children: React.ReactNode }> = ({children}) => {
     return (
-        <QuizAttemptListProvider>
-            <QuizAttemptCRUDProvider>
+        <QuizAttemptCRUDProvider>
+            <QuizAttemptLocalProvider>
                 {children}
-            </QuizAttemptCRUDProvider>
-        </QuizAttemptListProvider>
+            </QuizAttemptLocalProvider>
+        </QuizAttemptCRUDProvider>
     );
 };

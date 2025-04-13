@@ -1,10 +1,10 @@
 import React, {useCallback, useState} from 'react';
-import {useQuizAttemptLocal} from "../hooks/quizAttempt/useQuizAttemptLocal.ts";
-import {QuizQuestions} from "./common/QuizQuestions.tsx";
-import {LoadingSpinner} from './common/LoadingSpinner.tsx';
-import {useAuth} from "../hooks/useAuth.ts";
+import {useQuizAttemptLocal} from "../../hooks/quizAttempt/useQuizAttemptLocal.ts";
+import {QuizQuestions} from "../common/QuizQuestions.tsx";
+import {LoadingSpinner} from '../common/LoadingSpinner.tsx';
+import {useAuth} from "../../hooks/useAuth.ts";
 import {QuizPublicationDTO} from '@dti-isin/backend-api-client';
-import {useGetQuizById} from "../hooks/quiz/useGetQuizById.ts";
+import {useGetQuizById} from "../../hooks/quiz/useGetQuizById.ts";
 import {ClockIcon} from "@heroicons/react/24/outline";
 
 interface QuizPreStartProps {

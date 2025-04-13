@@ -3,8 +3,6 @@ import {quizAttemptApi} from "../../../config/config.ts";
 
 
 export const useGetQuizAttemptsByPublication = (publicationId: string) => {
-
-
     return useQuery(
         ['quizAttempts', publicationId],
         () => quizAttemptApi.apiAttemptsByPublicationPublicationIdGet({publicationId})

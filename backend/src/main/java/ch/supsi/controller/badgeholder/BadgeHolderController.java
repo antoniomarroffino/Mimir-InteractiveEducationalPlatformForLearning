@@ -62,52 +62,6 @@ public class BadgeHolderController {
         return Response.ok(badgeHolderDTO).build();
     }
 
-
-    @POST
-    @RolesAllowed("TEACHER")
-    @Operation(summary = "Create a new badge holder")
-    @APIResponse(
-            responseCode = "201",
-            description = "Badge holder created successfully",
-            content = @Content(
-                    mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = BadgeHolderDTO.class)
-            )
-    )
-    public Response createBadgeHolder(@Valid BadgeHolderDTO badgeHolderDTO) {
-        BadgeHolderDTO createdBadgeHolderDTO = this.badgeHolderService.createBadgeHolder(badgeHolderDTO);
-        return Response.status(Response.Status.CREATED)
-                .entity(createdBadgeHolderDTO)
-                .build();
-    }
-
-    @PUT
-    @Path("/{id}")
-    @RolesAllowed("TEACHER")
-    @Operation(summary = "Update an existing badge holder")
-    @APIResponse(
-            responseCode = "200",
-            description = "Badge holder updated successfully",
-            content = @Content(
-                    mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = BadgeHolderDTO.class)
-            )
-    )
-    @APIResponse(
-            responseCode = "404",
-            description = "Badge holder not found"
-    )
-    public Response updateBadgeHolder(
-            @PathParam("id") String id,
-            @Valid BadgeHolderDTO badgeHolderDTO
-    ) {
-        BadgeHolderDTO updatedBadgeHolderDTO = this.badgeHolderService.updateBadgeHolder(
-                new ObjectId(id),
-                badgeHolderDTO
-        );
-        return Response.ok(updatedBadgeHolderDTO).build();
-    }
-
     @POST
     @Path("/{azureOID}/badges")
     @RolesAllowed("TEACHER")
@@ -121,23 +75,6 @@ public class BadgeHolderController {
             @Valid Badge badge
     ) {
         this.badgeHolderService.addBadgeToHolder(azureOID, badge);
-        return Response.status(Response.Status.NO_CONTENT).build();
-    }
-
-    @DELETE
-    @Path("/{id}")
-    @RolesAllowed("TEACHER")
-    @Operation(summary = "Delete a badge holder")
-    @APIResponse(
-            responseCode = "204",
-            description = "Badge holder deleted successfully"
-    )
-    @APIResponse(
-            responseCode = "404",
-            description = "Badge holder not found"
-    )
-    public Response deleteBadgeHolder(@PathParam("id") String id) {
-        this.badgeHolderService.deleteBadgeHolder(new ObjectId(id));
         return Response.status(Response.Status.NO_CONTENT).build();
     }
 }

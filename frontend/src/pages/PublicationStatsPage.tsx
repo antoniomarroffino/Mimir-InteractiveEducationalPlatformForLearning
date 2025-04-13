@@ -183,6 +183,7 @@ const PublicationStatsPage: React.FC = () => {
                                                                     attempt={selectedAttempt}
                                                                     publication={selectedPublication}
                                                                     onClose={() => setSelectedAttempt(null)}
+                                                                    showBadgeAssignment={!selectedPublication.anonymous}
                                                                 />
                                                             </div>
                                                         </div>

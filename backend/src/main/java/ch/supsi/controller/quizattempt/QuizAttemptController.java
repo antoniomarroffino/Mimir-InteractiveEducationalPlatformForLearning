@@ -31,7 +31,7 @@ public class QuizAttemptController {
     IUserService userService;
 
     @GET
-    @RolesAllowed({"USER","TEACHER"})
+    @RolesAllowed({"STUDENT","TEACHER"})
     @Path("/user/{userAzureOID}")
     @Operation(summary = "Get all quiz attempts for a specific user")
     @APIResponse(
@@ -56,7 +56,7 @@ public class QuizAttemptController {
     }
 
     @POST
-    @RolesAllowed({"USER","TEACHER"})
+    @RolesAllowed({"STUDENT","TEACHER"})
     @Operation(summary = "Create a new quiz attempt")
     @APIResponse(responseCode = "201", description = "Quiz attempt created successfully", content = @Content(
             mediaType = MediaType.APPLICATION_JSON,
@@ -92,22 +92,6 @@ public class QuizAttemptController {
             schema = @Schema(type = SchemaType.ARRAY, implementation = QuizAttemptDTO.class)
     ))
     public Response getQuizAttemptsByPublication(@PathParam("publicationId") String publicationId) {
-        List<QuizAttemptDTO> attempts = this.quizAttemptService.getQuizAttemptsByPublication(new ObjectId(publicationId));
-        return Response.ok(attempts).build();
-    }
-
-
-    //TODO: Da levare questo metodo doppione "getPublicationStats"
-    @GET
-    @Path("/publications/{publicationId}/stats")
-    @RolesAllowed("TEACHER")
-    @Operation(summary = "Get statistics for a publication including all attempts and responses")
-    @APIResponse(responseCode = "200", description = "Publication statistics retrieved successfully", content = @Content(
-            mediaType = MediaType.APPLICATION_JSON,
-            schema = @Schema(type = SchemaType.ARRAY, implementation = QuizAttemptDTO.class)
-    ))
-    @APIResponse(responseCode = "404", description = "Publication not found")
-    public Response getPublicationStats(@PathParam("publicationId") String publicationId) {
         List<QuizAttemptDTO> attempts = this.quizAttemptService.getQuizAttemptsByPublication(new ObjectId(publicationId));
         return Response.ok(attempts).build();
     }

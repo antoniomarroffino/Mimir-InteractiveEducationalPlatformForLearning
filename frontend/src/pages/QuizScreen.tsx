@@ -2,7 +2,7 @@ import React from 'react';
 import {LoadingSpinner} from '../components/common/LoadingSpinner.tsx';
 import {useParams} from "react-router-dom";
 import {useGetQuizPublicationByCode} from "../hooks/quizPublication/useGetQuizPublicationByCode.ts";
-import QuizPreStart from "../components/QuizPreStart.tsx";
+import QuizPreStart from "../components/quiz/QuizPreStart.tsx";
 
 const QuizScreen: React.FC = () => {
     const {accessCode} = useParams();

@@ -45,7 +45,7 @@ public class QuizAttemptControllerTest {
 
     @Test
     @DisplayName("Should get quiz attempts by user")
-    @TestSecurity(user = "user", roles = "USER")
+    @TestSecurity(user = "user", roles = "STUDENT")
     void test01GetQuizAttemptsByUser_Success() {
         QuizAttemptDTO attempt1 = new QuizAttemptDTO();
         attempt1.setQuizPublicationId(VALID_PUBLICATION_ID);
@@ -65,7 +65,7 @@ public class QuizAttemptControllerTest {
 
     @Test
     @DisplayName("Should return empty list for quiz attempts by user")
-    @TestSecurity(user = "user", roles = "USER")
+    @TestSecurity(user = "user", roles = "STUDENT")
     void test02GetQuizAttemptsByUser_Empty() {
         when(this.quizAttemptService.getQuizAttemptsByUser(VALID_USER_AZURE_OID)).thenReturn(Collections.emptyList());
 
@@ -79,7 +79,7 @@ public class QuizAttemptControllerTest {
 
     @Test
     @DisplayName("Should create a new quiz attempt")
-    @TestSecurity(user = "user", roles = "USER")
+    @TestSecurity(user = "user", roles = "STUDENT")
     void test03CreateQuizAttempt_Success() {
         QuizAttemptDTO inputDTO = new QuizAttemptDTO();
         inputDTO.setQuizPublicationId(VALID_PUBLICATION_ID);
@@ -97,7 +97,7 @@ public class QuizAttemptControllerTest {
 
     @Test
     @DisplayName("Should return violation Validation Error because QuizAttempt is not valid")
-    @TestSecurity(user = "user", roles = "USER")
+    @TestSecurity(user = "user", roles = "STUDENT")
     void test04CreateQuizAttempt_ValidationError() {
         QuizAttemptDTO quizAttemptDTO = new QuizAttemptDTO();
         quizAttemptDTO.setQuizPublicationId(null);

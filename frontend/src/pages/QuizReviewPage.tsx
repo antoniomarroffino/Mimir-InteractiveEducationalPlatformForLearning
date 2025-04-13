@@ -6,7 +6,7 @@ import {useGetQuizAttemptsByUser} from "../hooks/quizAttempt/useGetQuizAttemptsB
 import {useGetQuizPublicationById} from "../hooks/quizPublication/useGetQuizPublicationById.ts";
 import React from "react";
 import {QuizAttemptDTO} from "@dti-isin/backend-api-client";
-import {AttemptBadgeDisplay} from "../hooks/badgeholder/AttemptBadgeDisplay.tsx";
+import {AttemptBadgeDisplay} from "../components/badge/AttemptBadgeDisplay.tsx";
 
 const QuizReviewPage: React.FC = () => {
     const {user} = useAuth();

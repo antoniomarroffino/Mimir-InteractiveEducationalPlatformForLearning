@@ -9,7 +9,6 @@ interface AssignBadgeParams {
     badgeType: BadgeType;
 }
 
-
 export const QuizAttemptCRUDProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const queryClient = useQueryClient();
     const createQuizAttemptMutation = useMutation(
@@ -28,18 +27,6 @@ export const QuizAttemptCRUDProvider: React.FC<{ children: React.ReactNode }> = 
                 );
             }
         }
-    );
-
-    const getQuizAttemptByIdQuery = useMutation(
-        (attemptId: string) =>
-            quizAttemptApi.apiAttemptsAttemptIdGet({attemptId})
-                .then(response => response.data)
-    );
-
-    const getQuizAttemptsByPublicationQuery = useMutation(
-        (publicationId: string) =>
-            quizAttemptApi.apiAttemptsByPublicationPublicationIdGet({publicationId})
-                .then(response => response.data)
     );
 
     const assignBadgeMutation = useMutation(
@@ -66,22 +53,6 @@ export const QuizAttemptCRUDProvider: React.FC<{ children: React.ReactNode }> = 
                 throw err;
             }
         },
-        getQuizAttemptById: async (attemptId: string) => {
-            try {
-                return await getQuizAttemptByIdQuery.mutateAsync(attemptId);
-            } catch (err) {
-                console.error("Failed to fetch quiz attempt:", err);
-                throw err;
-            }
-        },
-        getQuizAttemptsByPublication: async (publicationId: string) => {
-            try {
-                return await getQuizAttemptsByPublicationQuery.mutateAsync(publicationId);
-            } catch (err) {
-                console.error("Failed to fetch quiz attempts by publication:", err);
-                throw err;
-            }
-        },
         assignBadge: async (attemptId: string, badgeType: BadgeType) => {
             try {
                 await assignBadgeMutation.mutateAsync({ attemptId, badgeType });
@@ -91,12 +62,10 @@ export const QuizAttemptCRUDProvider: React.FC<{ children: React.ReactNode }> = 
             }
         },
         isCreatingQuizAttempt: createQuizAttemptMutation.isLoading,
-        isLoadingAttempt: getQuizAttemptByIdQuery.isLoading || getQuizAttemptsByPublicationQuery.isLoading,
         isAssigningBadge: assignBadgeMutation.isLoading,
         errorCreateQuizAttempt: createQuizAttemptMutation.error as Error,
-        errorLoadAttempt: getQuizAttemptByIdQuery.error as Error || getQuizAttemptsByPublicationQuery.error as Error,
         errorAssignBadge: assignBadgeMutation.error as Error,
-    }), [createQuizAttemptMutation, getQuizAttemptByIdQuery, assignBadgeMutation, getQuizAttemptsByPublicationQuery]);
+    }), [createQuizAttemptMutation, assignBadgeMutation]);
 
     return (
         <QuizAttemptCRUDContext.Provider value={value}>

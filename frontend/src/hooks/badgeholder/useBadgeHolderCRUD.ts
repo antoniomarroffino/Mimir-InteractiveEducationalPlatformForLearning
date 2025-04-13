@@ -11,7 +11,7 @@ interface AssignBadgeParams {
 export const useBadgeHolderCRUD = () => {
     const queryClient = useQueryClient();
 
-    const assignBadgeMutation = useMutation({
+    return useMutation({
         mutationFn: async ({ azureOID, badgeType, assignedBy }: AssignBadgeParams) => {
             const badge: Badge = {
                 type: badgeType,
@@ -24,17 +24,13 @@ export const useBadgeHolderCRUD = () => {
                 badge: badge
             });
         },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['badgeHolders'] });
+        onSuccess: (_data, params) => {
+            queryClient.invalidateQueries(['badgeHolders'])
+            queryClient.invalidateQueries(['badgeHolders', params.azureOID]);
         },
         onError: (error) => {
             console.error('Failed to assign badge:', error);
             throw error;
         }
     });
-
-    return {
-        assignBadgeToHolder: assignBadgeMutation.mutate,
-        isAssigningBadge: assignBadgeMutation.isLoading
-    };
 };

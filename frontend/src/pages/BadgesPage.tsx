@@ -1,13 +1,12 @@
-import React from 'react';
+import {useEffect, useState} from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../hooks/useAuth';
 import { Badge, BadgeType } from '@dti-isin/backend-api-client';
 import { FaTrophy, FaLock, FaStar, FaChartLine, FaMedal } from 'react-icons/fa';
-import { useQuery } from 'react-query';
-import { badgeHolderApi } from "../../config/config.ts";
 import confetti from 'canvas-confetti';
 import StatsCard from "../components/badge/StatsCard.tsx";
 import BadgeCard from "../components/badge/BadgeCard.tsx";
+import {useGetBadgeHolderByAzureOid} from "../hooks/badgeholder/useGetBadgeHolderByAzureOid.ts";
 
 interface GroupedBadge {
     type: BadgeType | undefined;
@@ -24,31 +23,25 @@ const containerVariants = {
     }
 };
 
-const BadgesPage: React.FC = () => {
+const BadgesPage = () => {
     const { user } = useAuth();
 
-    const { data: badgeHolder, isLoading } = useQuery(
-        ['badgeHolder', user?.azureOid],
-        async () => {
-            if (!user?.azureOid) return null;
-            return await badgeHolderApi.apiBadgeHoldersAzureOIDGet({
-                azureOID: user.azureOid
-            });
-        },
-        { enabled: !!user?.azureOid }
-    );
-
-    const badges = badgeHolder?.data.badges || [];
-
-    React.useEffect(() => {
-        if (badges.length > 0) {
-            confetti({
-                particleCount: 100,
-                spread: 70,
-                origin: { y: 0.6 }
-            });
+    const {data: badgeHolder, isLoading: isLoadingBadgeHolder, error: errorNotFoundBadgeHolder} = useGetBadgeHolderByAzureOid(user!.azureOid!);
+    const [groupedBadges, setGroupedBadges] = useState<GroupedBadge[]>();
+    
+    useEffect(() => {
+        if(badgeHolder && badgeHolder.badges){
+            if (badgeHolder.badges.length > 0) {
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            }
+            const groupedBadges = groupBadges(badgeHolder!.badges!);
+            setGroupedBadges(groupedBadges);
         }
-    }, [badges.length]);
+    }, [badgeHolder]);
 
     const formatDate = (dateString: string | undefined) => {
         if (!dateString) return 'N/A';
@@ -83,9 +76,8 @@ const BadgesPage: React.FC = () => {
         return Object.values(grouped);
     };
 
-    const groupedBadges = groupBadges(badges);
 
-    if (isLoading) {
+    if (isLoadingBadgeHolder) {
         return (
             <motion.div
                 initial={{ opacity: 0 }}
@@ -110,6 +102,77 @@ const BadgesPage: React.FC = () => {
         );
     }
 
+    if(errorNotFoundBadgeHolder){
+        return (
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="min-h-screen bg-gradient-to-br from-base-200 to-base-100 py-12 px-4"
+            >
+                <div className="max-w-7xl mx-auto text-center">
+                    <motion.div
+                        initial={{ y: -20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20 p-12 mb-12"
+                    >
+                        <div className="absolute inset-0 bg-pattern opacity-10"></div>
+                        <div className="relative z-10 flex flex-col items-center gap-8">
+                            <motion.div
+                                animate={{
+                                    scale: [1, 1.1, 1],
+                                    rotate: [0, 5, 0]
+                                }}
+                                transition={{
+                                    duration: 4,
+                                    repeat: Infinity,
+                                    ease: "easeInOut"
+                                }}
+                            >
+                                <FaTrophy className="text-[120px] text-primary/50"/>
+                            </motion.div>
+                            <div>
+                                <h1 className="text-5xl font-bold text-base-content mb-4">
+                                    No Badges Yet
+                                </h1>
+                                <p className="text-xl text-base-content/70 max-w-2xl mx-auto leading-relaxed">
+                                    You haven't earned any badges yet. Complete quizzes and challenges to start collecting achievements!
+                                </p>
+                            </div>
+                        </div>
+                    </motion.div>
+
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.3 }}
+                        className="mt-12 bg-base-100 rounded-3xl p-12 text-center"
+                    >
+                        <div className="max-w-2xl mx-auto">
+                            <motion.div
+                                animate={{
+                                    scale: [1, 1.1, 1],
+                                    rotate: [0, 5, 0]
+                                }}
+                                transition={{
+                                    duration: 3,
+                                    repeat: Infinity,
+                                    ease: "easeInOut"
+                                }}
+                                className="text-7xl mb-6"
+                            >
+                                🚀
+                            </motion.div>
+                            <h3 className="text-3xl font-bold mb-4">Start Your Journey!</h3>
+                            <p className="text-xl text-base-content/70">
+                                Your first badge is waiting! Participate in activities and demonstrate your skills to unlock amazing achievements.
+                            </p>
+                        </div>
+                    </motion.div>
+                </div>
+            </motion.div>
+        );
+    }
+
     return (
         <motion.div
             initial={{ opacity: 0 }}
@@ -130,8 +193,8 @@ const BadgesPage: React.FC = () => {
                                 Achievement Gallery
                             </h1>
                             <p className="text-xl text-primary-content/90 max-w-2xl leading-relaxed">
-                                {badges.length > 0
-                                    ? `🌟 Amazing progress! You've earned ${badges.length} badge${badges.length > 1 ? 's' : ''}.`
+                                {badgeHolder!.badges!.length > 0
+                                    ? `🌟 Amazing progress! You've earned ${badgeHolder!.badges!.length} badge${badgeHolder!.badges!.length > 1 ? 's' : ''}.`
                                     : "🚀 Ready to start your collection? Complete quizzes to earn badges!"}
                             </p>
                         </div>
@@ -161,19 +224,19 @@ const BadgesPage: React.FC = () => {
                 >
                     <StatsCard
                         title="Total Badges"
-                        value={badges.length}
+                        value={badgeHolder!.badges!.length}
                         icon={<FaMedal className="text-4xl text-primary"/>}
                         description="Collected so far"
                     />
                     <StatsCard
                         title="Latest Achievement"
-                        value={badges.length > 0 ? formatDate(badges[badges.length - 1].assignedAt) : "None yet"}
+                        value={badgeHolder!.badges!.length > 0 ? formatDate(badgeHolder!.badges![badgeHolder!.badges!.length - 1].assignedAt) : "None yet"}
                         icon={<FaChartLine className="text-4xl text-secondary"/>}
                         description="Keep the momentum"
                     />
                     <StatsCard
                         title="Progress"
-                        value={`${(badges.length / 10 * 100).toFixed(0)}%`}
+                        value={`${(badgeHolder!.badges!.length / 10 * 100).toFixed(0)}%`}
                         icon={<FaStar className="text-4xl text-accent"/>}
                         description="Toward mastery"
                     />
@@ -187,7 +250,7 @@ const BadgesPage: React.FC = () => {
                 >
                     <h2 className="text-3xl font-bold mb-8">Your Collection</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {groupedBadges.map((groupedBadge, index) => (
+                        {groupedBadges && groupedBadges.map((groupedBadge, index) => (
                             <BadgeCard
                                 key={index}
                                 groupedBadge={groupedBadge}
@@ -216,7 +279,7 @@ const BadgesPage: React.FC = () => {
                 </motion.div>
 
                 {/* Motivational Section */}
-                {badges.length === 0 && (
+                {badgeHolder!.badges!.length === 0 && (
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}

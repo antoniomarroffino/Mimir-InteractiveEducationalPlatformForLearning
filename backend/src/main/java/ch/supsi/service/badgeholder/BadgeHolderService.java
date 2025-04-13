@@ -9,7 +9,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.NotFoundException;
-import org.bson.types.ObjectId;
 
 import java.util.List;
 import java.util.Optional;
@@ -42,75 +41,15 @@ public class BadgeHolderService implements IBadgeHolderService {
     }
 
     @Override
-    public BadgeHolderDTO createBadgeHolder(BadgeHolderDTO badgeHolderDTO) {
-        this.verifyBadgeHolderIsValid(badgeHolderDTO);
-
-        if (this.badgeHolderRepository.findByAzureOIDOptional(badgeHolderDTO.getAzureOID()).isPresent()) {
-            throw new BadRequestException("Badge holder with Azure OID " + badgeHolderDTO.getAzureOID() + " already exists");
-        }
-
-        BadgeHolder badgeHolder = this.badgeHolderMapper.toEntity(badgeHolderDTO);
-        this.badgeHolderRepository.persist(badgeHolder);
-
-        return this.badgeHolderMapper.toDTO(badgeHolder);
-    }
-
-    @Override
-    public BadgeHolderDTO updateBadgeHolder(ObjectId id, BadgeHolderDTO badgeHolderDTO) {
-        this.verifyBadgeHolderIsValid(badgeHolderDTO);
-
-        Optional<BadgeHolder> badgeHolderOpt = this.badgeHolderRepository.findByIdOptional(id);
-        if (badgeHolderOpt.isEmpty()) {
-            throw new NotFoundException("Badge holder " + id + " not found");
-        }
-
-        BadgeHolder existingBadgeHolder = badgeHolderOpt.get();
-        existingBadgeHolder.badges = badgeHolderDTO.getBadges();
-
-        this.badgeHolderRepository.update(existingBadgeHolder);
-
-        return this.badgeHolderMapper.toDTO(existingBadgeHolder);
-    }
-
-    @Override
-    public void deleteBadgeHolder(ObjectId id) {
-        Optional<BadgeHolder> badgeHolderOpt = this.badgeHolderRepository.findByIdOptional(id);
-        if (badgeHolderOpt.isEmpty()) {
-            throw new NotFoundException("Badge holder " + id + " not found");
-        }
-
-        this.badgeHolderRepository.delete(badgeHolderOpt.get());
-    }
-
-    @Override
     public void addBadgeToHolder(String azureOID, Badge badge) {
         if (azureOID == null || badge == null) {
             throw new BadRequestException("Azure OID and badge cannot be null");
         }
 
         Optional<BadgeHolder> badgeHolderOpt = this.badgeHolderRepository.findByAzureOIDOptional(azureOID);
-        BadgeHolder badgeHolder;
-
-        // Create new badge holder if it doesn't exist
-        badgeHolder = badgeHolderOpt.orElseGet(() -> new BadgeHolder(azureOID));
+        BadgeHolder badgeHolder = badgeHolderOpt.orElseGet(() -> new BadgeHolder(azureOID));
 
         badgeHolder.badges.add(badge);
-
-        if (badgeHolderOpt.isEmpty()) {
-            this.badgeHolderRepository.persist(badgeHolder);
-        } else {
-            this.badgeHolderRepository.update(badgeHolder);
-        }
-    }
-
-    private void verifyBadgeHolderIsValid(BadgeHolderDTO badgeHolderDTO) {
-        if (badgeHolderDTO == null) {
-            throw new BadRequestException("Badge holder data cannot be null");
-        }
-
-        String azureOID = badgeHolderDTO.getAzureOID();
-        if (azureOID == null || azureOID.trim().isEmpty()) {
-            throw new BadRequestException("Azure OID cannot be null or empty");
-        }
+        this.badgeHolderRepository.persistOrUpdate(badgeHolder);
     }
 }

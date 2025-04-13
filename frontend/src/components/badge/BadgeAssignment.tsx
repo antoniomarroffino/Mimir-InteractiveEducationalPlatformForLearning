@@ -18,7 +18,7 @@ export const BadgeAssignment: React.FC<BadgeAssignmentProps> = ({
                                                                     assignedBy
                                                                 }) => {
     const { assignBadge, isAssigningBadge } = useQuizAttemptCRUD();
-    const { assignBadgeToHolder, isAssigningBadge: isAssigningBadgeToHolder } = useBadgeHolderCRUD();
+    const { mutateAsync: assignBadgeToHolder, isLoading: isAssigningBadgeToHolder } = useBadgeHolderCRUD();
     const [showConfirm, setShowConfirm] = React.useState(false);
 
     const isLoading = isAssigningBadge || isAssigningBadgeToHolder;

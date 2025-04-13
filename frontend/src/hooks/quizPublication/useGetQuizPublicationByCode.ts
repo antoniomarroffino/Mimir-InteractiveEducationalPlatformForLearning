@@ -8,7 +8,6 @@ export const useGetQuizPublicationByCode = (code: string) => {
     const location = useLocation();
     const isResultsPage = location.pathname.includes('/results');
 
-    // Controlla se i dati sono già in cache
     const cachedData = queryClient.getQueryData<QuizPublicationDTO>(['quizPublication', code]);
 
     return useQuery<QuizPublicationDTO, Error>({
