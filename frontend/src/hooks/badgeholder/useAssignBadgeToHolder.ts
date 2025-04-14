@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from 'react-query';
-import { BadgeType, Badge } from '@dti-isin/backend-api-client';
+import { BadgeType } from '@dti-isin/backend-api-client';
 import { badgeHolderApi } from "../../../config/config.ts";
 
 interface AssignBadgeParams {
@@ -8,20 +8,20 @@ interface AssignBadgeParams {
     assignedBy: string;
 }
 
-export const useBadgeHolderCRUD = () => {
+export const useAssignBadgeToHolder = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
         mutationFn: async ({ azureOID, badgeType, assignedBy }: AssignBadgeParams) => {
-            const badge: Badge = {
-                type: badgeType,
-                assignedAt: new Date().toISOString(),
-                assignedBy
-            };
-
             return await badgeHolderApi.apiBadgeHoldersAzureOIDBadgesPost({
                 azureOID: azureOID,
-                badge: badge
+                badgeDTO: {
+                    type: badgeType,
+                    assignedBy: {
+                        azureOid: assignedBy
+                    },
+                    assignedAt: new Date().toISOString(),
+                }
             });
         },
         onSuccess: (_data, params) => {

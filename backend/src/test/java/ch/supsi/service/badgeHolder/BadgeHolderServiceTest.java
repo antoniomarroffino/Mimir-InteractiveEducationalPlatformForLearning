@@ -1,9 +1,14 @@
 package ch.supsi.service.badgeHolder;
 
 import ch.supsi.mapper.BadgeHolderMapper;
+import ch.supsi.mapper.BadgeMapper;
 import ch.supsi.model.api.BadgeHolder;
 import ch.supsi.model.api.badge.Badge;
+import ch.supsi.model.api.badge.BadgeType;
+import ch.supsi.model.api.user.Role;
+import ch.supsi.model.dto.api.BadgeDTO;
 import ch.supsi.model.dto.api.BadgeHolderDTO;
+import ch.supsi.model.dto.api.UserWithoutCoursesDTO;
 import ch.supsi.repository.BadgeHolderRepository;
 import ch.supsi.service.badgeholder.BadgeHolderService;
 import io.quarkus.test.InjectMock;
@@ -17,10 +22,7 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -36,6 +38,9 @@ public class BadgeHolderServiceTest {
 
     @InjectMock
     BadgeHolderMapper badgeHolderMapper;
+
+    @InjectMock
+    BadgeMapper badgeMapper;
 
     @Test
     @DisplayName("Should return empty list when no badge holders")
@@ -110,7 +115,7 @@ public class BadgeHolderServiceTest {
         assertAll(
                 () -> assertThrows(
                         BadRequestException.class,
-                        () -> this.badgeHolderService.addBadgeToHolder(null, new Badge())
+                        () -> this.badgeHolderService.addBadgeToHolder(null, new BadgeDTO())
                 ),
 
                 () -> assertThrows(
@@ -123,24 +128,25 @@ public class BadgeHolderServiceTest {
                         () -> this.badgeHolderService.addBadgeToHolder(null, null)
                 )
         );
+
+        verifyNoInteractions(this.badgeHolderRepository, this.badgeMapper, this.badgeHolderMapper);
     }
 
     @Test
     @DisplayName("Should create new holder when not exists")
     void test07AddBadgeToHolder_NewHolder() {
         String oid = "newOID";
-        Badge badge = new Badge();
+        BadgeDTO badgeDTO = new BadgeDTO();
+        badgeDTO.setAssignedBy(new UserWithoutCoursesDTO(oid, null, null, Role.STUDENT));
 
         when(this.badgeHolderRepository.findByAzureOIDOptional(oid))
                 .thenReturn(Optional.empty());
+        when(this.badgeMapper.toEntity(badgeDTO)).thenReturn(new Badge());
 
-        this.badgeHolderService.addBadgeToHolder(oid, badge);
+        this.badgeHolderService.addBadgeToHolder(oid, badgeDTO);
 
-        verify(this.badgeHolderRepository, times(1)).persistOrUpdate((BadgeHolder) argThat(holder ->
-                ((BadgeHolder) (holder)).azureOID.equals(oid) &&
-                        ((BadgeHolder) (holder)).badges.size() == 1 &&
-                        ((BadgeHolder) (holder)).badges.getFirst() == badge
-        ));
+        verify(this.badgeMapper, times(1)).toEntity(badgeDTO);
+        verify(this.badgeHolderRepository, times(1)).persistOrUpdate(any(BadgeHolder.class));
     }
 
     @Test
@@ -148,19 +154,23 @@ public class BadgeHolderServiceTest {
     void test08AddBadgeToHOlder_ExistingHolder() {
         String oid = "existingOID";
         Badge existingBadge = new Badge();
-        Badge newBadge = new Badge();
+        BadgeDTO newBadge = new BadgeDTO();
+        newBadge.setAssignedBy(new UserWithoutCoursesDTO(oid, null, null, Role.STUDENT));
 
         BadgeHolder holder = createTestBadgeHolder(oid);
         holder.badges.add(existingBadge);
 
+        int sizeBeforeAddNewBadge = holder.badges.size();
+
         when(this.badgeHolderRepository.findByAzureOIDOptional(oid))
                 .thenReturn(Optional.of(holder));
+        when(this.badgeMapper.toEntity(newBadge)).thenReturn(new Badge());
 
         this.badgeHolderService.addBadgeToHolder(oid, newBadge);
 
-        assertEquals(2, holder.badges.size());
-        assertTrue(holder.badges.contains(newBadge));
+        assertEquals(sizeBeforeAddNewBadge + 1, holder.badges.size());
 
+        verify(this.badgeMapper, times(1)).toEntity(newBadge);
         verify(badgeHolderRepository, times(1)).persistOrUpdate(holder);
     }
 

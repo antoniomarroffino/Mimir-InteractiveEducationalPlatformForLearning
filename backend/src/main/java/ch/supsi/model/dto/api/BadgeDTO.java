@@ -1,7 +1,9 @@
 package ch.supsi.model.dto.api;
 
 import ch.supsi.model.api.badge.BadgeType;
+import ch.supsi.model.api.user.User;
 import io.quarkus.runtime.annotations.RegisterForReflection;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 
@@ -9,7 +11,8 @@ import java.time.LocalDateTime;
 public class BadgeDTO {
     private BadgeType type;
     private LocalDateTime assignedAt;
-    private String assignedBy;
+    @NotNull(message = "Assign by cannot be null")
+    private UserWithoutCoursesDTO assignedBy;
 
     public BadgeDTO() {
     }
@@ -30,11 +33,11 @@ public class BadgeDTO {
         this.assignedAt = assignedAt;
     }
 
-    public String getAssignedBy() {
+    public UserWithoutCoursesDTO getAssignedBy() {
         return assignedBy;
     }
 
-    public void setAssignedBy(String assignedBy) {
+    public void setAssignedBy(UserWithoutCoursesDTO assignedBy) {
         this.assignedBy = assignedBy;
     }
 }

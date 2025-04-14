@@ -1,9 +1,9 @@
 import React from 'react';
 import { FaTrophy } from 'react-icons/fa';
-import { Badge } from '@dti-isin/backend-api-client';
+import { BadgeDTO } from '@dti-isin/backend-api-client';
 
 interface AttemptBadgeDisplayProps {
-    badge: Badge;
+    badge: BadgeDTO;
 }
 
 export const AttemptBadgeDisplay: React.FC<AttemptBadgeDisplayProps> = ({ badge }) => {
@@ -29,7 +29,7 @@ export const AttemptBadgeDisplay: React.FC<AttemptBadgeDisplayProps> = ({ badge 
                     <div className="mt-2 flex items-center gap-2 text-xs text-base-content/60">
                         <span>Awarded on {new Date(badge.assignedAt!).toLocaleDateString()}</span>
                         <span>•</span>
-                        <span>by {badge.assignedBy}</span>
+                        <span>by {badge.assignedBy.name}</span>
                     </div>
                 </div>
             </div>

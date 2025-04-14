@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../hooks/useAuth';
-import { Badge, BadgeType } from '@dti-isin/backend-api-client';
+import { BadgeDTO, BadgeType } from '@dti-isin/backend-api-client';
 import { FaTrophy, FaLock, FaStar, FaChartLine, FaMedal } from 'react-icons/fa';
 import confetti from 'canvas-confetti';
 import StatsCard from "../components/badge/StatsCard.tsx";
@@ -11,7 +11,7 @@ import {useGetBadgeHolderByAzureOid} from "../hooks/badgeholder/useGetBadgeHolde
 interface GroupedBadge {
     type: BadgeType | undefined;
     count: number;
-    badges: Badge[];
+    badges: BadgeDTO[];
     latestDate: string | undefined;
 }
 
@@ -48,7 +48,7 @@ const BadgesPage = () => {
         return new Date(dateString).toLocaleDateString();
     };
 
-    const groupBadges = (badges: Badge[]): GroupedBadge[] => {
+    const groupBadges = (badges: BadgeDTO[]): GroupedBadge[] => {
         const grouped = badges.reduce((acc, badge) => {
             const key = badge.type;
             const assignedAt = badge.assignedAt || new Date().toISOString();

@@ -2,6 +2,8 @@ package ch.supsi.controller.quizAttempt;
 
 import ch.supsi.controller.quizattempt.QuizAttemptController;
 import ch.supsi.model.api.badge.BadgeType;
+import ch.supsi.model.api.user.Role;
+import ch.supsi.model.dto.api.BadgeDTO;
 import ch.supsi.model.dto.api.QuizAttemptDTO;
 import ch.supsi.model.dto.api.UserWithoutCoursesDTO;
 import ch.supsi.service.quizattempt.IQuizAttemptService;
@@ -47,6 +49,7 @@ public class QuizAttemptControllerTest {
     private static final String VALID_PUBLICATION_ID = new ObjectId().toString();
     private static final String VALID_QUESTION_ID = new ObjectId().toString();
     private static final String VALID_USER_AZURE_OID = "user-azure-oid";
+    private static final String BADGE_ASSIGNER_OID = "assigner-oid";
 
 
     @Test
@@ -56,12 +59,19 @@ public class QuizAttemptControllerTest {
         UserWithoutCoursesDTO userWithoutCoursesDTO = new UserWithoutCoursesDTO();
         userWithoutCoursesDTO.setAzureOid(VALID_USER_AZURE_OID);
 
+        BadgeDTO badge1 = new BadgeDTO();
+        badge1.setAssignedBy(new UserWithoutCoursesDTO(BADGE_ASSIGNER_OID, "assigner", "assignerEmail", Role.TEACHER));
+        BadgeDTO badge2 = new BadgeDTO();
+        badge2.setAssignedBy(new UserWithoutCoursesDTO(BADGE_ASSIGNER_OID, "assigner", "assignerEmail", Role.TEACHER));
+
         QuizAttemptDTO attempt1 = new QuizAttemptDTO();
         attempt1.setQuizPublicationId(VALID_PUBLICATION_ID);
         attempt1.setUser(userWithoutCoursesDTO);
+        attempt1.setBadges(List.of(badge1, badge2));
         QuizAttemptDTO attempt2 = new QuizAttemptDTO();
         attempt2.setQuizPublicationId(VALID_ATTEMPT_ID);
         attempt2.setUser(userWithoutCoursesDTO);
+        attempt2.setBadges(Collections.emptyList());
         List<QuizAttemptDTO> attemptList = List.of(attempt1, attempt2);
 
         when(this.quizAttemptService.getQuizAttemptsByUser(VALID_USER_AZURE_OID)).thenReturn(attemptList);
@@ -74,8 +84,8 @@ public class QuizAttemptControllerTest {
         assertEquals(attemptList.size(), ((List<?>) response.getEntity()).size());
 
         verify(this.quizAttemptService, times(1)).getQuizAttemptsByUser(VALID_USER_AZURE_OID);
-        verify(this.microsoftGraphService, times(attemptList.size())).getUserByOid(anyString());
-        verify(this.userService, times(attemptList.size())).buildUserWithoutCoursesDTO(any(User.class));
+        verify(this.microsoftGraphService, times(4)).getUserByOid(anyString());
+        verify(this.userService, times(4)).buildUserWithoutCoursesDTO(any(User.class));
     }
 
     @Test
@@ -100,11 +110,17 @@ public class QuizAttemptControllerTest {
         UserWithoutCoursesDTO userWithoutCoursesDTO = new UserWithoutCoursesDTO();
         userWithoutCoursesDTO.setAzureOid(VALID_USER_AZURE_OID);
 
+        BadgeDTO badge1 = new BadgeDTO();
+        badge1.setAssignedBy(new UserWithoutCoursesDTO(BADGE_ASSIGNER_OID, "assigner", "assignerEmail", Role.TEACHER));
+        BadgeDTO badge2 = new BadgeDTO();
+        badge2.setAssignedBy(new UserWithoutCoursesDTO(BADGE_ASSIGNER_OID, "assigner", "assignerEmail", Role.TEACHER));
+
         QuizAttemptDTO inputDTO = new QuizAttemptDTO();
         inputDTO.setQuizPublicationId(VALID_PUBLICATION_ID);
         QuizAttemptDTO responseDTO = new QuizAttemptDTO();
         responseDTO.setQuizPublicationId(VALID_PUBLICATION_ID);
         responseDTO.setUser(userWithoutCoursesDTO);
+        responseDTO.setBadges(List.of(badge1, badge2));
 
         when(this.quizAttemptService.createQuizAttempt(any(QuizAttemptDTO.class))).thenReturn(responseDTO);
         when(this.microsoftGraphService.getUserByOid(anyString())).thenReturn(new User());
@@ -115,8 +131,8 @@ public class QuizAttemptControllerTest {
         assertEquals(responseDTO, response.getEntity());
 
         verify(this.quizAttemptService, times(1)).createQuizAttempt(any(QuizAttemptDTO.class));
-        verify(this.microsoftGraphService, times(1)).getUserByOid(anyString());
-        verify(this.userService, times(1)).buildUserWithoutCoursesDTO(any(User.class));
+        verify(this.microsoftGraphService, times(3)).getUserByOid(anyString());
+        verify(this.userService, times(3)).buildUserWithoutCoursesDTO(any(User.class));
     }
 
     @Test
@@ -143,9 +159,15 @@ public class QuizAttemptControllerTest {
         UserWithoutCoursesDTO userWithoutCoursesDTO = new UserWithoutCoursesDTO();
         userWithoutCoursesDTO.setAzureOid(VALID_USER_AZURE_OID);
 
+        BadgeDTO badge1 = new BadgeDTO();
+        badge1.setAssignedBy(new UserWithoutCoursesDTO(BADGE_ASSIGNER_OID, "assigner", "assignerEmail", Role.TEACHER));
+        BadgeDTO badge2 = new BadgeDTO();
+        badge2.setAssignedBy(new UserWithoutCoursesDTO(BADGE_ASSIGNER_OID, "assigner", "assignerEmail", Role.TEACHER));
+
         QuizAttemptDTO attemptDTO = new QuizAttemptDTO();
         attemptDTO.setQuizPublicationId(VALID_PUBLICATION_ID);
         attemptDTO.setUser(userWithoutCoursesDTO);
+        attemptDTO.setBadges(List.of(badge1, badge2));
 
         when(this.quizAttemptService.getQuizAttemptById(any(ObjectId.class))).thenReturn(attemptDTO);
         when(this.microsoftGraphService.getUserByOid(anyString())).thenReturn(new User());
@@ -157,8 +179,8 @@ public class QuizAttemptControllerTest {
         assertEquals(attemptDTO, response.getEntity());
 
         verify(this.quizAttemptService, times(1)).getQuizAttemptById(any(ObjectId.class));
-        verify(this.microsoftGraphService, times(1)).getUserByOid(anyString());
-        verify(this.userService, times(1)).buildUserWithoutCoursesDTO(any(User.class));
+        verify(this.microsoftGraphService, times(3)).getUserByOid(anyString());
+        verify(this.userService, times(3)).buildUserWithoutCoursesDTO(any(User.class));
     }
 
     @Test
@@ -194,8 +216,14 @@ public class QuizAttemptControllerTest {
         UserWithoutCoursesDTO userWithoutCoursesDTO = new UserWithoutCoursesDTO();
         userWithoutCoursesDTO.setAzureOid(VALID_USER_AZURE_OID);
 
+        BadgeDTO badge1 = new BadgeDTO();
+        badge1.setAssignedBy(new UserWithoutCoursesDTO(BADGE_ASSIGNER_OID, "assigner", "assignerEmail", Role.TEACHER));
+        BadgeDTO badge2 = new BadgeDTO();
+        badge2.setAssignedBy(new UserWithoutCoursesDTO(BADGE_ASSIGNER_OID, "assigner", "assignerEmail", Role.TEACHER));
+
         QuizAttemptDTO attemptDTO = new QuizAttemptDTO();
         attemptDTO.setUser(userWithoutCoursesDTO);
+        attemptDTO.setBadges(List.of(badge1, badge2));
         List<QuizAttemptDTO> attempts = List.of(attemptDTO);
 
         when(this.quizAttemptService.getQuizAttemptsByPublication(any(ObjectId.class))).thenReturn(attempts);
@@ -208,8 +236,8 @@ public class QuizAttemptControllerTest {
         assertEquals(attempts.size(), ((List<?>) response.getEntity()).size());
 
         verify(this.quizAttemptService, times(1)).getQuizAttemptsByPublication(any(ObjectId.class));
-        verify(this.microsoftGraphService, times(attempts.size())).getUserByOid(anyString());
-        verify(this.userService, times(attempts.size())).buildUserWithoutCoursesDTO(any(User.class));
+        verify(this.microsoftGraphService, times(3)).getUserByOid(anyString());
+        verify(this.userService, times(3)).buildUserWithoutCoursesDTO(any(User.class));
     }
 
     @Test
@@ -230,8 +258,14 @@ public class QuizAttemptControllerTest {
         UserWithoutCoursesDTO userWithoutCoursesDTO = new UserWithoutCoursesDTO();
         userWithoutCoursesDTO.setAzureOid(VALID_USER_AZURE_OID);
 
+        BadgeDTO badge1 = new BadgeDTO();
+        badge1.setAssignedBy(new UserWithoutCoursesDTO(BADGE_ASSIGNER_OID, "assigner", "assignerEmail", Role.TEACHER));
+        BadgeDTO badge2 = new BadgeDTO();
+        badge2.setAssignedBy(new UserWithoutCoursesDTO(BADGE_ASSIGNER_OID, "assigner", "assignerEmail", Role.TEACHER));
+
         QuizAttemptDTO attemptDTO = new QuizAttemptDTO();
         attemptDTO.setUser(userWithoutCoursesDTO);
+        attemptDTO.setBadges(List.of(badge1, badge2));
         List<QuizAttemptDTO> attempts = List.of(attemptDTO);
 
         when(this.quizAttemptService.getQuizAttemptsByPublicationAndQuestion(any(ObjectId.class), any(ObjectId.class)))
@@ -246,8 +280,8 @@ public class QuizAttemptControllerTest {
 
         verify(this.quizAttemptService, times(1))
                 .getQuizAttemptsByPublicationAndQuestion(any(ObjectId.class), any(ObjectId.class));
-        verify(this.microsoftGraphService, times(attempts.size())).getUserByOid(anyString());
-        verify(this.userService, times(attempts.size())).buildUserWithoutCoursesDTO(any(User.class));
+        verify(this.microsoftGraphService, times(3)).getUserByOid(anyString());
+        verify(this.userService, times(3)).buildUserWithoutCoursesDTO(any(User.class));
     }
 
     @Test
@@ -257,8 +291,14 @@ public class QuizAttemptControllerTest {
         UserWithoutCoursesDTO userWithoutCoursesDTO = new UserWithoutCoursesDTO();
         userWithoutCoursesDTO.setAzureOid(null);
 
+        BadgeDTO badge1 = new BadgeDTO();
+        badge1.setAssignedBy(new UserWithoutCoursesDTO(BADGE_ASSIGNER_OID, "assigner", "assignerEmail", Role.TEACHER));
+        BadgeDTO badge2 = new BadgeDTO();
+        badge2.setAssignedBy(new UserWithoutCoursesDTO(BADGE_ASSIGNER_OID, "assigner", "assignerEmail", Role.TEACHER));
+
         QuizAttemptDTO attemptDTO = new QuizAttemptDTO();
         attemptDTO.setUser(userWithoutCoursesDTO);
+        attemptDTO.setBadges(List.of(badge1, badge2));
         List<QuizAttemptDTO> attempts = List.of(attemptDTO);
 
         when(this.quizAttemptService.getQuizAttemptsByPublicationAndQuestion(any(ObjectId.class), any(ObjectId.class)))
@@ -274,7 +314,8 @@ public class QuizAttemptControllerTest {
 
         verify(this.quizAttemptService, times(1))
                 .getQuizAttemptsByPublicationAndQuestion(any(ObjectId.class), any(ObjectId.class));
-        verifyNoInteractions(this.microsoftGraphService, this.userService);
+        verify(this.microsoftGraphService, times(2)).getUserByOid(anyString());
+        verify(this.userService, times(2)).buildUserWithoutCoursesDTO(any(User.class));
     }
 
     @Test

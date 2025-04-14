@@ -1,6 +1,7 @@
 package ch.supsi.controller.quizattempt;
 
 import ch.supsi.model.api.badge.BadgeType;
+import ch.supsi.model.dto.api.BadgeDTO;
 import ch.supsi.model.dto.api.BadgeHolderDTO;
 import ch.supsi.model.dto.api.QuizAttemptDTO;
 import ch.supsi.model.dto.api.UserWithoutCoursesDTO;
@@ -61,6 +62,10 @@ public class QuizAttemptController {
         attempts.forEach(attempt -> attempt.setUser(
                 this.buildUserWithoutCoursesDTOFromQuizAttemptDTO(attempt)
         ));
+        attempts.forEach(attempt ->
+                        attempt.getBadges()
+                                .forEach(badgeDTO ->
+                                        badgeDTO.setAssignedBy(this.buildUserWithoutCoursesDTOFromBadgeDTO(badgeDTO))));
         return Response.ok(attempts).build();
     }
 
@@ -75,6 +80,7 @@ public class QuizAttemptController {
     public Response createQuizAttempt(@Valid QuizAttemptDTO quizAttemptDTO) {
         QuizAttemptDTO responseDTO = this.quizAttemptService.createQuizAttempt(quizAttemptDTO);
         responseDTO.setUser(this.buildUserWithoutCoursesDTOFromQuizAttemptDTO(responseDTO));
+        responseDTO.getBadges().forEach(badgeDTO -> badgeDTO.setAssignedBy(this.buildUserWithoutCoursesDTOFromBadgeDTO(badgeDTO)));
         return Response.status(Response.Status.CREATED).entity(responseDTO).build();
     }
 
@@ -90,6 +96,7 @@ public class QuizAttemptController {
     public Response getQuizAttemptById(@PathParam("attemptId") String attemptId) {
         QuizAttemptDTO attemptDTO = this.quizAttemptService.getQuizAttemptById(new ObjectId(attemptId));
         attemptDTO.setUser(this.buildUserWithoutCoursesDTOFromQuizAttemptDTO(attemptDTO));
+        attemptDTO.getBadges().forEach(badgeDTO -> badgeDTO.setAssignedBy(this.buildUserWithoutCoursesDTOFromBadgeDTO(badgeDTO)));
         return Response.ok(attemptDTO).build();
     }
 
@@ -106,6 +113,10 @@ public class QuizAttemptController {
         attempts.forEach(attempt -> attempt.setUser(
                 this.buildUserWithoutCoursesDTOFromQuizAttemptDTO(attempt)
         ));
+        attempts.forEach(attempt ->
+                        attempt.getBadges()
+                                .forEach(badgeDTO ->
+                                        badgeDTO.setAssignedBy(this.buildUserWithoutCoursesDTOFromBadgeDTO(badgeDTO))));
         return Response.ok(attempts).build();
     }
 
@@ -129,6 +140,10 @@ public class QuizAttemptController {
         attempts.forEach(attempt -> attempt.setUser(
                 this.buildUserWithoutCoursesDTOFromQuizAttemptDTO(attempt)
         ));
+        attempts.forEach(attempt ->
+                attempt.getBadges()
+                        .forEach(badgeDTO ->
+                                badgeDTO.setAssignedBy(this.buildUserWithoutCoursesDTOFromBadgeDTO(badgeDTO))));
         return Response.ok(attempts).build();
     }
 
@@ -165,8 +180,16 @@ public class QuizAttemptController {
         if(quizAttemptDTO.getUser().getAzureOid() == null)
             return null;
 
+        return this.buildUserWithoutCoursesDTOFromAzureOid(quizAttemptDTO.getUser().getAzureOid());
+    }
+
+    private UserWithoutCoursesDTO buildUserWithoutCoursesDTOFromBadgeDTO(BadgeDTO badgeDTO) {
+        return this.buildUserWithoutCoursesDTOFromAzureOid(badgeDTO.getAssignedBy().getAzureOid());
+    }
+
+    private UserWithoutCoursesDTO buildUserWithoutCoursesDTOFromAzureOid(String azureOid) {
         return this.userService.buildUserWithoutCoursesDTO(
-                this.microsoftGraphService.getUserByOid(quizAttemptDTO.getUser().getAzureOid())
+                this.microsoftGraphService.getUserByOid(azureOid)
         );
     }
 }

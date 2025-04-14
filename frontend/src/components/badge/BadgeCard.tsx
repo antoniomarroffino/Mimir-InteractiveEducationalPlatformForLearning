@@ -1,12 +1,12 @@
 import React from "react";
 import {motion} from "framer-motion";
 import {FaTrophy} from "react-icons/fa";
-import {Badge} from "@dti-isin/backend-api-client";
+import {BadgeDTO} from "@dti-isin/backend-api-client";
 
 interface GroupedBadge {
     type: string | undefined;
     count: number;
-    badges: Badge[];
+    badges: BadgeDTO[];
     latestDate: string | undefined;
 }
 
@@ -27,7 +27,7 @@ const cardHoverVariants = {
 };
 
 const BadgeDisplay: React.FC<{
-    badges: Badge[];
+    badges: BadgeDTO[];
     formatDate: (date: string | undefined) => string;
 }> = ({badges, formatDate}) => (
     <div className="relative h-32 flex items-center justify-center perspective-1000">
@@ -58,7 +58,7 @@ const BadgeDisplay: React.FC<{
                         className="absolute bottom-0 transform translate-y-full bg-base-100 rounded-lg p-2 shadow-xl"
                     >
                         <div className="text-xs whitespace-nowrap">
-                            <div className="font-bold">{badge.assignedBy}</div>
+                            <div className="font-bold">Assigned by {badge.assignedBy.name}</div>
                             <div className="text-base-content/60">{formatDate(badge.assignedAt)}</div>
                         </div>
                     </motion.div>

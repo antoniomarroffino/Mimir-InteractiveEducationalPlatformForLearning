@@ -1,7 +1,9 @@
 package ch.supsi.model.dto.api.badge;
 
 import ch.supsi.model.api.badge.BadgeType;
+import ch.supsi.model.api.user.Role;
 import ch.supsi.model.dto.api.BadgeDTO;
+import ch.supsi.model.dto.api.UserWithoutCoursesDTO;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
@@ -28,15 +30,16 @@ public class BadgeDTOTest {
     @Test
     @DisplayName("Should create new BadgeDTO empty but setting all fields with setters")
     void test02CreateBadgeDTO_Setters() {
+        UserWithoutCoursesDTO userWithoutCoursesDTO = new UserWithoutCoursesDTO("TEST_OID", "name", "email@email.com", Role.STUDENT);
+
         BadgeDTO badgeDTO = new BadgeDTO();
-        String assignedBy = "TEST-OID";
         LocalDateTime assignedAt = LocalDateTime.now();
-        badgeDTO.setAssignedBy(assignedBy);
+        badgeDTO.setAssignedBy(userWithoutCoursesDTO);
         badgeDTO.setAssignedAt(assignedAt);
         badgeDTO.setType(BadgeType.BEST_ATTEMPT);
 
         assertEquals(assignedAt, badgeDTO.getAssignedAt());
-        assertEquals(assignedBy, badgeDTO.getAssignedBy());
+        assertEquals(userWithoutCoursesDTO, badgeDTO.getAssignedBy());
         assertEquals(BadgeType.BEST_ATTEMPT, badgeDTO.getType());
     }
 }

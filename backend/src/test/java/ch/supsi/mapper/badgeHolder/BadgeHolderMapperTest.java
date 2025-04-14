@@ -1,11 +1,14 @@
 package ch.supsi.mapper.badgeHolder;
 
 import ch.supsi.mapper.BadgeHolderMapper;
+import ch.supsi.mapper.BadgeMapper;
 import ch.supsi.model.api.BadgeHolder;
 import ch.supsi.model.api.badge.Badge;
 import ch.supsi.model.api.badge.BadgeType;
+import ch.supsi.model.dto.api.BadgeDTO;
 import ch.supsi.model.dto.api.BadgeHolderDTO;
 import ch.supsi.model.dto.api.UserWithoutCoursesDTO;
+import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import org.bson.types.ObjectId;
@@ -17,6 +20,8 @@ import org.junit.jupiter.api.TestMethodOrder;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
 
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.MethodName.class)
@@ -24,11 +29,15 @@ public class BadgeHolderMapperTest {
     @Inject
     BadgeHolderMapper badgeHolderMapper;
 
+    @InjectMock
+    BadgeMapper badgeMapper;
+
     @Test
     @DisplayName("Should return null because BadgeHolderEntity passed is null")
     void test01ToDTO_ReturnsNullBadgeHolderEntityIsNull() {
         BadgeHolderDTO dto = this.badgeHolderMapper.toDTO(null);
         assertNull(dto);
+        verifyNoInteractions(this.badgeMapper);
     }
 
     @Test
@@ -50,7 +59,9 @@ public class BadgeHolderMapperTest {
         assertNull(dto.getUser().getName());
         assertNull(dto.getUser().getEmail());
         assertNull(dto.getUser().getRole());
-        assertEquals(badgeHolder.badges, dto.getBadges());
+        assertEquals(badgeHolder.badges.size(), dto.getBadges().size());
+
+        verify(this.badgeMapper, times(badgeList.size())).toDTO(any(Badge.class));
     }
 
     @Test
@@ -58,6 +69,7 @@ public class BadgeHolderMapperTest {
     void test03ToEntity_ReturnsNullBadgeHolderDTOIsNull() {
         BadgeHolder entity = this.badgeHolderMapper.toEntity(null);
         assertNull(entity);
+        verifyNoInteractions(this.badgeMapper);
     }
 
     @Test
@@ -66,18 +78,20 @@ public class BadgeHolderMapperTest {
         String azureOid = "test-azure-oid";
         UserWithoutCoursesDTO userWithoutCoursesDTO = new UserWithoutCoursesDTO();
         userWithoutCoursesDTO.setAzureOid(azureOid);
-        List<Badge> badgeList = List.of(new Badge(BadgeType.BEST_ATTEMPT, azureOid));
+        List<BadgeDTO> badgeDTOList = List.of(new BadgeDTO());
 
         BadgeHolderDTO badgeHolderDTO = new BadgeHolderDTO();
         badgeHolderDTO.setId(null);
         badgeHolderDTO.setUser(userWithoutCoursesDTO);
-        badgeHolderDTO.setBadges(badgeList);
+        badgeHolderDTO.setBadges(badgeDTOList);
 
         BadgeHolder entity = this.badgeHolderMapper.toEntity(badgeHolderDTO);
         assertNotNull(entity);
         assertNull(entity.id);
         assertEquals(azureOid, entity.azureOID);
-        assertEquals(badgeList, entity.badges);
+        assertEquals(badgeDTOList.size(), entity.badges.size());
+
+        verify(this.badgeMapper, times(badgeDTOList.size())).toEntity(any(BadgeDTO.class));
     }
 
     @Test
@@ -87,17 +101,19 @@ public class BadgeHolderMapperTest {
         String azureOid = "test-azure-oid";
         UserWithoutCoursesDTO userWithoutCoursesDTO = new UserWithoutCoursesDTO();
         userWithoutCoursesDTO.setAzureOid(azureOid);
-        List<Badge> badgeList = List.of(new Badge(BadgeType.BEST_ATTEMPT, azureOid));
+        List<BadgeDTO> badgeDTOList = List.of(new BadgeDTO());
 
         BadgeHolderDTO badgeHolderDTO = new BadgeHolderDTO();
         badgeHolderDTO.setId(id.toString());
         badgeHolderDTO.setUser(userWithoutCoursesDTO);
-        badgeHolderDTO.setBadges(badgeList);
+        badgeHolderDTO.setBadges(badgeDTOList);
 
         BadgeHolder entity = this.badgeHolderMapper.toEntity(badgeHolderDTO);
         assertNotNull(entity);
         assertEquals(id, entity.id);
         assertEquals(azureOid, entity.azureOID);
-        assertEquals(badgeList, entity.badges);
+        assertEquals(badgeDTOList.size(), entity.badges.size());
+
+        verify(this.badgeMapper, times(badgeDTOList.size())).toEntity(any(BadgeDTO.class));
     }
 }

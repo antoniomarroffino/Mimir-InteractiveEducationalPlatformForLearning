@@ -1,6 +1,7 @@
 package ch.supsi.controller.badgeholder;
 
 import ch.supsi.model.api.badge.Badge;
+import ch.supsi.model.dto.api.BadgeDTO;
 import ch.supsi.model.dto.api.BadgeHolderDTO;
 import ch.supsi.model.dto.api.UserWithoutCoursesDTO;
 import ch.supsi.service.badgeholder.IBadgeHolderService;
@@ -51,6 +52,7 @@ public class BadgeHolderController {
                                 this.buildUserWithoutCoursesDTOFromBadgeHolderDTO(badgeHolderDTO)
                         )
                 );
+        badgeHoldersDTO.forEach(badgeHolderDTO -> badgeHolderDTO.getBadges().forEach(badge -> badge.setAssignedBy(this.buildUserWithoutCoursesDTOFromBadgeDTO(badge))));
         return Response.ok(badgeHoldersDTO).build();
     }
 
@@ -72,6 +74,7 @@ public class BadgeHolderController {
     public Response getBadgeHolder(@PathParam("azureOID") String azureOID) {
         BadgeHolderDTO badgeHolderDTO = this.badgeHolderService.getBadgeHolderByAzureOID(azureOID);
         badgeHolderDTO.setUser(this.buildUserWithoutCoursesDTOFromBadgeHolderDTO(badgeHolderDTO));
+        badgeHolderDTO.getBadges().forEach(badgeDTO -> badgeDTO.setAssignedBy(this.buildUserWithoutCoursesDTOFromBadgeDTO(badgeDTO)));
         return Response.ok(badgeHolderDTO).build();
     }
 
@@ -85,15 +88,23 @@ public class BadgeHolderController {
     )
     public Response assignBadge(
             @PathParam("azureOID") String azureOID,
-            @Valid Badge badge
+            @Valid BadgeDTO badgeDTO
     ) {
-        this.badgeHolderService.addBadgeToHolder(azureOID, badge);
+        this.badgeHolderService.addBadgeToHolder(azureOID, badgeDTO);
         return Response.status(Response.Status.NO_CONTENT).build();
     }
 
     private UserWithoutCoursesDTO buildUserWithoutCoursesDTOFromBadgeHolderDTO(BadgeHolderDTO badgeHolderDTO) {
+        return this.buildUserWithoutCoursesDTOFromAzureOid(badgeHolderDTO.getUser().getAzureOid());
+    }
+
+    private UserWithoutCoursesDTO buildUserWithoutCoursesDTOFromBadgeDTO(BadgeDTO badgeDTO) {
+        return this.buildUserWithoutCoursesDTOFromAzureOid(badgeDTO.getAssignedBy().getAzureOid());
+    }
+
+    private UserWithoutCoursesDTO buildUserWithoutCoursesDTOFromAzureOid(String azureOid) {
         return this.userService.buildUserWithoutCoursesDTO(
-                this.microsoftGraphService.getUserByOid(badgeHolderDTO.getUser().getAzureOid())
+                this.microsoftGraphService.getUserByOid(azureOid)
         );
     }
 }

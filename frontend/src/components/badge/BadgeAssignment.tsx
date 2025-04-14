@@ -2,7 +2,7 @@ import React from 'react';
 import { FaTrophy } from 'react-icons/fa';
 import { BadgeType } from '@dti-isin/backend-api-client';
 import { useQuizAttemptCRUD } from "../../hooks/quizAttempt/useQuizAttemptCRUD.ts";
-import {useBadgeHolderCRUD} from "../../hooks/badgeholder/useBadgeHolderCRUD.ts";
+import {useAssignBadgeToHolder} from "../../hooks/badgeholder/useAssignBadgeToHolder.ts";
 
 interface BadgeAssignmentProps {
     attemptId: string;
@@ -18,7 +18,7 @@ export const BadgeAssignment: React.FC<BadgeAssignmentProps> = ({
                                                                     assignedBy
                                                                 }) => {
     const { assignBadge, isAssigningBadge } = useQuizAttemptCRUD();
-    const { mutateAsync: assignBadgeToHolder, isLoading: isAssigningBadgeToHolder } = useBadgeHolderCRUD();
+    const { mutateAsync: assignBadgeToHolder, isLoading: isAssigningBadgeToHolder } = useAssignBadgeToHolder();
     const [showConfirm, setShowConfirm] = React.useState(false);
 
     const isLoading = isAssigningBadge || isAssigningBadgeToHolder;

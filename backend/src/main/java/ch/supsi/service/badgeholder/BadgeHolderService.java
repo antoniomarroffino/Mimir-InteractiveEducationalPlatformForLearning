@@ -1,8 +1,10 @@
 package ch.supsi.service.badgeholder;
 
 import ch.supsi.mapper.BadgeHolderMapper;
+import ch.supsi.mapper.BadgeMapper;
 import ch.supsi.model.api.BadgeHolder;
 import ch.supsi.model.api.badge.Badge;
+import ch.supsi.model.dto.api.BadgeDTO;
 import ch.supsi.model.dto.api.BadgeHolderDTO;
 import ch.supsi.repository.BadgeHolderRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -21,6 +23,9 @@ public class BadgeHolderService implements IBadgeHolderService {
 
     @Inject
     BadgeHolderMapper badgeHolderMapper;
+
+    @Inject
+    BadgeMapper badgeMapper;
 
     @Override
     public List<BadgeHolderDTO> getAllBadgeHolders() {
@@ -41,15 +46,15 @@ public class BadgeHolderService implements IBadgeHolderService {
     }
 
     @Override
-    public void addBadgeToHolder(String azureOID, Badge badge) {
-        if (azureOID == null || badge == null) {
+    public void addBadgeToHolder(String azureOID, BadgeDTO badgeDTO) {
+        if (azureOID == null || badgeDTO == null) {
             throw new BadRequestException("Azure OID and badge cannot be null");
         }
 
         Optional<BadgeHolder> badgeHolderOpt = this.badgeHolderRepository.findByAzureOIDOptional(azureOID);
         BadgeHolder badgeHolder = badgeHolderOpt.orElseGet(() -> new BadgeHolder(azureOID));
 
-        badgeHolder.badges.add(badge);
+        badgeHolder.badges.add(this.badgeMapper.toEntity(badgeDTO));
         this.badgeHolderRepository.persistOrUpdate(badgeHolder);
     }
 }

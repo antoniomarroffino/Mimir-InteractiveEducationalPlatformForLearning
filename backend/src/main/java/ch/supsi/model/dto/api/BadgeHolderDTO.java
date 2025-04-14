@@ -16,7 +16,7 @@ public class BadgeHolderDTO {
     @NotNull(message = "User cannot be null")
     private UserWithoutCoursesDTO user;
 
-    private List<Badge> badges;
+    private List<BadgeDTO> badges;
 
     public BadgeHolderDTO() {
         this.badges = new ArrayList<>();
@@ -43,11 +43,11 @@ public class BadgeHolderDTO {
         this.user = user;
     }
 
-    public List<Badge> getBadges() {
+    public List<BadgeDTO> getBadges() {
         return this.badges;
     }
 
-    public void setBadges(List<Badge> badges) {
+    public void setBadges(List<BadgeDTO> badges) {
         this.badges = badges != null ? badges : new ArrayList<>();
     }
 }
