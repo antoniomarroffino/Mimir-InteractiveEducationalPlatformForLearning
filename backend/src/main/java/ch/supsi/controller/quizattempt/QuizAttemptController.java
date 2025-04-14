@@ -56,7 +56,6 @@ public class QuizAttemptController {
     }
 
     @POST
-    @RolesAllowed({"STUDENT","TEACHER"})
     @Operation(summary = "Create a new quiz attempt")
     @APIResponse(responseCode = "201", description = "Quiz attempt created successfully", content = @Content(
             mediaType = MediaType.APPLICATION_JSON,
