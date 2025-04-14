@@ -6,4 +6,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class QuestionRepository implements PanacheMongoRepository<Question> {
+    public long countByQuestionBankId(String questionBankId) {
+        return count("questionBankId", questionBankId);
+    }
 }

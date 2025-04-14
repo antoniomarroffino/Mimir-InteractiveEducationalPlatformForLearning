@@ -263,6 +263,39 @@ public class QuizPublicationServiceTest {
         verify(this.quizPublicationMapperFacade, never()).toDTO(any(QuizPublication.class));
     }
 
+    @Test
+    @DisplayName("Should generate unique code after collision")
+    void test14GenerateUniqueCode_WithRetry() {
+        String existingCode = "EXIST01";
+        String newCode = "NEWCOD";
+
+        QuizPublication existingPublication = createTestQuizPublication(new ObjectId(), existingCode);
+
+        when(this.quizPublicationRepository.findByCodeOptional(anyString()))
+                .thenReturn(Optional.of(existingPublication))
+                .thenReturn(Optional.empty());
+
+        String generatedCode = this.quizPublicationService.generateUniqueCode();
+
+        verify(this.quizPublicationRepository, atLeast(2)).findByCodeOptional(anyString());
+
+        assertEquals(newCode.length(), generatedCode.length());
+    }
+
+    @Test
+    @DisplayName("Should generate valid code format")
+    void test15GenerateUniqueCode_ValidFormat() {
+        when(this.quizPublicationRepository.findByCodeOptional(anyString()))
+                .thenReturn(Optional.empty());
+
+        String code = this.quizPublicationService.generateUniqueCode();
+
+        assertEquals(6, code.length());
+
+        String validChars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+        assertTrue(code.chars().allMatch(c -> validChars.indexOf(c) >= 0));
+    }
+
     public static QuizPublication createTestQuizPublication() {
         ObjectId courseId = new ObjectId();
         ObjectId folderId = new ObjectId();

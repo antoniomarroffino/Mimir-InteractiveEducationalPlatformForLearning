@@ -70,6 +70,6 @@ public abstract class QuestionDTO {
     }
 
     public void setPoints(Integer points) {
-        this.points = points != null ? points : 1;
+        this.points = points != null && points > 0 ? points : 1;
     }
 }

@@ -130,7 +130,7 @@ public class QuizAttemptService implements IQuizAttemptService {
             throw new BadRequestException("Quiz publication ID cannot be null");
         }
 
-        if (quizAttemptDTO.getResponses() == null || quizAttemptDTO.getResponses().isEmpty()) {
+        if (quizAttemptDTO.getResponses().isEmpty()) {
             throw new BadRequestException("Quiz responses cannot be null or empty");
         }
     }

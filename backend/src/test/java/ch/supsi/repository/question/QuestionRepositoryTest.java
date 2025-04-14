@@ -58,4 +58,21 @@ public class QuestionRepositoryTest {
         assertTrue(this.questionRepository.deleteById(question.id));
         assertNull(this.questionRepository.findById(question.id));
     }
+
+    @Test
+    @DisplayName("Should count questions by question bank ID")
+    void test04ShouldCountByQuestionBankId() {
+        String testBankId = "testBank123";
+        Question q1 = new TrueFalseQuestion("Q1", true);
+        q1.questionBankId = testBankId;
+        Question q2 = new MultipleChoiceQuestion();
+        q2.questionBankId = testBankId;
+
+        this.questionRepository.persist(q1, q2);
+
+        long count = this.questionRepository.countByQuestionBankId(testBankId);
+        assertEquals(2, count);
+
+        assertEquals(0, this.questionRepository.countByQuestionBankId("nonExisting"));
+    }
 }

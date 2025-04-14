@@ -66,7 +66,7 @@ public abstract class QuestionResponseDTO {
     }
 
     public void setTimeSpent(Integer timeSpent) {
-        this.timeSpent = timeSpent;
+        this.timeSpent = timeSpent != null && timeSpent > 0 ? timeSpent : 0;
     }
 
     public Integer getEarnedPoints() {
@@ -74,6 +74,6 @@ public abstract class QuestionResponseDTO {
     }
 
     public void setEarnedPoints(Integer earnedPoints) {
-        this.earnedPoints = earnedPoints != null ? earnedPoints : 0;
+        this.earnedPoints = earnedPoints != null && earnedPoints > 0 ? earnedPoints : 0;
     }
 }

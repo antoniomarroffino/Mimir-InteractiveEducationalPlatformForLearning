@@ -114,6 +114,7 @@ public class QuestionServiceTest {
     @DisplayName("Should throw NotFoundError because questionBank is not found by its id")
     void test04CreateQuestionInBank_QuestionBankNotFound() {
         TrueFalseQuestionDTO dto = new TrueFalseQuestionDTO();
+        dto.setQuestionBankId(new ObjectId().toString());
         dto.setQuestionBankId(TEST_QUESTION_BANK_ID);
 
         when(this.questionBankRepository.findByIdOptional(any(ObjectId.class)))
@@ -123,7 +124,7 @@ public class QuestionServiceTest {
                 NotFoundException.class,
                 () -> this.questionService.createQuestionInQuestionBank(dto)
         );
-        assertEquals("Question bank with id " + dto.getId() + " not found", exception.getMessage());
+        assertEquals("Question bank with id " + dto.getQuestionBankId() + " not found", exception.getMessage());
 
         verify(this.questionBankRepository, times(1)).findByIdOptional(any(ObjectId.class));
         verify(this.questionMapperBuilder, never()).getQuestionDTOMapper(any(QuestionType.class));
@@ -271,6 +272,7 @@ public class QuestionServiceTest {
         question.id = TEST_QUESTION_ID;
         question.questionBankId = TEST_QUESTION_BANK_ID;
         QuestionBank bank = new QuestionBank();
+        bank.id = new ObjectId(TEST_QUESTION_BANK_ID);
 
         when(this.questionRepository.findByIdOptional(TEST_QUESTION_ID))
                 .thenReturn(Optional.of(question));

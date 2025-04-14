@@ -8,54 +8,51 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
-import java.util.Arrays;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.MethodName.class)
-public class MultipleChoiceQuestionDTOTest {
+public class TrueFalseQuestionDTOTest {
     @Test
-    @DisplayName("Should create correctly MultipleChoiceQuestionDTO with constructor no parameters")
-    void test01CreateMultipleChoiceQuestionDTO_ConstructorNoParameters() {
-        MultipleChoiceQuestionDTO dto = new MultipleChoiceQuestionDTO();
+    @DisplayName("Should create correctly TrueFalseQuestionDTO with constructor no parameters")
+    void test01CreateTrueFalseQuestionDTO_ConstructorNoParameters() {
+        TrueFalseQuestionDTO dto = new TrueFalseQuestionDTO();
         assertNull(dto.getId());
         assertNull(dto.getQuestionText());
         assertNull(dto.getQuestionBankId());
-        assertEquals(QuestionType.MULTIPLE_CHOICE, dto.getType());
+        assertEquals(QuestionType.TRUE_FALSE, dto.getType());
         assertEquals(1, dto.getPoints());
-        assertNull(dto.getChoices());
-        assertNull(dto.getCorrectAnswerIndexes());
+        assertNull(dto.getCorrectAnswer());
     }
 
     @Test
-    @DisplayName("Should all setters work correctly")
+     @DisplayName("Should all setters work correctly")
     void test02SettersWorkCorrectly() {
         String id = new ObjectId().toString();
         String questionText = "question text";
         String questionBankId = new ObjectId().toString();
         Integer points = 20;
-        String choice1 = "choice1";
-        String choice2 = "choice2";
-        List<String> choices = List.of(choice1, choice2);
-        Integer correctAnswerIndex = 1;
-        List<Integer> correctAnswerIndexes = List.of(correctAnswerIndex);
+        Boolean correctAnswer = true;
 
-        MultipleChoiceQuestionDTO dto = new MultipleChoiceQuestionDTO();
+        TrueFalseQuestionDTO dto = new TrueFalseQuestionDTO();
         dto.setId(id);
         dto.setQuestionText(questionText);
         dto.setQuestionBankId(questionBankId);
         dto.setPoints(points);
-        dto.setChoices(choices);
-        dto.setCorrectAnswerIndexes(correctAnswerIndexes);
+        dto.setCorrectAnswer(correctAnswer);
 
         assertEquals(id, dto.getId());
         assertEquals(questionText, dto.getQuestionText());
         assertEquals(questionBankId, dto.getQuestionBankId());
         assertEquals(points, dto.getPoints());
-        assertEquals(choices, dto.getChoices());
-        assertEquals(correctAnswerIndexes, dto.getCorrectAnswerIndexes());
+        assertEquals(correctAnswer, dto.getCorrectAnswer());
+
+        dto.setPoints(null);
+        assertEquals(1, dto.getPoints());
+
+        dto.setPoints(-20);
+        assertEquals(1, dto.getPoints());
     }
+
 }

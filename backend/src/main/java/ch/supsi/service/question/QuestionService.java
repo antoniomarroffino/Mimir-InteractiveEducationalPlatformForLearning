@@ -44,15 +44,11 @@ public class QuestionService implements IQuestionService {
     public QuestionDTO createQuestionInQuestionBank(QuestionDTO questionDTO) {
         if (questionDTO == null) throw new BadRequestException("QuestionDTO is null");
 
-        Optional<QuestionBank> questionBankOpt = this.questionBankRepository.findByIdOptional(new ObjectId(questionDTO.getQuestionBankId()));
-
-        if (questionBankOpt.isEmpty()) {
-            throw new NotFoundException("Question bank with id " + questionDTO.getId() + " not found");
-        }
+        QuestionBank questionBank = this.findQuestionBankById(new ObjectId(questionDTO.getQuestionBankId()));
 
         Question question = this.questionMapperBuilder.getQuestionDTOMapper(questionDTO.getType()).toEntity(questionDTO);
         this.questionRepository.persist(question);
-        this.questionBankRepository.addQuestionToQuestionBank(question.id.toString(), new ObjectId(question.questionBankId));
+        this.questionBankRepository.addQuestionToQuestionBank(question.id.toString(), questionBank.id);
 
         return this.questionMapperBuilder.getQuestionDTOMapper(questionDTO.getType()).toDTO(question);
     }
@@ -61,13 +57,8 @@ public class QuestionService implements IQuestionService {
     public QuestionDTO updateQuestion(ObjectId questionId, QuestionDTO questionDTO) {
         if (questionDTO == null) throw new BadRequestException("QuestionDTO is null");
 
-        Optional<Question> questionOpt = this.questionRepository.findByIdOptional(questionId);
+        Question question = this.findQuestionById(questionId);
 
-        if (questionOpt.isEmpty()) {
-            throw new NotFoundException("Question with id " + questionId + " not found");
-        }
-
-        Question question = questionOpt.get();
         this.questionFactory.getStrategy(question.type).updateQuestion(question, questionDTO);
         this.questionRepository.update(question);
         return this.questionMapperBuilder.getQuestionDTOMapper(questionDTO.getType()).toDTO(question);
@@ -75,20 +66,23 @@ public class QuestionService implements IQuestionService {
 
     @Override
     public void deleteQuestion(ObjectId questionId) {
-        Optional<Question> questionOpt = this.questionRepository.findByIdOptional(questionId);
+        Question question = this.findQuestionById(questionId);
 
-        if (questionOpt.isEmpty()) {
-            throw new NotFoundException("Question with id " + questionId + " not found");
-        }
+        QuestionBank questionBank = this.findQuestionBankById(new ObjectId(question.questionBankId));
 
-        Question question = questionOpt.get();
-        Optional<QuestionBank> questionBankOpt = this.questionBankRepository.findByIdOptional(new ObjectId(question.questionBankId));
+        this.questionBankRepository.removeQuestionFromQuestionBank(question.id.toString(), questionBank.id);
+        this.questionRepository.delete(question);
+    }
 
-        if (questionBankOpt.isEmpty()) {
-            throw new NotFoundException("Question bank with id " + question.questionBankId + " not found");
-        }
+    private Question findQuestionById(ObjectId questionId) {
+        return this.questionRepository
+                .findByIdOptional(questionId)
+                .orElseThrow(() -> new NotFoundException("Question with id " + questionId + " not found"));
+    }
 
-        this.questionBankRepository.removeQuestionFromQuestionBank(question.id.toString(), new ObjectId(question.questionBankId));
-        this.questionRepository.delete(questionOpt.get());
+    private QuestionBank findQuestionBankById(ObjectId questionBankId) {
+        return this.questionBankRepository
+                .findByIdOptional(questionBankId)
+                .orElseThrow(() -> new NotFoundException("Question bank with id " + questionBankId + " not found"));
     }
 }

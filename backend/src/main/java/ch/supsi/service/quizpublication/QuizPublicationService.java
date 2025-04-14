@@ -98,7 +98,7 @@ public class QuizPublicationService implements IQuizPublicationService {
                 .orElseThrow(() -> new NotFoundException("Quiz publication with id " + id + " not found"));
     }
 
-    private String generateUniqueCode() {
+    String generateUniqueCode() {
         Random random = new Random();
         String code;
         do {

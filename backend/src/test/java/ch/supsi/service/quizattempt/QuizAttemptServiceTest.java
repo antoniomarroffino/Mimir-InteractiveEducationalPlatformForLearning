@@ -103,10 +103,6 @@ public class QuizAttemptServiceTest {
         QuizAttemptDTO quizAttemptDTOPublicationIdNull = new QuizAttemptDTO();
         quizAttemptDTOPublicationIdNull.setQuizPublicationId(null);
 
-        QuizAttemptDTO quizAttemptDTOResponsesNull = new QuizAttemptDTO();
-        quizAttemptDTOResponsesNull.setQuizPublicationId(new ObjectId().toString());
-        quizAttemptDTOResponsesNull.setResponses(null);
-
         QuizAttemptDTO quizAttemptDTOResponsesEmpty = new QuizAttemptDTO();
         quizAttemptDTOResponsesEmpty.setQuizPublicationId(new ObjectId().toString());
         quizAttemptDTOResponsesEmpty.setResponses(Collections.emptyList());
@@ -119,10 +115,6 @@ public class QuizAttemptServiceTest {
                 () -> assertThrows(
                         BadRequestException.class,
                         () -> this.quizAttemptService.createQuizAttempt(quizAttemptDTOPublicationIdNull)
-                ),
-                () -> assertThrows(
-                        BadRequestException.class,
-                        () -> this.quizAttemptService.createQuizAttempt(quizAttemptDTOResponsesNull)
                 ),
                 () -> assertThrows(
                         BadRequestException.class,

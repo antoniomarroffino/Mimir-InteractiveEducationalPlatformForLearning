@@ -20,11 +20,13 @@ public class MultipleChoiceQuestionResponseDTOTest {
     @Test
     @DisplayName("Should create MultipleChoiceQuestionResponseDTO with constructor no parameters")
     void test01CreateMultipleChoiceQuestionResponseDTO_ConstructorWithNoParameters() {
-        MultipleChoiceQuestionResponseDTO multipleChoiceQuestionResponseDTO = new MultipleChoiceQuestionResponseDTO();
-        assertEquals(QuestionType.MULTIPLE_CHOICE, multipleChoiceQuestionResponseDTO.getResponseType());
-        assertNull(multipleChoiceQuestionResponseDTO.getId());
-        assertNull(multipleChoiceQuestionResponseDTO.getQuestionId());
-        assertNull(multipleChoiceQuestionResponseDTO.getSelectedAnswerIndexes());
+        MultipleChoiceQuestionResponseDTO responseDTO = new MultipleChoiceQuestionResponseDTO();
+        assertEquals(QuestionType.MULTIPLE_CHOICE, responseDTO.getResponseType());
+        assertNull(responseDTO.getId());
+        assertNull(responseDTO.getQuestionId());
+        assertNull(responseDTO.getSelectedAnswerIndexes());
+        assertEquals(0, responseDTO.getTimeSpent());
+        assertEquals(0, responseDTO.getEarnedPoints());
     }
 
     @Test
@@ -34,20 +36,33 @@ public class MultipleChoiceQuestionResponseDTOTest {
         String questionId = new ObjectId().toString();
         Integer selectedAnswerIndex = 1;
         Integer timeSpent = 10;
+        Integer earnedPoints = 10;
         List<Integer> selectedAnswerIndexes = List.of(selectedAnswerIndex);
 
-        MultipleChoiceQuestionResponseDTO multipleChoiceQuestionResponseDTO = new MultipleChoiceQuestionResponseDTO();
-        multipleChoiceQuestionResponseDTO.setId(id);
-        multipleChoiceQuestionResponseDTO.setQuestionId(questionId);
-        multipleChoiceQuestionResponseDTO.setSelectedAnswerIndexes(selectedAnswerIndexes);
-        multipleChoiceQuestionResponseDTO.setTimeSpent(timeSpent);
+        MultipleChoiceQuestionResponseDTO responseDTO = new MultipleChoiceQuestionResponseDTO();
+        responseDTO.setId(id);
+        responseDTO.setQuestionId(questionId);
+        responseDTO.setSelectedAnswerIndexes(selectedAnswerIndexes);
+        responseDTO.setTimeSpent(timeSpent);
+        responseDTO.setEarnedPoints(earnedPoints);
 
-        assertEquals(QuestionType.MULTIPLE_CHOICE, multipleChoiceQuestionResponseDTO.getResponseType());
-        assertEquals(id, multipleChoiceQuestionResponseDTO.getId());
-        assertEquals(questionId, multipleChoiceQuestionResponseDTO.getQuestionId());
-        assertEquals(selectedAnswerIndexes.size(), multipleChoiceQuestionResponseDTO.getSelectedAnswerIndexes().size());
-        assertEquals(selectedAnswerIndex, multipleChoiceQuestionResponseDTO.getSelectedAnswerIndexes().getFirst());
-        assertEquals(timeSpent, multipleChoiceQuestionResponseDTO.getTimeSpent());
+        assertEquals(QuestionType.MULTIPLE_CHOICE, responseDTO.getResponseType());
+        assertEquals(id, responseDTO.getId());
+        assertEquals(questionId, responseDTO.getQuestionId());
+        assertEquals(selectedAnswerIndexes.size(), responseDTO.getSelectedAnswerIndexes().size());
+        assertEquals(selectedAnswerIndex, responseDTO.getSelectedAnswerIndexes().getFirst());
+        assertEquals(timeSpent, responseDTO.getTimeSpent());
+        assertEquals(earnedPoints, responseDTO.getEarnedPoints());
+
+        responseDTO.setTimeSpent(null);
+        assertEquals(0, responseDTO.getTimeSpent());
+        responseDTO.setEarnedPoints(null);
+        assertEquals(0, responseDTO.getEarnedPoints());
+
+        responseDTO.setTimeSpent(-1);
+        assertEquals(0, responseDTO.getTimeSpent());
+        responseDTO.setEarnedPoints(-1);
+        assertEquals(0, responseDTO.getEarnedPoints());
     }
 
 }
