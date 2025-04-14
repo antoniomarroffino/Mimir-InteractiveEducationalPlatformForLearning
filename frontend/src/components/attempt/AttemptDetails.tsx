@@ -60,7 +60,7 @@ export const AttemptDetails: React.FC<AttemptDetailsProps> = ({
                             <div className="flex items-center gap-2">
                                 <BadgeAssignment
                                     attemptId={attempt.id!}
-                                    azureOID={attempt.userAzureOID!}
+                                    azureOID={attempt.user!.azureOid!}
                                     assignedBy={user!.azureOid!}
                                     hasBadge={hasBestAttemptBadge}
                                 />

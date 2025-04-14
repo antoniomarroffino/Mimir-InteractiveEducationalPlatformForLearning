@@ -27,6 +27,7 @@ export const useBadgeHolderCRUD = () => {
         onSuccess: (_data, params) => {
             queryClient.invalidateQueries(['badgeHolders'])
             queryClient.invalidateQueries(['badgeHolders', params.azureOID]);
+            queryClient.invalidateQueries(['quizAttempts'])
         },
         onError: (error) => {
             console.error('Failed to assign badge:', error);

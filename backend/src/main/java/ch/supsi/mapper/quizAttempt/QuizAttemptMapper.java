@@ -5,6 +5,7 @@ import ch.supsi.model.api.badge.Badge;
 import ch.supsi.model.api.response.QuestionResponse;
 import ch.supsi.model.dto.api.BadgeDTO;
 import ch.supsi.model.dto.api.QuizAttemptDTO;
+import ch.supsi.model.dto.api.UserWithoutCoursesDTO;
 import ch.supsi.model.dto.api.response.QuestionResponseDTO;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.bson.types.ObjectId;
@@ -18,7 +19,7 @@ public class QuizAttemptMapper {
         QuizAttemptDTO dto = new QuizAttemptDTO();
         dto.setId(quizAttempt.id.toString());
         dto.setQuizPublicationId(quizAttempt.quizPublicationId.toString());
-        dto.setUserAzureOID(quizAttempt.userAzureOID);
+        dto.setUser(new UserWithoutCoursesDTO(quizAttempt.userAzureOID, null, null, null));
         dto.setStartedAt(quizAttempt.startedAt);
         dto.setCompletedAt(quizAttempt.completedAt);
         dto.setResponses(questionResponseDTOList);
@@ -34,7 +35,7 @@ public class QuizAttemptMapper {
         }
 
         quizAttempt.quizPublicationId = new ObjectId(dto.getQuizPublicationId());
-        quizAttempt.userAzureOID = dto.getUserAzureOID();
+        quizAttempt.userAzureOID = dto.getUser() == null? null : dto.getUser().getAzureOid();
         quizAttempt.startedAt = dto.getStartedAt();
         quizAttempt.completedAt = dto.getCompletedAt();
         quizAttempt.responses = questionResponseList;

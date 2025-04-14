@@ -11,7 +11,7 @@ export const AttemptHeader: React.FC<AttemptHeaderProps> = ({ attempt }) => {
             <h2 className="text-xl font-bold flex items-center gap-2">
                 <span>Quiz Results</span>
                 <span className="text-sm font-normal text-base-content/70">
-                    ({attempt.userAzureOID || 'Anonymous'})
+                    ({attempt.user?.name || 'Anonymous'})
                 </span>
             </h2>
             <div className="text-sm text-base-content/70">

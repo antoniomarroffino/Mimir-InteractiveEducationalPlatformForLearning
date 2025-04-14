@@ -1,8 +1,10 @@
 package ch.supsi.model.dto.api.quizAttempt;
 
 import ch.supsi.model.api.badge.Badge;
+import ch.supsi.model.api.user.Role;
 import ch.supsi.model.dto.api.BadgeDTO;
 import ch.supsi.model.dto.api.QuizAttemptDTO;
+import ch.supsi.model.dto.api.UserWithoutCoursesDTO;
 import ch.supsi.model.dto.api.question.TrueFalseQuestionDTO;
 import ch.supsi.model.dto.api.response.QuestionResponseDTO;
 import ch.supsi.model.dto.api.response.TrueFalseQuestionResponseDTO;
@@ -28,7 +30,7 @@ public class QuizAttemptDTOTest {
         QuizAttemptDTO quizAttemptDTO = new QuizAttemptDTO();
         assertNull(quizAttemptDTO.getId());
         assertNull(quizAttemptDTO.getQuizPublicationId());
-        assertNull(quizAttemptDTO.getUserAzureOID());
+        assertNull(quizAttemptDTO.getUser());
         assertNull(quizAttemptDTO.getStartedAt());
         assertNull(quizAttemptDTO.getCompletedAt());
         assertNotNull(quizAttemptDTO.getResponses());
@@ -42,7 +44,7 @@ public class QuizAttemptDTOTest {
     void test02SettersWorkCorrectly() {
         String id = new ObjectId().toString();
         String publicationId = new ObjectId().toString();
-        String userAzureOID = "test-oid";
+        UserWithoutCoursesDTO userWithoutCoursesDTO = new UserWithoutCoursesDTO("TEST-OID", "name", "email@email.com", Role.STUDENT);
         LocalDateTime startedAt = LocalDateTime.now();
         LocalDateTime completedAt = LocalDateTime.now();
         TrueFalseQuestionResponseDTO trueFalseQuestionResponseDTO = new TrueFalseQuestionResponseDTO();
@@ -53,7 +55,7 @@ public class QuizAttemptDTOTest {
         QuizAttemptDTO quizAttemptDTO = new QuizAttemptDTO();
         quizAttemptDTO.setId(id);
         quizAttemptDTO.setQuizPublicationId(publicationId);
-        quizAttemptDTO.setUserAzureOID(userAzureOID);
+        quizAttemptDTO.setUser(userWithoutCoursesDTO);
         quizAttemptDTO.setStartedAt(startedAt);
         quizAttemptDTO.setCompletedAt(completedAt);
         quizAttemptDTO.setResponses(questionResponseDTOs);
@@ -61,7 +63,7 @@ public class QuizAttemptDTOTest {
 
         assertEquals(id, quizAttemptDTO.getId());
         assertEquals(publicationId, quizAttemptDTO.getQuizPublicationId());
-        assertEquals(userAzureOID, quizAttemptDTO.getUserAzureOID());
+        assertEquals(userWithoutCoursesDTO, quizAttemptDTO.getUser());
         assertEquals(startedAt, quizAttemptDTO.getStartedAt());
         assertEquals(completedAt, quizAttemptDTO.getCompletedAt());
         assertEquals(questionResponseDTOs, quizAttemptDTO.getResponses());

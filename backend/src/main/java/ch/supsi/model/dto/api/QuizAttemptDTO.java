@@ -1,5 +1,6 @@
 package ch.supsi.model.dto.api;
 
+import ch.supsi.model.api.user.User;
 import ch.supsi.model.dto.api.response.QuestionResponseDTO;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.validation.constraints.NotNull;
@@ -17,7 +18,7 @@ public class QuizAttemptDTO {
     @NotNull(message = "Quiz publication ID cannot be null")
     private String quizPublicationId;
 
-    private String userAzureOID;
+    private UserWithoutCoursesDTO user;
 
     private LocalDateTime startedAt;
 
@@ -33,7 +34,7 @@ public class QuizAttemptDTO {
     }
 
     public String getId() {
-        return id;
+        return this.id;
     }
 
     public void setId(String id) {
@@ -41,23 +42,23 @@ public class QuizAttemptDTO {
     }
 
     public String getQuizPublicationId() {
-        return quizPublicationId;
+        return this.quizPublicationId;
     }
 
     public void setQuizPublicationId(String quizPublicationId) {
         this.quizPublicationId = quizPublicationId;
     }
 
-    public String getUserAzureOID() {
-        return userAzureOID;
+    public UserWithoutCoursesDTO getUser() {
+        return this.user;
     }
 
-    public void setUserAzureOID(String userAzureOID) {
-        this.userAzureOID = userAzureOID;
+    public void setUser(UserWithoutCoursesDTO user) {
+        this.user = user;
     }
 
     public LocalDateTime getStartedAt() {
-        return startedAt;
+        return this.startedAt;
     }
 
     public void setStartedAt(LocalDateTime startedAt) {
@@ -65,7 +66,7 @@ public class QuizAttemptDTO {
     }
 
     public LocalDateTime getCompletedAt() {
-        return completedAt;
+        return this.completedAt;
     }
 
     public void setCompletedAt(LocalDateTime completedAt) {
@@ -73,7 +74,7 @@ public class QuizAttemptDTO {
     }
 
     public List<QuestionResponseDTO> getResponses() {
-        return responses;
+        return this.responses;
     }
 
     public void setResponses(List<QuestionResponseDTO> responses) {
@@ -81,7 +82,7 @@ public class QuizAttemptDTO {
     }
 
     public List<BadgeDTO> getBadges() {
-        return badges;
+        return this.badges;
     }
 
     public void setBadges(List<BadgeDTO> badges) {

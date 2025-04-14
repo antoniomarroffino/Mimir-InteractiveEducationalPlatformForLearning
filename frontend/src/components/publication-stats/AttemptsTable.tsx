@@ -107,13 +107,13 @@ export const AttemptsTable: React.FC<AttemptsTableProps> = ({
                                     <div className="avatar placeholder">
                                         <div className="bg-neutral text-neutral-content rounded-full w-10">
                                             <span>
-                                                {attempt.userAzureOID?.slice(0, 2).toUpperCase() || 'A'}
+                                                {attempt.user?.name?.slice(0, 2).toUpperCase() || 'A'}
                                             </span>
                                         </div>
                                     </div>
                                     <div>
                                         <div className="font-medium">
-                                            {attempt.userAzureOID || 'Anonymous'}
+                                            {attempt.user?.name || 'Anonymous'}
                                         </div>
                                         <div className="text-sm text-base-content/70">
                                             {new Date(attempt.completedAt!).toLocaleString()}

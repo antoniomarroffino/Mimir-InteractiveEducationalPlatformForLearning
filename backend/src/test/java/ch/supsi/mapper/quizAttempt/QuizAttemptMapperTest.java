@@ -5,8 +5,10 @@ import ch.supsi.model.api.badge.Badge;
 import ch.supsi.model.api.response.MultipleChoiceQuestionResponse;
 import ch.supsi.model.api.response.QuestionResponse;
 import ch.supsi.model.api.response.TrueFalseQuestionResponse;
+import ch.supsi.model.api.user.Role;
 import ch.supsi.model.dto.api.BadgeDTO;
 import ch.supsi.model.dto.api.QuizAttemptDTO;
+import ch.supsi.model.dto.api.UserWithoutCoursesDTO;
 import ch.supsi.model.dto.api.response.MultipleChoiceQuestionResponseDTO;
 import ch.supsi.model.dto.api.response.QuestionResponseDTO;
 import ch.supsi.model.dto.api.response.TrueFalseQuestionResponseDTO;
@@ -48,7 +50,7 @@ public class QuizAttemptMapperTest {
 
         assertNotNull(quizAttemptDTO);
         assertEquals(quizAttempt.id.toString(), quizAttemptDTO.getId());
-        assertEquals(quizAttempt.userAzureOID, quizAttemptDTO.getUserAzureOID());
+        assertEquals(quizAttempt.userAzureOID, quizAttemptDTO.getUser().getAzureOid());
         assertEquals(quizAttempt.quizPublicationId.toString(), quizAttemptDTO.getQuizPublicationId());
         assertEquals(quizAttempt.startedAt, quizAttemptDTO.getStartedAt());
         assertEquals(quizAttempt.completedAt, quizAttemptDTO.getCompletedAt());
@@ -57,11 +59,11 @@ public class QuizAttemptMapperTest {
     }
 
     @Test
-    @DisplayName("Should return new QuizAttempt given QuizAttemptDTO, List of QuestionResponse and List of Badge, and QuizAttemptDTO id is null")
-    void test02ToEntity_ReturnQuizAttemptWithIdDifferentFromQuizAttemptDTO() {
+    @DisplayName("Should return new QuizAttempt given QuizAttemptDTO, List of QuestionResponse and List of Badge, and QuizAttemptDTO id is null and User null")
+    void test02ToEntity_ReturnQuizAttemptWithIdDifferentFromQuizAttemptDTO_UserPassedIsNullAnonymous() {
         QuizAttemptDTO quizAttemptDTO = new QuizAttemptDTO();
         quizAttemptDTO.setId(null);
-        quizAttemptDTO.setUserAzureOID("TEST-OID");
+        quizAttemptDTO.setUser(null);
         quizAttemptDTO.setQuizPublicationId(new ObjectId().toString());
         quizAttemptDTO.setStartedAt(LocalDateTime.now());
         quizAttemptDTO.setCompletedAt(LocalDateTime.now());
@@ -76,7 +78,7 @@ public class QuizAttemptMapperTest {
         QuizAttempt quizAttempt = this.quizAttemptMapper.toEntity(quizAttemptDTO, questionResponseList, badgeList);
         assertNotNull(quizAttempt);
         assertNull(quizAttempt.id);
-        assertEquals(quizAttemptDTO.getUserAzureOID(), quizAttempt.userAzureOID);
+        assertNull(quizAttempt.userAzureOID);
         assertEquals(new ObjectId(quizAttemptDTO.getQuizPublicationId()), quizAttempt.quizPublicationId);
         assertEquals(quizAttemptDTO.getStartedAt(), quizAttempt.startedAt);
         assertEquals(quizAttemptDTO.getCompletedAt(), quizAttempt.completedAt);
@@ -89,7 +91,7 @@ public class QuizAttemptMapperTest {
     void test03ToEntity_ReturnQuizAttemptWithIdEqualFromQuizAttemptDTO() {
         QuizAttemptDTO quizAttemptDTO = new QuizAttemptDTO();
         quizAttemptDTO.setId(new ObjectId().toString());
-        quizAttemptDTO.setUserAzureOID("TEST-OID");
+        quizAttemptDTO.setUser(new UserWithoutCoursesDTO("TEST-OID", "name", "email@email.com", Role.STUDENT));
         quizAttemptDTO.setQuizPublicationId(new ObjectId().toString());
         quizAttemptDTO.setStartedAt(LocalDateTime.now());
         quizAttemptDTO.setCompletedAt(LocalDateTime.now());
@@ -104,7 +106,7 @@ public class QuizAttemptMapperTest {
         QuizAttempt quizAttempt = this.quizAttemptMapper.toEntity(quizAttemptDTO, questionResponseList, badgeList);
         assertNotNull(quizAttempt);
         assertEquals(quizAttemptDTO.getId(), quizAttempt.id.toString());
-        assertEquals(quizAttemptDTO.getUserAzureOID(), quizAttempt.userAzureOID);
+        assertEquals(quizAttemptDTO.getUser().getAzureOid(), quizAttempt.userAzureOID);
         assertEquals(quizAttemptDTO.getQuizPublicationId(), quizAttempt.quizPublicationId.toString());
         assertEquals(quizAttemptDTO.getStartedAt(), quizAttempt.startedAt);
         assertEquals(quizAttemptDTO.getCompletedAt(), quizAttempt.completedAt);

@@ -3,8 +3,11 @@ package ch.supsi.controller.quizAttempt;
 import ch.supsi.controller.quizattempt.QuizAttemptController;
 import ch.supsi.model.api.badge.BadgeType;
 import ch.supsi.model.dto.api.QuizAttemptDTO;
+import ch.supsi.model.dto.api.UserWithoutCoursesDTO;
 import ch.supsi.service.quizattempt.IQuizAttemptService;
 import ch.supsi.service.user.IUserService;
+import ch.supsi.service.user.microsoftGraph.IMicrosoftGraphService;
+import com.microsoft.graph.models.User;
 import io.quarkus.hibernate.validator.runtime.jaxrs.ResteasyReactiveViolationException;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
@@ -36,6 +39,9 @@ public class QuizAttemptControllerTest {
     @InjectMock
     IUserService userService;
 
+    @InjectMock
+    IMicrosoftGraphService microsoftGraphService;
+
     private static final String VALID_ATTEMPT_ID = new ObjectId().toString();
     private static final String NON_EXISTENT_ATTEMPT_ID = new ObjectId().toString();
     private static final String VALID_PUBLICATION_ID = new ObjectId().toString();
@@ -47,13 +53,20 @@ public class QuizAttemptControllerTest {
     @DisplayName("Should get quiz attempts by user")
     @TestSecurity(user = "user", roles = "STUDENT")
     void test01GetQuizAttemptsByUser_Success() {
+        UserWithoutCoursesDTO userWithoutCoursesDTO = new UserWithoutCoursesDTO();
+        userWithoutCoursesDTO.setAzureOid(VALID_USER_AZURE_OID);
+
         QuizAttemptDTO attempt1 = new QuizAttemptDTO();
         attempt1.setQuizPublicationId(VALID_PUBLICATION_ID);
+        attempt1.setUser(userWithoutCoursesDTO);
         QuizAttemptDTO attempt2 = new QuizAttemptDTO();
         attempt2.setQuizPublicationId(VALID_ATTEMPT_ID);
+        attempt2.setUser(userWithoutCoursesDTO);
         List<QuizAttemptDTO> attemptList = List.of(attempt1, attempt2);
 
         when(this.quizAttemptService.getQuizAttemptsByUser(VALID_USER_AZURE_OID)).thenReturn(attemptList);
+        when(this.microsoftGraphService.getUserByOid(anyString())).thenReturn(new User());
+        when(this.userService.buildUserWithoutCoursesDTO(any(User.class))).thenReturn(new UserWithoutCoursesDTO());
 
         Response response = this.quizAttemptController.getQuizAttemptsByUser(VALID_USER_AZURE_OID);
 
@@ -61,6 +74,8 @@ public class QuizAttemptControllerTest {
         assertEquals(attemptList.size(), ((List<?>) response.getEntity()).size());
 
         verify(this.quizAttemptService, times(1)).getQuizAttemptsByUser(VALID_USER_AZURE_OID);
+        verify(this.microsoftGraphService, times(attemptList.size())).getUserByOid(anyString());
+        verify(this.userService, times(attemptList.size())).buildUserWithoutCoursesDTO(any(User.class));
     }
 
     @Test
@@ -75,24 +90,33 @@ public class QuizAttemptControllerTest {
         assertTrue(((List<?>) response.getEntity()).isEmpty());
 
         verify(this.quizAttemptService, times(1)).getQuizAttemptsByUser(VALID_USER_AZURE_OID);
+        verifyNoInteractions(this.microsoftGraphService, this.userService);
     }
 
     @Test
     @DisplayName("Should create a new quiz attempt")
     @TestSecurity(user = "user", roles = "STUDENT")
     void test03CreateQuizAttempt_Success() {
+        UserWithoutCoursesDTO userWithoutCoursesDTO = new UserWithoutCoursesDTO();
+        userWithoutCoursesDTO.setAzureOid(VALID_USER_AZURE_OID);
+
         QuizAttemptDTO inputDTO = new QuizAttemptDTO();
         inputDTO.setQuizPublicationId(VALID_PUBLICATION_ID);
         QuizAttemptDTO responseDTO = new QuizAttemptDTO();
         responseDTO.setQuizPublicationId(VALID_PUBLICATION_ID);
+        responseDTO.setUser(userWithoutCoursesDTO);
 
         when(this.quizAttemptService.createQuizAttempt(any(QuizAttemptDTO.class))).thenReturn(responseDTO);
+        when(this.microsoftGraphService.getUserByOid(anyString())).thenReturn(new User());
+        when(this.userService.buildUserWithoutCoursesDTO(any(User.class))).thenReturn(new UserWithoutCoursesDTO());
 
         Response response = this.quizAttemptController.createQuizAttempt(inputDTO);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         assertEquals(responseDTO, response.getEntity());
 
         verify(this.quizAttemptService, times(1)).createQuizAttempt(any(QuizAttemptDTO.class));
+        verify(this.microsoftGraphService, times(1)).getUserByOid(anyString());
+        verify(this.userService, times(1)).buildUserWithoutCoursesDTO(any(User.class));
     }
 
     @Test
@@ -116,15 +140,25 @@ public class QuizAttemptControllerTest {
     @DisplayName("Should get quiz attempt by ID")
     @TestSecurity(user = "teacher", roles = "TEACHER")
     void test05GetQuizAttemptById_Success() {
+        UserWithoutCoursesDTO userWithoutCoursesDTO = new UserWithoutCoursesDTO();
+        userWithoutCoursesDTO.setAzureOid(VALID_USER_AZURE_OID);
+
         QuizAttemptDTO attemptDTO = new QuizAttemptDTO();
         attemptDTO.setQuizPublicationId(VALID_PUBLICATION_ID);
+        attemptDTO.setUser(userWithoutCoursesDTO);
+
         when(this.quizAttemptService.getQuizAttemptById(any(ObjectId.class))).thenReturn(attemptDTO);
+        when(this.microsoftGraphService.getUserByOid(anyString())).thenReturn(new User());
+        when(this.userService.buildUserWithoutCoursesDTO(any(User.class))).thenReturn(new UserWithoutCoursesDTO());
 
         Response response = this.quizAttemptController.getQuizAttemptById(VALID_ATTEMPT_ID);
+
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         assertEquals(attemptDTO, response.getEntity());
 
         verify(this.quizAttemptService, times(1)).getQuizAttemptById(any(ObjectId.class));
+        verify(this.microsoftGraphService, times(1)).getUserByOid(anyString());
+        verify(this.userService, times(1)).buildUserWithoutCoursesDTO(any(User.class));
     }
 
     @Test
@@ -157,16 +191,25 @@ public class QuizAttemptControllerTest {
     @DisplayName("Should get quiz attempts by publication")
     @TestSecurity(user = "teacher", roles = "TEACHER")
     void test08GetQuizAttemptsByPublication_Success() {
+        UserWithoutCoursesDTO userWithoutCoursesDTO = new UserWithoutCoursesDTO();
+        userWithoutCoursesDTO.setAzureOid(VALID_USER_AZURE_OID);
+
         QuizAttemptDTO attemptDTO = new QuizAttemptDTO();
+        attemptDTO.setUser(userWithoutCoursesDTO);
         List<QuizAttemptDTO> attempts = List.of(attemptDTO);
 
         when(this.quizAttemptService.getQuizAttemptsByPublication(any(ObjectId.class))).thenReturn(attempts);
+        when(this.microsoftGraphService.getUserByOid(anyString())).thenReturn(new User());
+        when(this.userService.buildUserWithoutCoursesDTO(any(User.class))).thenReturn(new UserWithoutCoursesDTO());
 
         Response response = this.quizAttemptController.getQuizAttemptsByPublication(VALID_PUBLICATION_ID);
+
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         assertEquals(attempts.size(), ((List<?>) response.getEntity()).size());
 
         verify(this.quizAttemptService, times(1)).getQuizAttemptsByPublication(any(ObjectId.class));
+        verify(this.microsoftGraphService, times(attempts.size())).getUserByOid(anyString());
+        verify(this.userService, times(attempts.size())).buildUserWithoutCoursesDTO(any(User.class));
     }
 
     @Test
@@ -184,11 +227,17 @@ public class QuizAttemptControllerTest {
     @DisplayName("Should get question stats")
     @TestSecurity(user = "teacher", roles = "TEACHER")
     void test10GetQuestionStats_Success() {
+        UserWithoutCoursesDTO userWithoutCoursesDTO = new UserWithoutCoursesDTO();
+        userWithoutCoursesDTO.setAzureOid(VALID_USER_AZURE_OID);
+
         QuizAttemptDTO attemptDTO = new QuizAttemptDTO();
+        attemptDTO.setUser(userWithoutCoursesDTO);
         List<QuizAttemptDTO> attempts = List.of(attemptDTO);
 
         when(this.quizAttemptService.getQuizAttemptsByPublicationAndQuestion(any(ObjectId.class), any(ObjectId.class)))
                 .thenReturn(attempts);
+        when(this.microsoftGraphService.getUserByOid(anyString())).thenReturn(new User());
+        when(this.userService.buildUserWithoutCoursesDTO(any(User.class))).thenReturn(new UserWithoutCoursesDTO());
 
         Response response = this.quizAttemptController.getQuestionStats(VALID_PUBLICATION_ID, VALID_QUESTION_ID);
 
@@ -197,12 +246,41 @@ public class QuizAttemptControllerTest {
 
         verify(this.quizAttemptService, times(1))
                 .getQuizAttemptsByPublicationAndQuestion(any(ObjectId.class), any(ObjectId.class));
+        verify(this.microsoftGraphService, times(attempts.size())).getUserByOid(anyString());
+        verify(this.userService, times(attempts.size())).buildUserWithoutCoursesDTO(any(User.class));
+    }
+
+    @Test
+    @DisplayName("Should get question stats and UserDTO returned is null because quiz is anonymous")
+    @TestSecurity(user = "teacher", roles = "TEACHER")
+    void test11GetQuestionStats_SuccessAndUserIsNullAnonymous() {
+        UserWithoutCoursesDTO userWithoutCoursesDTO = new UserWithoutCoursesDTO();
+        userWithoutCoursesDTO.setAzureOid(null);
+
+        QuizAttemptDTO attemptDTO = new QuizAttemptDTO();
+        attemptDTO.setUser(userWithoutCoursesDTO);
+        List<QuizAttemptDTO> attempts = List.of(attemptDTO);
+
+        when(this.quizAttemptService.getQuizAttemptsByPublicationAndQuestion(any(ObjectId.class), any(ObjectId.class)))
+                .thenReturn(attempts);
+        when(this.microsoftGraphService.getUserByOid(anyString())).thenReturn(new User());
+        when(this.userService.buildUserWithoutCoursesDTO(any(User.class))).thenReturn(new UserWithoutCoursesDTO());
+
+        Response response = this.quizAttemptController.getQuestionStats(VALID_PUBLICATION_ID, VALID_QUESTION_ID);
+
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        assertEquals(attempts.size(), ((List<?>) response.getEntity()).size());
+        assertNull(((QuizAttemptDTO)((List<?>) response.getEntity()).getFirst()).getUser());
+
+        verify(this.quizAttemptService, times(1))
+                .getQuizAttemptsByPublicationAndQuestion(any(ObjectId.class), any(ObjectId.class));
+        verifyNoInteractions(this.microsoftGraphService, this.userService);
     }
 
     @Test
     @DisplayName("Should forbid access to get quiz attempt by ID for non-TEACHER")
     @TestSecurity(user = "student", roles = "STUDENT")
-    void test11GetQuestionStats_Forbidden() {
+    void test12GetQuestionStats_Forbidden() {
         assertThrows(
                 io.quarkus.security.ForbiddenException.class, () ->
                         this.quizAttemptController.getQuestionStats(VALID_PUBLICATION_ID, VALID_QUESTION_ID)
@@ -213,7 +291,7 @@ public class QuizAttemptControllerTest {
     @Test
     @DisplayName("Should assign badge to quiz attempt")
     @TestSecurity(user = "teacher", roles = "TEACHER")
-    void test12AssignBadge_Success() {
+    void test13AssignBadge_Success() {
         when(this.userService.getOidFromJWT()).thenReturn(VALID_USER_AZURE_OID);
 
         Response response = this.quizAttemptController.assignBadge(VALID_ATTEMPT_ID, BadgeType.BEST_ATTEMPT);
@@ -225,7 +303,7 @@ public class QuizAttemptControllerTest {
     @Test
     @DisplayName("Should forbid badge assignment for non-TEACHER")
     @TestSecurity(user = "student", roles = "STUDENT")
-    void test13AssignBadge_Forbidden() {
+    void test14AssignBadge_Forbidden() {
         assertThrows(
                 io.quarkus.security.ForbiddenException.class, () ->
                         this.quizAttemptController.assignBadge(VALID_ATTEMPT_ID, BadgeType.BEST_ATTEMPT)

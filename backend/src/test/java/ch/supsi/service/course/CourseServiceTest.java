@@ -376,6 +376,7 @@ public class CourseServiceTest {
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), exception.getResponse().getStatus());
         assertEquals("User logged is null", exception.getMessage());
 
+        verify(this.courseRepositoryMocked, never()).findByNameOptional(anyString());
         verify(this.courseRepositoryMocked, never()).findByIdOptional(any(ObjectId.class));
         verify(this.courseRepositoryMocked, never()).update(any(Course.class));
         verify(this.courseMapperMocked, never()).toDTO(any(Course.class));
@@ -392,6 +393,7 @@ public class CourseServiceTest {
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), exception.getResponse().getStatus());
         assertEquals("Course data cannot be null", exception.getMessage());
 
+        verify(this.courseRepositoryMocked, never()).findByNameOptional(anyString());
         verify(this.courseRepositoryMocked, never()).findByIdOptional(any(ObjectId.class));
         verify(this.courseRepositoryMocked, never()).update(any(Course.class));
         verify(this.courseMapperMocked, never()).toDTO(any(Course.class));
@@ -415,6 +417,7 @@ public class CourseServiceTest {
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), exception.getResponse().getStatus());
         assertEquals("Course name cannot be empty", exception.getMessage());
 
+        verify(this.courseRepositoryMocked, never()).findByNameOptional(anyString());
         verify(this.courseRepositoryMocked, times(1)).findByIdOptional(any(ObjectId.class));
         verify(this.courseRepositoryMocked, never()).update(any(Course.class));
         verify(this.courseMapperMocked, never()).toDTO(any(Course.class));
@@ -442,6 +445,7 @@ public class CourseServiceTest {
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), exception.getResponse().getStatus());
         assertEquals("Course name " + courseDTO.getName() + " already exists", exception.getMessage());
 
+        verify(this.courseRepositoryMocked, times(1)).findByNameOptional(anyString());
         verify(this.courseRepositoryMocked, times(1)).findByIdOptional(any(ObjectId.class));
         verify(this.courseRepositoryMocked, never()).update(any(Course.class));
         verify(this.courseMapperMocked, never()).toDTO(any(Course.class));
@@ -465,6 +469,7 @@ public class CourseServiceTest {
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), exception.getResponse().getStatus());
         assertEquals("Course " + course.id + " not found", exception.getMessage());
 
+        verify(this.courseRepositoryMocked, never()).findByNameOptional(anyString());
         verify(this.courseRepositoryMocked, times(1)).findByIdOptional(course.id);
         verify(this.courseRepositoryMocked, never()).update(any(Course.class));
         verify(this.courseMapperMocked, never()).toDTO(any(Course.class));
@@ -491,6 +496,7 @@ public class CourseServiceTest {
         assertEquals(Response.Status.FORBIDDEN.getStatusCode(), exception.getResponse().getStatus());
         assertEquals("You are not authorized to update or delete this course", exception.getMessage());
 
+        verify(this.courseRepositoryMocked, never()).findByNameOptional(anyString());
         verify(this.courseRepositoryMocked, times(1)).findByIdOptional(course.id);
         verify(this.courseRepositoryMocked, never()).update(any(Course.class));
         verify(this.courseMapperMocked, never()).toDTO(any(Course.class));
@@ -519,6 +525,35 @@ public class CourseServiceTest {
         assertEquals(new_course_name, existingCourse.name);
         assertEquals(new_course_description, existingCourse.description);
 
+        verify(this.courseRepositoryMocked, times(1)).findByNameOptional(anyString());
+        verify(this.courseRepositoryMocked, times(1)).findByIdOptional(existingCourse.id);
+        verify(this.courseRepositoryMocked, times(1)).update(existingCourse);
+        verify(this.courseMapperMocked, times(1)).toDTO(existingCourse);
+    }
+
+    @Test
+    @DisplayName("Should return updated course only description change")
+    void test26UpdateCourse_ReturnUpdatedCourseOnlyDescriptionChange() {
+        Course existingCourse = createTestCourse("Course", "Course");
+
+        String new_course_name = "Course";
+        String new_course_description = "New Description";
+        CourseDTO courseDTO = new CourseDTO();
+        courseDTO.setId(existingCourse.id.toString());
+        courseDTO.setName(new_course_name);
+        courseDTO.setDescription(new_course_description);
+
+        User user = new User();
+        user.coursesId = Set.of(existingCourse.id.toString());
+
+        when(this.courseRepositoryMocked.findByIdOptional(existingCourse.id)).thenReturn(Optional.of(existingCourse));
+        when(this.courseMapperMocked.toDTO(existingCourse)).thenReturn(courseDTO);
+
+        this.courseService.updateCourse(existingCourse.id, courseDTO, user);
+        assertEquals(new_course_name, existingCourse.name);
+        assertEquals(new_course_description, existingCourse.description);
+
+        verify(this.courseRepositoryMocked, never()).findByNameOptional(anyString());
         verify(this.courseRepositoryMocked, times(1)).findByIdOptional(existingCourse.id);
         verify(this.courseRepositoryMocked, times(1)).update(existingCourse);
         verify(this.courseMapperMocked, times(1)).toDTO(existingCourse);
@@ -526,7 +561,7 @@ public class CourseServiceTest {
 
     @Test
     @DisplayName("Should throw InternalServerError 500 because user logged is null")
-    void test26DeleteCourse_ThrowInternalServerErrorUserLoggedIsNull() {
+    void test27DeleteCourse_ThrowInternalServerErrorUserLoggedIsNull() {
         InternalServerErrorException exception = assertThrows(
                 InternalServerErrorException.class,
                 () -> this.courseService.deleteCourse(new ObjectId(), null)
@@ -542,7 +577,7 @@ public class CourseServiceTest {
 
     @Test
     @DisplayName("Should throw NotFoundError 404 because courseId does not exist")
-    void test27DeleteCourse_ThrowNotFoundExceptionCourseIdDoesNotExist() {
+    void test28DeleteCourse_ThrowNotFoundExceptionCourseIdDoesNotExist() {
         Course course = createTestCourse("New Course", "");
 
         when(this.courseRepositoryMocked.findByIdOptional(course.id)).thenReturn(Optional.empty());
@@ -562,7 +597,7 @@ public class CourseServiceTest {
 
     @Test
     @DisplayName("Should throw ForbiddenError 403 because user is not an owner")
-    void test28DeleteCourse_ThrowForbiddenExceptionUserIsNotAuthorized() {
+    void test29DeleteCourse_ThrowForbiddenExceptionUserIsNotAuthorized() {
         Course course = createTestCourse("New Course", "");
 
         User user = new User();
@@ -585,7 +620,7 @@ public class CourseServiceTest {
 
     @Test
     @DisplayName("Should delete a course given id")
-    void test29DeleteCourse() {
+    void test30DeleteCourse() {
         Course course = createTestCourse("New Course", "");
 
         User user = new User();

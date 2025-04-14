@@ -59,7 +59,9 @@ export const QuizAttemptLocalProvider: React.FC<{ children: React.ReactNode }> =
                 quizPublication: publication,
                 responses: responses,
                 startedAt: new Date().toISOString(),
-                userAzureOID: publication.anonymous ? undefined : user?.azureOid || undefined
+                user: {
+                    azureOid: publication.anonymous ? undefined : user?.azureOid || undefined
+                }
             });
 
             navigate(`/quiz/${publication.publicationCode}`);
@@ -78,7 +80,7 @@ export const QuizAttemptLocalProvider: React.FC<{ children: React.ReactNode }> =
         try {
             const completedAttempt: QuizAttemptDTO = {
                 quizPublicationId: currentAttempt.quizPublicationId!,
-                userAzureOID: currentAttempt.userAzureOID,
+                user: currentAttempt.user,
                 startedAt: currentAttempt.startedAt,
                 completedAt: new Date().toISOString(),
                 responses: currentAttempt.responses || [],
@@ -89,7 +91,7 @@ export const QuizAttemptLocalProvider: React.FC<{ children: React.ReactNode }> =
                 console.error('Failed to create quiz attempt');
             }
             await queryClient.invalidateQueries(['quizAttempts']);
-            await queryClient.invalidateQueries(['quizAttempts', currentAttempt.userAzureOID]);
+            await queryClient.invalidateQueries(['quizAttempts', currentAttempt.user?.azureOid]);
 
             setCurrentAttempt(null);
             return completedQuizAttempt;

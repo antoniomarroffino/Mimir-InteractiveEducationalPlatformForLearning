@@ -9,7 +9,9 @@ import ch.supsi.model.api.question.QuestionType;
 import ch.supsi.model.api.question.TrueFalseQuestion;
 import ch.supsi.model.api.response.QuestionResponse;
 import ch.supsi.model.api.response.TrueFalseQuestionResponse;
+import ch.supsi.model.api.user.Role;
 import ch.supsi.model.dto.api.QuizAttemptDTO;
+import ch.supsi.model.dto.api.UserWithoutCoursesDTO;
 import ch.supsi.model.dto.api.response.QuestionResponseDTO;
 import ch.supsi.model.dto.api.response.TrueFalseQuestionResponseDTO;
 import ch.supsi.repository.QuestionRepository;
@@ -340,7 +342,7 @@ public class QuizAttemptServiceTest {
         QuizAttemptDTO quizAttemptDTO = new QuizAttemptDTO();
         quizAttemptDTO.setId(quizAttempt.id.toString());
         quizAttemptDTO.setQuizPublicationId(quizAttempt.quizPublicationId.toString());
-        quizAttemptDTO.setUserAzureOID(quizAttempt.userAzureOID);
+        quizAttemptDTO.setUser(new UserWithoutCoursesDTO(quizAttempt.userAzureOID, "name", "email@email.com", Role.STUDENT));
         quizAttemptDTO.setStartedAt(quizAttempt.startedAt);
         quizAttemptDTO.setCompletedAt(quizAttempt.completedAt);
         return quizAttemptDTO;

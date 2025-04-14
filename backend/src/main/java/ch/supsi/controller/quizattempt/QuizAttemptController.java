@@ -1,9 +1,12 @@
 package ch.supsi.controller.quizattempt;
 
 import ch.supsi.model.api.badge.BadgeType;
+import ch.supsi.model.dto.api.BadgeHolderDTO;
 import ch.supsi.model.dto.api.QuizAttemptDTO;
+import ch.supsi.model.dto.api.UserWithoutCoursesDTO;
 import ch.supsi.service.quizattempt.IQuizAttemptService;
 import ch.supsi.service.user.IUserService;
+import ch.supsi.service.user.microsoftGraph.IMicrosoftGraphService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -30,6 +33,9 @@ public class QuizAttemptController {
     @Inject
     IUserService userService;
 
+    @Inject
+    IMicrosoftGraphService microsoftGraphService;
+
     @GET
     @RolesAllowed({"STUDENT","TEACHER"})
     @Path("/user/{userAzureOID}")
@@ -52,6 +58,9 @@ public class QuizAttemptController {
     )
     public Response getQuizAttemptsByUser(@PathParam("userAzureOID") String userAzureOID) {
         List<QuizAttemptDTO> attempts = this.quizAttemptService.getQuizAttemptsByUser(userAzureOID);
+        attempts.forEach(attempt -> attempt.setUser(
+                this.buildUserWithoutCoursesDTOFromQuizAttemptDTO(attempt)
+        ));
         return Response.ok(attempts).build();
     }
 
@@ -65,6 +74,7 @@ public class QuizAttemptController {
     @APIResponse(responseCode = "404", description = "Resource not found")
     public Response createQuizAttempt(@Valid QuizAttemptDTO quizAttemptDTO) {
         QuizAttemptDTO responseDTO = this.quizAttemptService.createQuizAttempt(quizAttemptDTO);
+        responseDTO.setUser(this.buildUserWithoutCoursesDTOFromQuizAttemptDTO(responseDTO));
         return Response.status(Response.Status.CREATED).entity(responseDTO).build();
     }
 
@@ -79,6 +89,7 @@ public class QuizAttemptController {
     @APIResponse(responseCode = "404", description = "Quiz attempt not found")
     public Response getQuizAttemptById(@PathParam("attemptId") String attemptId) {
         QuizAttemptDTO attemptDTO = this.quizAttemptService.getQuizAttemptById(new ObjectId(attemptId));
+        attemptDTO.setUser(this.buildUserWithoutCoursesDTOFromQuizAttemptDTO(attemptDTO));
         return Response.ok(attemptDTO).build();
     }
 
@@ -92,6 +103,9 @@ public class QuizAttemptController {
     ))
     public Response getQuizAttemptsByPublication(@PathParam("publicationId") String publicationId) {
         List<QuizAttemptDTO> attempts = this.quizAttemptService.getQuizAttemptsByPublication(new ObjectId(publicationId));
+        attempts.forEach(attempt -> attempt.setUser(
+                this.buildUserWithoutCoursesDTOFromQuizAttemptDTO(attempt)
+        ));
         return Response.ok(attempts).build();
     }
 
@@ -112,6 +126,9 @@ public class QuizAttemptController {
                 new ObjectId(publicationId),
                 new ObjectId(questionId)
         );
+        attempts.forEach(attempt -> attempt.setUser(
+                this.buildUserWithoutCoursesDTOFromQuizAttemptDTO(attempt)
+        ));
         return Response.ok(attempts).build();
     }
 
@@ -142,5 +159,14 @@ public class QuizAttemptController {
         );
 
         return Response.ok().build();
+    }
+
+    private UserWithoutCoursesDTO buildUserWithoutCoursesDTOFromQuizAttemptDTO(QuizAttemptDTO quizAttemptDTO) {
+        if(quizAttemptDTO.getUser().getAzureOid() == null)
+            return null;
+
+        return this.userService.buildUserWithoutCoursesDTO(
+                this.microsoftGraphService.getUserByOid(quizAttemptDTO.getUser().getAzureOid())
+        );
     }
 }
