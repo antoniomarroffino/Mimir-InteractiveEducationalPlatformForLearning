@@ -10,7 +10,6 @@ import AdminDashboard from "./admin/AdminDashboard.tsx";
 import ProtectedRoute from "../routes/ProtectedRoute.tsx";
 import {Role} from "@dti-isin/backend-api-client";
 import {TeacherDashboard} from "./teacher/TeacherDashboard.tsx";
-import StudentDashboard from "./student/StudentDashboard.tsx";
 import PublicHome from "./no-logged/PublicHome.tsx";
 import {AdminProvider} from "../provider/AdminProvider.tsx";
 import UserProfile from "../components/user/UserProfile.tsx";
@@ -124,14 +123,14 @@ const App = () => {
                                 </Route>
 
                                 {/* Student Routes */}
-                                <Route
+                                {/*<Route
                                     path="/student"
                                     element={
                                         <ProtectedRoute allowedRoles={[Role.Student]}>
                                             <StudentDashboard/>
                                         </ProtectedRoute>
                                     }
-                                />
+                                />*/}
 
                                 <Route
                                     path="/profile"

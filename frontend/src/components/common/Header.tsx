@@ -24,7 +24,7 @@ const Header = () => {
         { name: 'Admin', path: '/admin', icon: <FiLayout className="text-xl" />, roles: [Role.Admin] },
         { name: 'Courses', path: '/courses', icon: <FiBook className="text-xl" />, roles: [Role.Teacher] },
         { name: 'Question Bank', path: '/question_banks', icon: <FiDatabase className="text-xl" />, roles: [Role.Teacher] },
-        { name: 'Dashboard', path: '/dashboard', icon: <FiLayout className="text-xl" />, roles: [Role.Student] },
+        //{ name: 'Dashboard', path: '/student', icon: <FiLayout className="text-xl" />, roles: [Role.Student] },
         { name: 'Quiz Review', path: '/quiz-review', icon: <FiCheckSquare className="text-xl" />, roles: [Role.Student, Role.Teacher] },
         { name: 'Badges', path: '/badges', icon: <FiAward className="text-xl" />, roles: [Role.Student, Role.Teacher] }
     ];
