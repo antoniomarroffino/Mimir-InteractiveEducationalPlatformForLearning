@@ -57,7 +57,11 @@ public class CourseService implements ICourseService {
     public CourseDTO createCourse(CourseDTO courseDTO, User currentUser) {
         this.verifyUserIsValid(currentUser);
 
-        this.verifyCourseIsValid(courseDTO);
+        if(courseDTO == null) {
+            throw new BadRequestException("Course data cannot be null");
+        }
+
+        this.verifyCourseNameIsValid(courseDTO.getName());
 
         Course course = this.courseMapper.toEntity(courseDTO);
         this.courseRepository.persist(course);
@@ -89,11 +93,17 @@ public class CourseService implements ICourseService {
     public CourseDTO updateCourse(ObjectId id, CourseDTO courseDTO, User currentUser) {
         this.verifyUserIsValid(currentUser);
 
-        this.verifyCourseIsValid(courseDTO);
+        if(courseDTO == null) {
+            throw new BadRequestException("Course data cannot be null");
+        }
 
         Course course = this.findCourseById(id);
 
         this.verifyUserIsOwner(id, currentUser);
+
+        if(!course.name.equalsIgnoreCase(courseDTO.getName())) {
+            this.verifyCourseNameIsValid(courseDTO.getName());
+        }
 
         course.name = courseDTO.getName();
 
@@ -134,17 +144,13 @@ public class CourseService implements ICourseService {
         return courseOpt.get();
     }
 
-    private void verifyCourseIsValid(CourseDTO courseDTO) {
-        if (courseDTO == null) {
-            throw new BadRequestException("Course data cannot be null");
-        }
-
-        String courseName = courseDTO.getName().trim();
+    private void verifyCourseNameIsValid(String name) {
+        String courseName = name.trim();
         if (courseName.isEmpty()) {
             throw new BadRequestException("Course name cannot be empty");
         }
 
-        if (this.isCourseNameDuplicated(courseDTO.getName())) {
+        if (this.isCourseNameDuplicated(name)) {
             throw new BadRequestException("Course name " + courseName + " already exists");
         }
     }

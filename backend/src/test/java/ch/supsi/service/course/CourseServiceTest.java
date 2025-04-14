@@ -43,22 +43,6 @@ public class CourseServiceTest {
     @InjectMock
     CourseMapper courseMapperMocked;
 
-    public static Course createTestCourse(String courseName, String description) {
-        Course course = new Course();
-        course.id = new ObjectId();
-        course.name = courseName;
-        course.description = description;
-        return course;
-    }
-
-    public static CourseDTO convertToDTO(Course course) {
-        CourseDTO courseDTO = new CourseDTO();
-        courseDTO.setId(course.id.toString());
-        courseDTO.setName(course.name);
-        courseDTO.setDescription(course.description);
-        return courseDTO;
-    }
-
     @Test
     @DisplayName("Should throw InternalServerError 500 because user logged is null")
     void test01GetTeacherCourses_ThrowInternalServerErrorUserIsNull() {
@@ -416,17 +400,22 @@ public class CourseServiceTest {
     @Test
     @DisplayName("Should throw BadRequestException 404 because CourseDTO passed has empty name")
     void test21UpdateCourse_ThrowBadRequestExceptionCourseDTOHasEmptyName() {
-        Course course = createTestCourse("", "");
+        Course course = createTestCourse("Test", "");
+
+        User user = new User();
+        user.coursesId.add(course.id.toString());
+
+        when(this.courseRepositoryMocked.findByIdOptional(any(ObjectId.class))).thenReturn(Optional.of(course));
 
         BadRequestException exception = assertThrows(
                 BadRequestException.class,
-                () -> this.courseService.updateCourse(new ObjectId(), convertToDTO(course), new User())
+                () -> this.courseService.updateCourse(course.id, new CourseDTO(""), user)
         );
 
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), exception.getResponse().getStatus());
         assertEquals("Course name cannot be empty", exception.getMessage());
 
-        verify(this.courseRepositoryMocked, never()).findByIdOptional(any(ObjectId.class));
+        verify(this.courseRepositoryMocked, times(1)).findByIdOptional(any(ObjectId.class));
         verify(this.courseRepositoryMocked, never()).update(any(Course.class));
         verify(this.courseMapperMocked, never()).toDTO(any(Course.class));
     }
@@ -434,20 +423,26 @@ public class CourseServiceTest {
     @Test
     @DisplayName("Should throw BadRequestException 404 because CourseDTO passed has duplicated name")
     void test22UpdateCourse_ThrowBadRequestExceptionCourseDTOHasDuplicatedName() {
-        CourseDTO courseDTO = new CourseDTO();
-        courseDTO.setName("Course");
+        Course course = createTestCourse("Course", "");
 
+        CourseDTO courseDTO = new CourseDTO();
+        courseDTO.setName("Course updated");
+
+        User user = new User();
+        user.coursesId.add(course.id.toString());
+
+        when(this.courseRepositoryMocked.findByIdOptional(any(ObjectId.class))).thenReturn(Optional.of(course));
         when(this.courseRepositoryMocked.findByNameOptional(anyString())).thenReturn(Optional.of(new Course()));
 
         BadRequestException exception = assertThrows(
                 BadRequestException.class,
-                () -> this.courseService.updateCourse(new ObjectId(), courseDTO, new User())
+                () -> this.courseService.updateCourse(course.id, courseDTO, user)
         );
 
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), exception.getResponse().getStatus());
         assertEquals("Course name " + courseDTO.getName() + " already exists", exception.getMessage());
 
-        verify(this.courseRepositoryMocked, never()).findByIdOptional(any(ObjectId.class));
+        verify(this.courseRepositoryMocked, times(1)).findByIdOptional(any(ObjectId.class));
         verify(this.courseRepositoryMocked, never()).update(any(Course.class));
         verify(this.courseMapperMocked, never()).toDTO(any(Course.class));
     }
@@ -521,6 +516,8 @@ public class CourseServiceTest {
         when(this.courseMapperMocked.toDTO(existingCourse)).thenReturn(courseDTO);
 
         this.courseService.updateCourse(existingCourse.id, courseDTO, user);
+        assertEquals(new_course_name, existingCourse.name);
+        assertEquals(new_course_description, existingCourse.description);
 
         verify(this.courseRepositoryMocked, times(1)).findByIdOptional(existingCourse.id);
         verify(this.courseRepositoryMocked, times(1)).update(existingCourse);
@@ -601,5 +598,21 @@ public class CourseServiceTest {
         verify(this.courseRepositoryMocked, times(1)).findByIdOptional(course.id);
         verify(this.courseRepositoryMocked, times(1)).delete(any(Course.class));
         verify(this.userRepositoryMocked, times(1)).removeCourseFromUser(course.id.toString(), user.azureOid);
+    }
+
+    public static Course createTestCourse(String courseName, String description) {
+        Course course = new Course();
+        course.id = new ObjectId();
+        course.name = courseName;
+        course.description = description;
+        return course;
+    }
+
+    public static CourseDTO convertToDTO(Course course) {
+        CourseDTO courseDTO = new CourseDTO();
+        courseDTO.setId(course.id.toString());
+        courseDTO.setName(course.name);
+        courseDTO.setDescription(course.description);
+        return courseDTO;
     }
 }
