@@ -1,25 +1,134 @@
 package ch.supsi.integration.course;
 
+import ch.supsi.model.api.Course;
+import ch.supsi.model.api.user.Role;
+import ch.supsi.model.api.user.User;
 import ch.supsi.repository.CourseRepository;
+import ch.supsi.repository.UserRepository;
 import ch.supsi.testContainersResource.MongoTestResource;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.security.TestSecurity;
+import io.smallrye.jwt.build.Jwt;
 import jakarta.inject.Inject;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
+import jakarta.ws.rs.core.Response;
+import org.bson.types.ObjectId;
+import org.junit.jupiter.api.*;
+
+import java.io.InputStream;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.*;
 
 @QuarkusTest
 @QuarkusTestResource(MongoTestResource.class)
 @Tag("integration")
+@TestMethodOrder(MethodOrderer.MethodName.class)
 public class CourseResourceIT {
-    @Inject
+    /*@Inject
     CourseRepository courseRepository;
+
+    @Inject
+    UserRepository userRepository;
 
     @BeforeEach
     @AfterEach
     public void setup() {
         this.courseRepository.deleteAll();
+        this.userRepository.deleteAll();
+    }
+
+
+    private String generateValidJwt(String oid, String name, String email) {
+        return Jwt.issuer("https://login.microsoftonline.com/3cadd1a7-ce2c-43b6-8986-2f1b472fab3b/v2.0")
+                .subject(oid)
+                .upn(email)
+                .preferredUserName(email + "@testforprojectsupsi.onmicrosoft.com")
+                .claim("oid", oid)
+                .claim("name", name)
+                .claim("preferred_username", email)
+                .sign();
+    }
+
+
+    @Test
+    @DisplayName("Should return 200 ok empty list of courses")
+    @TestSecurity(user = "testUser", roles = "TEACHER")
+    void test01GetCourses_Empty() {
+        given().when()
+                .get("/courses")
+                .then()
+                .statusCode(Response.Status.OK.getStatusCode())
+                .body("$", empty());
+    }
+
+    @Test
+    @DisplayName("Should return 200 ok list of two courses")
+    @TestSecurity(user = "testUser", roles = "TEACHER")
+    void test02GetCourses_TwoCourses() {
+        Course course1 = new Course("Course1");
+        this.courseRepository.persist(course1);
+        Course course2 = new Course("Course2");
+        this.courseRepository.persist(course2);
+
+        given().when()
+                .get("/courses")
+                .then()
+                .statusCode(Response.Status.OK.getStatusCode())
+                .body("$", hasSize(2))
+                .body("name", containsInAnyOrder("Course1", "Course2"));
+    }
+
+    @Test
+    @DisplayName("Should return 200 ok list of teacher courses")
+    @TestSecurity(user = "testUser", roles = "TEACHER")
+    void test03GetTeacherCourses() {
+        User user = new User();
+        user.azureOid = "testUser";
+        user.role = Role.TEACHER;
+        this.userRepository.persist(user);
+
+        Course course1 = new Course("Course1");
+        this.courseRepository.persist(course1);
+        this.userRepository.addCourseToUser(course1.id.toString(), user.azureOid);
+
+        given().when()
+                .auth().oauth2(this.generateValidJwt("testUser", "testUser", "testUser@onmicrosoft.com"))
+                .get("/courses/teacher")
+                .then()
+                .statusCode(Response.Status.OK.getStatusCode())
+                .body("$", hasSize(1))
+                .body("[0].name", equalTo("Course1"));
+    }
+
+    @Test
+    @DisplayName("Should return 200 ok Course founded by id")
+    @TestSecurity(user = "testUser", roles = "TEACHER")
+    void test04GetCourseById_Found() {
+        User user = new User();
+        user.azureOid = "testUser";
+        this.userRepository.persist(user);
+
+        Course course = new Course("Course1");
+        this.courseRepository.persist(course);
+
+        given().when()
+                .get("/courses/" + course.id)
+                .then()
+                .statusCode(Response.Status.OK.getStatusCode())
+                .body("name", equalTo("Course1"));
+    }
+
+    @Test
+    @DisplayName("Should return 404 not found because Course is not founded by its id")
+    @TestSecurity(user = "testUser", roles = "TEACHER")
+    void test05GetCourseById_NotFound() {
+        ObjectId nonExistentId = new ObjectId();
+        given().when()
+                .get("/courses/" + nonExistentId)
+                .then()
+                .statusCode(Response.Status.NOT_FOUND.getStatusCode())
+                .body("message", equalTo("Course " + nonExistentId + " not found"));
     }
 
     /*

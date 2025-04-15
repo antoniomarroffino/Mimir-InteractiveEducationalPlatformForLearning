@@ -40,6 +40,9 @@ nb-configuration.xml
 !.env.template
 .env
 
+# Private Key
+*.pem
+
 # Plugin directory
 /.quarkus/cli/plugins/
 # TLS Certificates
