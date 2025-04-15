@@ -57,6 +57,10 @@ public class FolderController {
                     schema = @Schema(implementation = FolderDTO.class)
             )
     )
+    @APIResponse(
+            responseCode = "404",
+            description = "Folder not found"
+    )
     public Response getFolder(
             @PathParam("courseId") String courseId,
             @PathParam("folderId") String folderId) {
@@ -76,6 +80,10 @@ public class FolderController {
                     mediaType = MediaType.APPLICATION_JSON,
                     schema = @Schema(implementation = FolderDTO.class)
             )
+    )
+    @APIResponse(
+            responseCode = "400",
+            description = "Bad Request: Invalid folder data or duplicate name"
     )
     public Response createFolder(
             @PathParam("courseId") String courseId,
@@ -100,6 +108,14 @@ public class FolderController {
                     schema = @Schema(implementation = FolderDTO.class)
             )
     )
+    @APIResponse(
+            responseCode = "404",
+            description = "Folder not found"
+    )
+    @APIResponse(
+            responseCode = "400",
+            description = "Bad Request: Invalid folder data or duplicate name"
+    )
     public Response updateFolder(
             @PathParam("courseId") String courseId,
             @PathParam("folderId") String folderId,
@@ -117,6 +133,10 @@ public class FolderController {
     @Path("/{folderId}")
     @Operation(summary = "Delete folder from course")
     @APIResponse(responseCode = "204", description = "Folder deleted successfully")
+    @APIResponse(
+            responseCode = "404",
+            description = "Folder not found"
+    )
     public Response deleteFolder(
             @PathParam("courseId") String courseId,
             @PathParam("folderId") String folderId) {

@@ -104,8 +104,10 @@ public class CourseResourceIT {
         Course course = new Course("Course1");
         this.courseRepository.persist(course);
 
-        given().when()
-                .get("/courses/" + course.id)
+        given()
+                .pathParam("id", course.id.toString())
+                .when()
+                .get("/courses/{id}")
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .body("name", equalTo("Course1"));
@@ -116,8 +118,10 @@ public class CourseResourceIT {
     @TestSecurity(user = "testUser", roles = "TEACHER")
     void test05GetCourseById_NotFound() {
         ObjectId nonExistentId = new ObjectId();
-        given().when()
-                .get("/courses/" + nonExistentId)
+        given()
+                .pathParam("id", nonExistentId.toString())
+                .when()
+                .get("/courses/{id}")
                 .then()
                 .statusCode(Response.Status.NOT_FOUND.getStatusCode())
                 .body("message", equalTo("Course " + nonExistentId + " not found"));
@@ -274,10 +278,11 @@ public class CourseResourceIT {
         updateDTO.setDescription("Updated Description");
 
         given()
+                .pathParam("id", course.id.toString())
                 .contentType(ContentType.JSON)
                 .body(updateDTO)
                 .when()
-                .put("/courses/" + course.id)
+                .put("/courses/{id}")
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .body("name", equalTo("New Name"))
@@ -313,10 +318,11 @@ public class CourseResourceIT {
         CourseDTO updateDTO = new CourseDTO("");
 
         given()
+                .pathParam("id", course.id.toString())
                 .contentType(ContentType.JSON)
                 .body(updateDTO)
                 .when()
-                .put("/courses/" + course.id)
+                .put("/courses/{id}")
                 .then()
                 .statusCode(Response.Status.BAD_REQUEST.getStatusCode())
                 .body("message", equalTo("Validation failed"));
@@ -344,10 +350,11 @@ public class CourseResourceIT {
         CourseDTO updateDTO = new CourseDTO(null);
 
         given()
+                .pathParam("id", course.id.toString())
                 .contentType(ContentType.JSON)
                 .body(updateDTO)
                 .when()
-                .put("/courses/" + course.id)
+                .put("/courses/{id}")
                 .then()
                 .statusCode(Response.Status.BAD_REQUEST.getStatusCode())
                 .body("message", equalTo("Validation failed"));
@@ -380,10 +387,11 @@ public class CourseResourceIT {
         CourseDTO updateDTO = new CourseDTO("New Name");
 
         given()
+                .pathParam("id", course.id.toString())
                 .contentType(ContentType.JSON)
                 .body(updateDTO)
                 .when()
-                .put("/courses/" + course.id)
+                .put("/courses/{id}")
                 .then()
                 .statusCode(Response.Status.FORBIDDEN.getStatusCode())
                 .body("message", equalTo("You are not authorized to update or delete this course"));
@@ -409,8 +417,9 @@ public class CourseResourceIT {
         this.userRepository.addCourseToUser(course.id.toString(), user.azureOid);
 
         given()
+                .pathParam("id", course.id.toString())
                 .when()
-                .delete("/courses/" + course.id)
+                .delete("/courses/{id}")
                 .then()
                 .statusCode(Response.Status.NO_CONTENT.getStatusCode());
 
@@ -445,8 +454,9 @@ public class CourseResourceIT {
         this.userRepository.persist(anotherUser);
 
         given()
+                .pathParam("id", course.id.toString())
                 .when()
-                .delete("/courses/" + course.id)
+                .delete("/courses/{id}")
                 .then()
                 .statusCode(Response.Status.FORBIDDEN.getStatusCode())
                 .body("message", equalTo("You are not authorized to update or delete this course"));
@@ -479,8 +489,9 @@ public class CourseResourceIT {
         ObjectId nonExistingCourseId = new ObjectId();
 
         given()
+                .pathParam("id", nonExistingCourseId.toString())
                 .when()
-                .delete("/courses/" + nonExistingCourseId)
+                .delete("/courses/{id}")
                 .then()
                 .statusCode(Response.Status.NOT_FOUND.getStatusCode())
                 .body("message", equalTo("Course " + nonExistingCourseId + " not found"));
@@ -510,8 +521,9 @@ public class CourseResourceIT {
         this.courseRepository.persist(course);
 
         given()
+                .pathParam("id", course.id.toString())
                 .when()
-                .put("/courses/assign/" + course.id)
+                .put("/courses/assign/{id}")
                 .then()
                 .statusCode(Response.Status.NO_CONTENT.getStatusCode());
 
@@ -541,8 +553,9 @@ public class CourseResourceIT {
         ObjectId nonExistingCourseId = new ObjectId();
 
         given()
+                .pathParam("id", nonExistingCourseId.toString())
                 .when()
-                .put("/courses/assign/" + nonExistingCourseId)
+                .put("/courses/assign/{id}")
                 .then()
                 .statusCode(Response.Status.NOT_FOUND.getStatusCode())
                 .body("message", equalTo("Course " + nonExistingCourseId + " not found"));
@@ -572,8 +585,9 @@ public class CourseResourceIT {
         this.userRepository.addCourseToUser(course.id.toString(), user.azureOid);
 
         given()
+                .pathParam("id", course.id.toString())
                 .when()
-                .put("/courses/left/" + course.id)
+                .put("/courses/left/{id}")
                 .then()
                 .statusCode(Response.Status.NO_CONTENT.getStatusCode());
 
@@ -604,8 +618,9 @@ public class CourseResourceIT {
         ObjectId nonExistingCourseId = new ObjectId();
 
         given()
+                .pathParam("id", nonExistingCourseId.toString())
                 .when()
-                .put("/courses/left/" + nonExistingCourseId)
+                .put("/courses/left/{id}")
                 .then()
                 .statusCode(Response.Status.NOT_FOUND.getStatusCode())
                 .body("message", equalTo("Course " + nonExistingCourseId + " not found"));

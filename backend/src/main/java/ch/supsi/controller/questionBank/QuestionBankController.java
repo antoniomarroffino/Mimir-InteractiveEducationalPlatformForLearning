@@ -75,6 +75,10 @@ public class QuestionBankController {
                     schema = @Schema(implementation = QuestionBankDTO.class)
             )
     )
+    @APIResponse(
+            responseCode = "400",
+            description = "Bad Request: Invalid question bank data or duplicate name"
+    )
     public Response createQuestionBank(@Valid QuestionBankDTO questionBankDTO) {
         QuestionBankDTO createdQuestionBankDTO = this.questionBankService.createQuestionBank(questionBankDTO);
         return Response.status(Response.Status.CREATED)
@@ -96,6 +100,10 @@ public class QuestionBankController {
     @APIResponse(
             responseCode = "404",
             description = "Question bank not found"
+    )
+    @APIResponse(
+            responseCode = "400",
+            description = "Bad Request: Invalid question bank data or duplicate name"
     )
     public Response updateQuestionBank(
             @PathParam("id") String id,

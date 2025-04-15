@@ -54,6 +54,10 @@ public class QuestionController {
                     schema = @Schema(implementation = QuestionDTO.class)
             )
     )
+    @APIResponse(
+            responseCode = "404",
+            description = "Question bank not found"
+    )
     public Response createQuestionInQuestionBank(@Valid QuestionDTO questionDTO) {
 
         QuestionDTO savedQuestionDTO = this.questionService.createQuestionInQuestionBank(questionDTO);
@@ -74,6 +78,10 @@ public class QuestionController {
                     mediaType = MediaType.APPLICATION_JSON,
                     schema = @Schema(implementation = QuestionDTO.class)
             )
+    )
+    @APIResponse(
+            responseCode = "404",
+            description = "Question not found"
     )
     public Response updateQuestion(@PathParam("questionId") String questionId,
                                    @Valid QuestionDTO questionDTO) {

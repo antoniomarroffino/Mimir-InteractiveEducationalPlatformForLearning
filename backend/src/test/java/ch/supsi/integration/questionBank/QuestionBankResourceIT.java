@@ -1,12 +1,13 @@
-package ch.supsi.integration.folder;
+package ch.supsi.integration.questionBank;
 
 import ch.supsi.JWTProducer.JwtProducer;
-import ch.supsi.model.api.Course;
-import ch.supsi.model.api.Folder;
+import ch.supsi.model.api.QuestionBank;
+import ch.supsi.model.api.question.TrueFalseQuestion;
 import ch.supsi.model.api.user.Role;
 import ch.supsi.model.api.user.User;
-import ch.supsi.model.dto.api.FolderDTO;
-import ch.supsi.repository.CourseRepository;
+import ch.supsi.model.dto.api.QuestionBankDTO;
+import ch.supsi.repository.QuestionBankRepository;
+import ch.supsi.repository.QuestionRepository;
 import ch.supsi.repository.UserRepository;
 import ch.supsi.testContainersResource.MongoTestResource;
 import io.quarkus.test.common.QuarkusTestResource;
@@ -22,21 +23,21 @@ import org.junit.jupiter.api.*;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @QuarkusTest
 @QuarkusTestResource(MongoTestResource.class)
 @Tag("integration")
 @TestMethodOrder(MethodOrderer.MethodName.class)
-public class FolderResourceIT {
+public class QuestionBankResourceIT {
     @Inject
-    CourseRepository courseRepository;
+    QuestionBankRepository questionBankRepository;
+
+    @Inject
+    QuestionRepository questionRepository;
 
     @Inject
     UserRepository userRepository;
-
-    private static Course course;
 
     @BeforeEach
     public void beforeEach() {
@@ -44,20 +45,17 @@ public class FolderResourceIT {
         user.azureOid = JwtProducer.DEFAULT_OID;
         user.role = Role.TEACHER;
         this.userRepository.persist(user);
-
-        course = new Course("Test Course", "Test Course Description");
-        this.courseRepository.persist(course);
-        this.userRepository.addCourseToUser(course.id.toString(), user.azureOid);
     }
 
     @AfterEach
     public void afterEach() {
+        this.questionRepository.deleteAll();
+        this.questionBankRepository.deleteAll();
         this.userRepository.deleteAll();
-        this.courseRepository.deleteAll();
     }
 
     @Test
-    @DisplayName("Should return empty folder list")
+    @DisplayName("Should return empty question bank list")
     @TestSecurity(user = "testUser", roles = "TEACHER")
     @JwtSecurity(
             claims = {
@@ -65,18 +63,17 @@ public class FolderResourceIT {
                     @Claim(key = JwtProducer.NAME_CLAIM_KEY, value = JwtProducer.DEFAULT_NAME),
                     @Claim(key = JwtProducer.EMAIL_CLAIM_KEY, value = JwtProducer.DEFAULT_PREFERRED_USERNAME)
             })
-    void test01GetFolders_Empty() {
+    void test01GetQuestionBanks_Empty() {
         given()
-                .pathParam("courseId", course.id.toString())
                 .when()
-                .get("/courses/{courseId}/folders")
+                .get("/question_banks")
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .body("$", empty());
     }
 
     @Test
-    @DisplayName("Should return folder list with two items")
+    @DisplayName("Should return question bank list with data")
     @TestSecurity(user = "testUser", roles = "TEACHER")
     @JwtSecurity(
             claims = {
@@ -84,23 +81,21 @@ public class FolderResourceIT {
                     @Claim(key = JwtProducer.NAME_CLAIM_KEY, value = JwtProducer.DEFAULT_NAME),
                     @Claim(key = JwtProducer.EMAIL_CLAIM_KEY, value = JwtProducer.DEFAULT_PREFERRED_USERNAME)
             })
-    void test02GetFolders_WithData() {
-        course.folders.add(new Folder("Folder 1"));
-        course.folders.add(new Folder("Folder 2"));
-        this.courseRepository.update(course);
+    void test02GetQuestionBanks_WithData() {
+        QuestionBank bank = new QuestionBank("Test Bank");
+        this.questionBankRepository.persist(bank);
 
         given()
-                .pathParam("courseId", course.id.toString())
                 .when()
-                .get("/courses/{courseId}/folders")
+                .get("/question_banks")
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
-                .body("$", hasSize(2))
-                .body("name", containsInAnyOrder("Folder 1", "Folder 2"));
+                .body("$", hasSize(1))
+                .body("[0].name", equalTo("Test Bank"));
     }
 
     @Test
-    @DisplayName("Should return 200 ok Folder founded by id")
+    @DisplayName("Should get question bank by ID")
     @TestSecurity(user = "testUser", roles = "TEACHER")
     @JwtSecurity(
             claims = {
@@ -108,23 +103,21 @@ public class FolderResourceIT {
                     @Claim(key = JwtProducer.NAME_CLAIM_KEY, value = JwtProducer.DEFAULT_NAME),
                     @Claim(key = JwtProducer.EMAIL_CLAIM_KEY, value = JwtProducer.DEFAULT_PREFERRED_USERNAME)
             })
-    void test03GetFolderById() {
-        course.folders.add(new Folder("Folder 1"));
-        course.folders.add(new Folder("Folder 2"));
-        this.courseRepository.update(course);
+    void test03GetQuestionBankById_Found() {
+        QuestionBank bank = new QuestionBank("Test Bank");
+        this.questionBankRepository.persist(bank);
 
         given()
-                .pathParam("courseId", course.id.toString())
-                .pathParam("folderId", course.folders.getFirst().id.toString())
+                .pathParam("id", bank.id.toString())
                 .when()
-                .get("/courses/{courseId}/folders/{folderId}")
+                .get("/question_banks/{id}")
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
-                .body("name", equalTo("Folder 1"));
+                .body("name", equalTo("Test Bank"));
     }
 
     @Test
-    @DisplayName("Should return 404 not found because folder is not founded by id")
+    @DisplayName("Should return 404 for non-existent question bank")
     @TestSecurity(user = "testUser", roles = "TEACHER")
     @JwtSecurity(
             claims = {
@@ -132,20 +125,19 @@ public class FolderResourceIT {
                     @Claim(key = JwtProducer.NAME_CLAIM_KEY, value = JwtProducer.DEFAULT_NAME),
                     @Claim(key = JwtProducer.EMAIL_CLAIM_KEY, value = JwtProducer.DEFAULT_PREFERRED_USERNAME)
             })
-    void test04GetFolderById_NotFound() {
-        ObjectId nonExistingFolderId = new ObjectId();
-
+    void test04GetQuestionBankById_NotFound() {
+        ObjectId nonExistentId = new ObjectId();
         given()
-                .pathParam("courseId", course.id.toString())
+                .pathParam("id", nonExistentId.toString())
                 .when()
-                .get("/courses/{courseId}/folders/" + nonExistingFolderId)
+                .get("/question_banks/{id}")
                 .then()
                 .statusCode(Response.Status.NOT_FOUND.getStatusCode())
-                .body("message", equalTo("Folder " + nonExistingFolderId + " not found"));
+                .body("message", equalTo("Question bank with id " + nonExistentId + " not found"));
     }
 
     @Test
-    @DisplayName("Should create new folder successfully")
+    @DisplayName("Should create new question bank")
     @TestSecurity(user = "testUser", roles = "TEACHER")
     @JwtSecurity(
             claims = {
@@ -153,28 +145,25 @@ public class FolderResourceIT {
                     @Claim(key = JwtProducer.NAME_CLAIM_KEY, value = JwtProducer.DEFAULT_NAME),
                     @Claim(key = JwtProducer.EMAIL_CLAIM_KEY, value = JwtProducer.DEFAULT_PREFERRED_USERNAME)
             })
-    void test05CreateFolder_Success() {
-        FolderDTO folderDTO = new FolderDTO("New Folder");
+    void test05CreateQuestionBank_Success() {
+        QuestionBankDTO dto = new QuestionBankDTO("New Bank");
 
         given()
-                .pathParam("courseId", course.id.toString())
                 .contentType(ContentType.JSON)
-                .body(folderDTO)
+                .body(dto)
                 .when()
-                .post("/courses/{courseId}/folders")
+                .post("/question_banks")
                 .then()
                 .statusCode(Response.Status.CREATED.getStatusCode())
                 .body("id", notNullValue())
-                .body("name", equalTo("New Folder"));
+                .body("name", equalTo("New Bank"));
 
-        Course updatedCourse = this.courseRepository.findById(course.id);
-
-        assertEquals(1, updatedCourse.folders.size());
-        assertEquals("New Folder", updatedCourse.folders.getFirst().name);
+        assertEquals(1, this.questionBankRepository.listAll().size());
+        assertEquals("New Bank", this.questionBankRepository.listAll().getFirst().name);
     }
 
     @Test
-    @DisplayName("Should return 400 for empty folder name")
+    @DisplayName("Should return 400 for empty name")
     @TestSecurity(user = "testUser", roles = "TEACHER")
     @JwtSecurity(
             claims = {
@@ -182,24 +171,23 @@ public class FolderResourceIT {
                     @Claim(key = JwtProducer.NAME_CLAIM_KEY, value = JwtProducer.DEFAULT_NAME),
                     @Claim(key = JwtProducer.EMAIL_CLAIM_KEY, value = JwtProducer.DEFAULT_PREFERRED_USERNAME)
             })
-    void test06CreateFolder_EmptyName() {
-        FolderDTO folderDTO = new FolderDTO("");
+    void test06CreateQuestionBank_EmptyName() {
+        QuestionBankDTO dto = new QuestionBankDTO("");
 
         given()
-                .pathParam("courseId", course.id.toString())
                 .contentType(ContentType.JSON)
-                .body(folderDTO)
+                .body(dto)
                 .when()
-                .post("/courses/{courseId}/folders")
+                .post("/question_banks")
                 .then()
                 .statusCode(Response.Status.BAD_REQUEST.getStatusCode())
                 .body("message", equalTo("Validation failed"));
 
-        assertEquals(0, this.courseRepository.findById(course.id).folders.size());
+        assertTrue(this.questionBankRepository.listAll().isEmpty());
     }
 
     @Test
-    @DisplayName("Should return 400 for null folder name")
+    @DisplayName("Should return 400 for null name")
     @TestSecurity(user = "testUser", roles = "TEACHER")
     @JwtSecurity(
             claims = {
@@ -207,24 +195,23 @@ public class FolderResourceIT {
                     @Claim(key = JwtProducer.NAME_CLAIM_KEY, value = JwtProducer.DEFAULT_NAME),
                     @Claim(key = JwtProducer.EMAIL_CLAIM_KEY, value = JwtProducer.DEFAULT_PREFERRED_USERNAME)
             })
-    void test07CreateFolder_NullName() {
-        FolderDTO folderDTO = new FolderDTO(null);
+    void test07CreateQuestionBank_NullName() {
+        QuestionBankDTO dto = new QuestionBankDTO(null);
 
         given()
-                .pathParam("courseId", course.id.toString())
                 .contentType(ContentType.JSON)
-                .body(folderDTO)
+                .body(dto)
                 .when()
-                .post("/courses/{courseId}/folders")
+                .post("/question_banks")
                 .then()
                 .statusCode(Response.Status.BAD_REQUEST.getStatusCode())
                 .body("message", equalTo("Validation failed"));
 
-        assertEquals(0, this.courseRepository.findById(course.id).folders.size());
+        assertTrue(this.questionBankRepository.listAll().isEmpty());
     }
 
     @Test
-    @DisplayName("Should return 400 for duplicate folder name")
+    @DisplayName("Should return 400 for duplicate name")
     @TestSecurity(user = "testUser", roles = "TEACHER")
     @JwtSecurity(
             claims = {
@@ -232,27 +219,27 @@ public class FolderResourceIT {
                     @Claim(key = JwtProducer.NAME_CLAIM_KEY, value = JwtProducer.DEFAULT_NAME),
                     @Claim(key = JwtProducer.EMAIL_CLAIM_KEY, value = JwtProducer.DEFAULT_PREFERRED_USERNAME)
             })
-    void test08CreateFolder_DuplicateName() {
-        course.folders.add(new Folder("Existing Folder"));
-        this.courseRepository.update(course);
+    void test08CreateQuestionBank_DuplicateName() {
+        QuestionBank bank = new QuestionBank("Existing Bank");
+        this.questionBankRepository.persist(bank);
 
-        FolderDTO folderDTO = new FolderDTO("Existing Folder");
+        QuestionBankDTO dto = new QuestionBankDTO();
+        dto.setName("Existing Bank");
 
         given()
-                .pathParam("courseId", course.id.toString())
                 .contentType(ContentType.JSON)
-                .body(folderDTO)
+                .body(dto)
                 .when()
-                .post("/courses/{courseId}/folders")
+                .post("/question_banks")
                 .then()
                 .statusCode(Response.Status.BAD_REQUEST.getStatusCode())
-                .body("message", containsString("Folder name " + folderDTO.getName() + " already exists in this course"));
+                .body("message", containsString("QuestionBankDTO name already exists"));
 
-        assertEquals(1, this.courseRepository.findById(course.id).folders.size());
+        assertEquals(1, this.questionBankRepository.listAll().size());
     }
 
     @Test
-    @DisplayName("Should update folder successfully")
+    @DisplayName("Should update question bank")
     @TestSecurity(user = "testUser", roles = "TEACHER")
     @JwtSecurity(
             claims = {
@@ -260,31 +247,28 @@ public class FolderResourceIT {
                     @Claim(key = JwtProducer.NAME_CLAIM_KEY, value = JwtProducer.DEFAULT_NAME),
                     @Claim(key = JwtProducer.EMAIL_CLAIM_KEY, value = JwtProducer.DEFAULT_PREFERRED_USERNAME)
             })
-    void test09UpdateFolder_Success() {
-        Folder folder = new Folder("Old Name");
-        course.folders.add(folder);
-        this.courseRepository.update(course);
+    void test09UpdateQuestionBank_Success() {
+        QuestionBank bank = new QuestionBank("Old Name");
+        this.questionBankRepository.persist(bank);
 
-        FolderDTO updateDTO = new FolderDTO("New Name");
+        QuestionBankDTO dto = new QuestionBankDTO("New Name");
 
         given()
-                .pathParam("courseId", course.id.toString())
-                .pathParam("folderId", folder.id.toString())
+                .pathParam("id", bank.id.toString())
                 .contentType(ContentType.JSON)
-                .body(updateDTO)
+                .body(dto)
                 .when()
-                .put("/courses/{courseId}/folders/{folderId}")
+                .put("/question_banks/{id}")
                 .then()
                 .statusCode(Response.Status.OK.getStatusCode())
                 .body("name", equalTo("New Name"));
 
-        Course updatedCourse = this.courseRepository.findById(course.id);
-
-        assertEquals("New Name", updatedCourse.folders.getFirst().name);
+        QuestionBank updated = this.questionBankRepository.findById(bank.id);
+        assertEquals("New Name", updated.name);
     }
 
     @Test
-    @DisplayName("Should return 404 for non-existent folder")
+    @DisplayName("Should return 404 when updating non-existent bank")
     @TestSecurity(user = "testUser", roles = "TEACHER")
     @JwtSecurity(
             claims = {
@@ -292,24 +276,23 @@ public class FolderResourceIT {
                     @Claim(key = JwtProducer.NAME_CLAIM_KEY, value = JwtProducer.DEFAULT_NAME),
                     @Claim(key = JwtProducer.EMAIL_CLAIM_KEY, value = JwtProducer.DEFAULT_PREFERRED_USERNAME)
             })
-    void test10UpdateFolder_NotFound() {
-        ObjectId nonExistingFolderId = new ObjectId();
-        FolderDTO updateDTO = new FolderDTO("New Name");
+    void test10UpdateQuestionBank_NotFound() {
+        ObjectId nonExistentId = new ObjectId();
+        QuestionBankDTO dto = new QuestionBankDTO("New Name");
 
         given()
-                .pathParam("courseId", course.id.toString())
-                .pathParam("folderId", nonExistingFolderId.toString())
+                .pathParam("id", nonExistentId.toString())
                 .contentType(ContentType.JSON)
-                .body(updateDTO)
+                .body(dto)
                 .when()
-                .put("/courses/{courseId}/folders/{folderId}")
+                .put("/question_banks/{id}")
                 .then()
                 .statusCode(Response.Status.NOT_FOUND.getStatusCode())
-                .body("message", equalTo("Folder " + nonExistingFolderId + " not found"));
+                .body("message", equalTo("Question bank with id " + nonExistentId + " not found"));
     }
 
     @Test
-    @DisplayName("Should return 400 because folder dto has empty name")
+    @DisplayName("Should return 400 for empty name")
     @TestSecurity(user = "testUser", roles = "TEACHER")
     @JwtSecurity(
             claims = {
@@ -317,25 +300,25 @@ public class FolderResourceIT {
                     @Claim(key = JwtProducer.NAME_CLAIM_KEY, value = JwtProducer.DEFAULT_NAME),
                     @Claim(key = JwtProducer.EMAIL_CLAIM_KEY, value = JwtProducer.DEFAULT_PREFERRED_USERNAME)
             })
-    void test11UpdateFolder_EmptyName() {
-        course.folders.add(new Folder("New Name"));
-        this.courseRepository.update(course);
-        FolderDTO updateDTO = new FolderDTO("");
+    void test11UpdateQuestionBank_EmptyName() {
+        QuestionBank bank = new QuestionBank("Old Name");
+        this.questionBankRepository.persist(bank);
+
+        QuestionBankDTO dto = new QuestionBankDTO("");
 
         given()
-                .pathParam("courseId", course.id.toString())
-                .pathParam("folderId", course.folders.getFirst().id.toString())
+                .pathParam("id", bank.id.toString())
                 .contentType(ContentType.JSON)
-                .body(updateDTO)
+                .body(dto)
                 .when()
-                .put("/courses/{courseId}/folders/{folderId}")
+                .put("/question_banks/{id}")
                 .then()
                 .statusCode(Response.Status.BAD_REQUEST.getStatusCode())
                 .body("message", equalTo("Validation failed"));
     }
 
     @Test
-    @DisplayName("Should return 400 because folder dto has null name")
+    @DisplayName("Should return 400 for null name")
     @TestSecurity(user = "testUser", roles = "TEACHER")
     @JwtSecurity(
             claims = {
@@ -343,25 +326,25 @@ public class FolderResourceIT {
                     @Claim(key = JwtProducer.NAME_CLAIM_KEY, value = JwtProducer.DEFAULT_NAME),
                     @Claim(key = JwtProducer.EMAIL_CLAIM_KEY, value = JwtProducer.DEFAULT_PREFERRED_USERNAME)
             })
-    void test12UpdateFolder_NullName() {
-        course.folders.add(new Folder("New Name"));
-        this.courseRepository.update(course);
-        FolderDTO updateDTO = new FolderDTO(null);
+    void test12UpdateQuestionBank_NullName() {
+        QuestionBank bank = new QuestionBank("Old Name");
+        this.questionBankRepository.persist(bank);
+
+        QuestionBankDTO dto = new QuestionBankDTO(null);
 
         given()
-                .pathParam("courseId", course.id.toString())
-                .pathParam("folderId", course.folders.getFirst().id.toString())
+                .pathParam("id", bank.id.toString())
                 .contentType(ContentType.JSON)
-                .body(updateDTO)
+                .body(dto)
                 .when()
-                .put("/courses/{courseId}/folders/{folderId}")
+                .put("/question_banks/{id}")
                 .then()
                 .statusCode(Response.Status.BAD_REQUEST.getStatusCode())
                 .body("message", equalTo("Validation failed"));
     }
 
     @Test
-    @DisplayName("Should delete folder successfully")
+    @DisplayName("Should return 400 for duplicate name")
     @TestSecurity(user = "testUser", roles = "TEACHER")
     @JwtSecurity(
             claims = {
@@ -369,25 +352,57 @@ public class FolderResourceIT {
                     @Claim(key = JwtProducer.NAME_CLAIM_KEY, value = JwtProducer.DEFAULT_NAME),
                     @Claim(key = JwtProducer.EMAIL_CLAIM_KEY, value = JwtProducer.DEFAULT_PREFERRED_USERNAME)
             })
-    void test13DeleteFolder_Success() {
-        Folder folder = new Folder("To Delete");
-        course.folders.add(folder);
-        this.courseRepository.update(course);
+    void test13UpdateQuestionBank_DuplicateName() {
+        QuestionBank bank = new QuestionBank("Existing Bank");
+        this.questionBankRepository.persist(bank);
+
+        QuestionBankDTO dto = new QuestionBankDTO();
+        dto.setName("Existing Bank");
 
         given()
-                .pathParam("courseId", course.id.toString())
-                .pathParam("folderId", folder.id.toString())
+                .pathParam("id", bank.id.toString())
+                .contentType(ContentType.JSON)
+                .body(dto)
                 .when()
-                .delete("/courses/{courseId}/folders/{folderId}")
+                .put("/question_banks/{id}")
+                .then()
+                .statusCode(Response.Status.BAD_REQUEST.getStatusCode())
+                .body("message", containsString("QuestionBankDTO name already exists"));
+    }
+
+    @Test
+    @DisplayName("Should delete question bank and associated questions")
+    @TestSecurity(user = "testUser", roles = "TEACHER")
+    @JwtSecurity(
+            claims = {
+                    @Claim(key = JwtProducer.OID_CLAIM_KEY, value = JwtProducer.DEFAULT_OID),
+                    @Claim(key = JwtProducer.NAME_CLAIM_KEY, value = JwtProducer.DEFAULT_NAME),
+                    @Claim(key = JwtProducer.EMAIL_CLAIM_KEY, value = JwtProducer.DEFAULT_PREFERRED_USERNAME)
+            })
+    void test14DeleteQuestionBank_Success() {
+        TrueFalseQuestion trueFalseQuestion = new TrueFalseQuestion("Test", true);
+        this.questionRepository.persist(trueFalseQuestion);
+
+        QuestionBank bank = new QuestionBank("Existing Bank");
+        bank.questions.add(trueFalseQuestion.id.toString());
+        this.questionBankRepository.persist(bank);
+
+        trueFalseQuestion.questionBankId = bank.id.toString();
+        this.questionRepository.update(trueFalseQuestion);
+
+        given()
+                .pathParam("id", bank.id.toString())
+                .when()
+                .delete("/question_banks/{id}")
                 .then()
                 .statusCode(Response.Status.NO_CONTENT.getStatusCode());
 
-        Course updatedCourse = this.courseRepository.findById(course.id);
-        assertTrue(updatedCourse.folders.isEmpty());
+        assertFalse(this.questionBankRepository.findByIdOptional(bank.id).isPresent());
+        assertFalse(this.questionRepository.findByIdOptional(trueFalseQuestion.id).isPresent());
     }
 
     @Test
-    @DisplayName("Should return 404 when deleting non-existent folder")
+    @DisplayName("Should return 404 when deleting non-existent bank")
     @TestSecurity(user = "testUser", roles = "TEACHER")
     @JwtSecurity(
             claims = {
@@ -395,35 +410,28 @@ public class FolderResourceIT {
                     @Claim(key = JwtProducer.NAME_CLAIM_KEY, value = JwtProducer.DEFAULT_NAME),
                     @Claim(key = JwtProducer.EMAIL_CLAIM_KEY, value = JwtProducer.DEFAULT_PREFERRED_USERNAME)
             })
-    void test14DeleteFolder_NotFound() {
-        ObjectId nonExistingFolderId = new ObjectId();
+    void test15DeleteQuestionBank_NotFound() {
+        TrueFalseQuestion trueFalseQuestion = new TrueFalseQuestion("Test", true);
+        this.questionRepository.persist(trueFalseQuestion);
+
+        QuestionBank bank = new QuestionBank("Existing Bank");
+        bank.questions.add(trueFalseQuestion.id.toString());
+        this.questionBankRepository.persist(bank);
+
+        trueFalseQuestion.questionBankId = bank.id.toString();
+        this.questionRepository.update(trueFalseQuestion);
+
+        ObjectId nonExistentId = new ObjectId();
 
         given()
-                .pathParam("courseId", course.id.toString())
-                .pathParam("folderId", nonExistingFolderId.toString())
+                .pathParam("id", nonExistentId.toString())
                 .when()
-                .delete("/courses/{courseId}/folders/{folderId}")
+                .delete("/question_banks/{id}")
                 .then()
                 .statusCode(Response.Status.NOT_FOUND.getStatusCode())
-                .body("message", equalTo("Folder " + nonExistingFolderId + " not found"));
-    }
+                .body("message", equalTo("Question bank with id " + nonExistentId + " not found"));
 
-    @Test
-    @DisplayName("Should return 404 for non-existent course")
-    @TestSecurity(user = "testUser", roles = "TEACHER")
-    @JwtSecurity(
-            claims = {
-                    @Claim(key = JwtProducer.OID_CLAIM_KEY, value = JwtProducer.DEFAULT_OID),
-                    @Claim(key = JwtProducer.NAME_CLAIM_KEY, value = JwtProducer.DEFAULT_NAME),
-                    @Claim(key = JwtProducer.EMAIL_CLAIM_KEY, value = JwtProducer.DEFAULT_PREFERRED_USERNAME)
-            })
-    void test15CourseNotFound() {
-        ObjectId invalidCourseId = new ObjectId();
-        given()
-                .pathParam("courseId", invalidCourseId.toString())
-                .when()
-                .get("/courses/{courseId}/folders")
-                .then()
-                .statusCode(Response.Status.NOT_FOUND.getStatusCode());
+        assertTrue(this.questionBankRepository.findByIdOptional(bank.id).isPresent());
+        assertTrue(this.questionRepository.findByIdOptional(trueFalseQuestion.id).isPresent());
     }
 }

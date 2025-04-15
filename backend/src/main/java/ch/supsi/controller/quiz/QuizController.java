@@ -62,6 +62,10 @@ public class QuizController {
                     schema = @Schema(implementation = QuizDTO.class)
             )
     )
+    @APIResponse(
+            responseCode = "404",
+            description = "Quiz not found"
+    )
     public Response getQuiz(
             @PathParam("courseId") String courseId,
             @PathParam("folderId") String folderId,
@@ -84,6 +88,10 @@ public class QuizController {
                     mediaType = MediaType.APPLICATION_JSON,
                     schema = @Schema(implementation = QuizDTO.class)
             )
+    )
+    @APIResponse(
+            responseCode = "400",
+            description = "Bad Request: Invalid quiz data"
     )
     public Response createQuiz(
             @PathParam("courseId") String courseId,
@@ -111,6 +119,14 @@ public class QuizController {
                     schema = @Schema(implementation = QuizDTO.class)
             )
     )
+    @APIResponse(
+            responseCode = "400",
+            description = "Bad Request: Invalid quiz data"
+    )
+    @APIResponse(
+            responseCode = "404",
+            description = "Quiz not found"
+    )
     public Response updateQuiz(
             @PathParam("courseId") String courseId,
             @PathParam("folderId") String folderId,
@@ -132,6 +148,10 @@ public class QuizController {
     @APIResponse(
             responseCode = "204",
             description = "Quiz deleted successfully"
+    )
+    @APIResponse(
+            responseCode = "404",
+            description = "Quiz not found"
     )
     public Response deleteQuiz(
             @PathParam("courseId") String courseId,
