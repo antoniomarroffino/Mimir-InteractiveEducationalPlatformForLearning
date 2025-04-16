@@ -14,7 +14,7 @@ public class JwtProducer {
     public static final String OID_CLAIM_KEY = "oid";
     public static final String NAME_CLAIM_KEY = "name";
     public static final String EMAIL_CLAIM_KEY = "preferred_username";
-
+/*
     @ConfigProperty(name = "quarkus.oidc.token.issuer")
     String issuer;
 
@@ -29,5 +29,5 @@ public class JwtProducer {
                 .claim(NAME_CLAIM_KEY, DEFAULT_NAME)
                 .claim(EMAIL_CLAIM_KEY, DEFAULT_PREFERRED_USERNAME)
                 .sign();
-    }
+    }*/
 }
