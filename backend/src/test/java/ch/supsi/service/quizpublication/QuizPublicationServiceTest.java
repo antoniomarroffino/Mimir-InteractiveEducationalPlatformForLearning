@@ -132,41 +132,8 @@ public class QuizPublicationServiceTest {
     }
 
     @Test
-    @DisplayName("Should update a quizPublication and return an updated QuizPublicationDTO")
-    void test06UpdateQuizPublication_ReturnUpdatedQuizPublicationDTO() {
-        QuizPublication quizPublication = createTestQuizPublication();
-
-        when(this.quizPublicationRepository.findByIdOptional(quizPublication.id)).thenReturn(Optional.of(quizPublication));
-        when(this.quizPublicationMapperFacade.toDTO(quizPublication)).thenReturn(new QuizPublicationDTO());
-
-        QuizPublicationDTO quizPublicationDTO = this.quizPublicationService.updateQuizPublication(quizPublication.id, new QuizPublicationDTO());
-        assertNotNull(quizPublicationDTO);
-
-        verify(this.quizPublicationRepository, times(1)).findByIdOptional(quizPublication.id);
-        verify(this.quizPublicationRepository, times(1)).update(quizPublication);
-        verify(this.quizPublicationMapperFacade, times(1)).toDTO(quizPublication);
-    }
-
-    @Test
-    @DisplayName("Should throw NotFoundError because QuizPublication id does not exist")
-    void test07UpdateQuizPublication_ThrowNotFoundErrorQuizPublicationIdDoesNotExist() {
-        ObjectId id = new ObjectId();
-        when(this.quizPublicationRepository.findByIdOptional(any(ObjectId.class))).thenReturn(Optional.empty());
-
-        NotFoundException exception = assertThrows(
-                NotFoundException.class,
-                () -> this.quizPublicationService.updateQuizPublication(id, new QuizPublicationDTO())
-        );
-        assertEquals("Quiz publication with id " + id + " not found", exception.getMessage());
-
-        verify(this.quizPublicationRepository, times(1)).findByIdOptional(any(ObjectId.class));
-        verify(this.quizPublicationRepository, never()).update(any(QuizPublication.class));
-        verify(this.quizPublicationMapperFacade, never()).toDTO(any(QuizPublication.class));
-    }
-
-    @Test
     @DisplayName("Should deactivate an active publication founded by id")
-    void test08DeactivateQuizPublication() {
+    void test06DeactivateQuizPublication() {
         QuizPublication quizPublication = createTestQuizPublication();
         quizPublication.published = true;
 
@@ -187,7 +154,7 @@ public class QuizPublicationServiceTest {
 
     @Test
     @DisplayName("Should throw NotFoundError because QuizPublication id does not exist")
-    void test09DeactivateQuizPublication_ThrowNotFoundErrorQuizPublicationIdDoesNotExist() {
+    void test07DeactivateQuizPublication_ThrowNotFoundErrorQuizPublicationIdDoesNotExist() {
         ObjectId id = new ObjectId();
         when(this.quizPublicationRepository.findByIdOptional(id)).thenReturn(Optional.empty());
 
@@ -204,7 +171,7 @@ public class QuizPublicationServiceTest {
 
     @Test
     @DisplayName("Should delete quizPublication founded by id")
-    void test10DeleteQuizPublication() {
+    void test08DeleteQuizPublication() {
         QuizPublication quizPublication = createTestQuizPublication();
 
         when(this.quizPublicationRepository.findByIdOptional(quizPublication.id)).thenReturn(Optional.of(quizPublication));
@@ -217,7 +184,7 @@ public class QuizPublicationServiceTest {
 
     @Test
     @DisplayName("Should throw NotFoundError because QuizPublication id does not exist")
-    void test11DeleteQuizPublication_ThrowNotFoundErrorQuizPublicationIdDoesNotExist() {
+    void test09DeleteQuizPublication_ThrowNotFoundErrorQuizPublicationIdDoesNotExist() {
         ObjectId id = new ObjectId();
         when(this.quizPublicationRepository.findByIdOptional(id)).thenReturn(Optional.empty());
 
@@ -233,7 +200,7 @@ public class QuizPublicationServiceTest {
 
     @Test
     @DisplayName("Should return all QuizPublicationDTO in a quiz founded by quizId")
-    void test12GetPublicationsByQuizId() {
+    void test10GetPublicationsByQuizId() {
         QuizPublication quizPublication1 = createTestQuizPublication();
         QuizPublication quizPublication2 = createTestQuizPublication();
         List<QuizPublication> quizPublications = List.of(quizPublication1, quizPublication2);
@@ -252,7 +219,7 @@ public class QuizPublicationServiceTest {
 
     @Test
     @DisplayName("Should return empty QuizPublicationDTO list")
-    void test13GetPublicationsByQuizId_EmptyList() {
+    void test11GetPublicationsByQuizId_EmptyList() {
         when(this.quizPublicationRepository.findPublicationsByQuizId(any(ObjectId.class))).thenReturn(Collections.emptyList());
 
         List<QuizPublicationDTO> quizPublicationDTOS = this.quizPublicationService.getPublicationsByQuizId(new ObjectId());
@@ -265,7 +232,7 @@ public class QuizPublicationServiceTest {
 
     @Test
     @DisplayName("Should generate unique code after collision")
-    void test14GenerateUniqueCode_WithRetry() {
+    void test12GenerateUniqueCode_WithRetry() {
         String existingCode = "EXIST01";
         String newCode = "NEWCOD";
 
@@ -284,7 +251,7 @@ public class QuizPublicationServiceTest {
 
     @Test
     @DisplayName("Should generate valid code format")
-    void test15GenerateUniqueCode_ValidFormat() {
+    void test13GenerateUniqueCode_ValidFormat() {
         when(this.quizPublicationRepository.findByCodeOptional(anyString()))
                 .thenReturn(Optional.empty());
 

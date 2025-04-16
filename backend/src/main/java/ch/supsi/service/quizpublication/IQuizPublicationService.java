@@ -12,8 +12,6 @@ public interface IQuizPublicationService {
 
     QuizPublicationDTO getPublicationByCode(String code);
 
-    QuizPublicationDTO updateQuizPublication(ObjectId publicationId, QuizPublicationDTO quizPublicationDTO);
-
     QuizPublicationDTO deactivateQuizPublication(ObjectId publicationId);
 
     void deleteQuizPublication(ObjectId publicationId);

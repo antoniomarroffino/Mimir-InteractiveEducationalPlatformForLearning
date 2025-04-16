@@ -196,95 +196,9 @@ public class QuizPublicationControllerTest {
     }
 
     @Test
-    @DisplayName("Should update publication successfully")
-    @TestSecurity(user = "teacher", roles = "TEACHER")
-    void test9UpdatePublication_Success() {
-        QuizPublicationDTO quizPublicationDTO = this.validRequest();
-        when(this.quizPublicationService.updateQuizPublication(any(), any())).thenReturn(quizPublicationDTO);
-
-        Response response = this.quizPublicationController.updateQuizPublication(PUBLICATION_ID, quizPublicationDTO);
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        assertEquals(quizPublicationDTO, response.getEntity());
-
-        verify(this.quizPublicationService, times(1)).updateQuizPublication(any(ObjectId.class), any(QuizPublicationDTO.class));
-    }
-
-    @Test
-    @DisplayName("Should throw 404 for non-existent update")
-    @TestSecurity(user = "teacher", roles = "TEACHER")
-    void test10UpdatePublication_NotFound() {
-        QuizPublicationDTO quizPublicationDTO = this.validRequest();
-
-        when(this.quizPublicationService.updateQuizPublication(any(ObjectId.class), any(QuizPublicationDTO.class))).thenThrow(new NotFoundException());
-
-        assertThrows(
-                NotFoundException.class,
-                () -> quizPublicationController.updateQuizPublication(PUBLICATION_ID, quizPublicationDTO)
-        );
-
-        verify(this.quizPublicationService, times(1)).updateQuizPublication(any(ObjectId.class), any(QuizPublicationDTO.class));
-    }
-
-    @Test
-    @DisplayName("Should forbid unauthorized update")
-    @TestSecurity(user = "student", roles = "STUDENT")
-    void test11UpdatePublication_Forbidden() {
-        QuizPublicationDTO quizPublicationDTO = this.validRequest();
-
-        assertThrows(
-                io.quarkus.security.ForbiddenException.class,
-                () -> this.quizPublicationController.updateQuizPublication(PUBLICATION_ID, quizPublicationDTO)
-        );
-
-        verifyNoMoreInteractions(this.quizPublicationService);
-    }
-
-    @Test
-    @DisplayName("Should throw 400 for invalid publication data")
-    @TestSecurity(user = "teacher", roles = "TEACHER")
-    void test12UpdatePublication_InvalidDTO() {
-        QuizPublicationDTO quizPublicationDTOCourseIdNull = new QuizPublicationDTO(PUBLICATION_ID, null, FOLDER_ID, QUIZ_ID, List.of(), "");
-        QuizPublicationDTO quizPublicationDTOCourseIdEmpty = new QuizPublicationDTO(PUBLICATION_ID, "", FOLDER_ID, QUIZ_ID, List.of(), "");
-        QuizPublicationDTO quizPublicationDTOFolderIdNull = new QuizPublicationDTO(PUBLICATION_ID, COURSE_ID, null, QUIZ_ID, List.of(), "");
-        QuizPublicationDTO quizPublicationDTOFolderIdEmpty = new QuizPublicationDTO(PUBLICATION_ID, COURSE_ID, "", QUIZ_ID, List.of(), "");
-        QuizPublicationDTO quizPublicationDTOIdNull = new QuizPublicationDTO(PUBLICATION_ID, COURSE_ID, FOLDER_ID, null, List.of(), "");
-        QuizPublicationDTO quizPublicationDTOIdEmpty = new QuizPublicationDTO(PUBLICATION_ID, COURSE_ID, FOLDER_ID, "", List.of(), "");
-
-
-        assertAll(
-                () -> assertThrows(
-                        ResteasyReactiveViolationException.class,
-                        () -> this.quizPublicationController.updateQuizPublication(PUBLICATION_ID, quizPublicationDTOCourseIdNull)
-                ),
-                () -> assertThrows(
-                        ResteasyReactiveViolationException.class,
-                        () -> this.quizPublicationController.updateQuizPublication(PUBLICATION_ID, quizPublicationDTOCourseIdEmpty)
-                ),
-                () -> assertThrows(
-                        ResteasyReactiveViolationException.class,
-                        () -> this.quizPublicationController.updateQuizPublication(PUBLICATION_ID, quizPublicationDTOFolderIdNull)
-                ),
-                () -> assertThrows(
-                        ResteasyReactiveViolationException.class,
-                        () -> this.quizPublicationController.updateQuizPublication(PUBLICATION_ID, quizPublicationDTOFolderIdEmpty)
-                ),
-                () -> assertThrows(
-                        ResteasyReactiveViolationException.class,
-                        () -> this.quizPublicationController.updateQuizPublication(PUBLICATION_ID, quizPublicationDTOIdNull)
-                ),
-                () -> assertThrows(
-                        ResteasyReactiveViolationException.class,
-                        () -> this.quizPublicationController.updateQuizPublication(PUBLICATION_ID, quizPublicationDTOIdEmpty)
-                )
-        );
-
-        verifyNoMoreInteractions(this.quizPublicationService, this.courseService, this.quizService);
-    }
-
-    @Test
     @DisplayName("Should deactivate publication successfully")
     @TestSecurity(user = "teacher", roles = "TEACHER")
-    void test13DeactivatePublication_Success() {
+    void test09DeactivatePublication_Success() {
         QuizPublicationDTO quizPublicationDTO = this.validRequest();
 
         when(this.quizPublicationService.deactivateQuizPublication(any())).thenReturn(quizPublicationDTO);
@@ -299,7 +213,7 @@ public class QuizPublicationControllerTest {
     @Test
     @DisplayName("Should throw 404 for non-existent deactivation")
     @TestSecurity(user = "teacher", roles = "TEACHER")
-    void test14DeactivatePublication_NotFound() {
+    void test10DeactivatePublication_NotFound() {
         when(this.quizPublicationService.deactivateQuizPublication(any(ObjectId.class))).thenThrow(new NotFoundException());
 
         assertThrows(
@@ -313,7 +227,7 @@ public class QuizPublicationControllerTest {
     @Test
     @DisplayName("Should forbid unauthorized deactivation")
     @TestSecurity(user = "student", roles = "STUDENT")
-    void test15DeactivatePublication_Forbidden() {
+    void test11DeactivatePublication_Forbidden() {
         assertThrows(
                 io.quarkus.security.ForbiddenException.class,
                 () -> this.quizPublicationController.deactivateQuizPublication(PUBLICATION_ID)
@@ -324,7 +238,7 @@ public class QuizPublicationControllerTest {
     @Test
     @DisplayName("Should delete publication successfully")
     @TestSecurity(user = "teacher", roles = "TEACHER")
-    void test16DeletePublication_Success() {
+    void test12DeletePublication_Success() {
         Response response = this.quizPublicationController.deleteQuizPublication(PUBLICATION_ID);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
 
@@ -334,7 +248,7 @@ public class QuizPublicationControllerTest {
     @Test
     @DisplayName("Should throw 404 for non-existent deletion")
     @TestSecurity(user = "teacher", roles = "TEACHER")
-    void test17DeletePublication_NotFound() {
+    void test13DeletePublication_NotFound() {
         doThrow(new NotFoundException()).when(this.quizPublicationService).deleteQuizPublication(any(ObjectId.class));
 
         assertThrows(
@@ -346,7 +260,7 @@ public class QuizPublicationControllerTest {
     @Test
     @DisplayName("Should forbid unauthorized deletion")
     @TestSecurity(user = "student", roles = "STUDENT")
-    void test18DeletePublication_Forbidden() {
+    void test14DeletePublication_Forbidden() {
         assertThrows(
                 io.quarkus.security.ForbiddenException.class,
                 () -> this.quizPublicationController.deleteQuizPublication(PUBLICATION_ID)
@@ -357,7 +271,7 @@ public class QuizPublicationControllerTest {
     @Test
     @DisplayName("Should get publications by quiz ID")
     @TestSecurity(user = "teacher", roles = "TEACHER")
-    void test19GetPublicationsByQuizId_Success() {
+    void test15GetPublicationsByQuizId_Success() {
         QuizPublicationDTO quizPublicationDTO = this.validRequest();
 
         when(this.quizPublicationService.getPublicationsByQuizId(any())).thenReturn(List.of(quizPublicationDTO));
@@ -372,7 +286,7 @@ public class QuizPublicationControllerTest {
     @Test
     @DisplayName("Should return empty publications list")
     @TestSecurity(user = "teacher", roles = "TEACHER")
-    void test20GetPublicationsByQuizId_Empty() {
+    void test16GetPublicationsByQuizId_Empty() {
         when(this.quizPublicationService.getPublicationsByQuizId(any())).thenReturn(Collections.emptyList());
 
         Response response = this.quizPublicationController.getPublicationsByQuizId(QUIZ_ID);
@@ -385,7 +299,7 @@ public class QuizPublicationControllerTest {
     @Test
     @DisplayName("Should forbid unauthorized access")
     @TestSecurity(user = "student", roles = "STUDENT")
-    void test21GetPublicationsByQuizId_Forbidden() {
+    void test17GetPublicationsByQuizId_Forbidden() {
         assertThrows(
                 io.quarkus.security.ForbiddenException.class,
                 () -> this.quizPublicationController.getPublicationsByQuizId(QUIZ_ID)

@@ -86,23 +86,6 @@ public class QuizPublicationController {
 
     @PUT
     @RolesAllowed("TEACHER")
-    @Path("/{id}")
-    @Operation(summary = "Update a quiz publication")
-    @APIResponse(responseCode = "200", description = "Quiz publication updated successfully", content = @Content(
-            mediaType = MediaType.APPLICATION_JSON,
-            schema = @Schema(type = SchemaType.OBJECT, implementation = QuizPublicationDTO.class)
-    ))
-    @APIResponse(responseCode = "404", description = "Publication not found")
-    public Response updateQuizPublication(
-            @PathParam("id") String id,
-            @Valid QuizPublicationDTO quizPublicationDTO) {
-        QuizPublicationDTO updatedDTO = this.quizPublicationService.updateQuizPublication(new ObjectId(id), quizPublicationDTO);
-
-        return Response.ok(updatedDTO).build();
-    }
-
-    @PUT
-    @RolesAllowed("TEACHER")
     @Path("/deactivate/{publicationId}")
     @Operation(summary = "deactivate a quiz publication")
     @APIResponse(responseCode = "200", description = "Quiz publication deactivate successfully", content = @Content(
@@ -136,7 +119,6 @@ public class QuizPublicationController {
             mediaType = MediaType.APPLICATION_JSON,
             schema = @Schema(type = SchemaType.ARRAY, implementation = QuizPublicationDTO.class)
     ))
-    @APIResponse(responseCode = "404", description = "No publications found for the quiz")
     public Response getPublicationsByQuizId(@PathParam("quizId") String quizId) {
         List<QuizPublicationDTO> publications = this.quizPublicationService.getPublicationsByQuizId(new ObjectId(quizId));
         return Response.ok(publications).build();

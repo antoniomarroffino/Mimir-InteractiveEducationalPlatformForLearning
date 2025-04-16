@@ -29,24 +29,6 @@ export const QuizPublicationCRUDProvider: React.FC<{ children: React.ReactNode }
     });
 
     const {
-        mutateAsync: updatePublicationMutation,
-        isLoading: isUpdatingPublication,
-        error: errorUpdatePublication,
-    } = useMutation<QuizPublicationDTO, Error, QuizPublicationDTO>({
-        mutationFn: async (dto) => {
-            const response = await quizPublicationApi.apiPublicationsIdPut({
-                id: dto.id!,
-                quizPublicationDTO: dto
-            });
-            return response.data;
-        },
-        onSuccess: (updatedQuizPublicationDTO) => {
-            queryClient.invalidateQueries(["quizPublications", updatedQuizPublicationDTO.quizId]);
-            queryClient.invalidateQueries(["publications"]);
-        },
-    });
-
-    const {
         mutateAsync: deactivatePublicationMutation,
         isLoading: isDeactivatingPublication,
         error: errorDeactivatePublication,
@@ -76,17 +58,14 @@ export const QuizPublicationCRUDProvider: React.FC<{ children: React.ReactNode }
 
     const value = {
         createPublication: createPublicationMutation,
-        updatePublication: updatePublicationMutation,
         deletePublication: deletePublicationMutation,
         deactivatePublication: deactivatePublicationMutation,
 
         isCreatingPublication,
-        isUpdatingPublication,
         isDeletingPublication,
         isDeactivatingPublication,
 
         errorCreatePublication,
-        errorUpdatePublication,
         errorDeletePublication,
         errorDeactivatePublication,
     };
