@@ -1,5 +1,6 @@
 package ch.supsi.model.dto.api;
 
+import ch.supsi.model.api.AttemptStatus;
 import ch.supsi.model.api.user.User;
 import ch.supsi.model.dto.api.response.QuestionResponseDTO;
 import io.quarkus.runtime.annotations.RegisterForReflection;
@@ -27,6 +28,9 @@ public class QuizAttemptDTO {
     private List<QuestionResponseDTO> responses;
 
     private List<BadgeDTO> badges;
+
+    @Schema(description = "Status of the attempt (IN_PROGRESS, TERMINATED)")
+    private AttemptStatus status;
 
     public QuizAttemptDTO() {
         this.responses = new ArrayList<>();
@@ -87,5 +91,13 @@ public class QuizAttemptDTO {
 
     public void setBadges(List<BadgeDTO> badges) {
         this.badges = badges != null ? badges : new ArrayList<>();
+    }
+
+    public AttemptStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(AttemptStatus status) {
+        this.status = status;
     }
 }
