@@ -179,7 +179,10 @@ public class QuizAttemptController {
     @PATCH
     @Path("/{attemptId}")
     @Operation(summary = "Update an existing quiz attempt (in progress)")
-    @APIResponse(responseCode = "200", description = "Quiz attempt updated successfully")
+    @APIResponse(responseCode = "200", description = "Quiz attempt updated successfully", content = @Content(
+            mediaType = MediaType.APPLICATION_JSON,
+            schema = @Schema(implementation = QuizAttemptDTO.class)
+    ))
     @APIResponse(responseCode = "404", description = "Quiz attempt not found")
     public Response updateQuizAttempt(@PathParam("attemptId") String attemptId, @Valid QuizAttemptDTO quizAttemptDTO) {
         QuizAttemptDTO updatedDTO = this.quizAttemptService.updateQuizAttempt(new ObjectId(attemptId), quizAttemptDTO);
@@ -191,7 +194,14 @@ public class QuizAttemptController {
     @POST
     @Path("/{attemptId}/submit")
     @Operation(summary = "Submit and complete a quiz attempt")
-    @APIResponse(responseCode = "200", description = "Quiz attempt submitted and completed")
+    @APIResponse(
+            responseCode = "200",
+            description = "Quiz attempt submitted and completed",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = QuizAttemptDTO.class)
+            )
+    )
     @APIResponse(responseCode = "404", description = "Quiz attempt not found")
     public Response submitQuizAttempt(@PathParam("attemptId") String attemptId, @Valid QuizAttemptDTO quizAttemptDTO) {
         QuizAttemptDTO submittedDTO = this.quizAttemptService.submitQuizAttempt(new ObjectId(attemptId), quizAttemptDTO);

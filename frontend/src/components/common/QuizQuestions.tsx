@@ -18,6 +18,8 @@ import {useNavigate} from "react-router-dom";
 import {MobileNavigation} from "./MobileNavigation.tsx";
 import {QuestionResponseFactory} from "../question/QuestionResponseFactory.tsx";
 import {ClockIcon} from "@heroicons/react/24/outline";
+import { useQuizAttemptAutosave } from "../../hooks/quizAttempt/useQuizAttemptAutosave";
+
 
 interface QuizQuestionsProps {
     publication: QuizPublicationDTO;
@@ -36,6 +38,8 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({publication, timeLi
     );
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const navigate = useNavigate();
+
+    useQuizAttemptAutosave(15000);
 
     useEffect(() => {
         const timer = setInterval(() => {
