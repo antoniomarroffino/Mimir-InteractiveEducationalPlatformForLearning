@@ -1,39 +1,40 @@
 import { useEffect, useRef } from 'react';
 import { useQuizAttemptLocal } from './useQuizAttemptLocal';
 import { useQuizAttemptCRUD } from './useQuizAttemptCRUD';
-import {AttemptStatus} from "@dti-isin/backend-api-client";
+import { AttemptStatus } from "@dti-isin/backend-api-client";
 
 export const useQuizAttemptAutosave = (intervalMs: number = 15000) => {
     const { currentAttempt } = useQuizAttemptLocal();
     const { updateAttemptPartial } = useQuizAttemptCRUD();
     const autosaveTimerRef = useRef<NodeJS.Timeout | null>(null);
 
+    const attemptRef = useRef(currentAttempt);
+    attemptRef.current = currentAttempt;
+
     useEffect(() => {
-        if (!currentAttempt?.id) return;
+        if (!attemptRef.current?.id) return;
 
-        const startAutosave = () => {
-            autosaveTimerRef.current = setInterval(async () => {
-                try {
-                    await updateAttemptPartial(currentAttempt.id!, {
-                        quizPublicationId: currentAttempt.quizPublicationId!,
-                        user: currentAttempt.user,
-                        startedAt: currentAttempt.startedAt,
-                        responses: currentAttempt.responses || [],
-                        status: AttemptStatus.InProgress
-                    });
-                    console.debug('[Autosave] Tentativo salvato con successo');
-                } catch (err) {
-                    console.error('[Autosave] Errore nel salvataggio automatico', err);
-                }
-            }, intervalMs);
-        };
+        autosaveTimerRef.current = setInterval(async () => {
+            const attempt = attemptRef.current;
+            if (!attempt?.id) return;
 
-        startAutosave();
+            try {
+                await updateAttemptPartial(attempt.id, {
+                    quizPublicationId: attempt.quizPublicationId!,
+                    user: attempt.user,
+                    startedAt: attempt.startedAt,
+                    responses: attempt.responses || [],
+                    status: AttemptStatus.InProgress
+                });
+            } catch (err) {
+                console.error('[Autosave] Errore nel salvataggio automatico', err);
+            }
+        }, intervalMs);
 
         return () => {
             if (autosaveTimerRef.current) {
                 clearInterval(autosaveTimerRef.current);
             }
         };
-    }, [currentAttempt?.id, currentAttempt?.responses, intervalMs]);
+    }, [attemptRef.current?.id, intervalMs]);
 };
