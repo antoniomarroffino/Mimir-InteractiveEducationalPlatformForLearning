@@ -176,6 +176,32 @@ public class QuizAttemptController {
         return Response.ok().build();
     }
 
+    @PATCH
+    @Path("/{attemptId}")
+    @Operation(summary = "Update an existing quiz attempt (in progress)")
+    @APIResponse(responseCode = "200", description = "Quiz attempt updated successfully")
+    @APIResponse(responseCode = "404", description = "Quiz attempt not found")
+    public Response updateQuizAttempt(@PathParam("attemptId") String attemptId, @Valid QuizAttemptDTO quizAttemptDTO) {
+        QuizAttemptDTO updatedDTO = this.quizAttemptService.updateQuizAttempt(new ObjectId(attemptId), quizAttemptDTO);
+        updatedDTO.setUser(this.buildUserWithoutCoursesDTOFromQuizAttemptDTO(updatedDTO));
+        updatedDTO.getBadges().forEach(b -> b.setAssignedBy(this.buildUserWithoutCoursesDTOFromBadgeDTO(b)));
+        return Response.ok(updatedDTO).build();
+    }
+
+    @POST
+    @Path("/{attemptId}/submit")
+    @Operation(summary = "Submit and complete a quiz attempt")
+    @APIResponse(responseCode = "200", description = "Quiz attempt submitted and completed")
+    @APIResponse(responseCode = "404", description = "Quiz attempt not found")
+    public Response submitQuizAttempt(@PathParam("attemptId") String attemptId, @Valid QuizAttemptDTO quizAttemptDTO) {
+        QuizAttemptDTO submittedDTO = this.quizAttemptService.submitQuizAttempt(new ObjectId(attemptId), quizAttemptDTO);
+        submittedDTO.setUser(this.buildUserWithoutCoursesDTOFromQuizAttemptDTO(submittedDTO));
+        submittedDTO.getBadges().forEach(b -> b.setAssignedBy(this.buildUserWithoutCoursesDTOFromBadgeDTO(b)));
+        return Response.ok(submittedDTO).build();
+    }
+
+
+
     private UserWithoutCoursesDTO buildUserWithoutCoursesDTOFromQuizAttemptDTO(QuizAttemptDTO quizAttemptDTO) {
         if(quizAttemptDTO.getUser().getAzureOid() == null)
             return null;

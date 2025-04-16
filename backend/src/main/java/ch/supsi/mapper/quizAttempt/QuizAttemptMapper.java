@@ -24,6 +24,7 @@ public class QuizAttemptMapper {
         dto.setCompletedAt(quizAttempt.completedAt);
         dto.setResponses(questionResponseDTOList);
         dto.setBadges(badgeDTOList);
+        dto.setStatus(quizAttempt.status);
         return dto;
     }
 
@@ -40,6 +41,7 @@ public class QuizAttemptMapper {
         quizAttempt.completedAt = dto.getCompletedAt();
         quizAttempt.responses = questionResponseList;
         quizAttempt.badges = badgeList;
+        quizAttempt.status = dto.getStatus();
         return quizAttempt;
     }
 }
