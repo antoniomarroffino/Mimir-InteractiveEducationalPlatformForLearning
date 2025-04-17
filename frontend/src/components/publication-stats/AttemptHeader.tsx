@@ -1,14 +1,12 @@
 import React from 'react';
 import { QuizAttemptDTO } from '@dti-isin/backend-api-client';
-import { calculateDurationInSeconds, formatDuration } from '../../utils/timeUtils';
+import {QuizDuration} from "../quiz-results/QuizDuration.tsx";
 
 interface AttemptHeaderProps {
     attempt: QuizAttemptDTO;
 }
 
 export const AttemptHeader: React.FC<AttemptHeaderProps> = ({ attempt }) => {
-    const durationSeconds = calculateDurationInSeconds(attempt.startedAt, attempt.completedAt);
-
     return (
         <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-bold flex items-center gap-2">
@@ -18,9 +16,10 @@ export const AttemptHeader: React.FC<AttemptHeaderProps> = ({ attempt }) => {
                 </span>
             </h2>
             <div className="text-sm text-base-content/70">
-                {durationSeconds > 0 && (
-                    <span>Duration: {formatDuration(durationSeconds)}</span>
-                )}
+                <QuizDuration
+                    startedAt={attempt.startedAt}
+                    completedAt={attempt.completedAt}
+                />
             </div>
         </div>
     );
