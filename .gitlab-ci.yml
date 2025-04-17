@@ -3,7 +3,7 @@ stages:
   - build_backend
   - publish_npm_package
   - build_frontend
-  #- deploy
+  - deploy
 
 structure:
   stage: structure
@@ -12,6 +12,7 @@ structure:
     - '[ -d frontend ] || exit 1'
   only:
     - dev
+    - spike/103-deployment-AWS
 
 services:
   - name: docker:dind
@@ -43,6 +44,7 @@ build_backend:
       - backend/target/backend-api-client
   only:
     - dev
+    - spike/103-deployment-AWS
 
 publish_npm_package:
   stage: publish_npm_package
@@ -58,6 +60,7 @@ publish_npm_package:
     - build_backend
   only:
     - dev
+    - spike/103-deployment-AWS
 
 build_frontend:
   stage: build_frontend
@@ -76,6 +79,37 @@ build_frontend:
       - frontend/dist/
   only:
     - dev
+    - spike/103-deployment-AWS
+
+deploy:
+  stage: deploy
+  image: amazon/aws-cli
+  before_script:
+    - aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+    - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+    - aws configure set default.region $AWS_DEFAULT_REGION
+
+  script:
+    # FRONTEND → S3 + invalidate CloudFront
+    - cd frontend
+    - npm ci && npm run build
+    - aws s3 sync dist/ s3://$FRONTEND_S3_BUCKET/ --delete
+    - aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths "/*"
+    - cd ..
+
+    # BACKEND → Docker push su ECR
+    - aws ecr get-login-password | docker login --username AWS --password-stdin $ECR_REGISTRY
+    - docker build -t $ECR_REGISTRY:latest backend
+    - docker push $ECR_REGISTRY:latest
+
+    # APP RUNNER → deploy nuovo container
+    - aws apprunner update-service \
+      --service-arn $APP_RUNNER_SERVICE_ARN \
+      --source-configuration ImageRepository='{ImageIdentifier="$ECR_REGISTRY:latest",ImageRepositoryType="ECR",ImageConfiguration={Port="8080"}}'
+  only:
+    #- main
+    - spike/103-deployment-AWS
+
 
 #deploy:
 #  stage: deploy
