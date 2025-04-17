@@ -126,7 +126,6 @@ const PublicationStatsPage: React.FC = () => {
                             </div>
                         </div>
 
-                        {/* Content */}
                         <div className="flex-1 overflow-y-auto">
                             <AnimatePresence mode="wait">
                                 {selectedPublication && (

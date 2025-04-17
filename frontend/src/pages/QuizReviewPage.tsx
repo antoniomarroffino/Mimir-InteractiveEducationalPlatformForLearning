@@ -32,8 +32,7 @@ const QuizReviewPage: React.FC = () => {
             <div className="h-full bg-gradient-to-r from-primary/5 to-secondary/5 p-4 sm:p-6 flex flex-col">
                 <ReviewHeader totalAttempts={attempts.length}/>
 
-                <div className="flex-1 flex gap-6 min-h-0"> {/* min-h-0 è importante per il flex container */}
-                    {/* Lista tentativi con scroll indipendente */}
+                <div className="flex-1 flex gap-6 min-h-0">
                     <div className="w-96 flex-shrink-0">
                         <AttemptsList
                             attempts={attempts}
@@ -43,16 +42,13 @@ const QuizReviewPage: React.FC = () => {
                         />
                     </div>
 
-                    {/* Contenitore principale con scroll indipendente */}
-                    <div className="flex-grow flex flex-col min-h-0"> {/* min-h-0 per nested flex */}
-                        {/* Badge Display - altezza fissa */}
+                    <div className="flex-grow flex flex-col min-h-0">
                         {selectedAttempt && hasBadge && badge && (
-                            <div className="animate-fadeIn shrink-0"> {/* shrink-0 per mantenere l'altezza */}
+                            <div className="animate-fadeIn shrink-0">
                                 <AttemptBadgeDisplay badge={badge} />
                             </div>
                         )}
 
-                        {/* Quiz Review Box con scroll interno */}
                         <div className="flex-1 bg-base-200 rounded-xl overflow-hidden flex flex-col min-h-0">
                             {selectedAttempt ? (
                                 isLoadingPublication ? (

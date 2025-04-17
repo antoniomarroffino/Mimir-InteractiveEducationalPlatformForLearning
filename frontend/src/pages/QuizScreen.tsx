@@ -1,18 +1,19 @@
-import React, {useCallback, useState} from 'react';
-import {useLocation, useNavigate, useParams} from 'react-router-dom';
-import {useGetQuizPublicationByCode} from '../hooks/quizPublication/useGetQuizPublicationByCode.ts';
-import {useGetQuizById} from '../hooks/quiz/useGetQuizById.ts';
-import {useQuizAttemptLocal} from '../hooks/quizAttempt/useQuizAttemptLocal.ts';
-import {useAuth} from '../hooks/useAuth.ts';
-import {QuizDTO, QuizPublicationDTO} from '@dti-isin/backend-api-client';
-import {ClockIcon} from '@heroicons/react/24/outline';
-import {LoadingSpinner} from '../components/common/LoadingSpinner.tsx';
-import {QuizQuestions} from '../components/common/QuizQuestions.tsx';
+import React, { useCallback, useState } from 'react';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useGetQuizPublicationByCode } from '../hooks/quizPublication/useGetQuizPublicationByCode.ts';
+import { useGetQuizById } from '../hooks/quiz/useGetQuizById.ts';
+import { useQuizAttemptLocal } from '../hooks/quizAttempt/useQuizAttemptLocal.ts';
+import { useAuth } from '../hooks/useAuth.ts';
+import { QuizDTO, QuizPublicationDTO } from '@dti-isin/backend-api-client';
+import { ClockIcon } from '@heroicons/react/24/outline';
+import { LoadingSpinner } from '../components/common/LoadingSpinner.tsx';
+import { QuizQuestions } from '../components/common/QuizQuestions.tsx';
+import { motion } from 'framer-motion';
 
 const QuizScreen: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const {accessCode} = useParams();
+    const { accessCode } = useParams();
 
     const state = location.state as {
         publication?: QuizPublicationDTO;
@@ -37,28 +38,25 @@ const QuizScreen: React.FC = () => {
         publication?.courseId ?? '',
         publication?.folderId ?? '',
         publication?.quizId ?? '',
-        {enabled: !hasStateData && !!publication}
+        { enabled: !hasStateData && !!publication }
     );
 
     const finalPublication = state?.publication ?? publication;
     const finalQuiz = state?.quiz ?? quiz;
 
-    const {startQuizAttempt} = useQuizAttemptLocal();
-    const {user, login} = useAuth();
+    const { startQuizAttempt } = useQuizAttemptLocal();
+    const { user, login } = useAuth();
     const [isQuizStarted, setIsQuizStarted] = useState(false);
     const [isStarting, setIsStarting] = useState(false);
 
     const handleStartQuiz = useCallback(async () => {
-        if (!finalPublication) {
-            console.error("Tentativo di avvio quiz senza publication.");
-            return;
-        }
+        if (!finalPublication) return;
         try {
             setIsStarting(true);
             await startQuizAttempt(finalPublication);
             setIsQuizStarted(true);
         } catch (err) {
-            console.error('Errore durante l\'avvio del quiz:', err);
+            console.error('Error while starting the quiz:', err);
         } finally {
             setIsStarting(false);
         }
@@ -68,9 +66,9 @@ const QuizScreen: React.FC = () => {
         return (
             <div className="min-h-screen flex items-center justify-center bg-base-200">
                 <div className="alert alert-error shadow-lg">
-                    <span>Errore nel caricamento del quiz.</span>
+                    <span>Error loading the quiz.</span>
                     <button className="btn btn-sm ml-4" onClick={() => navigate('/')}>
-                        Torna alla home
+                        Back to Home
                     </button>
                 </div>
             </div>
@@ -78,134 +76,113 @@ const QuizScreen: React.FC = () => {
     }
 
     if (!finalPublication || !finalQuiz || isLoadingPublication || isLoadingQuiz) {
-        return <LoadingSpinner/>;
+        return <LoadingSpinner />;
     }
 
     const formatTimeLimit = (minutes?: number | null) => {
         if (!minutes) return null;
-        if (minutes < 60) return `${minutes} minutes`;
+        if (minutes < 60) return `${minutes} minute${minutes > 1 ? 's' : ''}`;
         const hours = Math.floor(minutes / 60);
         const remainingMinutes = minutes % 60;
         return `${hours}h${remainingMinutes ? ` ${remainingMinutes}m` : ''}`;
     };
 
-    const renderQuizPreparation = () => {
-        if (finalPublication.anonymous) {
-            return renderCard({
-                type: 'primary',
-                title: 'Pronto per iniziare?',
-                description: 'Preparati a metterti alla prova!',
-                buttonLabel: 'Inizia il Quiz',
-                buttonAction: handleStartQuiz,
-                disabled: isStarting,
-                loading: isStarting
-            });
-        }
+    const renderAccessCard = () => {
+        const isAnonymous = finalPublication.anonymous;
+        const timeLimit = formatTimeLimit(finalQuiz.timeLimitMinutes);
 
-        if (!user) {
-            return renderCard({
-                type: 'warning',
-                title: 'Accesso Richiesto',
-                description: 'Devi effettuare il login per accedere a questo quiz.',
-                buttonLabel: 'Effettua il Login',
-                buttonAction: login
-            });
-        }
+        const content = isAnonymous
+            ? {
+                icon: '🧠',
+                title: 'Ready to challenge yourself?',
+                description: 'This is an anonymous quiz. No login required.',
+                buttonText: 'Start the Quiz',
+                action: handleStartQuiz,
+                color: 'primary'
+            }
+            : !user
+                ? {
+                    icon: '🔒',
+                    title: 'Login Required',
+                    description: 'You must log in to access this quiz.',
+                    buttonText: 'Login',
+                    action: login,
+                    color: 'warning'
+                }
+                : {
+                    icon: '🚀',
+                    title: 'Are you ready?',
+                    description: 'Read the instructions carefully before starting.',
+                    buttonText: 'Start the Quiz',
+                    action: handleStartQuiz,
+                    color: 'primary'
+                };
 
-        return renderCard({
-            type: 'primary',
-            title: 'Pronto per iniziare?',
-            description: 'Preparati a metterti alla prova!',
-            buttonLabel: 'Inizia il Quiz',
-            buttonAction: handleStartQuiz,
-            disabled: isStarting,
-            loading: isStarting
-        });
-    };
-
-    const renderCard = ({
-                            type,
-                            title,
-                            description,
-                            buttonLabel,
-                            buttonAction,
-                            disabled,
-                            loading
-                        }: {
-        type: 'primary' | 'warning';
-        title: string;
-        description: string;
-        buttonLabel: string;
-        buttonAction: () => void;
-        disabled?: boolean;
-        loading?: boolean;
-    }) => {
         return (
-            <div className="flex justify-center">
-                <div className={`card w-96 bg-${type}/20 shadow-xl backdrop-blur-sm`}>
-                    <div className="card-body items-center text-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                             className={`w-16 h-16 mb-4 stroke-${type}`}>
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                                  d={type === 'warning'
-                                      ? 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z'
-                                      : 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'}
-                            />
-                        </svg>
-                        <h3 className={`card-title text-${type}`}>{title}</h3>
-                        <p className="text-base-content mt-2">{description}</p>
-                        {finalQuiz.timeLimitMinutes && (
-                            <div className="flex items-center justify-center gap-2 mt-4 text-base-content/80">
-                                <ClockIcon className="w-5 h-5"/>
-                                <span>Time limit: {formatTimeLimit(finalQuiz.timeLimitMinutes)}</span>
-                            </div>
-                        )}
-                        <div className="card-actions justify-center mt-4">
-                            <button
-                                onClick={buttonAction}
-                                disabled={disabled}
-                                className={`btn btn-${type} btn-wide hover:scale-105 transition-transform`}
-                            >
-                                {loading ? 'Caricamento...' : buttonLabel}
-                            </button>
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className={`card w-full sm:w-[28rem] bg-${content.color}/20 shadow-xl backdrop-blur-sm`}
+            >
+                <div className="card-body items-center text-center">
+                    <div className="text-5xl mb-2">{content.icon}</div>
+                    <h3 className={`text-2xl font-bold text-${content.color}`}>{content.title}</h3>
+                    <p className="text-base-content/80 mt-2">{content.description}</p>
+                    {timeLimit && (
+                        <div className="flex items-center justify-center gap-2 mt-4 text-base-content/70">
+                            <ClockIcon className="w-5 h-5" />
+                            <span>Time limit: {timeLimit}</span>
                         </div>
+                    )}
+                    <div className="card-actions justify-center mt-6">
+                        <button
+                            onClick={content.action}
+                            disabled={isStarting}
+                            className={`btn btn-${content.color} btn-wide text-white hover:scale-105 transition-transform`}
+                        >
+                            {isStarting ? 'Loading...' : content.buttonText}
+                        </button>
                     </div>
                 </div>
-            </div>
+            </motion.div>
         );
     };
 
     return (
-        <div className="min-h-screen bg-base-200 flex flex-col">
+        <div className="min-h-screen bg-gradient-to-br from-base-100 to-base-300 flex flex-col">
             <div className="bg-gradient-to-r from-primary to-secondary">
-                <div className="container mx-auto px-4 py-8">
-                    <div className="text-center text-neutral-content">
-                        <h1 className="text-4xl font-bold mb-2">{finalQuiz.name}</h1>
-                        <p className="text-lg mb-4">{finalQuiz.description}</p>
-                        {finalQuiz.timeLimitMinutes && (
-                            <div className="flex items-center justify-center gap-2">
-                                <ClockIcon className="w-5 h-5"/>
-                                <span>Time limit: {formatTimeLimit(finalQuiz.timeLimitMinutes)}</span>
-                            </div>
-                        )}
-                    </div>
+                <div className="container mx-auto px-4 py-10 text-center text-neutral-content">
+                    <motion.h1
+                        className="text-4xl font-extrabold tracking-tight mb-2"
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5 }}
+                    >
+                        {finalQuiz.name}
+                    </motion.h1>
+                    <motion.p
+                        className="text-lg max-w-xl mx-auto"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.2 }}
+                    >
+                        {finalQuiz.description}
+                    </motion.p>
                 </div>
             </div>
 
-            <div className="flex-1 relative">
-                <div className="absolute top-0 left-0 right-0 h-4 bg-gradient-to-b from-black/10"/>
-                <div className="container mx-auto px-4 py-8">
-                    {!isQuizStarted ? (
-                        <div className="flex items-center justify-center min-h-[400px]">
-                            {renderQuizPreparation()}
-                        </div>
-                    ) : (
-                        <QuizQuestions
-                            publication={finalPublication}
-                            timeLimit={finalQuiz.timeLimitMinutes}
-                        />
-                    )}
-                </div>
+            <div className="flex-1 container mx-auto px-4 py-10">
+                {!isQuizStarted ? (
+                    <div className="flex justify-center items-center min-h-[400px]">
+                        {renderAccessCard()}
+                    </div>
+                ) : (
+                    <QuizQuestions
+                        publication={finalPublication}
+                        timeLimit={finalQuiz.timeLimitMinutes}
+                    />
+                )}
             </div>
         </div>
     );
