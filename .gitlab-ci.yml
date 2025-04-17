@@ -12,7 +12,7 @@ structure:
     - '[ -d frontend ] || exit 1'
   only:
     - dev
-    - spike/103-deployment-AWS
+    #- spike/103-deployment-AWS
 
 services:
   - name: docker:dind
@@ -44,7 +44,7 @@ build_backend:
       - backend/target/backend-api-client
   only:
     - dev
-    - spike/103-deployment-AWS
+    #- spike/103-deployment-AWS
 
 publish_npm_package:
   stage: publish_npm_package
@@ -95,18 +95,13 @@ deploy:
     - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
     - aws configure set default.region $AWS_DEFAULT_REGION
   script:
-    # FRONTEND → S3 + invalidate CloudFront
     - aws s3 sync frontend/dist/ s3://$FRONTEND_S3_BUCKET/ --delete
     - aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths "/*"
-
-    # BACKEND → Docker push to ECR
     - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY
     - cd backend
     - docker build -t $ECR_REGISTRY:latest .
     - docker push $ECR_REGISTRY:latest
     - cd ..
-
-    # APP RUNNER → Deploy new container
     - aws ecs update-service --cluster $ECS_CLUSTER --service $ECS_SERVICE --force-new-deployment
   dependencies:
     - build_frontend
