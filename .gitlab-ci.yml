@@ -83,19 +83,17 @@ build_frontend:
 
 deploy:
   stage: deploy
-  image:
-    name: amazon/aws-cli
-    entrypoint: [""]
+  image: docker:latest
   services:
     - docker:dind
   variables:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_TLS_CERTDIR: ""
   before_script:
+    - apk add --no-cache aws-cli curl
     - aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
     - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
     - aws configure set default.region $AWS_DEFAULT_REGION
-    - apk add --no-cache docker
   script:
     # FRONTEND → S3 + invalidate CloudFront
     - aws s3 sync frontend/dist/ s3://$FRONTEND_S3_BUCKET/ --delete
@@ -104,14 +102,14 @@ deploy:
     # BACKEND → Docker push su ECR
     - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY
     - cd backend
-    - docker build -t $ECR_REPOSITORY_URI:latest .
-    - docker push $ECR_REPOSITORY_URI:latest
+    - docker build -t $ECR_REGISTRY:latest .
+    - docker push $ECR_REGISTRY:latest
     - cd ..
 
     # APP RUNNER → deploy nuovo container
     - aws apprunner update-service \
       --service-arn $APP_RUNNER_SERVICE_ARN \
-      --source-configuration "ImageRepository={ImageIdentifier='$ECR_REPOSITORY_URI:latest',ImageRepositoryType='ECR',ImageConfiguration={Port=8080}}"
+      --source-configuration "ImageRepository={ImageIdentifier='$ECR_REGISTRY:latest',ImageRepositoryType='ECR',ImageConfiguration={Port=8080}}"
   dependencies:
     - build_frontend
     - build_backend
