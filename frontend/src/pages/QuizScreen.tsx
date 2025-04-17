@@ -1,37 +1,68 @@
 import React from 'react';
-import {LoadingSpinner} from '../components/common/LoadingSpinner.tsx';
-import {useParams} from "react-router-dom";
-import {useGetQuizPublicationByCode} from "../hooks/quizPublication/useGetQuizPublicationByCode.ts";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useGetQuizPublicationByCode } from "../hooks/quizPublication/useGetQuizPublicationByCode.ts";
+import { useGetQuizById } from "../hooks/quiz/useGetQuizById.ts";
+import { QuizDTO, QuizPublicationDTO } from "@dti-isin/backend-api-client";
+import { LoadingSpinner } from '../components/common/LoadingSpinner.tsx';
 import QuizPreStart from "../components/quiz/QuizPreStart.tsx";
 
 const QuizScreen: React.FC = () => {
-    const {accessCode} = useParams();
-    const {data: publication, isLoading: isLoadingPublication, error: errorGetPublication} = useGetQuizPublicationByCode(accessCode!);
+    const location = useLocation();
+    const navigate = useNavigate();
+    const { accessCode } = useParams();
 
-    if (errorGetPublication) {
+    const state = location.state as {
+        publication?: QuizPublicationDTO;
+        quiz?: QuizDTO;
+    };
+
+    const hasStateData = !!(state?.publication && state?.quiz);
+
+    const {
+        data: publication,
+        isLoading: isLoadingPublication,
+        error: errorPublication
+    } = useGetQuizPublicationByCode(accessCode!, {
+        enabled: !hasStateData
+    });
+
+    const {
+        data: quiz,
+        isLoading: isLoadingQuiz,
+        error: errorQuiz
+    } = useGetQuizById(
+        publication?.courseId ?? '',
+        publication?.folderId ?? '',
+        publication?.quizId ?? '',
+        { enabled: !hasStateData && !!publication }
+    );
+
+    if (hasStateData) {
+        return <QuizPreStart />;
+    }
+
+    if (errorPublication || errorQuiz) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-base-200">
                 <div className="alert alert-error shadow-lg">
-                    <div>
-                        <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current flex-shrink-0 h-6 w-6"
-                             fill="none" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                        <span>Error fetching quiz: {errorGetPublication.message}</span>
-                    </div>
+                    <span>Errore nel caricamento del quiz.</span>
+                    <button className="btn btn-sm ml-4" onClick={() => navigate('/')}>
+                        Torna alla home
+                    </button>
                 </div>
             </div>
         );
     }
 
-    if (!publication || isLoadingPublication) {
-        return <LoadingSpinner/>;
+    if (publication && quiz && !isLoadingPublication && !isLoadingQuiz) {
+        navigate(`/quiz/${accessCode}`, {
+            replace: true,
+            state: { publication, quiz }
+        });
+        return null;
     }
 
-    return (
-        <QuizPreStart publication={publication} />
-    );
+    return <LoadingSpinner />;
 };
 
 export default QuizScreen;
