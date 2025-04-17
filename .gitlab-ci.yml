@@ -99,17 +99,18 @@ deploy:
     - aws s3 sync frontend/dist/ s3://$FRONTEND_S3_BUCKET/ --delete
     - aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths "/*"
 
-    # BACKEND → Docker push su ECR
+    # BACKEND → Docker push to ECR
     - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY
     - cd backend
     - docker build -t $ECR_REGISTRY:latest .
     - docker push $ECR_REGISTRY:latest
     - cd ..
 
-    # APP RUNNER → deploy nuovo container
-    - aws apprunner update-service \
-      --service-arn $APP_RUNNER_SERVICE_ARN \
-      --source-configuration "ImageRepository={ImageIdentifier='$ECR_REGISTRY:latest',ImageRepositoryType='ECR',ImageConfiguration={Port=8080}}"
+    # APP RUNNER → Deploy new container
+    - |
+      aws apprunner update-service \
+        --service-arn $APP_RUNNER_SERVICE_ARN \
+        --source-configuration "ImageRepository={ImageIdentifier='$ECR_REGISTRY:latest',ImageRepositoryType='ECR',ImageConfiguration={Port=8080}}"
   dependencies:
     - build_frontend
     - build_backend
