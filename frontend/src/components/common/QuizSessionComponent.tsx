@@ -47,7 +47,6 @@ export const QuizSessionComponent = () => {
     return (
         <section className="w-full max-w-md mx-auto relative">
 
-            {/* Analyzing logic component */}
             {isAnalyzing && (
                 <QuizCodeAnalyzer
                     publicationCode={code}
@@ -56,7 +55,6 @@ export const QuizSessionComponent = () => {
                 />
             )}
 
-            {/* Loading overlay */}
             {isAnalyzing && (
                 <div
                     className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 flex items-center justify-center">
@@ -67,7 +65,6 @@ export const QuizSessionComponent = () => {
                 </div>
             )}
 
-            {/* Codice d'inserimento */}
             <div className="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow">
                 <div className="card-body items-center text-center">
                     <div className="p-4 bg-primary/10 rounded-full mb-4">
