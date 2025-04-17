@@ -17,18 +17,17 @@ RUN ./mvnw clean package \
 FROM quay.io/quarkus/quarkus-micro-image:2.0
 WORKDIR /app
 
-RUN curl -sS "https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem" > /app/global-bundle.pem
+RUN curl -o /etc/ssl/certs/rds-combined-ca-bundle.pem https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem && \
+    update-ca-trust extract || true
+
 
 COPY --from=builder /app/target/*-runner serviceQuarkus
 ENV QUARKUS_PROFILE=prod
-# Imposta le variabili di ambiente per SSL
-ENV JAVA_OPTS="-Djavax.net.ssl.trustStore=/app/global-bundle.pem -Djavax.net.ssl.trustStoreType=PEM"
 
 RUN chmod 775 /app /app/serviceQuarkus \
   && chown -R 1001 /app \
   && chmod -R "g+rwX" /app \
-  && chown -R 1001:root /app \
-  && chmod 644 /app/global-bundle.pem
+  && chown -R 1001:root /app
 
 EXPOSE 8080
 USER 1001
