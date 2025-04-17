@@ -60,7 +60,7 @@ publish_npm_package:
     - build_backend
   only:
     - dev
-    - spike/103-deployment-AWS
+    #- spike/103-deployment-AWS
 
 build_frontend:
   stage: build_frontend
