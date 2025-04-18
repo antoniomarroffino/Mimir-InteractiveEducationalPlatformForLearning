@@ -20,7 +20,7 @@ export const isResponseCorrect = (question: QuestionDTO, response: QuestionRespo
         const multipleChoiceResponse = response as MultipleChoiceQuestionResponseDTO;
 
         const responseIndexes = multipleChoiceResponse.selectedAnswerIndexes || [];
-        const correctIndexes = multipleChoiceQuestion.correctAnswerIndexes || [];
+        const correctIndexes = multipleChoiceQuestion.correctAnswerIndexes;
 
         return JSON.stringify(responseIndexes.sort()) === JSON.stringify(correctIndexes.sort());
     }
@@ -32,7 +32,7 @@ export const checkIfAnswered = (question: QuestionDTO, response?: QuestionRespon
     if (!response) return false;
 
     if (question.type === QuestionType.TrueFalse) {
-        return (response as TrueFalseQuestionResponseDTO).selectedAnswer !== null;
+        return (response as TrueFalseQuestionResponseDTO).selectedAnswer !== undefined;
     }
 
     if (question.type === QuestionType.MultipleChoice) {

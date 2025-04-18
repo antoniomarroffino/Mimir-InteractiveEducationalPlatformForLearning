@@ -8,7 +8,7 @@ export const calculateEarnedPoints = (attempt: QuizAttemptDTO): number => {
 
 export const calculateTotalAvailablePoints = (publication: QuizPublicationDTO): number => {
     return publication.questions?.reduce((total, question) => {
-        return total + (question.points || 1);
+        return total + (question.points);
     }, 0) || 0;
 };
 
