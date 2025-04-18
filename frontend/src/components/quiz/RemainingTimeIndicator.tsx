@@ -12,12 +12,12 @@ export const RemainingTimeIndicator: React.FC<RemainingTimeIndicatorProps> = ({ 
 
     return (
         <div
-            className={`w-fit self-start bg-base-100 p-3 rounded-xl shadow-lg flex items-center gap-2 mb-4 ${
+            className={`min-h-[48px] bg-primary/10 px-3 py-2 rounded-xl flex items-center gap-2 ${
                 timeRemaining < 30 ? 'animate-pulse ring-2 ring-error/30' : ''
             }`}
         >
             <ClockIcon className="w-5 h-5 text-primary" />
-            <span className={`font-mono text-lg ${timeRemaining < 60 ? 'text-error' : ''}`}>
+            <span className={`font-mono text-sm md:text-base leading-none ${timeRemaining < 60 ? 'text-error' : ''}`}>
                 {formatted}
             </span>
         </div>

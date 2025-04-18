@@ -19,9 +19,9 @@ export const QuizExecutionHeader: React.FC<QuizExecutionHeaderProps> = ({ title,
     return (
         <>
             <div className="bg-gradient-to-r from-primary to-secondary text-neutral-content">
-                <div className="container mx-auto px-4 py-10 text-center">
+                <div className="container mx-auto px-4 py-6 sm:py-10 text-center">
                     <motion.h1
-                        className="text-4xl font-extrabold tracking-tight mb-2"
+                        className="text-2xl sm:text-4xl font-extrabold tracking-tight mb-2"
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5 }}

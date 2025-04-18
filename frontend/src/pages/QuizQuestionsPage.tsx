@@ -18,9 +18,8 @@ import { QuizExecutionHeader } from "../components/quiz/QuizExecutionHeader";
 import { AnimatePresence } from "framer-motion";
 import { QuestionNavigationArrows } from "../components/quiz/QuestionNavigationArrows";
 import { TimeWarningPopup } from "../components/quiz/TimeWarningPopup";
-import { MobileNavigation } from "../components/common/MobileNavigation";
 import { CurrentQuestionCard } from "../components/quiz/CurrentQuestionCard";
-import { SidebarQuizExecution } from "../components/quiz/SidebarQuizExecution"; // nuovo componente
+import { SidebarQuizExecution } from "../components/quiz/SidebarQuizExecution";
 
 const QuizQuestionsPage: React.FC = () => {
     const location = useLocation();
@@ -45,7 +44,6 @@ const QuizQuestionsPage: React.FC = () => {
     const [userResponses, setUserResponses] = useState<QuestionResponseDTO[]>(
         currentAttempt?.responses || new Array(publication?.questions?.length || 0).fill(null)
     );
-    const [showMobileNav, setShowMobileNav] = useState(false);
     const [showPopup, setShowPopup] = useState(false);
 
     const [timeRemaining, setTimeRemaining] = useState<number | null>(
@@ -162,23 +160,15 @@ const QuizQuestionsPage: React.FC = () => {
         <div className="min-h-[calc(100vh-4rem)] flex flex-col bg-gradient-to-br from-primary/10 to-secondary/10">
             <QuizExecutionHeader title={quiz.name} description={quiz.description} />
 
-            <div className="flex-1 flex overflow-hidden py-10 container mx-auto px-4 gap-6">
-                {/* Left */}
+            <div className="flex-1 flex flex-col-reverse md:flex-row overflow-hidden py-6 container mx-auto px-4 gap-6">
+
+            {/* Colonna principale - Domande */}
                 <div className="flex-1 flex flex-col justify-start">
                     <QuestionNavigationArrows
                         currentIndex={currentQuestionIndex}
-                        totalQuestions={publication.questions?.length || 0}
-                        onPrevious={() =>
-                            setCurrentQuestionIndex((i) => Math.max(0, i - 1))
-                        }
-                        onNext={() =>
-                            setCurrentQuestionIndex((i) =>
-                                Math.min(
-                                    (publication.questions?.length || 0) - 1,
-                                    i + 1
-                                )
-                            )
-                        }
+                        totalQuestions={publication.questions!.length}
+                        onPrevious={() => setCurrentQuestionIndex(i => Math.max(0, i - 1))}
+                        onNext={() => setCurrentQuestionIndex(i => Math.min(publication.questions!.length - 1, i + 1))}
                     />
 
                     <div className="mt-6 flex justify-center">
@@ -190,36 +180,23 @@ const QuizQuestionsPage: React.FC = () => {
                             />
                         </AnimatePresence>
                     </div>
+
+                    {showPopup && <TimeWarningPopup onClose={() => setShowPopup(false)} />}
                 </div>
 
-                {/* Right - Sidebar */}
+                {/* Sidebar - destra su desktop, sopra su mobile */}
                 <SidebarQuizExecution
                     timeRemaining={timeRemaining}
-                    questions={publication.questions || []}
+                    questions={publication.questions!}
                     currentQuestionIndex={currentQuestionIndex}
                     onQuestionChange={setCurrentQuestionIndex}
                     onCompleteQuiz={handleCompleteQuiz}
                     userResponses={userResponses}
                 />
-
-                {/* Mobile */}
-                <MobileNavigation
-                    isOpen={showMobileNav}
-                    onClose={() => setShowMobileNav(false)}
-                    questions={publication.questions || []}
-                    currentQuestionIndex={currentQuestionIndex}
-                    onQuestionChange={(index) => {
-                        setCurrentQuestionIndex(index);
-                        setShowMobileNav(false);
-                    }}
-                    onCompleteQuiz={handleCompleteQuiz}
-                    userResponses={userResponses}
-                />
-
-                {showPopup && <TimeWarningPopup onClose={() => setShowPopup(false)} />}
             </div>
         </div>
     );
+
 };
 
 export default QuizQuestionsPage;
