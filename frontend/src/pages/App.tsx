@@ -1,10 +1,10 @@
 import {Outlet, Route, Routes} from 'react-router-dom';
 import {QueryClient, QueryClientProvider} from 'react-query';
-import CourseDetails from './CourseDetails';
+import CourseDetailsPage from './CourseDetailsPage.tsx';
 import Header from "../components/common/Header.tsx";
 import Footer from "../components/common/Footer.tsx";
 import '../App.css';
-import {QuizCreation} from "./QuizCreation.tsx";
+import {QuizCreationPage} from "./QuizCreationPage.tsx";
 import {AuthProvider} from "../provider/AuthProvider.tsx";
 import AdminDashboard from "./admin/AdminDashboard.tsx";
 import ProtectedRoute from "../routes/ProtectedRoute.tsx";
@@ -24,12 +24,13 @@ import {QuestionBankProviders} from "../provider/questionBank/QuestionBankProvid
 import {QuestionBankDashboard} from "./teacher/QuestionBankDashboard.tsx";
 import QuestionBankDetails from "../components/questionBank/QuestionBankDetails.tsx";
 import {QuizAttemptProviders} from "../provider/quizAttempt/QuizAttemptProviders.tsx";
-import QuizResults from "./QuizResults.tsx";
-import QuizScreen from "./QuizScreen.tsx";
+import QuizResultsPage from "./QuizResultsPage.tsx";
+import QuizScreenPage from "./QuizScreenPage.tsx";
 import PublicationStatsPage from "./PublicationStatsPage.tsx";
 import QuizReviewPage from "./QuizReviewPage.tsx";
 import BadgesPage from "./BadgesPage.tsx";
 import ScrollToTop from "../utils/ScrollToTop.tsx";
+import QuizQuestionsPage from "./QuizQuestionsPage.tsx";
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -84,13 +85,13 @@ const App = () => {
                                     }
                                 >
                                     <Route index element={<TeacherDashboard/>}/>
-                                    <Route path=":courseId" element={<CourseDetails/>}/>
+                                    <Route path=":courseId" element={<CourseDetailsPage/>}/>
                                     <Route
                                         path=":courseId/folders/:folderId/quizzes/:quizId/edit"
                                         element={
                                             <QuestionBankProviders>
                                                 <QuestionProviders>
-                                                    <QuizCreation/>
+                                                    <QuizCreationPage/>
                                                 </QuestionProviders>
                                             </QuestionBankProviders>
                                         }
@@ -160,11 +161,14 @@ const App = () => {
                                 />
                                 <Route
                                     path="/quiz/:accessCode"
-                                    element={<QuizScreen/>}
+                                    element={<QuizScreenPage/>}
                                 />
+
+                                <Route path="/quiz/:accessCode/questions" element={<QuizQuestionsPage />} />
+
                                 <Route
                                     path="/results/:quizAttemptId"
-                                    element={<QuizResults/>}
+                                    element={<QuizResultsPage/>}
                                 />
                             </Routes>
                             <Footer/>

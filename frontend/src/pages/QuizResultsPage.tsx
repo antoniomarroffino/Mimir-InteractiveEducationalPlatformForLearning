@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useQuizAttemptLocal } from "../hooks/quizAttempt/useQuizAttemptLocal";
 import {QuizReview} from "../components/quiz-results/QuizReview.tsx";
 
-const QuizResults: React.FC = () => {
+const QuizResultsPage: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { resetQuizAttempt } = useQuizAttemptLocal();
@@ -51,4 +51,4 @@ const QuizResults: React.FC = () => {
     );
 };
 
-export default QuizResults;
+export default QuizResultsPage;

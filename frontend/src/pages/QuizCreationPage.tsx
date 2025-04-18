@@ -17,7 +17,7 @@ import {useGetFolderById} from "../hooks/folder/useGetFolderById.ts";
 import {LoadingSpinner} from "../components/common/LoadingSpinner.tsx";
 import {QuizTimeLimit} from "../components/quiz/QuizTimeLimit.tsx";
 
-export const QuizCreation: React.FC = () => {
+export const QuizCreationPage: React.FC = () => {
     const {courseId, folderId, quizId} = useParams();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const {data: currentQuiz, isLoading: isLoadingQuiz} = useGetQuizById(courseId!, folderId!, quizId!);

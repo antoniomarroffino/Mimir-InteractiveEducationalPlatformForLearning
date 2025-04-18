@@ -22,3 +22,11 @@ export const formatDuration = (seconds: number): string => {
     const remainingSeconds = seconds % 60;
     return `${minutes}m ${remainingSeconds}s`;
 };
+
+export const formatMinutesDuration = (minutes?: number | null): string | null => {
+    if (!minutes) return null;
+    if (minutes < 60) return `${minutes} minute${minutes > 1 ? 's' : ''}`;
+    const hours = Math.floor(minutes / 60);
+    const remaining = minutes % 60;
+    return `${hours}h${remaining ? ` ${remaining}m` : ''}`;
+};

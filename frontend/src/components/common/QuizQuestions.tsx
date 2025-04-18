@@ -145,23 +145,23 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({publication, timeLi
     const currentQuestion = publication.questions?.[currentQuestionIndex];
 
     return (
-        <div className="h-[calc(100vh-7rem)] bg-gradient-to-br from-primary/10 to-secondary/10 overflow-hidden">
-            <div className="container mx-auto px-4 py-6 h-full flex gap-6">
+        <div className="relative h-[calc(100vh-4rem)] bg-gradient-to-br from-primary/10 to-secondary/10 overflow-hidden">
+            <div className="container mx-auto h-full px-4 py-6 flex gap-6 items-start">
                 {/* Left - Question Area */}
                 <div className="flex-1 h-full overflow-y-auto pr-2">
                     {/* Timer */}
                     {timeRemaining !== null && (
                         <motion.div
-                            initial={{opacity: 0}}
-                            animate={{opacity: 1}}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
                             className="mb-4 flex justify-end"
                         >
                             <div className={`bg-base-100 p-3 rounded-xl shadow-lg flex items-center gap-2 
-                                ${timeRemaining < 30 ? 'animate-pulse ring-2 ring-error/30' : ''}`}>
-                                <ClockIcon className="w-5 h-5 text-primary"/>
+                        ${timeRemaining < 30 ? 'animate-pulse ring-2 ring-error/30' : ''}`}>
+                                <ClockIcon className="w-5 h-5 text-primary" />
                                 <span className={`font-mono text-lg ${timeRemaining < 60 ? 'text-error' : ''}`}>
-                                    {formatTimeRemaining(timeRemaining)}
-                                </span>
+                            {formatTimeRemaining(timeRemaining)}
+                        </span>
                             </div>
                         </motion.div>
                     )}
@@ -177,11 +177,11 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({publication, timeLi
                     <AnimatePresence mode="wait">
                         <motion.div
                             key={currentQuestion?.id}
-                            initial={{opacity: 0, y: 15}}
-                            animate={{opacity: 1, y: 0}}
-                            exit={{opacity: 0, y: -15}}
-                            transition={{duration: 0.3}}
-                            className="bg-base-100 rounded-xl shadow-xl p-6 min-h-[400px] max-w-3xl mx-auto"
+                            initial={{ opacity: 0, y: 15 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -15 }}
+                            transition={{ duration: 0.3 }}
+                            className="bg-base-100 rounded-xl shadow-xl p-6 min-h-[460px] max-w-3xl mx-auto"
                         >
                             {isTrueFalseQuestion(currentQuestion!) && (
                                 <TrueFalseQuestion
@@ -202,7 +202,7 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({publication, timeLi
                 </div>
 
                 {/* Right - Sidebar */}
-                <div className="hidden md:block w-[300px] sticky top-[6rem] h-[calc(100vh-7rem)] overflow-y-auto">
+                <div className="hidden md:block w-[300px] sticky top-[5rem] max-h-[calc(100vh-5rem)] overflow-y-auto">
                     <QuizNavigation
                         questions={publication.questions || []}
                         currentQuestionIndex={currentQuestionIndex}
@@ -226,5 +226,6 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({publication, timeLi
                 />
             </div>
         </div>
+
     );
 };
