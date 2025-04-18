@@ -97,27 +97,24 @@ const QuizScreenPage: React.FC = () => {
     const timeLimit = formatMinutesDuration(finalQuiz.timeLimitMinutes);
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-base-100 to-base-300 flex flex-col">
+        <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-br from-base-100 to-base-300 flex flex-col">
             <QuizExecutionHeader title={finalQuiz.name} description={finalQuiz.description} />
-
-            <div className="flex-1 container mx-auto px-4 py-10">
-                <div className="flex justify-center items-center min-h-[400px]">
-                    {finalPublication.anonymous ? (
-                        <AnonymousAccessCard
-                            timeLimit={timeLimit!}
-                            onStart={handleStartQuiz}
-                            loading={isStarting}
-                        />
-                    ) : !user ? (
-                        <LoginRequiredAccessCard onLogin={login} />
-                    ) : (
-                        <AuthenticatedAccessCard
-                            timeLimit={timeLimit!}
-                            onStart={handleStartQuiz}
-                            loading={isStarting}
-                        />
-                    )}
-                </div>
+            <div className="flex-1 flex justify-center items-center px-4 py-8">
+                {finalPublication.anonymous ? (
+                    <AnonymousAccessCard
+                        timeLimit={timeLimit!}
+                        onStart={handleStartQuiz}
+                        loading={isStarting}
+                    />
+                ) : !user ? (
+                    <LoginRequiredAccessCard onLogin={login} />
+                ) : (
+                    <AuthenticatedAccessCard
+                        timeLimit={timeLimit!}
+                        onStart={handleStartQuiz}
+                        loading={isStarting}
+                    />
+                )}
             </div>
         </div>
     );

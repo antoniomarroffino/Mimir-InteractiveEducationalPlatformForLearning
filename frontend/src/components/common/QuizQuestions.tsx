@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
     MultipleChoiceQuestionDTO,
     MultipleChoiceQuestionResponseDTO,
@@ -9,25 +9,26 @@ import {
     TrueFalseQuestionDTO,
     TrueFalseQuestionResponseDTO
 } from '@dti-isin/backend-api-client';
-import {MultipleChoiceQuestion} from "../question/MultipleChoiceQuestion.tsx";
-import {TrueFalseQuestion} from "../question/TrueFalseQuestion.tsx";
-import {QuizNavigation} from "../quiz/QuizNavigation.tsx";
-import {useQuizAttemptLocal} from "../../hooks/quizAttempt/useQuizAttemptLocal.ts";
-import {useNavigate} from "react-router-dom";
-import {MobileNavigation} from "./MobileNavigation.tsx";
-import {QuestionResponseFactory} from "../question/QuestionResponseFactory.tsx";
-import {ClockIcon} from "@heroicons/react/24/outline";
-import {useQuizAttemptAutosave} from "../../hooks/quizAttempt/useQuizAttemptAutosave";
-import {AnimatePresence, motion} from 'framer-motion';
-import {QuestionNavigationArrows} from "../quiz/QuestionNavigationArrows.tsx";
+import { MultipleChoiceQuestion } from "../question/MultipleChoiceQuestion";
+import { TrueFalseQuestion } from "../question/TrueFalseQuestion";
+import { QuizNavigation } from "../quiz/QuizNavigation";
+import { useQuizAttemptLocal } from "../../hooks/quizAttempt/useQuizAttemptLocal";
+import { useNavigate } from "react-router-dom";
+import { MobileNavigation } from "./MobileNavigation";
+import { QuestionResponseFactory } from "../question/QuestionResponseFactory";
+import { useQuizAttemptAutosave } from "../../hooks/quizAttempt/useQuizAttemptAutosave";
+import { AnimatePresence, motion } from 'framer-motion';
+import { QuestionNavigationArrows } from "../quiz/QuestionNavigationArrows";
+import { RemainingTimeIndicator } from "../quiz/RemainingTimeIndicator";
+import { TimeWarningPopup } from "../quiz/TimeWarningPopup";
 
 interface QuizQuestionsProps {
     publication: QuizPublicationDTO;
     timeLimit?: number;
 }
 
-export const QuizQuestions: React.FC<QuizQuestionsProps> = ({publication, timeLimit}) => {
-    const {currentAttempt, updateQuizAttemptResponses, completeQuizAttempt} = useQuizAttemptLocal();
+export const QuizQuestions: React.FC<QuizQuestionsProps> = ({ publication, timeLimit }) => {
+    const { currentAttempt, updateQuizAttemptResponses, completeQuizAttempt } = useQuizAttemptLocal();
     const [showMobileNav, setShowMobileNav] = useState(false);
     const [timeRemaining, setTimeRemaining] = useState<number | null>(
         timeLimit ? timeLimit * 60 : null
@@ -36,6 +37,7 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({publication, timeLi
         currentAttempt?.responses || new Array(publication.questions?.length || 0).fill(null)
     );
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+    const [showPopup, setShowPopup] = useState(false);
     const navigate = useNavigate();
 
     useQuizAttemptAutosave(15000);
@@ -58,6 +60,7 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({publication, timeLi
 
     useEffect(() => {
         if (!timeRemaining) return;
+
         const timer = setInterval(() => {
             setTimeRemaining(prev => {
                 if (!prev || prev <= 0) {
@@ -65,21 +68,21 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({publication, timeLi
                     handleCompleteQuiz();
                     return 0;
                 }
+
+                if (prev === 60) {
+                    setShowPopup(true);
+                }
+
                 return prev - 1;
             });
         }, 1000);
+
         return () => clearInterval(timer);
     }, [timeRemaining]);
 
     useEffect(() => {
         updateQuizAttemptResponses(userResponses);
     }, [userResponses, updateQuizAttemptResponses]);
-
-    const formatTimeRemaining = (seconds: number): string => {
-        const minutes = Math.floor(seconds / 60);
-        const remainingSeconds = seconds % 60;
-        return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-    };
 
     const isTrueFalseQuestion = (q: QuestionDTO): q is TrueFalseQuestionDTO => q.type === QuestionType.TrueFalse;
     const isMultipleChoiceQuestion = (q: QuestionDTO): q is MultipleChoiceQuestionDTO => q.type === QuestionType.MultipleChoice;
@@ -93,22 +96,20 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({publication, timeLi
             const timeSpent = updated[currentQuestionIndex]?.timeSpent || 0;
 
             if (isTrueFalseQuestion(currentQuestion)) {
-                const tfAnswer = typeof answer === 'boolean' ? answer : undefined;
                 updated[currentQuestionIndex] = {
                     ...QuestionResponseFactory.createResponse(
                         QuestionType.TrueFalse,
                         currentQuestion.id!,
-                        tfAnswer
+                        typeof answer === 'boolean' ? answer : undefined
                     ),
                     timeSpent
                 };
             } else if (isMultipleChoiceQuestion(currentQuestion)) {
-                const mcAnswer = Array.isArray(answer) ? answer : [];
                 updated[currentQuestionIndex] = {
                     ...QuestionResponseFactory.createResponse(
                         QuestionType.MultipleChoice,
                         currentQuestion.id!,
-                        mcAnswer
+                        Array.isArray(answer) ? answer : []
                     ),
                     timeSpent
                 };
@@ -135,7 +136,7 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({publication, timeLi
         try {
             const completedAttempt = await completeQuizAttempt();
             navigate(`/results/${completedAttempt.id!}`, {
-                state: {attempt: completedAttempt, quizPublication: publication}
+                state: { attempt: completedAttempt, quizPublication: publication }
             });
         } catch (error) {
             console.error('Error during completing quiz:', error);
@@ -145,27 +146,10 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({publication, timeLi
     const currentQuestion = publication.questions?.[currentQuestionIndex];
 
     return (
-        <div className="relative h-[calc(100vh-4rem)] bg-gradient-to-br from-primary/10 to-secondary/10 overflow-hidden">
-            <div className="container mx-auto h-full px-4 py-6 flex gap-6 items-start">
+        <div className="flex-1 overflow-hidden bg-gradient-to-br from-primary/10 to-secondary/10">
+            <div className="container mx-auto px-4 py-6 h-full flex gap-6 items-start max-h-full relative">
                 {/* Left - Question Area */}
                 <div className="flex-1 h-full overflow-y-auto pr-2">
-                    {/* Timer */}
-                    {timeRemaining !== null && (
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            className="mb-4 flex justify-end"
-                        >
-                            <div className={`bg-base-100 p-3 rounded-xl shadow-lg flex items-center gap-2 
-                        ${timeRemaining < 30 ? 'animate-pulse ring-2 ring-error/30' : ''}`}>
-                                <ClockIcon className="w-5 h-5 text-primary" />
-                                <span className={`font-mono text-lg ${timeRemaining < 60 ? 'text-error' : ''}`}>
-                            {formatTimeRemaining(timeRemaining)}
-                        </span>
-                            </div>
-                        </motion.div>
-                    )}
-
                     <QuestionNavigationArrows
                         currentIndex={currentQuestionIndex}
                         totalQuestions={publication.questions?.length || 0}
@@ -173,7 +157,6 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({publication, timeLi
                         onNext={() => setCurrentQuestionIndex(i => Math.min((publication.questions?.length || 0) - 1, i + 1))}
                     />
 
-                    {/* Question Box */}
                     <AnimatePresence mode="wait">
                         <motion.div
                             key={currentQuestion?.id}
@@ -203,6 +186,11 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({publication, timeLi
 
                 {/* Right - Sidebar */}
                 <div className="hidden md:block w-[300px] sticky top-[5rem] max-h-[calc(100vh-5rem)] overflow-y-auto">
+                    {timeRemaining !== null && (
+                        <div className="m-4">
+                            <RemainingTimeIndicator timeRemaining={timeRemaining} />
+                        </div>
+                    )}
                     <QuizNavigation
                         questions={publication.questions || []}
                         currentQuestionIndex={currentQuestionIndex}
@@ -224,8 +212,12 @@ export const QuizQuestions: React.FC<QuizQuestionsProps> = ({publication, timeLi
                     onCompleteQuiz={handleCompleteQuiz}
                     userResponses={userResponses}
                 />
+
+                {/* Popup */}
+                {showPopup && (
+                    <TimeWarningPopup onClose={() => setShowPopup(false)} />
+                )}
             </div>
         </div>
-
     );
 };
