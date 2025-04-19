@@ -10,7 +10,6 @@ import { useQuizAttemptAutosave } from "../hooks/quizAttempt/useQuizAttemptAutos
 import { QuizExecutionHeader } from "../components/quiz/QuizExecutionHeader";
 import { AnimatePresence } from "framer-motion";
 import { QuestionNavigationArrows } from "../components/quiz/QuestionNavigationArrows";
-import { TimeWarningPopup } from "../components/quiz/TimeWarningPopup";
 import { CurrentQuestionCard } from "../components/quiz/CurrentQuestionCard";
 import { SidebarQuizExecution } from "../components/quiz/SidebarQuizExecution";
 import {
@@ -18,7 +17,6 @@ import {
     getCurrentQuestionResponse
 } from "../utils/questionUtils";
 import { useTrackTimeSpent } from "../hooks/quizAttempt/useTrackTimeSpent";
-import { useQuizCountdown } from "../hooks/quizAttempt/useQuizCountdown";
 
 const QuizQuestionsPage: React.FC = () => {
     const location = useLocation();
@@ -44,24 +42,19 @@ const QuizQuestionsPage: React.FC = () => {
         currentAttempt?.responses || new Array(publication?.questions?.length || 0).fill(null)
     );
 
-    const [showPopup, setShowPopup] = useState(false);
-
     useQuizAttemptAutosave(15000);
     useTrackTimeSpent(currentQuestionIndex, setUserResponses);
 
-    const timeRemaining = useQuizCountdown({
-        initialSeconds: quiz?.timeLimitMinutes ? quiz.timeLimitMinutes * 60 : 0,
-        onMinuteLeft: () => setShowPopup(true),
-        onExpire: async () => {
-            updateQuizAttemptResponses(userResponses);
-            const completedAttempt = await completeQuizAttempt();
-            navigate(`/results/${completedAttempt.id!}`, {
-                state: { attempt: completedAttempt, quizPublication: publication }
-            });
-        }
-    });
+    const onMinuteLeft = useCallback(() => {
+    }, []);
 
-
+    const onExpire = useCallback(async () => {
+        updateQuizAttemptResponses(userResponses);
+        const completedAttempt = await completeQuizAttempt(userResponses);
+        navigate(`/results/${completedAttempt.id!}`, {
+            state: { attempt: completedAttempt, quizPublication: publication }
+        });
+    }, [userResponses, updateQuizAttemptResponses, completeQuizAttempt, navigate, publication]);
 
     const currentQuestion = useMemo(() => {
         return publication?.questions?.[currentQuestionIndex];
@@ -92,16 +85,11 @@ const QuizQuestionsPage: React.FC = () => {
     );
 
     const handleCompleteQuiz = useCallback(async () => {
-        try {
-            const completedAttempt = await completeQuizAttempt(userResponses);
-            navigate(`/results/${completedAttempt.id!}`, {
-                state: { attempt: completedAttempt, quizPublication: publication }
-            });
-        } catch (error) {
-            console.error("Error during completing quiz:", error);
-        }
-    }, [completeQuizAttempt, navigate, publication, userResponses]);
-
+        const completedAttempt = await completeQuizAttempt(userResponses);
+        navigate(`/results/${completedAttempt.id!}`, {
+            state: { attempt: completedAttempt, quizPublication: publication }
+        });
+    }, [userResponses, completeQuizAttempt, navigate, publication]);
 
     if (!publication || !quiz) {
         navigate(`/quiz/${accessCode}`);
@@ -130,17 +118,21 @@ const QuizQuestionsPage: React.FC = () => {
                             />
                         </AnimatePresence>
                     </div>
-
-                    {showPopup && <TimeWarningPopup onClose={() => setShowPopup(false)} />}
                 </div>
 
                 <SidebarQuizExecution
-                    timeRemaining={timeRemaining}
+                    quizTimeLimit={quiz.timeLimitMinutes}
                     questions={publication.questions!}
                     currentQuestionIndex={currentQuestionIndex}
                     onQuestionChange={setCurrentQuestionIndex}
                     onCompleteQuiz={handleCompleteQuiz}
                     userResponses={userResponses}
+                    updateQuizAttemptResponses={updateQuizAttemptResponses}
+                    completeQuizAttempt={completeQuizAttempt}
+                    publication={publication}
+                    navigate={navigate}
+                    onExpire={onExpire}
+                    onMinuteLeft={onMinuteLeft}
                 />
             </div>
         </div>
