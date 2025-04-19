@@ -10,9 +10,6 @@ export type CourseListContextType = {
 
     errorTeacherCourses: Error | null;
     errorAllCourses: Error | null;
-
-    fetchTeacherCourses: () => Promise<void>;
-    fetchAllCourses: () => Promise<void>;
 };
 
 export const CourseListContext = createContext<CourseListContextType | undefined>(undefined);
