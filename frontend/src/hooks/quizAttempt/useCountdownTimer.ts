@@ -1,4 +1,3 @@
-// hooks/quizAttempt/useCountdownTimer.ts
 import { useState, useEffect, useRef } from 'react';
 
 interface UseCountdownTimerOptions {
@@ -21,6 +20,7 @@ export function useCountdownTimer({
         durationSeconds != null ? Date.now() + durationSeconds * 1000 : null
     );
     const minuteWarnedRef = useRef<boolean>(false);
+    const expiredRef = useRef<boolean>(false);
 
     useEffect(() => {
         if (endTimeRef.current == null) return;
@@ -30,9 +30,10 @@ export function useCountdownTimer({
             const diff = Math.max(0, Math.floor((endTimeRef.current! - now) / 1000));
             setRemaining(diff);
 
-            if (diff <= 0 && intervalRef.current) {
+            if (diff <= 0 && intervalRef.current && !expiredRef.current) {
                 clearInterval(intervalRef.current);
                 intervalRef.current = null;
+                expiredRef.current = true;
                 onExpire?.();
             }
 

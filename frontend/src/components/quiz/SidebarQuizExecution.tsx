@@ -69,7 +69,6 @@ export const SidebarQuizExecution: React.FC<SidebarQuizExecutionProps> = ({
                     : 'w-full border-b border-base-300 mb-4'
             }`}
         >
-            {/* Mobile Header */}
             {!isDesktop && (
                 <div className="flex justify-between items-center min-h-[56px]">
                     <RemainingTimeIndicator timeRemaining={timeRemaining!} />
@@ -80,14 +79,12 @@ export const SidebarQuizExecution: React.FC<SidebarQuizExecutionProps> = ({
                 </div>
             )}
 
-            {/* Desktop Header */}
             {isDesktop && (
                 <div className="flex justify-end mb-4 px-2 pt-2">
                     <RemainingTimeIndicator timeRemaining={timeRemaining!} />
                 </div>
             )}
 
-            {/* Navigation */}
             {(showNavigation || isDesktop) && (
                 <div className="mt-4 md:mt-0 w-full">
                     <QuizNavigation
@@ -100,7 +97,6 @@ export const SidebarQuizExecution: React.FC<SidebarQuizExecutionProps> = ({
                 </div>
             )}
 
-            {/* Popup 1 minuto */}
             {showPopup && <TimeWarningPopup onClose={() => setShowPopup(false)} />}
         </div>
     );

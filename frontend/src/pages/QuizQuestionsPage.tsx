@@ -1,27 +1,20 @@
-import React, { useCallback, useMemo, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import {
-    QuestionResponseDTO,
-    QuizDTO,
-    QuizPublicationDTO
-} from "@dti-isin/backend-api-client";
-import { useQuizAttemptLocal } from "../hooks/quizAttempt/useQuizAttemptLocal";
-import { useQuizAttemptAutosave } from "../hooks/quizAttempt/useQuizAttemptAutosave";
-import { QuizExecutionHeader } from "../components/quiz/QuizExecutionHeader";
-import { AnimatePresence } from "framer-motion";
-import { QuestionNavigationArrows } from "../components/quiz/QuestionNavigationArrows";
-import { CurrentQuestionCard } from "../components/quiz/CurrentQuestionCard";
-import { SidebarQuizExecution } from "../components/quiz/SidebarQuizExecution";
-import {
-    createUpdatedResponse,
-    getCurrentQuestionResponse
-} from "../utils/questionUtils";
-import { useTrackTimeSpent } from "../hooks/quizAttempt/useTrackTimeSpent";
+import React, {useCallback, useMemo, useState} from "react";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
+import {QuestionResponseDTO, QuizDTO, QuizPublicationDTO} from "@dti-isin/backend-api-client";
+import {useQuizAttemptLocal} from "../hooks/quizAttempt/useQuizAttemptLocal";
+import {useQuizAttemptAutosave} from "../hooks/quizAttempt/useQuizAttemptAutosave";
+import {QuizExecutionHeader} from "../components/quiz/QuizExecutionHeader";
+import {AnimatePresence} from "framer-motion";
+import {QuestionNavigationArrows} from "../components/quiz/QuestionNavigationArrows";
+import {CurrentQuestionCard} from "../components/quiz/CurrentQuestionCard";
+import {SidebarQuizExecution} from "../components/quiz/SidebarQuizExecution";
+import {createUpdatedResponse, getCurrentQuestionResponse} from "../utils/questionUtils";
+import {useTrackTimeSpent} from "../hooks/quizAttempt/useTrackTimeSpent";
 
 const QuizQuestionsPage: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { accessCode } = useParams();
+    const {accessCode} = useParams();
 
     const state = location.state as {
         publication?: QuizPublicationDTO;
@@ -34,7 +27,8 @@ const QuizQuestionsPage: React.FC = () => {
     const {
         currentAttempt,
         updateQuizAttemptResponses,
-        completeQuizAttempt
+        completeQuizAttempt,
+        clearQuizAttempt
     } = useQuizAttemptLocal();
 
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -51,10 +45,14 @@ const QuizQuestionsPage: React.FC = () => {
     const onExpire = useCallback(async () => {
         updateQuizAttemptResponses(userResponses);
         const completedAttempt = await completeQuizAttempt(userResponses);
+
+        clearQuizAttempt();
+
         navigate(`/results/${completedAttempt.id!}`, {
-            state: { attempt: completedAttempt, quizPublication: publication }
+            state: {attempt: completedAttempt, quizPublication: publication}
         });
-    }, [userResponses, updateQuizAttemptResponses, completeQuizAttempt, navigate, publication]);
+    }, [userResponses, updateQuizAttemptResponses, completeQuizAttempt, navigate, publication, clearQuizAttempt]);
+
 
     const currentQuestion = useMemo(() => {
         return publication?.questions?.[currentQuestionIndex];
@@ -87,7 +85,7 @@ const QuizQuestionsPage: React.FC = () => {
     const handleCompleteQuiz = useCallback(async () => {
         const completedAttempt = await completeQuizAttempt(userResponses);
         navigate(`/results/${completedAttempt.id!}`, {
-            state: { attempt: completedAttempt, quizPublication: publication }
+            state: {attempt: completedAttempt, quizPublication: publication}
         });
     }, [userResponses, completeQuizAttempt, navigate, publication]);
 
@@ -98,7 +96,7 @@ const QuizQuestionsPage: React.FC = () => {
 
     return (
         <div className="min-h-[calc(100vh-4rem)] flex flex-col bg-gradient-to-br from-primary/10 to-secondary/10">
-            <QuizExecutionHeader title={quiz.name} description={quiz.description} />
+            <QuizExecutionHeader title={quiz.name} description={quiz.description}/>
 
             <div className="flex-1 flex flex-col-reverse md:flex-row overflow-hidden py-6 container mx-auto px-4 gap-6">
                 <div className="flex-1 flex flex-col justify-start">

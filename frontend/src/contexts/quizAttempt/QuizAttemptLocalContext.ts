@@ -8,6 +8,8 @@ export type QuizAttemptLocalContextType = {
     completeQuizAttempt: (userResponsesOverride?: QuestionResponseDTO[]) => Promise<QuizAttemptDTO>;
     resetQuizAttempt: () => void;
     prepareQuizResponses: (publication: QuizPublicationDTO) => QuestionResponseDTO[];
+    clearQuizAttempt: () => void;
+
 };
 
 export const QuizAttemptLocalContext = createContext<QuizAttemptLocalContextType | undefined>(undefined);

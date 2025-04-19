@@ -105,7 +105,6 @@ export const QuizAttemptLocalProvider: React.FC<{ children: React.ReactNode }> =
             await queryClient.invalidateQueries(['quizAttempts', currentAttempt.user.azureOid]);
         }
 
-        setCurrentAttempt(null);
         return submitted;
     }, [currentAttempt, submitAttemptFinal, queryClient]);
 
@@ -148,20 +147,26 @@ export const QuizAttemptLocalProvider: React.FC<{ children: React.ReactNode }> =
         navigate('/');
     }, [navigate]);
 
+    const clearQuizAttempt = useCallback(() => {
+        setCurrentAttempt(null);
+    }, []);
+
     const value = useMemo(() => ({
         currentAttempt,
         startQuizAttempt,
         updateQuizAttemptResponses,
         completeQuizAttempt,
         resetQuizAttempt,
-        prepareQuizResponses
+        prepareQuizResponses,
+        clearQuizAttempt
     }), [
         currentAttempt,
         startQuizAttempt,
         updateQuizAttemptResponses,
         completeQuizAttempt,
         resetQuizAttempt,
-        prepareQuizResponses
+        prepareQuizResponses,
+        clearQuizAttempt
     ]);
 
     return (
