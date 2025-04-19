@@ -1,25 +1,22 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
-    MultipleChoiceQuestionDTO,
-    MultipleChoiceQuestionResponseDTO,
-    QuestionDTO,
     QuestionResponseDTO,
-    QuestionType,
     QuizDTO,
-    QuizPublicationDTO,
-    TrueFalseQuestionDTO,
-    TrueFalseQuestionResponseDTO
+    QuizPublicationDTO
 } from "@dti-isin/backend-api-client";
 import { useQuizAttemptLocal } from "../hooks/quizAttempt/useQuizAttemptLocal";
 import { useQuizAttemptAutosave } from "../hooks/quizAttempt/useQuizAttemptAutosave";
-import { QuestionResponseFactory } from "../components/question/QuestionResponseFactory";
 import { QuizExecutionHeader } from "../components/quiz/QuizExecutionHeader";
 import { AnimatePresence } from "framer-motion";
 import { QuestionNavigationArrows } from "../components/quiz/QuestionNavigationArrows";
 import { TimeWarningPopup } from "../components/quiz/TimeWarningPopup";
 import { CurrentQuestionCard } from "../components/quiz/CurrentQuestionCard";
 import { SidebarQuizExecution } from "../components/quiz/SidebarQuizExecution";
+import {
+    createUpdatedResponse,
+    getCurrentQuestionResponse
+} from "../utils/questionUtils";
 
 const QuizQuestionsPage: React.FC = () => {
     const location = useLocation();
@@ -44,8 +41,8 @@ const QuizQuestionsPage: React.FC = () => {
     const [userResponses, setUserResponses] = useState<QuestionResponseDTO[]>(
         currentAttempt?.responses || new Array(publication?.questions?.length || 0).fill(null)
     );
-    const [showPopup, setShowPopup] = useState(false);
 
+    const [showPopup, setShowPopup] = useState(false);
     const [timeRemaining, setTimeRemaining] = useState<number | null>(
         quiz?.timeLimitMinutes ? quiz.timeLimitMinutes * 60 : null
     );
@@ -88,55 +85,33 @@ const QuizQuestionsPage: React.FC = () => {
         updateQuizAttemptResponses(userResponses);
     }, [userResponses, updateQuizAttemptResponses]);
 
-    const isTrueFalseQuestion = (q: QuestionDTO): q is TrueFalseQuestionDTO =>
-        q.type === QuestionType.TrueFalse;
-    const isMultipleChoiceQuestion = (q: QuestionDTO): q is MultipleChoiceQuestionDTO =>
-        q.type === QuestionType.MultipleChoice;
+    const currentQuestion = useMemo(() => {
+        return publication?.questions?.[currentQuestionIndex];
+    }, [publication?.questions, currentQuestionIndex]);
+
+    const currentResponse = useMemo(() => {
+        return getCurrentQuestionResponse(
+            currentQuestion,
+            userResponses,
+            currentQuestionIndex
+        );
+    }, [currentQuestion, userResponses, currentQuestionIndex]);
 
     const handleAnswer = useCallback(
         (answer: boolean | number[] | null) => {
-            const currentQuestion = publication?.questions?.[currentQuestionIndex];
             if (!currentQuestion) return;
-            setUserResponses((prev) => {
-                const updated = [...prev];
-                const timeSpent = updated[currentQuestionIndex]?.timeSpent || 0;
-                if (isTrueFalseQuestion(currentQuestion)) {
-                    updated[currentQuestionIndex] = {
-                        ...QuestionResponseFactory.createResponse(
-                            QuestionType.TrueFalse,
-                            currentQuestion.id!,
-                            typeof answer === "boolean" ? answer : undefined
-                        ),
-                        timeSpent
-                    };
-                } else if (isMultipleChoiceQuestion(currentQuestion)) {
-                    updated[currentQuestionIndex] = {
-                        ...QuestionResponseFactory.createResponse(
-                            QuestionType.MultipleChoice,
-                            currentQuestion.id!,
-                            Array.isArray(answer) ? answer : []
-                        ),
-                        timeSpent
-                    };
-                }
-                return updated;
-            });
-        },
-        [currentQuestionIndex, publication?.questions]
-    );
 
-    const getCurrentQuestionResponse = useCallback(() => {
-        const response = userResponses[currentQuestionIndex];
-        if (!response) return null;
-        switch (response.responseType) {
-            case QuestionType.TrueFalse:
-                return (response as TrueFalseQuestionResponseDTO).selectedAnswer;
-            case QuestionType.MultipleChoice:
-                return (response as MultipleChoiceQuestionResponseDTO).selectedAnswerIndexes;
-            default:
-                return null;
-        }
-    }, [currentQuestionIndex, userResponses]);
+            const updated = [...userResponses];
+            updated[currentQuestionIndex] = createUpdatedResponse(
+                currentQuestion,
+                answer,
+                userResponses[currentQuestionIndex]?.timeSpent || 0
+            );
+
+            setUserResponses(updated);
+        },
+        [currentQuestion, currentQuestionIndex, userResponses]
+    );
 
     const handleCompleteQuiz = useCallback(async () => {
         try {
@@ -154,15 +129,11 @@ const QuizQuestionsPage: React.FC = () => {
         return null;
     }
 
-    const currentQuestion = publication.questions?.[currentQuestionIndex];
-
     return (
         <div className="min-h-[calc(100vh-4rem)] flex flex-col bg-gradient-to-br from-primary/10 to-secondary/10">
             <QuizExecutionHeader title={quiz.name} description={quiz.description} />
 
             <div className="flex-1 flex flex-col-reverse md:flex-row overflow-hidden py-6 container mx-auto px-4 gap-6">
-
-            {/* Colonna principale - Domande */}
                 <div className="flex-1 flex flex-col justify-start">
                     <QuestionNavigationArrows
                         currentIndex={currentQuestionIndex}
@@ -175,7 +146,7 @@ const QuizQuestionsPage: React.FC = () => {
                         <AnimatePresence mode="wait">
                             <CurrentQuestionCard
                                 question={currentQuestion}
-                                answer={getCurrentQuestionResponse()}
+                                answer={currentResponse}
                                 onAnswer={handleAnswer}
                             />
                         </AnimatePresence>
@@ -184,7 +155,6 @@ const QuizQuestionsPage: React.FC = () => {
                     {showPopup && <TimeWarningPopup onClose={() => setShowPopup(false)} />}
                 </div>
 
-                {/* Sidebar - destra su desktop, sopra su mobile */}
                 <SidebarQuizExecution
                     timeRemaining={timeRemaining}
                     questions={publication.questions!}
@@ -196,7 +166,6 @@ const QuizQuestionsPage: React.FC = () => {
             </div>
         </div>
     );
-
 };
 
 export default QuizQuestionsPage;
