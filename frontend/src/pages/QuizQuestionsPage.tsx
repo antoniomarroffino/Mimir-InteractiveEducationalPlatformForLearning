@@ -1,6 +1,6 @@
 import React, {useCallback, useMemo, useState} from "react";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
-import {QuestionResponseDTO, QuizDTO, QuizPublicationDTO} from "@dti-isin/backend-api-client";
+import {QuestionResponseDTO, QuizDTO, QuizPublicationDTO, QuizAttemptDTO} from "@dti-isin/backend-api-client";
 import {useQuizAttemptLocal} from "../hooks/quizAttempt/useQuizAttemptLocal";
 import {useQuizAttemptAutosave} from "../hooks/quizAttempt/useQuizAttemptAutosave";
 import {QuizExecutionHeader} from "../components/quiz/QuizExecutionHeader";
@@ -10,11 +10,15 @@ import {CurrentQuestionCard} from "../components/quiz/CurrentQuestionCard";
 import {SidebarQuizExecution} from "../components/quiz/SidebarQuizExecution";
 import {createUpdatedResponse, getCurrentQuestionResponse} from "../utils/questionUtils";
 import {useTrackTimeSpent} from "../hooks/quizAttempt/useTrackTimeSpent";
+import {TimeExpiredPopup} from "../components/quiz/TimeExpiredPopup.tsx";
 
 const QuizQuestionsPage: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const {accessCode} = useParams();
+
+    const [completedAttempt, setCompletedAttempt] = useState<QuizAttemptDTO | null>(null);
+
 
     const state = location.state as {
         publication?: QuizPublicationDTO;
@@ -44,14 +48,16 @@ const QuizQuestionsPage: React.FC = () => {
 
     const onExpire = useCallback(async () => {
         updateQuizAttemptResponses(userResponses);
-        const completedAttempt = await completeQuizAttempt(userResponses);
-
+        const attempt = await completeQuizAttempt(userResponses);
         clearQuizAttempt();
+        setCompletedAttempt(attempt);
+    }, [
+        userResponses,
+        updateQuizAttemptResponses,
+        completeQuizAttempt,
+        clearQuizAttempt
+    ]);
 
-        navigate(`/results/${completedAttempt.id!}`, {
-            state: {attempt: completedAttempt, quizPublication: publication}
-        });
-    }, [userResponses, updateQuizAttemptResponses, completeQuizAttempt, navigate, publication, clearQuizAttempt]);
 
 
     const currentQuestion = useMemo(() => {
@@ -133,7 +139,21 @@ const QuizQuestionsPage: React.FC = () => {
                     onMinuteLeft={onMinuteLeft}
                 />
             </div>
+
+            {completedAttempt && (
+                <TimeExpiredPopup
+                    onConfirm={() => {
+                        navigate(`/results/${completedAttempt.id!}`, {
+                            state: {
+                                attempt: completedAttempt,
+                                quizPublication: publication
+                            }
+                        });
+                    }}
+                />
+            )}
         </div>
+
     );
 };
 
