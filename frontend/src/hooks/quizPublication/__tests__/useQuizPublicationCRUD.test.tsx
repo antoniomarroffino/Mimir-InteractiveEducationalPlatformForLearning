@@ -1,8 +1,10 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterAll, describe, expect, it, vi } from "vitest";
 import { renderHook } from "@testing-library/react";
 import { useQuizPublicationCRUD } from "../useQuizPublicationCRUD";
 import { QuizPublicationCRUDContext } from "../../../contexts/quizPublication/QuizPublicationCRUDContext";
 import { QuizPublicationDTO } from "@dti-isin/backend-api-client";
+
+const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
 describe("useQuizPublicationCRUD", () => {
   const mockContextValue = {
@@ -24,6 +26,10 @@ describe("useQuizPublicationCRUD", () => {
       </QuizPublicationCRUDContext.Provider>
     );
   };
+
+  afterAll(() => {
+    consoleErrorSpy.mockRestore();
+  });
 
   it("should return the context value when used within provider", () => {
     const { result } = renderHook(() => useQuizPublicationCRUD(), {
