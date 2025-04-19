@@ -80,34 +80,33 @@ export const QuizAttemptLocalProvider: React.FC<{ children: React.ReactNode }> =
         }
     }, [prepareQuizResponses, user, navigate, createInitialAttempt]);
 
-    const completeQuizAttempt = useCallback(async (): Promise<QuizAttemptDTO> => {
+    const completeQuizAttempt = useCallback(async (
+        userResponsesOverride?: QuestionResponseDTO[]
+    ): Promise<QuizAttemptDTO> => {
         if (!currentAttempt || !currentAttempt.id) {
             throw new Error('Nessun tentativo di quiz corrente');
         }
 
-        try {
-            const completedDTO: QuizAttemptDTO = {
-                quizPublicationId: currentAttempt.quizPublicationId!,
-                user: currentAttempt.user,
-                startedAt: currentAttempt.startedAt,
-                completedAt: new Date().toISOString(),
-                responses: currentAttempt.responses || [],
-                status: AttemptStatus.Terminated
-            };
+        const finalResponses = userResponsesOverride ?? currentAttempt.responses ?? [];
 
-            const submitted = await submitAttemptFinal(currentAttempt.id, completedDTO);
+        const completedDTO: QuizAttemptDTO = {
+            quizPublicationId: currentAttempt.quizPublicationId!,
+            user: currentAttempt.user,
+            startedAt: currentAttempt.startedAt,
+            completedAt: new Date().toISOString(),
+            responses: finalResponses,
+            status: AttemptStatus.Terminated
+        };
 
-            await queryClient.invalidateQueries(['quizAttempts']);
-            if (currentAttempt.user?.azureOid) {
-                await queryClient.invalidateQueries(['quizAttempts', currentAttempt.user.azureOid]);
-            }
+        const submitted = await submitAttemptFinal(currentAttempt.id, completedDTO);
 
-            setCurrentAttempt(null);
-            return submitted;
-        } catch (error) {
-            console.error('Errore durante il completamento del tentativo:', error);
-            throw error;
+        await queryClient.invalidateQueries(['quizAttempts']);
+        if (currentAttempt.user?.azureOid) {
+            await queryClient.invalidateQueries(['quizAttempts', currentAttempt.user.azureOid]);
         }
+
+        setCurrentAttempt(null);
+        return submitted;
     }, [currentAttempt, submitAttemptFinal, queryClient]);
 
 

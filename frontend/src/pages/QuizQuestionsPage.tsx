@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
     QuestionResponseDTO,
@@ -17,7 +17,8 @@ import {
     createUpdatedResponse,
     getCurrentQuestionResponse
 } from "../utils/questionUtils";
-import {useTrackTimeSpent} from "../hooks/quizAttempt/useTrackTimeSpent.ts";
+import { useTrackTimeSpent } from "../hooks/quizAttempt/useTrackTimeSpent";
+import { useQuizCountdown } from "../hooks/quizAttempt/useQuizCountdown";
 
 const QuizQuestionsPage: React.FC = () => {
     const location = useLocation();
@@ -44,32 +45,23 @@ const QuizQuestionsPage: React.FC = () => {
     );
 
     const [showPopup, setShowPopup] = useState(false);
-    const [timeRemaining, setTimeRemaining] = useState<number | null>(
-        quiz?.timeLimitMinutes ? quiz.timeLimitMinutes * 60 : null
-    );
 
     useQuizAttemptAutosave(15000);
     useTrackTimeSpent(currentQuestionIndex, setUserResponses);
 
-    useEffect(() => {
-        if (!timeRemaining) return;
-        const timer = setInterval(() => {
-            setTimeRemaining((prev) => {
-                if (!prev || prev <= 0) {
-                    clearInterval(timer);
-                    handleCompleteQuiz();
-                    return 0;
-                }
-                if (prev === 60) setShowPopup(true);
-                return prev - 1;
+    const timeRemaining = useQuizCountdown({
+        initialSeconds: quiz?.timeLimitMinutes ? quiz.timeLimitMinutes * 60 : 0,
+        onMinuteLeft: () => setShowPopup(true),
+        onExpire: async () => {
+            updateQuizAttemptResponses(userResponses);
+            const completedAttempt = await completeQuizAttempt();
+            navigate(`/results/${completedAttempt.id!}`, {
+                state: { attempt: completedAttempt, quizPublication: publication }
             });
-        }, 1000);
-        return () => clearInterval(timer);
-    }, [timeRemaining]);
+        }
+    });
 
-    useEffect(() => {
-        updateQuizAttemptResponses(userResponses);
-    }, [userResponses, updateQuizAttemptResponses]);
+
 
     const currentQuestion = useMemo(() => {
         return publication?.questions?.[currentQuestionIndex];
@@ -101,14 +93,15 @@ const QuizQuestionsPage: React.FC = () => {
 
     const handleCompleteQuiz = useCallback(async () => {
         try {
-            const completedAttempt = await completeQuizAttempt();
+            const completedAttempt = await completeQuizAttempt(userResponses);
             navigate(`/results/${completedAttempt.id!}`, {
                 state: { attempt: completedAttempt, quizPublication: publication }
             });
         } catch (error) {
             console.error("Error during completing quiz:", error);
         }
-    }, [completeQuizAttempt, navigate, publication]);
+    }, [completeQuizAttempt, navigate, publication, userResponses]);
+
 
     if (!publication || !quiz) {
         navigate(`/quiz/${accessCode}`);

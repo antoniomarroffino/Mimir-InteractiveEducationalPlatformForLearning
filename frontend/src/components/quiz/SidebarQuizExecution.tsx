@@ -22,9 +22,10 @@ export const SidebarQuizExecution: React.FC<SidebarQuizExecutionProps> = ({
                                                                               userResponses
                                                                           }) => {
     const [showNavigation, setShowNavigation] = useState(false);
-    const [isDesktop, setIsDesktop] = useState<boolean>(typeof window !== 'undefined' && window.innerWidth >= 768);
+    const [isDesktop, setIsDesktop] = useState<boolean>(
+        typeof window !== 'undefined' && window.innerWidth >= 768
+    );
 
-    // Aggiorna dinamicamente quando cambia la dimensione della finestra
     useEffect(() => {
         const handleResize = () => {
             setIsDesktop(window.innerWidth >= 768);
@@ -39,7 +40,7 @@ export const SidebarQuizExecution: React.FC<SidebarQuizExecutionProps> = ({
             {/* Mobile layout */}
             {!isDesktop && (
                 <div className="flex justify-between items-center min-h-[56px]">
-                    {timeRemaining !== null && (
+                    {typeof timeRemaining === 'number' && (
                         <RemainingTimeIndicator timeRemaining={timeRemaining} />
                     )}
                     <NavigationToggleButton
@@ -50,7 +51,7 @@ export const SidebarQuizExecution: React.FC<SidebarQuizExecutionProps> = ({
             )}
 
             {/* Desktop layout */}
-            {isDesktop && timeRemaining !== null && (
+            {isDesktop && typeof timeRemaining === 'number' && (
                 <div className="flex justify-end mb-4 px-2 pt-2">
                     <RemainingTimeIndicator timeRemaining={timeRemaining} />
                 </div>
