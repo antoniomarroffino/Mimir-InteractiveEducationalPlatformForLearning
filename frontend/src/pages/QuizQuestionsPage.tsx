@@ -17,6 +17,7 @@ import {
     createUpdatedResponse,
     getCurrentQuestionResponse
 } from "../utils/questionUtils";
+import {useTrackTimeSpent} from "../hooks/quizAttempt/useTrackTimeSpent.ts";
 
 const QuizQuestionsPage: React.FC = () => {
     const location = useLocation();
@@ -48,22 +49,7 @@ const QuizQuestionsPage: React.FC = () => {
     );
 
     useQuizAttemptAutosave(15000);
-
-    useEffect(() => {
-        const timer = setInterval(() => {
-            setUserResponses((prev) => {
-                const updated = [...prev];
-                if (updated[currentQuestionIndex]) {
-                    updated[currentQuestionIndex] = {
-                        ...updated[currentQuestionIndex],
-                        timeSpent: (updated[currentQuestionIndex]?.timeSpent || 0) + 1
-                    };
-                }
-                return updated;
-            });
-        }, 1000);
-        return () => clearInterval(timer);
-    }, [currentQuestionIndex]);
+    useTrackTimeSpent(currentQuestionIndex, setUserResponses);
 
     useEffect(() => {
         if (!timeRemaining) return;
