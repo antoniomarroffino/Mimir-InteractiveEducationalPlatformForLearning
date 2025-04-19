@@ -3,7 +3,7 @@ import {useMsal} from "@azure/msal-react";
 import {Role, UserWithoutCoursesDTO} from "@dti-isin/backend-api-client";
 import {loginRequest} from "../auth/authConfig.ts";
 import {setAuthToken, userApi} from "../../config/config";
-import {AuthContext} from "../contexts/AuthContext";
+import {AuthContext} from "../contexts/auth/AuthContext.tsx";
 import {useQueryClient} from "react-query";
 
 export const AuthProvider = ({children}: { children: React.ReactNode }) => {

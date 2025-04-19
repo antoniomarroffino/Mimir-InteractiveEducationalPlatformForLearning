@@ -2,7 +2,7 @@ import { describe, expect, it, vi, afterAll, Mock } from "vitest";
 import { renderHook } from "@testing-library/react";
 import { useContext } from "react";
 import { useAdmin } from "../useAdmin";
-import { AdminContext, AdminContextType } from "../../../contexts/AdminContext";
+import { AdminContext, AdminContextType } from "../../../contexts/admin/AdminContext.tsx";
 import { Role, UserWithoutCoursesDTO } from "@dti-isin/backend-api-client";
 
 // Mock console.error to prevent error messages from appearing in the console

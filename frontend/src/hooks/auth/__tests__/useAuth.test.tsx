@@ -2,10 +2,9 @@ import { describe, expect, it, vi, afterAll, Mock } from "vitest";
 import { renderHook } from "@testing-library/react";
 import { useContext } from "react";
 import { useAuth } from "../useAuth";
-import { AuthContext, AuthContextType } from "../../../contexts/AuthContext";
+import { AuthContext, AuthContextType } from "../../../contexts/auth/AuthContext.tsx";
 import { Role, UserWithoutCoursesDTO } from "@dti-isin/backend-api-client";
 
-// Mock console.error to prevent error messages from appearing in the console
 const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
 vi.mock("react", () => ({
@@ -29,7 +28,6 @@ describe("useAuth", () => {
     hasRole: vi.fn().mockImplementation((role: Role) => mockUser.role === role),
   };
 
-  // Clean up console.error mock after all tests
   afterAll(() => {
     consoleErrorSpy.mockRestore();
   });

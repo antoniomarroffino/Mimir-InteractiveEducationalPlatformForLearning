@@ -14,7 +14,6 @@ import PublicHome from "./no-logged/PublicHome.tsx";
 import {AdminProvider} from "../provider/AdminProvider.tsx";
 import UserProfile from "../components/user/UserProfile.tsx";
 import {QuizPublicationPage} from "./QuizPublicationPage.tsx";
-import {QuizRetrieveProvider} from '../provider/QuizRetrieveProvider.tsx';
 import {QuizPublicationProviders} from "../provider/quizPublication/QuizPublicationProviders.tsx";
 import {CourseProviders} from "../provider/course/CourseProviders.tsx";
 import {FolderProviders} from "../provider/folder/FolderProviders.tsx";
@@ -49,81 +48,80 @@ const App = () => {
             <ScrollToTop/>
             <AuthProvider>
                 <QuizPublicationProviders>
-                    <QuizRetrieveProvider>
-                        <QuizAttemptProviders>
-                            <Header/>
-                            <Routes>
-                                {/* Public Route */}
-                                <Route path="/" element={<PublicHome/>}/>
+                    <QuizAttemptProviders>
+                        <Header/>
+                        <Routes>
+                            {/* Public Route */}
+                            <Route path="/" element={<PublicHome/>}/>
 
-                                {/* Admin Routes */}
+                            {/* Admin Routes */}
+                            <Route
+                                path="/admin"
+                                element={
+                                    <ProtectedRoute allowedRoles={[Role.Admin]}>
+                                        <AdminProvider>
+                                            <AdminDashboard/>
+                                        </AdminProvider>
+                                    </ProtectedRoute>
+                                }
+                            />
+
+                            {/* Teacher Routes */}
+                            <Route
+                                path="/courses"
+                                element={
+                                    <ProtectedRoute allowedRoles={[Role.Teacher]}>
+                                        <CourseProviders>
+                                            <FolderProviders>
+                                                <QuizProviders>
+                                                    <Outlet/>
+                                                </QuizProviders>
+                                            </FolderProviders>
+                                        </CourseProviders>
+                                    </ProtectedRoute>
+                                }
+                            >
+                                <Route index element={<TeacherDashboard/>}/>
+                                <Route path=":courseId" element={<CourseDetails/>}/>
                                 <Route
-                                    path="/admin"
+                                    path=":courseId/folders/:folderId/quizzes/:quizId/edit"
                                     element={
-                                        <ProtectedRoute allowedRoles={[Role.Admin]}>
-                                            <AdminProvider>
-                                                <AdminDashboard/>
-                                            </AdminProvider>
-                                        </ProtectedRoute>
+                                        <QuestionBankProviders>
+                                            <QuestionProviders>
+                                                <QuizCreation/>
+                                            </QuestionProviders>
+                                        </QuestionBankProviders>
                                     }
                                 />
-
-                                {/* Teacher Routes */}
                                 <Route
-                                    path="/courses"
-                                    element={
-                                        <ProtectedRoute allowedRoles={[Role.Teacher]}>
-                                            <CourseProviders>
-                                                <FolderProviders>
-                                                    <QuizProviders>
-                                                        <Outlet/>
-                                                    </QuizProviders>
-                                                </FolderProviders>
-                                            </CourseProviders>
-                                        </ProtectedRoute>
-                                    }
-                                >
-                                    <Route index element={<TeacherDashboard/>}/>
-                                    <Route path=":courseId" element={<CourseDetails/>}/>
-                                    <Route
-                                        path=":courseId/folders/:folderId/quizzes/:quizId/edit"
-                                        element={
-                                            <QuestionBankProviders>
-                                                <QuestionProviders>
-                                                    <QuizCreation/>
-                                                </QuestionProviders>
-                                            </QuestionBankProviders>
-                                        }
-                                    />
-                                    <Route
-                                        path=":courseId/folders/:folderId/quizzes/:quizId/publications/:publicationId"
-                                        element={<QuizPublicationPage/>}
-                                    />
-                                    <Route
-                                        path=":courseId/folders/:folderId/quizzes/:quizId/results"
-                                        element={<PublicationStatsPage/>}
-                                    />
-                                </Route>
-
+                                    path=":courseId/folders/:folderId/quizzes/:quizId/publications/:publicationId"
+                                    element={<QuizPublicationPage/>}
+                                />
                                 <Route
-                                    path="/question_banks"
-                                    element={
-                                        <ProtectedRoute allowedRoles={[Role.Teacher]}>
-                                            <QuestionBankProviders>
-                                                <QuestionProviders>
-                                                    <Outlet/>
-                                                </QuestionProviders>
-                                            </QuestionBankProviders>
-                                        </ProtectedRoute>
-                                    }
-                                >
-                                    <Route index element={<QuestionBankDashboard/>}/>
-                                    <Route path=":questionBankId" element={<QuestionBankDetails/>}/>
+                                    path=":courseId/folders/:folderId/quizzes/:quizId/results"
+                                    element={<PublicationStatsPage/>}
+                                />
+                            </Route>
 
-                                </Route>
+                            <Route
+                                path="/question_banks"
+                                element={
+                                    <ProtectedRoute allowedRoles={[Role.Teacher]}>
+                                        <QuestionBankProviders>
+                                            <QuestionProviders>
+                                                <Outlet/>
+                                            </QuestionProviders>
+                                        </QuestionBankProviders>
+                                    </ProtectedRoute>
+                                }
+                            >
+                                <Route index element={<QuestionBankDashboard/>}/>
+                                <Route path=":questionBankId" element={<QuestionBankDetails/>}/>
 
-                                {/* Student Routes */}
-                                {/*<Route
+                            </Route>
+
+                            {/* Student Routes */}
+                            {/*<Route
                                     path="/student"
                                     element={
                                         <ProtectedRoute allowedRoles={[Role.Student]}>
@@ -132,44 +130,43 @@ const App = () => {
                                     }
                                 />*/}
 
-                                <Route
-                                    path="/profile"
-                                    element={
-                                        <ProtectedRoute allowedRoles={[Role.Admin, Role.Student, Role.Teacher]}>
-                                            <UserProfile/>
-                                        </ProtectedRoute>
-                                    }
-                                />
+                            <Route
+                                path="/profile"
+                                element={
+                                    <ProtectedRoute allowedRoles={[Role.Admin, Role.Student, Role.Teacher]}>
+                                        <UserProfile/>
+                                    </ProtectedRoute>
+                                }
+                            />
 
-                                <Route
-                                    path="/quiz-review"
-                                    element={
-                                        <ProtectedRoute allowedRoles={[Role.Student, Role.Teacher]}>
-                                            <QuizReviewPage/>
-                                        </ProtectedRoute>
-                                    }
-                                />
+                            <Route
+                                path="/quiz-review"
+                                element={
+                                    <ProtectedRoute allowedRoles={[Role.Student, Role.Teacher]}>
+                                        <QuizReviewPage/>
+                                    </ProtectedRoute>
+                                }
+                            />
 
-                                <Route
-                                    path="/badges"
-                                    element={
-                                        <ProtectedRoute allowedRoles={[Role.Student, Role.Teacher]}>
-                                            <BadgesPage/>
-                                        </ProtectedRoute>
-                                    }
-                                />
-                                <Route
-                                    path="/quiz/:accessCode"
-                                    element={<QuizScreen/>}
-                                />
-                                <Route
-                                    path="/results/:quizAttemptId"
-                                    element={<QuizResults/>}
-                                />
-                            </Routes>
-                            <Footer/>
-                        </QuizAttemptProviders>
-                    </QuizRetrieveProvider>
+                            <Route
+                                path="/badges"
+                                element={
+                                    <ProtectedRoute allowedRoles={[Role.Student, Role.Teacher]}>
+                                        <BadgesPage/>
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path="/quiz/:accessCode"
+                                element={<QuizScreen/>}
+                            />
+                            <Route
+                                path="/results/:quizAttemptId"
+                                element={<QuizResults/>}
+                            />
+                        </Routes>
+                        <Footer/>
+                    </QuizAttemptProviders>
                 </QuizPublicationProviders>
             </AuthProvider>
         </QueryClientProvider>

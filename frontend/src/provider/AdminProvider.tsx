@@ -1,5 +1,5 @@
 import React, {useMemo} from "react";
-import {AdminContext} from "../contexts/AdminContext.tsx";
+import {AdminContext} from "../contexts/admin/AdminContext.tsx";
 import {useMutation, useQuery, useQueryClient} from "react-query";
 import {Role, UserWithoutCoursesDTO} from "@dti-isin/backend-api-client";
 import {userApi} from "../../config/config.ts";

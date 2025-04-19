@@ -6,7 +6,7 @@ import {
   QuestionType,
   TrueFalseQuestionDTO,
 } from "@dti-isin/backend-api-client";
-import { QuestionContext } from "../../../contexts/QuestionContext";
+import { QuestionContext } from "../../../contexts/question/QuestionContext.tsx";
 import { QuestionCRUDContext } from "../../../contexts/question/QuestionCRUDContext";
 
 const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
