@@ -1,14 +1,12 @@
-import { describe, expect, it, vi, afterAll } from "vitest";
+import { describe, expect, it, vi, afterAll, Mock } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
 import { useGetCourseById } from "../useGetCourseById";
 import { courseApi } from "../../../../config/config";
 import { CourseDTO } from "@dti-isin/backend-api-client";
 import { QueryClient, QueryClientProvider } from "react-query";
 
-// Mock console.error to prevent error messages from appearing in the console
 const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-// Mock the courseApi
 vi.mock("../../../../config/config", () => ({
   courseApi: {
     apiCoursesIdGet: vi.fn(),
@@ -35,13 +33,12 @@ describe("useGetCourseById", () => {
     );
   };
 
-  // Clean up console.error mock after all tests
   afterAll(() => {
     consoleErrorSpy.mockRestore();
   });
 
   it("should fetch course data successfully", async () => {
-    (courseApi.apiCoursesIdGet as any).mockResolvedValueOnce({
+    (courseApi.apiCoursesIdGet as Mock).mockResolvedValueOnce({
       data: mockCourse,
     });
 
@@ -59,7 +56,7 @@ describe("useGetCourseById", () => {
 
   it("should handle error when fetching course data", async () => {
     const error = new Error("Failed to fetch course");
-    (courseApi.apiCoursesIdGet as any).mockRejectedValueOnce(error);
+    (courseApi.apiCoursesIdGet as Mock).mockRejectedValueOnce(error);
 
     const { result } = renderHook(() => useGetCourseById("1"), {
       wrapper: createWrapper(),

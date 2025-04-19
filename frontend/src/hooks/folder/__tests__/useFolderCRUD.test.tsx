@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, afterAll } from "vitest";
+import { describe, expect, it, vi, afterAll, Mock } from "vitest";
 import { renderHook } from "@testing-library/react";
 import { useContext } from "react";
 import { useFolderCRUD } from "../useFolderCRUD";
@@ -41,7 +41,7 @@ describe("useFolderCRUD", () => {
   });
 
   it("should throw error when context is undefined", () => {
-    (useContext as any).mockReturnValue(undefined);
+    (useContext as Mock).mockReturnValue(undefined);
 
     expect(() => renderHook(() => useFolderCRUD())).toThrowError(
       "useFolderCRUD must be used within a FolderCRUDProvider"
@@ -49,7 +49,7 @@ describe("useFolderCRUD", () => {
   });
 
   it("should return context when available", () => {
-    (useContext as any).mockReturnValue(mockContextValue);
+    (useContext as Mock).mockReturnValue(mockContextValue);
 
     const { result } = renderHook(() => useFolderCRUD());
 
@@ -58,7 +58,7 @@ describe("useFolderCRUD", () => {
   });
 
   it("should maintain referential equality between renders", () => {
-    (useContext as any).mockReturnValue(mockContextValue);
+    (useContext as Mock).mockReturnValue(mockContextValue);
 
     const { result, rerender } = renderHook(() => useFolderCRUD());
     const firstResult = result.current;
@@ -76,7 +76,7 @@ describe("useFolderCRUD", () => {
       errorDeleteFolder: new Error("Delete error"),
     };
 
-    (useContext as any).mockReturnValue(errorContextValue);
+    (useContext as Mock).mockReturnValue(errorContextValue);
 
     const { result } = renderHook(() => useFolderCRUD());
 
@@ -93,7 +93,7 @@ describe("useFolderCRUD", () => {
       isDeletingFolder: true,
     };
 
-    (useContext as any).mockReturnValue(loadingContextValue);
+    (useContext as Mock).mockReturnValue(loadingContextValue);
 
     const { result } = renderHook(() => useFolderCRUD());
 

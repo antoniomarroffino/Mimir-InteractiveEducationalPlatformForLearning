@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, afterAll } from "vitest";
+import { describe, expect, it, vi, afterAll, Mock } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
 import { useGetQuestionBankById } from "../useSelectedQuestionBank";
 import { questionBankApi } from "../../../../config/config";
@@ -40,7 +40,7 @@ describe("useGetQuestionBankById", () => {
   });
 
   it("should fetch question bank data successfully", async () => {
-    (questionBankApi.apiQuestionBanksIdGet as any).mockResolvedValueOnce({
+    (questionBankApi.apiQuestionBanksIdGet as Mock).mockResolvedValueOnce({
       data: mockQuestionBank,
     });
 
@@ -60,7 +60,9 @@ describe("useGetQuestionBankById", () => {
 
   it("should handle error when fetching question bank data", async () => {
     const error = new Error("Failed to fetch question bank");
-    (questionBankApi.apiQuestionBanksIdGet as any).mockRejectedValueOnce(error);
+    (questionBankApi.apiQuestionBanksIdGet as Mock).mockRejectedValueOnce(
+      error
+    );
 
     const { result } = renderHook(() => useGetQuestionBankById("1"), {
       wrapper: createWrapper(),

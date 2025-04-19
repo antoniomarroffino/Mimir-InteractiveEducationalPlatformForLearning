@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, afterAll } from "vitest";
+import { describe, expect, it, vi, afterAll, Mock } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
 import { quizAttemptApi } from "../../../../config/config";
 import {
@@ -9,10 +9,8 @@ import {
 import { QueryClient, QueryClientProvider } from "react-query";
 import { useGetQuizAttemptsByUser } from "../useGetQuizAttemptsByUser";
 
-// Mock console.error to prevent error messages from appearing in the console
 const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-// Mock the quizAttemptApi
 vi.mock("../../../../config/config", () => ({
   quizAttemptApi: {
     apiAttemptsUserUserAzureOIDGet: vi.fn(),
@@ -61,14 +59,13 @@ describe("useGetQuizAttemptByUser", () => {
     );
   };
 
-  // Clean up console.error mock after all tests
   afterAll(() => {
     consoleErrorSpy.mockRestore();
   });
 
   it("should fetch quiz attempts data successfully", async () => {
     (
-      quizAttemptApi.apiAttemptsUserUserAzureOIDGet as any
+      quizAttemptApi.apiAttemptsUserUserAzureOIDGet as Mock
     ).mockResolvedValueOnce({
       data: mockQuizAttempts,
     });
@@ -90,7 +87,7 @@ describe("useGetQuizAttemptByUser", () => {
   it("should handle error when fetching quiz attempts data", async () => {
     const error = new Error("Failed to fetch quiz attempts");
     (
-      quizAttemptApi.apiAttemptsUserUserAzureOIDGet as any
+      quizAttemptApi.apiAttemptsUserUserAzureOIDGet as Mock
     ).mockRejectedValueOnce(error);
 
     const { result } = renderHook(() => useGetQuizAttemptsByUser("user1"), {

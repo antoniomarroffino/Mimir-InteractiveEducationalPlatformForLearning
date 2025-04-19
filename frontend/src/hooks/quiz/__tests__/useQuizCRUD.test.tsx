@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, afterAll } from "vitest";
+import { describe, expect, it, vi, afterAll, Mock } from "vitest";
 import { renderHook } from "@testing-library/react";
 import { useContext } from "react";
 import { useQuizCRUD } from "../useQuizCRUD";
@@ -43,7 +43,7 @@ describe("useQuizCRUD", () => {
   });
 
   it("should throw error when context is undefined", () => {
-    (useContext as any).mockReturnValue(undefined);
+    (useContext as Mock).mockReturnValue(undefined);
 
     expect(() => renderHook(() => useQuizCRUD())).toThrowError(
       "useQuizCRUD must be used within a QuizCRUDProvider"
@@ -51,7 +51,7 @@ describe("useQuizCRUD", () => {
   });
 
   it("should return context when available", () => {
-    (useContext as any).mockReturnValue(mockContextValue);
+    (useContext as Mock).mockReturnValue(mockContextValue);
 
     const { result } = renderHook(() => useQuizCRUD());
 
@@ -60,7 +60,7 @@ describe("useQuizCRUD", () => {
   });
 
   it("should maintain referential equality between renders", () => {
-    (useContext as any).mockReturnValue(mockContextValue);
+    (useContext as Mock).mockReturnValue(mockContextValue);
 
     const { result, rerender } = renderHook(() => useQuizCRUD());
     const firstResult = result.current;
@@ -77,7 +77,7 @@ describe("useQuizCRUD", () => {
       createQuiz: createQuizMock,
     };
 
-    (useContext as any).mockReturnValue(createContext);
+    (useContext as Mock).mockReturnValue(createContext);
 
     const { result } = renderHook(() => useQuizCRUD());
 
@@ -98,7 +98,7 @@ describe("useQuizCRUD", () => {
       updateQuiz: updateQuizMock,
     };
 
-    (useContext as any).mockReturnValue(updateContext);
+    (useContext as Mock).mockReturnValue(updateContext);
 
     const { result } = renderHook(() => useQuizCRUD());
 
@@ -125,7 +125,7 @@ describe("useQuizCRUD", () => {
       deleteQuiz: deleteQuizMock,
     };
 
-    (useContext as any).mockReturnValue(deleteContext);
+    (useContext as Mock).mockReturnValue(deleteContext);
 
     const { result } = renderHook(() => useQuizCRUD());
 
@@ -142,7 +142,7 @@ describe("useQuizCRUD", () => {
       isDeletingQuiz: true,
     };
 
-    (useContext as any).mockReturnValue(loadingContext);
+    (useContext as Mock).mockReturnValue(loadingContext);
 
     const { result } = renderHook(() => useQuizCRUD());
 
@@ -159,7 +159,7 @@ describe("useQuizCRUD", () => {
       errorDeleteQuiz: new Error("Delete error"),
     };
 
-    (useContext as any).mockReturnValue(errorContext);
+    (useContext as Mock).mockReturnValue(errorContext);
 
     const { result } = renderHook(() => useQuizCRUD());
 

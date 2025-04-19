@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, afterAll } from "vitest";
+import { describe, expect, it, vi, afterAll, Mock } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
 import { useGetFoldersInCourseId } from "../useGetFoldersInCourseId";
 import { folderApi } from "../../../../config/config";
@@ -46,7 +46,7 @@ describe("useGetFoldersInCourseId", () => {
   });
 
   it("should fetch folders data successfully", async () => {
-    (folderApi.apiCoursesCourseIdFoldersGet as any).mockResolvedValueOnce({
+    (folderApi.apiCoursesCourseIdFoldersGet as Mock).mockResolvedValueOnce({
       data: mockFolders,
     });
 
@@ -79,7 +79,7 @@ describe("useGetFoldersInCourseId", () => {
 
   it("should handle error when fetching folders data", async () => {
     const error = new Error("Failed to fetch folders");
-    (folderApi.apiCoursesCourseIdFoldersGet as any).mockRejectedValueOnce(
+    (folderApi.apiCoursesCourseIdFoldersGet as Mock).mockRejectedValueOnce(
       error
     );
 

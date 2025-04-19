@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, afterAll } from "vitest";
+import { describe, expect, it, vi, afterAll, Mock } from "vitest";
 import { renderHook } from "@testing-library/react";
 import { useContext } from "react";
 import { useQuestionBankList } from "../useQuestionBankList";
@@ -42,7 +42,7 @@ describe("useQuestionBankList", () => {
   });
 
   it("should throw error when context is undefined", () => {
-    (useContext as any).mockReturnValue(undefined);
+    (useContext as Mock).mockReturnValue(undefined);
 
     expect(() => renderHook(() => useQuestionBankList())).toThrowError(
       "useQuestionBankList must be used within a QuestionBankListProvider"
@@ -50,7 +50,7 @@ describe("useQuestionBankList", () => {
   });
 
   it("should return context when available", () => {
-    (useContext as any).mockReturnValue(mockContextValue);
+    (useContext as Mock).mockReturnValue(mockContextValue);
 
     const { result } = renderHook(() => useQuestionBankList());
 
@@ -59,7 +59,7 @@ describe("useQuestionBankList", () => {
   });
 
   it("should maintain referential equality between renders", () => {
-    (useContext as any).mockReturnValue(mockContextValue);
+    (useContext as Mock).mockReturnValue(mockContextValue);
 
     const { result, rerender } = renderHook(() => useQuestionBankList());
     const firstResult = result.current;
@@ -75,7 +75,7 @@ describe("useQuestionBankList", () => {
       errorQuestionBanks: new Error("Failed to fetch question banks"),
     };
 
-    (useContext as any).mockReturnValue(errorContextValue);
+    (useContext as Mock).mockReturnValue(errorContextValue);
 
     const { result } = renderHook(() => useQuestionBankList());
 
@@ -88,7 +88,7 @@ describe("useQuestionBankList", () => {
       isLoadingQuestionBanks: true,
     };
 
-    (useContext as any).mockReturnValue(loadingContextValue);
+    (useContext as Mock).mockReturnValue(loadingContextValue);
 
     const { result } = renderHook(() => useQuestionBankList());
 

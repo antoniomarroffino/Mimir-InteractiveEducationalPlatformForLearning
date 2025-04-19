@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, afterAll } from "vitest";
+import { describe, expect, it, vi, afterAll, Mock } from "vitest";
 import { renderHook } from "@testing-library/react";
 import { useContext } from "react";
 import { useAuth } from "../useAuth";
@@ -35,7 +35,7 @@ describe("useAuth", () => {
   });
 
   it("should throw error when context is undefined", () => {
-    (useContext as any).mockReturnValue(undefined);
+    (useContext as Mock).mockReturnValue(undefined);
 
     expect(() => renderHook(() => useAuth())).toThrowError(
       "useAuth must be used within AuthProvider"
@@ -43,7 +43,7 @@ describe("useAuth", () => {
   });
 
   it("should return context when available", () => {
-    (useContext as any).mockReturnValue(mockContextValue);
+    (useContext as Mock).mockReturnValue(mockContextValue);
 
     const { result } = renderHook(() => useAuth());
 
@@ -52,7 +52,7 @@ describe("useAuth", () => {
   });
 
   it("should maintain referential equality between renders", () => {
-    (useContext as any).mockReturnValue(mockContextValue);
+    (useContext as Mock).mockReturnValue(mockContextValue);
 
     const { result, rerender } = renderHook(() => useAuth());
     const firstResult = result.current;
@@ -68,7 +68,7 @@ describe("useAuth", () => {
       isLoading: true,
     };
 
-    (useContext as any).mockReturnValue(loadingContext);
+    (useContext as Mock).mockReturnValue(loadingContext);
 
     const { result } = renderHook(() => useAuth());
 
@@ -89,7 +89,7 @@ describe("useAuth", () => {
         .mockImplementation((role: Role) => studentUser.role === role),
     };
 
-    (useContext as any).mockReturnValue(studentContext);
+    (useContext as Mock).mockReturnValue(studentContext);
 
     const { result } = renderHook(() => useAuth());
 
@@ -104,7 +104,7 @@ describe("useAuth", () => {
       login: loginMock,
     };
 
-    (useContext as any).mockReturnValue(loginContext);
+    (useContext as Mock).mockReturnValue(loginContext);
 
     const { result } = renderHook(() => useAuth());
 
@@ -119,7 +119,7 @@ describe("useAuth", () => {
       logout: logoutMock,
     };
 
-    (useContext as any).mockReturnValue(logoutContext);
+    (useContext as Mock).mockReturnValue(logoutContext);
 
     const { result } = renderHook(() => useAuth());
 
@@ -135,7 +135,7 @@ describe("useAuth", () => {
       }),
     };
 
-    (useContext as any).mockReturnValue(errorContext);
+    (useContext as Mock).mockReturnValue(errorContext);
 
     const { result } = renderHook(() => useAuth());
 

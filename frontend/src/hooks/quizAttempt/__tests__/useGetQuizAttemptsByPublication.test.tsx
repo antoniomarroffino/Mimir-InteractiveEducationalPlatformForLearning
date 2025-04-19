@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, afterAll } from "vitest";
+import { describe, expect, it, vi, afterAll, Mock } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
 import { useGetQuizAttemptsByPublication } from "../useGetQuizAttemptsByPublication";
 import { quizAttemptApi } from "../../../../config/config";
@@ -68,7 +68,7 @@ describe("useGetQuizAttemptsByPublication", () => {
 
   it("should fetch quiz attempts data successfully", async () => {
     (
-      quizAttemptApi.apiAttemptsByPublicationPublicationIdGet as any
+      quizAttemptApi.apiAttemptsByPublicationPublicationIdGet as Mock
     ).mockResolvedValueOnce({
       data: mockQuizAttempts,
     });
@@ -93,7 +93,7 @@ describe("useGetQuizAttemptsByPublication", () => {
   it("should handle error when fetching quiz attempts data", async () => {
     const error = new Error("Failed to fetch quiz attempts");
     (
-      quizAttemptApi.apiAttemptsByPublicationPublicationIdGet as any
+      quizAttemptApi.apiAttemptsByPublicationPublicationIdGet as Mock
     ).mockRejectedValueOnce(error);
 
     const { result } = renderHook(

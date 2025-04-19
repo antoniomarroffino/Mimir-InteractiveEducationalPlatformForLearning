@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, afterAll } from "vitest";
+import { describe, expect, it, vi, afterAll, Mock } from "vitest";
 import { renderHook } from "@testing-library/react";
 import { useContext } from "react";
 import { useQuestionBankCRUD } from "../useQuestionBankCRUD";
@@ -41,7 +41,7 @@ describe("useQuestionBankCRUD", () => {
   });
 
   it("should throw error when context is undefined", () => {
-    (useContext as any).mockReturnValue(undefined);
+    (useContext as Mock).mockReturnValue(undefined);
 
     expect(() => renderHook(() => useQuestionBankCRUD())).toThrowError(
       "useQuestionBankCRUD must be used within a QuestionBankCRUDProvider"
@@ -49,7 +49,7 @@ describe("useQuestionBankCRUD", () => {
   });
 
   it("should return context when available", () => {
-    (useContext as any).mockReturnValue(mockContextValue);
+    (useContext as Mock).mockReturnValue(mockContextValue);
 
     const { result } = renderHook(() => useQuestionBankCRUD());
 
@@ -58,7 +58,7 @@ describe("useQuestionBankCRUD", () => {
   });
 
   it("should maintain referential equality between renders", () => {
-    (useContext as any).mockReturnValue(mockContextValue);
+    (useContext as Mock).mockReturnValue(mockContextValue);
 
     const { result, rerender } = renderHook(() => useQuestionBankCRUD());
     const firstResult = result.current;
@@ -76,7 +76,7 @@ describe("useQuestionBankCRUD", () => {
       errorDeleteQuestionBank: new Error("Delete error"),
     };
 
-    (useContext as any).mockReturnValue(errorContextValue);
+    (useContext as Mock).mockReturnValue(errorContextValue);
 
     const { result } = renderHook(() => useQuestionBankCRUD());
 
@@ -93,7 +93,7 @@ describe("useQuestionBankCRUD", () => {
       isDeletingQuestionBank: true,
     };
 
-    (useContext as any).mockReturnValue(loadingContextValue);
+    (useContext as Mock).mockReturnValue(loadingContextValue);
 
     const { result } = renderHook(() => useQuestionBankCRUD());
 

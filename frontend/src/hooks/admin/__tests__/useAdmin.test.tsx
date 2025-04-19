@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, afterAll } from "vitest";
+import { describe, expect, it, vi, afterAll, Mock } from "vitest";
 import { renderHook } from "@testing-library/react";
 import { useContext } from "react";
 import { useAdmin } from "../useAdmin";
@@ -44,7 +44,7 @@ describe("useAdmin", () => {
   });
 
   it("should throw error when context is undefined", () => {
-    (useContext as any).mockReturnValue(undefined);
+    (useContext as Mock).mockReturnValue(undefined);
 
     expect(() => renderHook(() => useAdmin())).toThrowError(
       "useAdmin must be used within AdminProvider"
@@ -52,7 +52,7 @@ describe("useAdmin", () => {
   });
 
   it("should return context when available", () => {
-    (useContext as any).mockReturnValue(mockContextValue);
+    (useContext as Mock).mockReturnValue(mockContextValue);
 
     const { result } = renderHook(() => useAdmin());
 
@@ -61,7 +61,7 @@ describe("useAdmin", () => {
   });
 
   it("should maintain referential equality between renders", () => {
-    (useContext as any).mockReturnValue(mockContextValue);
+    (useContext as Mock).mockReturnValue(mockContextValue);
 
     const { result, rerender } = renderHook(() => useAdmin());
     const firstResult = result.current;
@@ -77,7 +77,7 @@ describe("useAdmin", () => {
       isLoading: true,
     };
 
-    (useContext as any).mockReturnValue(loadingContext);
+    (useContext as Mock).mockReturnValue(loadingContext);
 
     const { result } = renderHook(() => useAdmin());
 
@@ -90,7 +90,7 @@ describe("useAdmin", () => {
       error: new Error("Test error"),
     };
 
-    (useContext as any).mockReturnValue(errorContext);
+    (useContext as Mock).mockReturnValue(errorContext);
 
     const { result } = renderHook(() => useAdmin());
 
@@ -104,7 +104,7 @@ describe("useAdmin", () => {
       isLoadingTeachers: true,
     };
 
-    (useContext as any).mockReturnValue(loadingTeachersContext);
+    (useContext as Mock).mockReturnValue(loadingTeachersContext);
 
     const { result } = renderHook(() => useAdmin());
 
@@ -117,7 +117,7 @@ describe("useAdmin", () => {
       errorTeachers: new Error("Teachers error"),
     };
 
-    (useContext as any).mockReturnValue(errorTeachersContext);
+    (useContext as Mock).mockReturnValue(errorTeachersContext);
 
     const { result } = renderHook(() => useAdmin());
 
@@ -132,7 +132,7 @@ describe("useAdmin", () => {
       promoteUser: promoteUserMock,
     };
 
-    (useContext as any).mockReturnValue(promoteUserContext);
+    (useContext as Mock).mockReturnValue(promoteUserContext);
 
     const { result } = renderHook(() => useAdmin());
 
@@ -151,7 +151,7 @@ describe("useAdmin", () => {
       fetchAllTeachers: fetchAllTeachersMock,
     };
 
-    (useContext as any).mockReturnValue(fetchTeachersContext);
+    (useContext as Mock).mockReturnValue(fetchTeachersContext);
 
     const { result } = renderHook(() => useAdmin());
 
