@@ -30,7 +30,7 @@ const QuestionBankDetails: React.FC = () => {
     const navigate = useNavigate();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const {data: questionBank, isLoading, error: errorGetQuestionBank} = useGetQuestionBankById(questionBankId!);
-    const {updateQuestionBank, deleteQuestionBank} = useQuestionBankCRUD();
+    const {updateQuestionBank, deleteQuestionBank, reorderQuestionBank} = useQuestionBankCRUD();
     const {deleteQuestion} = useQuestionCRUD();
     const {
         isCreatingQuestion,
@@ -82,13 +82,9 @@ const QuestionBankDetails: React.FC = () => {
 
     const handleReorderQuestions = async (reorderedQuestions: SpecificQuestionDTO[]) => {
         if (!questionBank) return;
-
-        await updateQuestionBank(questionBank.id!, {
-            ...questionBank,
-            questions: reorderedQuestions
-        });
+        const orderedIds = reorderedQuestions.map(q => q.id!);
+        await reorderQuestionBank(questionBank.id!, orderedIds);
     };
-
 
 
     const handleDeleteQuestion = async (questionId: string) => {
@@ -124,7 +120,6 @@ const QuestionBankDetails: React.FC = () => {
     return (
         <div className="w-full min-h-screen p-4 sm:p-6 lg:p-8">
             <BreadcrumbQuestionBank questionBankDTO={questionBank}/>
-            {/* Header Section */}
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-8">
                 <div className="flex-1 flex items-center gap-4 bg-base-100 p-4 rounded-xl shadow-sm">
                     {editMode ? (
@@ -212,7 +207,6 @@ const QuestionBankDetails: React.FC = () => {
                 )}
             </div>
 
-            {/* Delete Confirmation Modal */}
             <dialog id="delete_question_bank_modal" className="modal">
                 <div className="modal-box bg-base-100 border border-error/20">
                     <form method="dialog" className="space-y-6">
@@ -244,7 +238,6 @@ const QuestionBankDetails: React.FC = () => {
             </dialog>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 relative">
-                {/* Mobile Sidebar Toggle */}
                 <div className="lg:hidden absolute top-0 right-0 z-50">
                     <button
                         className="btn btn-ghost"
@@ -254,7 +247,6 @@ const QuestionBankDetails: React.FC = () => {
                     </button>
                 </div>
 
-                {/* Sidebar for Questions List */}
                 <div className={`
     lg:col-span-4 
     fixed 
@@ -311,7 +303,6 @@ const QuestionBankDetails: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Main Question Editor */}
                 <div className="lg:col-span-5 order-first lg:order-none">
                     <div className="card bg-base-100 shadow-lg">
                         <div className="card-body">
@@ -350,7 +341,6 @@ const QuestionBankDetails: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Question Type Selector */}
                 <div className="lg:col-span-3">
                     {isCreatingQuestion ? (
                         <QuestionTypeSelector

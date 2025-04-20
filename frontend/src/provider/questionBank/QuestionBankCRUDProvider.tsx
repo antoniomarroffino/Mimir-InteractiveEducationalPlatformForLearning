@@ -2,7 +2,7 @@ import {QuestionBankDTO} from "@dti-isin/backend-api-client";
 import {QuestionBankCRUDContext} from "../../contexts/questionBank/QuestionBankCRUDContext.ts";
 import {useMutation, useQueryClient} from "react-query";
 import {questionBankApi} from "../../../config/config.ts";
-import {useMemo} from "react";
+import React, {useMemo} from "react";
 
 export const QuestionBankCRUDProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const queryClient = useQueryClient();
@@ -41,6 +41,19 @@ export const QuestionBankCRUDProvider: React.FC<{ children: React.ReactNode }> =
         }
     );
 
+    const reorderQuestionsMutation = useMutation(
+        ({id, orderedQuestionIds}: { id: string, orderedQuestionIds: string[] }) =>
+            questionBankApi.apiQuestionBanksIdReorderPatch({id, requestBody: orderedQuestionIds}),
+        {
+            onSuccess: () => {
+                queryClient.invalidateQueries(["questionBanks"]);
+            },
+            onError: (error: Error) => {
+                console.error("Question reorder failed:", error);
+            }
+        }
+    );
+
     const deleteQuestionBankMutation = useMutation(
         (id: string) => questionBankApi.apiQuestionBanksIdDelete({id}),
         {
@@ -72,6 +85,15 @@ export const QuestionBankCRUDProvider: React.FC<{ children: React.ReactNode }> =
             }
         },
 
+        reorderQuestionBank: async (id: string, orderedQuestionIds: string[]): Promise<void> => {
+            try {
+                await reorderQuestionsMutation.mutateAsync({id, orderedQuestionIds});
+            } catch (err) {
+                console.error("Question reorder failed:", err);
+                throw err;
+            }
+        },
+
         deleteQuestionBank: async (id: string) => {
             try {
                 await deleteQuestionBankMutation.mutateAsync(id);
@@ -84,11 +106,13 @@ export const QuestionBankCRUDProvider: React.FC<{ children: React.ReactNode }> =
         isCreatingQuestionBank: createQuestionBankMutation.isLoading,
         isUpdatingQuestionBank: updateQuestionBankMutation.isLoading,
         isDeletingQuestionBank: deleteQuestionBankMutation.isLoading,
+        isReorderingQuestions: reorderQuestionsMutation.isLoading,
 
         errorCreateQuestionBank: createQuestionBankMutation.error,
         errorUpdateQuestionBank: updateQuestionBankMutation.error,
         errorDeleteQuestionBank: deleteQuestionBankMutation.error,
-    }), [createQuestionBankMutation, updateQuestionBankMutation, deleteQuestionBankMutation]);
+        errorReorderQuestions: reorderQuestionsMutation.error,
+    }), [createQuestionBankMutation, updateQuestionBankMutation, deleteQuestionBankMutation, reorderQuestionsMutation]);
 
     return (
         <QuestionBankCRUDContext.Provider value={value}>

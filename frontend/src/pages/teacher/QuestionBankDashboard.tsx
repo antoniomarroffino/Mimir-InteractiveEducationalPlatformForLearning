@@ -1,51 +1,94 @@
-import {PlusCircleIcon} from '@heroicons/react/24/outline';
 import {useState} from "react";
+import {motion} from "framer-motion";
+import {FiDatabase, FiPlusCircle} from "react-icons/fi";
 import {QuestionBankCreationForm} from "../../components/questionBank/QuestionBankCreationForm.tsx";
 import {QuestionBankSearch} from "../../components/questionBank/QuestionBankSearch.tsx";
 import {QuestionBankGrid} from "../../components/questionBank/QuestionBankGrid.tsx";
-import {BanknotesIcon} from "@heroicons/react/16/solid";
 
 export const QuestionBankDashboard = () => {
     const [searchTerm, setSearchTerm] = useState('');
 
     return (
-        <section className="py-12 bg-gradient-to-br from-blue-50 to-purple-50 min-h-screen">
-            <div className="container mx-auto px-4">
-                {/* Header Section */}
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-6">
-                    <div className="flex items-center gap-4">
-                        <BanknotesIcon className="w-12 h-12 text-purple-600"/>
+        <motion.section
+            initial={{opacity: 0}}
+            animate={{opacity: 1}}
+            className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 py-12 px-4"
+        >
+            <div className="max-w-7xl mx-auto">
+                {/* Hero */}
+                <motion.div
+                    initial={{y: -20, opacity: 0}}
+                    animate={{y: 0, opacity: 1}}
+                    className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-purple-500 via-indigo-500 to-fuchsia-500 p-10 mb-12 text-white shadow-xl"
+                >
+                    <div className="flex items-center justify-between flex-col md:flex-row gap-6">
                         <div>
-                            <h1 className="text-4xl font-bold text-gray-900">Question Bank</h1>
-                            <p className="text-lg text-gray-600 mt-2">Collaborative knowledge repository for
-                                educators</p>
+                            <h1 className="text-4xl font-bold mb-2">Question Bank</h1>
+                            <p className="text-lg opacity-90">
+                                Empower your learning journey through shared knowledge
+                            </p>
                         </div>
+                        <motion.div
+                            animate={{rotate: [0, 5, -5, 0]}}
+                            transition={{duration: 4, repeat: Infinity, ease: "easeInOut"}}
+                        >
+                            <FiDatabase className="w-16 h-16 text-white/90"/>
+                        </motion.div>
                     </div>
+                </motion.div>
 
-                    <div className="w-full md:w-96">
-                        <QuestionBankSearch searchTerm={searchTerm} onSearchChange={setSearchTerm}/>
+                <motion.div
+                    initial={{opacity: 0, y: 10}}
+                    animate={{opacity: 1, y: 0}}
+                    transition={{delay: 0.1}}
+                    className="mb-10 rounded-xl bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200/40 p-4 flex items-start gap-4 shadow-sm"
+                >
+                    <motion.div
+                        animate={{rotate: [0, 10, -10, 0]}}
+                        transition={{duration: 4, repeat: Infinity, ease: "easeInOut"}}
+                        className="bg-white p-2 rounded-full shadow-md"
+                    >
+                        <FiDatabase className="w-6 h-6 text-purple-600"/>
+                    </motion.div>
+
+                    <div className="text-sm text-gray-800 leading-relaxed">
+                        <p>
+                            <strong>Question Banks</strong> are shared collections of questions that teachers can use and contribute to.
+                            You can <span className="text-purple-700 font-medium">create your own</span>, or
+                            <span className="text-purple-700 font-medium"> reuse questions</span> from existing ones — making quizzes faster, smarter, and more collaborative.
+                        </p>
                     </div>
-                </div>
+                </motion.div>
 
-                {/* Main Content Grid */}
+
+                {/* Main grid */}
                 <div className="grid lg:grid-cols-4 gap-8">
-                    {/* Creation Panel */}
-                    <div className="lg:col-span-1">
-                        <div className="bg-white rounded-2xl p-6 shadow-lg border border-purple-100 sticky top-6">
-                            <h2 className="text-xl font-semibold flex items-center gap-2 mb-4 text-purple-900">
-                                <PlusCircleIcon className="w-6 h-6"/>
-                                Create New Vault
-                            </h2>
-                            <QuestionBankCreationForm/>
-                        </div>
-                    </div>
+                    {/* Left: Creation Card */}
+                    <motion.div
+                        initial={{opacity: 0, y: 10}}
+                        animate={{opacity: 1, y: 0}}
+                        transition={{delay: 0.2}}
+                        className="lg:col-span-1 bg-white rounded-2xl p-6 shadow-xl border border-purple-100"
+                    >
+                        <h2 className="text-xl font-semibold flex items-center gap-2 mb-4 text-purple-900">
+                            <FiPlusCircle className="w-5 h-5"/>
+                            Create New Bank
+                        </h2>
+                        <QuestionBankCreationForm/>
+                    </motion.div>
 
-                    {/* Question Bank Grid */}
-                    <div className="lg:col-span-3">
+                    {/* Right: Search + Grid */}
+                    <motion.div
+                        initial={{opacity: 0, y: 10}}
+                        animate={{opacity: 1, y: 0}}
+                        transition={{delay: 0.3}}
+                        className="lg:col-span-3 space-y-6"
+                    >
+                        <QuestionBankSearch searchTerm={searchTerm} onSearchChange={setSearchTerm}/>
                         <QuestionBankGrid searchTerm={searchTerm}/>
-                    </div>
+                    </motion.div>
                 </div>
             </div>
-        </section>
+        </motion.section>
     );
 };

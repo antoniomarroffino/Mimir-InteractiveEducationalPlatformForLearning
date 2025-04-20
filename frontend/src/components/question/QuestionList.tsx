@@ -1,8 +1,13 @@
-import React, {useState} from "react";
+import React from "react";
 import {QuestionElement} from './QuestionElement';
 import {SpecificQuestionDTO} from "../../hooks/question/useQuestionCreation";
 import {closestCenter, DndContext, DragEndEvent} from "@dnd-kit/core";
-import {arrayMove, SortableContext, useSortable, verticalListSortingStrategy} from "@dnd-kit/sortable";
+import {
+    arrayMove,
+    SortableContext,
+    useSortable,
+    verticalListSortingStrategy
+} from "@dnd-kit/sortable";
 import {CSS} from "@dnd-kit/utilities";
 
 interface QuestionsListProps {
@@ -10,16 +15,14 @@ interface QuestionsListProps {
     onStartEditing?: (question: SpecificQuestionDTO) => void;
     onDeleteQuestion?: (questionId: string) => void;
     onReorder?: (reorderedQuestions: SpecificQuestionDTO[]) => void;
-
 }
 
 export const QuestionsList: React.FC<QuestionsListProps> = ({
-                                                                questions: initialQuestions,
+                                                                questions,
                                                                 onStartEditing,
                                                                 onDeleteQuestion,
                                                                 onReorder
                                                             }) => {
-    const [questions, setQuestions] = useState(initialQuestions);
 
     const handleDragEnd = (event: DragEndEvent) => {
         const {active, over} = event;
@@ -29,12 +32,9 @@ export const QuestionsList: React.FC<QuestionsListProps> = ({
             const newIndex = questions.findIndex(q => q.id === over!.id);
 
             const newOrder = arrayMove(questions, oldIndex, newIndex);
-            setQuestions(newOrder);
-
             onReorder?.(newOrder);
         }
     };
-
 
     return (
         <div>
