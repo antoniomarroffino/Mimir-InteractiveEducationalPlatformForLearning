@@ -80,6 +80,17 @@ const QuestionBankDetails: React.FC = () => {
         }
     };
 
+    const handleReorderQuestions = async (reorderedQuestions: SpecificQuestionDTO[]) => {
+        if (!questionBank) return;
+
+        await updateQuestionBank(questionBank.id!, {
+            ...questionBank,
+            questions: reorderedQuestions
+        });
+    };
+
+
+
     const handleDeleteQuestion = async (questionId: string) => {
         if (questionBank) {
             await deleteQuestion(questionId, questionBankId!);
@@ -281,6 +292,7 @@ const QuestionBankDetails: React.FC = () => {
                             questions={questionBank.questions || []}
                             onStartEditing={startQuestionEditing}
                             onDeleteQuestion={handleDeleteQuestion}
+                            onReorder={handleReorderQuestions}
                         />
 
                         {isCreatingQuestion && (

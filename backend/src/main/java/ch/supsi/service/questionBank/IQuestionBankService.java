@@ -14,5 +14,7 @@ public interface IQuestionBankService {
 
     QuestionBankDTO updateQuestionBank(ObjectId id, QuestionBankDTO questionBankDTO);
 
+    void updateQuestionOrder(ObjectId bankId, List<String> orderedQuestionIds);
+
     void deleteQuestionBank(ObjectId id);
 }

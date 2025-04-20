@@ -66,6 +66,14 @@ public class QuestionBankService implements IQuestionBankService {
         this.questionBankRepository.delete(questionBank);
     }
 
+    public void updateQuestionOrder(ObjectId bankId, List<String> orderedQuestionIds) {
+        QuestionBank questionBank = this.findQuestionBankById(bankId);
+        questionBank.questions = orderedQuestionIds;
+        questionBank.lastModified = LocalDateTime.now();
+        this.questionBankRepository.update(questionBank);
+    }
+
+
     private QuestionBank findQuestionBankById(ObjectId id) {
         return this.questionBankRepository.findByIdOptional(id)
                 .orElseThrow(() -> new NotFoundException("Question bank with id " + id + " not found"));

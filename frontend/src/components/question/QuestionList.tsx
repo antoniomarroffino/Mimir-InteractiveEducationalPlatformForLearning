@@ -1,43 +1,40 @@
-import React, { useState } from "react";
-import { QuestionElement } from './QuestionElement';
-import { SpecificQuestionDTO } from "../../hooks/question/useQuestionCreation";
-import {
-    DndContext,
-    closestCenter,
-    DragEndEvent
-} from "@dnd-kit/core";
-import {
-    arrayMove,
-    SortableContext,
-    useSortable,
-    verticalListSortingStrategy
-} from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
+import React, {useState} from "react";
+import {QuestionElement} from './QuestionElement';
+import {SpecificQuestionDTO} from "../../hooks/question/useQuestionCreation";
+import {closestCenter, DndContext, DragEndEvent} from "@dnd-kit/core";
+import {arrayMove, SortableContext, useSortable, verticalListSortingStrategy} from "@dnd-kit/sortable";
+import {CSS} from "@dnd-kit/utilities";
 
 interface QuestionsListProps {
     questions: SpecificQuestionDTO[];
     onStartEditing?: (question: SpecificQuestionDTO) => void;
     onDeleteQuestion?: (questionId: string) => void;
+    onReorder?: (reorderedQuestions: SpecificQuestionDTO[]) => void;
+
 }
 
 export const QuestionsList: React.FC<QuestionsListProps> = ({
                                                                 questions: initialQuestions,
                                                                 onStartEditing,
-                                                                onDeleteQuestion
+                                                                onDeleteQuestion,
+                                                                onReorder
                                                             }) => {
     const [questions, setQuestions] = useState(initialQuestions);
 
     const handleDragEnd = (event: DragEndEvent) => {
-        const { active, over } = event;
+        const {active, over} = event;
 
         if (active.id !== over?.id) {
             const oldIndex = questions.findIndex(q => q.id === active.id);
-            const newIndex = questions.findIndex(q => q.id === over?.id);
+            const newIndex = questions.findIndex(q => q.id === over!.id);
 
             const newOrder = arrayMove(questions, oldIndex, newIndex);
             setQuestions(newOrder);
+
+            onReorder?.(newOrder);
         }
     };
+
 
     return (
         <div>
@@ -73,8 +70,13 @@ interface SortableQuestionElementProps {
     onStartEditing?: (q: SpecificQuestionDTO) => void;
 }
 
-const SortableQuestionElement: React.FC<SortableQuestionElementProps> = ({ question, index, onDelete, onStartEditing }) => {
-    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: question.id! });
+const SortableQuestionElement: React.FC<SortableQuestionElementProps> = ({
+                                                                             question,
+                                                                             index,
+                                                                             onDelete,
+                                                                             onStartEditing
+                                                                         }) => {
+    const {attributes, listeners, setNodeRef, transform, transition} = useSortable({id: question.id!});
 
     const style = {
         transform: CSS.Transform.toString(transform),
