@@ -74,7 +74,8 @@ public class QuizService implements IQuizService {
         updatedQuiz.updatedAt = LocalDateTime.now();
         updatedQuiz.questionsId = quizDTO.getQuestions().stream()
                 .map(questionDTO -> new ObjectId(questionDTO.getId()))
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
+
         updatedQuiz.timeLimitMinutes = quizDTO.getTimeLimitMinutes();
 
         int index = folder.quizzes.indexOf(existingQuiz);

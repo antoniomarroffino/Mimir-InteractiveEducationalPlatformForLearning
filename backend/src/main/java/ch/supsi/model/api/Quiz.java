@@ -4,7 +4,9 @@ import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Schema(description = "Quiz model", name = "Quiz")
@@ -12,14 +14,14 @@ public class Quiz {
     public ObjectId id;
     public String name;
     public String description;
-    public Set<ObjectId> questionsId;
+    public List<ObjectId> questionsId;
     public LocalDateTime createdAt;
     public LocalDateTime updatedAt;
     public Integer timeLimitMinutes;
 
     public Quiz() {
         this.id = new ObjectId();
-        this.questionsId = new HashSet<>();
+        this.questionsId = new ArrayList<>();
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
         this.timeLimitMinutes = null;
