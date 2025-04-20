@@ -1,11 +1,14 @@
 import {motion} from 'framer-motion';
+import {useState} from 'react';
 import {CreateCourseForm} from "../../components/course/CreateCourseForm.tsx";
 import {CourseList} from "../../components/course/CourseList.tsx";
 import {CourseSearch} from "../../components/course/CourseSearch.tsx";
 import {LightBulbIcon, PlusCircleIcon} from "@heroicons/react/24/outline";
 import {CoursesPageHeader} from "../../components/course/CoursesPageHeader.tsx";
-
+import {CoursesInfoAlert} from "../../components/course/CoursesInfoAlert.tsx";
 export const CoursesDashboard = () => {
+    const [showInfo, setShowInfo] = useState(false);
+
     return (
         <motion.section
             initial={{opacity: 0}}
@@ -13,7 +16,13 @@ export const CoursesDashboard = () => {
             className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 py-12 px-4"
         >
             <div className="max-w-7xl mx-auto">
-                <CoursesPageHeader />
+                <CoursesPageHeader
+                    onToggleInfo={() => setShowInfo(prev => !prev)}
+                    showInfoToggle
+                />
+
+                {showInfo && <CoursesInfoAlert />}
+
                 <div className="grid md:grid-cols-5 gap-8">
                     <motion.div
                         initial={{opacity: 0, y: 10}}

@@ -145,9 +145,7 @@ const CourseDetailsPage = () => {
 
 
             <div className="flex flex-col lg:flex-row gap-8 mb-8">
-                {/* Sezione sinistra - Dettagli corso */}
                 <div className="flex-1 space-y-8">
-                    {/* Header corso con azioni */}
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                         <div className="space-y-2">
                             {isEditing ? (
@@ -164,7 +162,6 @@ const CourseDetailsPage = () => {
                                 </h1>
                             )}
 
-                            {/* Descrizione sotto il titolo */}
                             {!isEditing && (
                                 <div className="text-base-content/60 prose prose-sm italic text-left w-full">
                                     {selectedCourse.description || 'No description provided'}
@@ -195,7 +192,6 @@ const CourseDetailsPage = () => {
                             </button>
                         </div>
                     </div>
-                    {/* Sezione descrizione */}
                     <div className="mb-8">
                         {isEditing && (
                             <div
