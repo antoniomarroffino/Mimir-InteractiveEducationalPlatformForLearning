@@ -2,9 +2,12 @@ import React, {useState} from 'react';
 import {useAuth} from "../../hooks/useAuth.ts";
 import {FiHash} from "react-icons/fi";
 import {QuizCodeAnalyzer} from "./QuizCodeAnalyzer.tsx";
+import {useNavigate} from 'react-router-dom';
+import {QuizPublicationDTO, QuizDTO} from "@dti-isin/backend-api-client";
 
 export const QuizSessionComponent = () => {
     const {user} = useAuth();
+    const navigate = useNavigate();
     const [code, setCode] = useState('');
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
@@ -14,26 +17,52 @@ export const QuizSessionComponent = () => {
         setErrorMessage('');
     };
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter' && code.trim()) {
+    const handleStartAnalyze = () => {
+        if (code.trim()) {
             setIsAnalyzing(true);
         }
     };
 
-    const handlePressJoinButton = () => {
-        if(code.trim()) {
-            setIsAnalyzing(true);
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            handleStartAnalyze();
         }
-    }
+    };
+
+    const handleAnalyzeSuccess = (publication: QuizPublicationDTO, quiz: QuizDTO) => {
+        setIsAnalyzing(false);
+        navigate(`/quiz/${code}`, {
+            state: {
+                publication,
+                quiz
+            }
+        });
+    };
+
+    const handleAnalyzeError = (message: string) => {
+        setIsAnalyzing(false);
+        setErrorMessage(message);
+    };
 
     return (
-        <section className="w-full max-w-md mx-auto">
+        <section className="w-full max-w-md mx-auto relative">
+
             {isAnalyzing && (
                 <QuizCodeAnalyzer
                     publicationCode={code}
-                    onClose={() => setIsAnalyzing(false)}
-                    onError={(error) => setErrorMessage(error)}
+                    onSuccess={handleAnalyzeSuccess}
+                    onError={handleAnalyzeError}
                 />
+            )}
+
+            {isAnalyzing && (
+                <div
+                    className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 flex items-center justify-center">
+                    <div className="bg-base-100 p-8 rounded-lg flex flex-col items-center gap-4">
+                        <span className="loading loading-spinner loading-lg text-primary"></span>
+                        <p className="text-lg">Verifica del codice in corso...</p>
+                    </div>
+                </div>
             )}
 
             <div className="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow">
@@ -57,7 +86,7 @@ export const QuizSessionComponent = () => {
                             />
                             <button
                                 className="btn btn-primary join-item"
-                                onClick={handlePressJoinButton}
+                                onClick={handleStartAnalyze}
                             >
                                 {user ? "Join" : "Login"}
                             </button>

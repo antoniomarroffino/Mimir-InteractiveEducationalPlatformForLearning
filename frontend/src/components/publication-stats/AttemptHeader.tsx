@@ -1,5 +1,6 @@
 import React from 'react';
 import { QuizAttemptDTO } from '@dti-isin/backend-api-client';
+import {QuizDuration} from "../quiz-results/QuizDuration.tsx";
 
 interface AttemptHeaderProps {
     attempt: QuizAttemptDTO;
@@ -15,14 +16,10 @@ export const AttemptHeader: React.FC<AttemptHeaderProps> = ({ attempt }) => {
                 </span>
             </h2>
             <div className="text-sm text-base-content/70">
-                {attempt.startedAt && attempt.completedAt && (
-                    <span>
-                        Duration: {Math.round(
-                        (new Date(attempt.completedAt).getTime() -
-                            new Date(attempt.startedAt).getTime()) / 1000
-                    )} seconds
-                    </span>
-                )}
+                <QuizDuration
+                    startedAt={attempt.startedAt}
+                    completedAt={attempt.completedAt}
+                />
             </div>
         </div>
     );

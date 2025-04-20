@@ -192,7 +192,7 @@ public class QuizAttemptControllerTest {
 
         assertThrows(
                 NotFoundException.class, () ->
-                this.quizAttemptController.getQuizAttemptById(NON_EXISTENT_ATTEMPT_ID)
+                        this.quizAttemptController.getQuizAttemptById(NON_EXISTENT_ATTEMPT_ID)
         );
 
         verify(this.quizAttemptService, times(1)).getQuizAttemptById(any(ObjectId.class));
@@ -204,7 +204,7 @@ public class QuizAttemptControllerTest {
     void test07GetQuizAttemptById_Forbidden() {
         assertThrows(
                 io.quarkus.security.ForbiddenException.class, () ->
-                this.quizAttemptController.getQuizAttemptById(VALID_ATTEMPT_ID)
+                        this.quizAttemptController.getQuizAttemptById(VALID_ATTEMPT_ID)
         );
         verifyNoInteractions(this.quizAttemptService);
     }
@@ -310,7 +310,7 @@ public class QuizAttemptControllerTest {
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         assertEquals(attempts.size(), ((List<?>) response.getEntity()).size());
-        assertNull(((QuizAttemptDTO)((List<?>) response.getEntity()).getFirst()).getUser());
+        assertNull(((QuizAttemptDTO) ((List<?>) response.getEntity()).getFirst()).getUser());
 
         verify(this.quizAttemptService, times(1))
                 .getQuizAttemptsByPublicationAndQuestion(any(ObjectId.class), any(ObjectId.class));
@@ -351,4 +351,62 @@ public class QuizAttemptControllerTest {
         );
         verifyNoInteractions(this.quizAttemptService);
     }
+
+    @Test
+    @DisplayName("Should update quiz attempt and return updated DTO")
+    @TestSecurity(user = "student", roles = "STUDENT")
+    void test15UpdateQuizAttempt_Success() {
+        QuizAttemptDTO inputDTO = new QuizAttemptDTO();
+        inputDTO.setQuizPublicationId(VALID_PUBLICATION_ID);
+        inputDTO.setUser(new UserWithoutCoursesDTO(VALID_USER_AZURE_OID, "name", "email", Role.STUDENT));
+        inputDTO.setBadges(Collections.emptyList());
+
+        QuizAttemptDTO updatedDTO = new QuizAttemptDTO();
+        updatedDTO.setQuizPublicationId(VALID_PUBLICATION_ID);
+        updatedDTO.setUser(inputDTO.getUser());
+        updatedDTO.setBadges(Collections.emptyList());
+
+        when(quizAttemptService.updateQuizAttempt(any(ObjectId.class), eq(inputDTO))).thenReturn(updatedDTO);
+        when(microsoftGraphService.getUserByOid(anyString())).thenReturn(new User());
+        when(userService.buildUserWithoutCoursesDTO(any(User.class))).thenReturn(new UserWithoutCoursesDTO());
+
+        Response response = quizAttemptController.updateQuizAttempt(VALID_ATTEMPT_ID, inputDTO);
+
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        assertEquals(updatedDTO, response.getEntity());
+
+        verify(quizAttemptService, times(1)).updateQuizAttempt(any(ObjectId.class), eq(inputDTO));
+        verify(microsoftGraphService, times(1)).getUserByOid(anyString());
+        verify(userService, times(1)).buildUserWithoutCoursesDTO(any(User.class));
+    }
+
+    @Test
+    @DisplayName("Should submit quiz attempt and return submitted DTO")
+    @TestSecurity(user = "student", roles = "STUDENT")
+    void test16SubmitQuizAttempt_Success() {
+        QuizAttemptDTO inputDTO = new QuizAttemptDTO();
+        inputDTO.setQuizPublicationId(VALID_PUBLICATION_ID);
+        inputDTO.setUser(new UserWithoutCoursesDTO(VALID_USER_AZURE_OID, "name", "email", Role.STUDENT));
+        inputDTO.setBadges(Collections.emptyList());
+
+        QuizAttemptDTO submittedDTO = new QuizAttemptDTO();
+        submittedDTO.setQuizPublicationId(VALID_PUBLICATION_ID);
+        submittedDTO.setUser(inputDTO.getUser());
+        submittedDTO.setBadges(Collections.emptyList());
+
+        when(quizAttemptService.submitQuizAttempt(any(ObjectId.class), eq(inputDTO))).thenReturn(submittedDTO);
+        when(microsoftGraphService.getUserByOid(anyString())).thenReturn(new User());
+        when(userService.buildUserWithoutCoursesDTO(any(User.class))).thenReturn(new UserWithoutCoursesDTO());
+
+        Response response = quizAttemptController.submitQuizAttempt(VALID_ATTEMPT_ID, inputDTO);
+
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        assertEquals(submittedDTO, response.getEntity());
+
+        verify(quizAttemptService, times(1)).submitQuizAttempt(any(ObjectId.class), eq(inputDTO));
+        verify(microsoftGraphService, times(1)).getUserByOid(anyString());
+        verify(userService, times(1)).buildUserWithoutCoursesDTO(any(User.class));
+    }
+
+
 }

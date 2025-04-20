@@ -35,10 +35,14 @@ public class QuizAttempt {
     @Schema(description = "List of badges")
     public List<Badge> badges;
 
+    @Schema(description = "Current status of the attempt")
+    public AttemptStatus status;
+
 
     public QuizAttempt() {
         this.badges = new ArrayList<>();
         this.responses = new ArrayList<>();
+        this.status = AttemptStatus.IN_PROGRESS;
     }
 
     public QuizAttempt(ObjectId quizPublicationId, String userAzureOID, LocalDateTime startedAt, LocalDateTime completedAt, List<QuestionResponse> responses) {

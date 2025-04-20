@@ -29,6 +29,19 @@ export const QuizAttemptCRUDProvider: React.FC<{ children: React.ReactNode }> = 
         }
     );
 
+    const submitAttemptMutation = useMutation(
+        ({ attemptId, quizAttemptDTO }: { attemptId: string, quizAttemptDTO: QuizAttemptDTO }) =>
+            quizAttemptApi.apiAttemptsAttemptIdSubmitPost({
+                attemptId,
+                quizAttemptDTO
+            }).then(res => res.data),
+        {
+            onSuccess: () => {
+                queryClient.invalidateQueries(['quizAttempts']);
+            }
+        }
+    );
+
     const assignBadgeMutation = useMutation(
         ({ attemptId, badgeType }: AssignBadgeParams) =>
             quizAttemptApi.apiAttemptsAttemptIdBadgesPost({
@@ -43,13 +56,34 @@ export const QuizAttemptCRUDProvider: React.FC<{ children: React.ReactNode }> = 
         }
     );
 
+    const updateAttemptPartialMutation = useMutation(
+        ({ attemptId, quizAttemptDTO }: { attemptId: string, quizAttemptDTO: QuizAttemptDTO }) =>
+            quizAttemptApi.apiAttemptsAttemptIdPatch({
+                attemptId,
+                quizAttemptDTO
+            }).then(res => res.data),
+        {
+            onSuccess: (_, { attemptId }) => {
+                queryClient.invalidateQueries(['quizAttempt', attemptId]);
+            }
+        }
+    );
+
 
     const value = useMemo(() => ({
-        createQuizAttempt: async (quizAttemptDTO: QuizAttemptDTO) => {
+        createInitialAttempt: async (quizAttemptDTO: QuizAttemptDTO) => {
             try {
                 return await createQuizAttemptMutation.mutateAsync(quizAttemptDTO);
             } catch (err) {
                 console.error("Quiz Attempt creation failed:", err);
+                throw err;
+            }
+        },
+        submitAttemptFinal: async (attemptId: string, quizAttemptDTO: QuizAttemptDTO): Promise<QuizAttemptDTO> => {
+            try {
+                return await submitAttemptMutation.mutateAsync({ attemptId, quizAttemptDTO });
+            } catch (err) {
+                console.error("Final submission of Quiz Attempt failed:", err);
                 throw err;
             }
         },
@@ -61,11 +95,19 @@ export const QuizAttemptCRUDProvider: React.FC<{ children: React.ReactNode }> = 
                 throw err;
             }
         },
+        updateAttemptPartial: async (attemptId: string, quizAttemptDTO: QuizAttemptDTO): Promise<QuizAttemptDTO> => {
+            try {
+                return await updateAttemptPartialMutation.mutateAsync({ attemptId, quizAttemptDTO });
+            } catch (err) {
+                console.error("Partial update of Quiz Attempt failed:", err);
+                throw err;
+            }
+        },
         isCreatingQuizAttempt: createQuizAttemptMutation.isLoading,
         isAssigningBadge: assignBadgeMutation.isLoading,
         errorCreateQuizAttempt: createQuizAttemptMutation.error as Error,
         errorAssignBadge: assignBadgeMutation.error as Error,
-    }), [createQuizAttemptMutation, assignBadgeMutation]);
+    }), [createQuizAttemptMutation, assignBadgeMutation, submitAttemptMutation, updateAttemptPartialMutation]);
 
     return (
         <QuizAttemptCRUDContext.Provider value={value}>

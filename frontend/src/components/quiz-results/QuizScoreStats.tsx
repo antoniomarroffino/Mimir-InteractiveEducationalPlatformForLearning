@@ -14,8 +14,8 @@ export const QuizScoreStats: React.FC<QuizScoreStatsProps> = ({
     const percentage = (earnedPoints / (totalPoints || 1)) * 100;
 
     return (
-        <div className="stats shadow-lg w-full">
-            <div className="stat">
+        <div className="stats shadow-lg w-full flex justify-center">
+            <div className="stat w-1/2 text-center">
                 <div className="stat-title">Score</div>
                 <div className="stat-value text-primary">
                     {earnedPoints} / {totalPoints} points
@@ -24,7 +24,7 @@ export const QuizScoreStats: React.FC<QuizScoreStatsProps> = ({
                     {Math.round(percentage)}% success rate
                 </div>
             </div>
-            <div className="stat">
+            <div className="stat w-1/2 text-center">
                 <div className="stat-title">Questions</div>
                 <div className="stat-value">{totalQuestions}</div>
                 <div className="stat-desc">

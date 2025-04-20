@@ -1,6 +1,7 @@
 package ch.supsi.service.quizattempt;
 
 import ch.supsi.mapper.quizAttempt.facade.IQuizAttemptMapperFacade;
+import ch.supsi.model.api.AttemptStatus;
 import ch.supsi.model.api.QuizAttempt;
 import ch.supsi.model.api.badge.Badge;
 import ch.supsi.model.api.badge.BadgeType;
@@ -37,16 +38,14 @@ public class QuizAttemptService implements IQuizAttemptService {
     IPointsCalculatorBuilder pointsCalculatorBuilder;
 
     @Override
-    public QuizAttemptDTO createQuizAttempt(QuizAttemptDTO quizAttemptDTO) {
-        this.verifyQuizAttemptIsValid(quizAttemptDTO);
+    public QuizAttemptDTO createQuizAttempt(QuizAttemptDTO dto) {
+        this.verifyQuizAttemptIsValid(dto);
+        dto.setStartedAt(LocalDateTime.now());
+        QuizAttempt attempt = this.quizAttemptMapperFacade.toEntity(dto);
+        attempt.status = AttemptStatus.IN_PROGRESS;
 
-        QuizAttempt quizAttempt = this.quizAttemptMapperFacade.toEntity(quizAttemptDTO);
-        quizAttempt.completedAt = LocalDateTime.now();
-
-        quizAttempt.responses.forEach(this::calculatePoints);
-
-        this.quizAttemptRepository.persist(quizAttempt);
-        return this.quizAttemptMapperFacade.toDTO(quizAttempt);
+        this.quizAttemptRepository.persist(attempt);
+        return this.quizAttemptMapperFacade.toDTO(attempt);
     }
 
     @Override
@@ -101,6 +100,34 @@ public class QuizAttemptService implements IQuizAttemptService {
         quizAttempt.badges.add(new Badge(badgeType, teacherAzureOid));
         this.quizAttemptRepository.update(quizAttempt);
     }
+
+    @Override
+    public QuizAttemptDTO updateQuizAttempt(ObjectId attemptId, QuizAttemptDTO dto) {
+        QuizAttempt attempt = this.findQuizAttemptById(attemptId);
+
+        attempt.responses = this.quizAttemptMapperFacade.toEntity(dto).responses;
+        attempt.status = AttemptStatus.IN_PROGRESS;
+
+        this.quizAttemptRepository.update(attempt);
+        return this.quizAttemptMapperFacade.toDTO(attempt);
+    }
+
+    @Override
+    public QuizAttemptDTO submitQuizAttempt(ObjectId attemptId, QuizAttemptDTO dto) {
+        QuizAttempt attempt = this.findQuizAttemptById(attemptId);
+
+        attempt.responses = this.quizAttemptMapperFacade.toEntity(dto).responses;
+        attempt.status = AttemptStatus.TERMINATED;
+        attempt.completedAt = LocalDateTime.now();
+
+        attempt.responses.forEach(this::calculatePoints);
+
+        this.quizAttemptRepository.update(attempt);
+        return this.quizAttemptMapperFacade.toDTO(attempt);
+    }
+
+
+
 
     private void verifyBadgeIsUnique(QuizAttempt quizAttempt, BadgeType badgeType) {
         boolean badgeExists = quizAttempt.badges.stream()

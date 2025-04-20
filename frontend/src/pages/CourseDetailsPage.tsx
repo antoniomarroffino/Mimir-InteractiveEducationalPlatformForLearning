@@ -11,7 +11,7 @@ import {useFolderCRUD} from "../hooks/folder/useFolderCRUD.ts";
 import {useGetCourseById} from "../hooks/course/useGetCourseById.ts";
 import {LoadingSpinner} from "../components/common/LoadingSpinner.tsx";
 
-const CourseDetails = () => {
+const CourseDetailsPage = () => {
     const {courseId} = useParams();
     const navigate = useNavigate();
     const {data: selectedCourse, isLoading, error} = useGetCourseById(courseId!);
@@ -337,4 +337,4 @@ const CourseDetails = () => {
     );
 };
 
-export default CourseDetails;
+export default CourseDetailsPage;

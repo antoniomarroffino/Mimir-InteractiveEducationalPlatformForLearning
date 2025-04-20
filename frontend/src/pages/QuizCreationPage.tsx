@@ -1,7 +1,7 @@
 import {useParams} from 'react-router-dom';
 import {QuestionDTO, QuestionType} from '@dti-isin/backend-api-client';
 import {BreadcrumbCourses} from "../components/common/BreadcrumbCourses.tsx";
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {BsLayoutSidebar, BsListTask, BsListUl, BsPencil, BsQuestionDiamond} from 'react-icons/bs';
 import {useQuizCRUD} from "../hooks/quiz/useQuizCRUD.ts";
 import {useQuestionBankList} from "../hooks/questionBank/useQuestionBankList.ts";
@@ -17,18 +17,22 @@ import {useGetFolderById} from "../hooks/folder/useGetFolderById.ts";
 import {LoadingSpinner} from "../components/common/LoadingSpinner.tsx";
 import {QuizTimeLimit} from "../components/quiz/QuizTimeLimit.tsx";
 
-export const QuizCreation: React.FC = () => {
+export const QuizCreationPage: React.FC = () => {
     const {courseId, folderId, quizId} = useParams();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const {data: currentQuiz, isLoading: isLoadingQuiz} = useGetQuizById(courseId!, folderId!, quizId!);
     const {data: currentFolder, isLoading: isLoadingFolder} = useGetFolderById(courseId!, folderId!);
     const {data: currentCourse, isLoading: isLoadingCourse} = useGetCourseById(courseId!);
-    const [selectedQuestions, setSelectedQuestions] = useState<string[]>([]);
     const [isEditingQuizName, setIsEditingQuizName] = useState(false);
     const [editedQuizName, setEditedQuizName] = useState(currentQuiz?.name || '');
-    const {updateQuiz, isUpdatingQuiz} = useQuizCRUD();
-    const [isUpdatingTimeLimit, setIsUpdatingTimeLimit] = useState(false);
+    const {updateQuiz} = useQuizCRUD();
+    const [selectedQuestions, setSelectedQuestions] = useState<string[]>([]);
     const {questionBanks, isLoadingQuestionBanks, errorQuestionBanks} = useQuestionBankList();
+
+    const stableSelectedQuestions = useMemo(() => selectedQuestions, [selectedQuestions]);
+    const stableQuestionBanks = useMemo(() => questionBanks, [questionBanks]);
+
+
     const {
         selectedQuestionType,
         questionTemplate,
@@ -39,25 +43,36 @@ export const QuizCreation: React.FC = () => {
         isEditingExistingQuestion
     } = useQuestionCreation();
 
+    const importedQuestionIds = useMemo(() => {
+        return currentQuiz?.questions?.map(q => q.id!) || [];
+    }, [currentQuiz?.questions]);
+
+    useEffect(() => {
+        console.log("currentQuiz changed", currentQuiz);
+    }, [currentQuiz]);
+
     useEffect(() => {
         setEditedQuizName(currentQuiz?.name || '');
     }, [currentQuiz?.name]);
 
-    const handleTimeLimitChange = async (minutes: number | undefined) => {
+    const quizTimeLimit = useMemo(() => currentQuiz?.timeLimitMinutes, [currentQuiz?.timeLimitMinutes]);
+
+    const handleTimeLimitChange = useCallback((minutes: number | undefined) => {
         if (!currentQuiz) return;
 
-        setIsUpdatingTimeLimit(true);
-        try {
-            await updateQuiz(courseId!, folderId!, quizId!, {
+        updateQuiz.mutateAsync({
+            courseId: courseId!,
+            folderId: folderId!,
+            quizId: quizId!,
+            quizDTO: {
                 ...currentQuiz,
                 timeLimitMinutes: minutes
-            });
-        } catch (error) {
-            console.error('Failed to update time limit:', error);
-        } finally {
-            setIsUpdatingTimeLimit(false);
-        }
-    };
+            }
+        }).catch((error) => {
+            console.error("Failed to update time limit:", error);
+        });
+    }, [courseId, folderId, quizId, currentQuiz, updateQuiz]);
+
 
     const saveNewQuestion = async (questionDTO: SpecificQuestionDTO) => {
         if (questionDTO) {
@@ -72,9 +87,14 @@ export const QuizCreation: React.FC = () => {
         }
 
         try {
-            await updateQuiz(courseId!, folderId!, quizId!, {
-                ...currentQuiz,
-                name: editedQuizName.trim()
+            await updateQuiz.mutateAsync({
+                courseId: courseId!,
+                folderId: folderId!,
+                quizId: quizId!,
+                quizDTO: {
+                    ...currentQuiz,
+                    name: editedQuizName.trim()
+                }
             });
         } catch (error) {
             console.error('Failed to update quiz name:', error);
@@ -83,7 +103,8 @@ export const QuizCreation: React.FC = () => {
         }
     };
 
-    const handleQuestionSelect = (questionId: string) => {
+
+    const handleQuestionSelect = useCallback((questionId: string) => {
         const isImported = currentQuiz!.questions?.some(q => q.id === questionId);
         if (isImported) return;
 
@@ -94,9 +115,10 @@ export const QuizCreation: React.FC = () => {
                 return [...prev, questionId];
             }
         });
-    };
+    }, [currentQuiz]);
 
-    const handleBankSelect = (bankId: string) => {
+
+    const handleBankSelect = useCallback((bankId: string) => {
         const bank = questionBanks.find(b => b.id === bankId);
         const bankQuestionIds = bank?.questions
             ?.map(q => q.id)
@@ -104,9 +126,10 @@ export const QuizCreation: React.FC = () => {
             .filter((id): id is string => id !== undefined) || [];
 
         setSelectedQuestions(prev => [...new Set([...prev, ...bankQuestionIds])]);
-    };
+    }, [questionBanks, currentQuiz]);
 
-    const handleImportQuestions = async () => {
+
+    const handleImportQuestions = useCallback(async () => {
         if (!currentQuiz || !folderId || !quizId) return;
 
         const questionsToAdd = selectedQuestions
@@ -125,15 +148,20 @@ export const QuizCreation: React.FC = () => {
         ];
 
         try {
-            await updateQuiz(courseId!, folderId, quizId, {
-                ...currentQuiz,
-                questions: updatedQuestions
+            await updateQuiz.mutateAsync({
+                courseId: courseId!,
+                folderId: folderId!,
+                quizId: quizId!,
+                quizDTO: {
+                    ...currentQuiz,
+                    questions: updatedQuestions
+                }
             });
             setSelectedQuestions([]);
         } catch (error) {
             console.error('Failed to import questions:', error);
         }
-    };
+    }, [courseId, folderId, quizId, currentQuiz, questionBanks, selectedQuestions, updateQuiz]);
 
     const handleQuestionDelete = async (questionId: string) => {
         if (!currentQuiz || !folderId || !quizId) return;
@@ -141,16 +169,25 @@ export const QuizCreation: React.FC = () => {
         const updatedQuestions = currentQuiz.questions?.filter(q => q.id !== questionId) || [];
 
         try {
-            await updateQuiz(courseId!, folderId, quizId, {
-                ...currentQuiz,
-                questions: updatedQuestions
+            await updateQuiz.mutateAsync({
+                courseId: courseId!,
+                folderId: folderId!,
+                quizId: quizId!,
+                quizDTO: {
+                    ...currentQuiz,
+                    questions: updatedQuestions
+                }
             });
-            if (questionTemplate!.id === questionId)
+
+            if (questionTemplate?.id === questionId) {
                 resetQuestionCreation();
+            }
         } catch (error) {
             console.error('Failed to delete question:', error);
         }
     };
+
+
 
     if (isLoadingQuiz || isLoadingFolder || isLoadingCourse || isLoadingQuestionBanks) {
         return <LoadingSpinner fullScreen/>;
@@ -201,9 +238,10 @@ export const QuizCreation: React.FC = () => {
                                             <button
                                                 className="btn btn-primary gap-2"
                                                 onClick={handleQuizNameUpdate}
-                                                disabled={isUpdatingQuiz}
+                                                disabled={updateQuiz.isLoading}
+
                                             >
-                                                {isUpdatingQuiz ? (
+                                                {updateQuiz.isLoading ? (
                                                     <span className="loading loading-spinner"></span>
                                                 ) : (
                                                     <CheckIcon className="w-5 h-5"/>
@@ -245,16 +283,10 @@ export const QuizCreation: React.FC = () => {
                 <div
                     className="bg-primary/5 p-4 rounded-xl border border-primary/10 flex items-center gap-3 flex-1 max-w-lg mx-4">
                     <QuizTimeLimit
-                        timeLimit={currentQuiz?.timeLimitMinutes}
+                        timeLimit={quizTimeLimit}
                         onTimeChange={handleTimeLimitChange}
-                        disabled={isUpdatingTimeLimit}
+                        disabled={updateQuiz.isLoading}
                     />
-                    {/*
-                    <LightBulbIcon className="w-6 h-6 text-primary shrink-0"/>
-                    <div className="text-base-content/70 text-sm">
-                        Pick questions from the question banks!
-                    </div>
-                    */}
                 </div>
             </div>
 
@@ -354,16 +386,17 @@ export const QuizCreation: React.FC = () => {
                 {/* Question Banks Panel */}
                 <div className="lg:col-span-4">
                     <QuestionBankList
-                        banks={questionBanks}
+                        banks={stableQuestionBanks}
                         isLoading={isLoadingQuestionBanks}
                         error={errorQuestionBanks}
-                        importedQuestion={currentQuiz!.questions?.map(q => q.id!) || []}
-                        selectedQuestions={selectedQuestions}
+                        importedQuestion={importedQuestionIds}
+                        selectedQuestions={stableSelectedQuestions}
                         onQuestionSelect={handleQuestionSelect}
                         onBankSelect={handleBankSelect}
                         onImport={handleImportQuestions}
-                        isImporting={isUpdatingQuiz}
+                        isImporting={updateQuiz.isLoading}
                     />
+
                 </div>
             </div>
         </div>

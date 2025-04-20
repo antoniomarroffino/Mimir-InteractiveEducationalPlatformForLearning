@@ -17,5 +17,9 @@ public interface IQuizAttemptService {
 
     List<QuizAttemptDTO> getQuizAttemptsByPublicationAndQuestion(ObjectId publicationId, ObjectId questionId);
 
+    QuizAttemptDTO updateQuizAttempt(ObjectId attemptId, QuizAttemptDTO dto);
+
+    QuizAttemptDTO submitQuizAttempt(ObjectId attemptId, QuizAttemptDTO dto);
+
     void assignBadge(ObjectId attemptId, BadgeType badgeType, String teacherAzureOid);
 }

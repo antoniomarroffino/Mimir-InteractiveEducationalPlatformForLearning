@@ -1,5 +1,6 @@
-import React, {useEffect, useState} from 'react';
-import {MultipleChoiceQuestionDTO} from '@dti-isin/backend-api-client';
+import React, { useEffect, useState } from 'react';
+import { MultipleChoiceQuestionDTO } from '@dti-isin/backend-api-client';
+import { motion } from 'framer-motion';
 
 interface MultipleChoiceQuestionProps {
     question: MultipleChoiceQuestionDTO;
@@ -28,34 +29,42 @@ export const MultipleChoiceQuestion: React.FC<MultipleChoiceQuestionProps> = ({
     };
 
     return (
-        <div className="card bg-base-100 shadow-xl">
+        <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            className="card bg-base-100 shadow-xl"
+        >
             <div className="card-body">
                 <h2 className="card-title text-2xl text-center text-primary mb-6">
                     {question.questionText}
                 </h2>
-                <div className="space-y-2 mt-4">
-                    {question.choices.map((choice, index) => (
-                        <label
-                            key={index}
-                            className={`
-                                flex items-center p-3 border rounded-lg cursor-pointer
-                                transition-all duration-300
-                                ${selectedAnswers.includes(index)
-                                ? 'bg-primary/10 border-primary'
-                                : 'hover:bg-base-200'}
-                            `}
-                        >
-                            <input
-                                type="checkbox"
-                                checked={selectedAnswers.includes(index)}
-                                onChange={() => handleAnswerSelection(index)}
-                                className="checkbox checkbox-primary mr-3"
-                            />
-                            <span>{choice}</span>
-                        </label>
-                    ))}
+                <div className="space-y-3 mt-4">
+                    {question.choices.map((choice, index) => {
+                        const isSelected = selectedAnswers.includes(index);
+                        return (
+                            <motion.label
+                                key={index}
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                className={`
+                  flex items-center p-3 border rounded-lg cursor-pointer
+                  transition-all duration-300
+                  ${isSelected ? 'bg-primary/10 border-primary' : 'hover:bg-base-200'}
+                `}
+                            >
+                                <input
+                                    type="checkbox"
+                                    checked={isSelected}
+                                    onChange={() => handleAnswerSelection(index)}
+                                    className="checkbox checkbox-primary mr-3"
+                                />
+                                <span className="text-base">{choice}</span>
+                            </motion.label>
+                        );
+                    })}
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 };

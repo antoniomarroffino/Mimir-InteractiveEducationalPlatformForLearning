@@ -5,9 +5,11 @@ export type QuizAttemptLocalContextType = {
     currentAttempt: Partial<QuizAttemptDTO> | null;
     startQuizAttempt: (publication: QuizPublicationDTO) => Promise<void>;
     updateQuizAttemptResponses: (responses: QuestionResponseDTO[]) => void;
-    completeQuizAttempt: () => Promise<QuizAttemptDTO>;
+    completeQuizAttempt: (userResponsesOverride?: QuestionResponseDTO[]) => Promise<QuizAttemptDTO>;
     resetQuizAttempt: () => void;
     prepareQuizResponses: (publication: QuizPublicationDTO) => QuestionResponseDTO[];
+    clearQuizAttempt: () => void;
+
 };
 
 export const QuizAttemptLocalContext = createContext<QuizAttemptLocalContextType | undefined>(undefined);
