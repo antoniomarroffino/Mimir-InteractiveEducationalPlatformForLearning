@@ -1,7 +1,7 @@
-import {QuestionBankDTO} from '@dti-isin/backend-api-client';
-import {QuestionBankItem} from "./QuestionBankItem.tsx";
-import {useMemo, useState} from "react";
-import {QuestionBankSearch} from "../questionBank/QuestionBankSearch.tsx";
+import { QuestionBankDTO } from '@dti-isin/backend-api-client';
+import { QuestionBankItem } from "./QuestionBankItem.tsx";
+import React, { useMemo, useState } from "react";
+import { QuestionBankSearch } from "../questionBank/QuestionBankSearch.tsx";
 
 interface QuestionBankListProps {
     banks: QuestionBankDTO[];
@@ -15,18 +15,17 @@ interface QuestionBankListProps {
     isImporting: boolean;
 }
 
-export const QuestionBankList: React.FC<QuestionBankListProps> = ({
-                                                                      banks,
-                                                                      isLoading,
-                                                                      error,
-                                                                      selectedQuestions,
-                                                                      importedQuestion,
-                                                                      onQuestionSelect,
-                                                                      onBankSelect,
-                                                                      onImport,
-                                                                      isImporting
-                                                                  }) => {
-
+export const QuestionBankList: React.FC<QuestionBankListProps> = React.memo(({
+                                                                                 banks,
+                                                                                 isLoading,
+                                                                                 error,
+                                                                                 selectedQuestions,
+                                                                                 importedQuestion,
+                                                                                 onQuestionSelect,
+                                                                                 onBankSelect,
+                                                                                 onImport,
+                                                                                 isImporting
+                                                                             }) => {
     const [searchTerm, setSearchTerm] = useState('');
 
     const filteredBanks = useMemo(() => {
@@ -34,7 +33,6 @@ export const QuestionBankList: React.FC<QuestionBankListProps> = ({
             bank.name.toLowerCase().includes(searchTerm.toLowerCase())
         );
     }, [banks, searchTerm]);
-
 
     if (error) {
         return (
@@ -61,7 +59,6 @@ export const QuestionBankList: React.FC<QuestionBankListProps> = ({
                 </button>
             </div>
 
-            {/* Aggiungi la barra di ricerca */}
             <QuestionBankSearch
                 searchTerm={searchTerm}
                 onSearchChange={setSearchTerm}
@@ -87,4 +84,4 @@ export const QuestionBankList: React.FC<QuestionBankListProps> = ({
             </div>
         </div>
     );
-};
+});
