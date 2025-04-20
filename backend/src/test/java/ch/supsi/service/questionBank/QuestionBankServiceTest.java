@@ -16,10 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -40,9 +37,10 @@ public class QuestionBankServiceTest {
     public static QuestionBank createTestQuestionBank(String name) {
         QuestionBank qb = new QuestionBank();
         qb.name = name;
-        qb.questions = new HashSet<>();
+        qb.questions = new ArrayList<>();
         return qb;
     }
+
 
     @Test
     @DisplayName("Should return empty list of Question Banks")
