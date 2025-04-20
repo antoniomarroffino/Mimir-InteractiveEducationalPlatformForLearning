@@ -39,6 +39,7 @@ public class QuizAttemptService implements IQuizAttemptService {
 
     @Override
     public QuizAttemptDTO createQuizAttempt(QuizAttemptDTO dto) {
+        this.verifyQuizAttemptIsValid(dto);
         dto.setStartedAt(LocalDateTime.now());
         QuizAttempt attempt = this.quizAttemptMapperFacade.toEntity(dto);
         attempt.status = AttemptStatus.IN_PROGRESS;
