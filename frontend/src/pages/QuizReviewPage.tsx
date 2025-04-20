@@ -3,15 +3,17 @@ import {AttemptsList} from "../components/attempt/AttemptsList.tsx";
 import {useAuth} from "../hooks/useAuth.ts";
 import {useGetQuizAttemptsByUser} from "../hooks/quizAttempt/useGetQuizAttemptsByUser.ts";
 import {useGetQuizPublicationById} from "../hooks/quizPublication/useGetQuizPublicationById.ts";
-import React from "react";
+import React, {useState} from "react";
 import {QuizAttemptDTO} from "@dti-isin/backend-api-client";
 import {AttemptBadgeDisplay} from "../components/badge/AttemptBadgeDisplay.tsx";
 import {QuizReviewPageHeader} from "../components/quiz-results/QuizReviewPageHeader.tsx";
+import {QuizReviewInfoAlert} from "../components/quiz-results/QuizReviewInfoAlert.tsx";
 
 const QuizReviewPage: React.FC = () => {
     const {user} = useAuth();
     const {data: attempts = [], isLoading: isLoadingAttempts} = useGetQuizAttemptsByUser(user?.azureOid);
-    const [selectedAttempt, setSelectedAttempt] = React.useState<QuizAttemptDTO | null | undefined>(null);
+    const [selectedAttempt, setSelectedAttempt] = useState<QuizAttemptDTO | null | undefined>(null);
+    const [showInfo, setShowInfo] = useState(false);
 
     const {data: publication, isLoading: isLoadingPublication} = useGetQuizPublicationById(
         selectedAttempt?.quizPublicationId || '',
@@ -30,7 +32,15 @@ const QuizReviewPage: React.FC = () => {
     return (
         <div className="min-h-screen bg-gradient-to-br from-primary/5 to-secondary/5 py-12 px-4">
             <div className="max-w-7xl mx-auto">
-                <QuizReviewPageHeader totalAttempts={attempts.length} />
+                <QuizReviewPageHeader
+                    totalAttempts={attempts.length}
+                    onToggleInfo={() => setShowInfo(prev => !prev)}
+                    showInfoToggle
+                />
+
+                {showInfo && (
+                    <QuizReviewInfoAlert/>
+                )}
 
                 <div className="flex flex-col lg:flex-row gap-6 min-h-[600px]">
                     {/* Sidebar */}
