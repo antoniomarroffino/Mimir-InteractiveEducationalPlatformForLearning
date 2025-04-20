@@ -61,7 +61,7 @@ public class QuestionBankMapperTest {
         questionBankDTO.setLastModified(LocalDateTime.now());
         questionBankDTO.setName("Test");
 
-        Set<String> questionList = Set.of(new ObjectId().toString(), new ObjectId().toString());
+        List<String> questionList = List.of(new ObjectId().toString(), new ObjectId().toString());
 
         QuestionBank questionBank = this.questionBankMapper.toEntity(questionBankDTO, questionList);
         assertNotNull(questionBank);
@@ -79,7 +79,7 @@ public class QuestionBankMapperTest {
         questionBankDTO.setLastModified(LocalDateTime.now());
         questionBankDTO.setName("Test");
 
-        Set<String> questionList = Set.of(new ObjectId().toString(), new ObjectId().toString());
+        List<String> questionList = List.of(new ObjectId().toString(), new ObjectId().toString());
 
         QuestionBank questionBank = this.questionBankMapper.toEntity(questionBankDTO, questionList);
         assertNotNull(questionBank);
