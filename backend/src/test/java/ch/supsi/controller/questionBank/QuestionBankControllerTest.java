@@ -294,4 +294,32 @@ public class QuestionBankControllerTest {
         );
         verifyNoInteractions(this.questionBankService);
     }
+
+    @Test
+    @DisplayName("Should update question order successfully")
+    @TestSecurity(user = "teacher", roles = "TEACHER")
+    void test18ReorderQuestions_Success() {
+        List<String> orderedIds = List.of("q1", "q2", "q3");
+
+        Response response = this.questionBankController.reorderQuestions(QUESTION_BANK_ID, orderedIds);
+
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        verify(this.questionBankService, times(1)).updateQuestionOrder(new ObjectId(QUESTION_BANK_ID), orderedIds);
+    }
+
+    @Test
+    @DisplayName("Should return 404 when question bank to reorder not found")
+    @TestSecurity(user = "teacher", roles = "TEACHER")
+    void test19ReorderQuestions_NotFound() {
+        doThrow(new NotFoundException()).when(this.questionBankService)
+                .updateQuestionOrder(any(ObjectId.class), anyList());
+
+        assertThrows(
+                NotFoundException.class,
+                () -> this.questionBankController.reorderQuestions(NON_EXISTENT_ID, List.of("q1", "q2"))
+        );
+
+        verify(this.questionBankService, times(1)).updateQuestionOrder(any(ObjectId.class), anyList());
+    }
+
 }

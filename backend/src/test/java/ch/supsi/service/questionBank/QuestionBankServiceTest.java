@@ -282,4 +282,24 @@ public class QuestionBankServiceTest {
         verify(this.questionBankRepository, times(1)).findByIdOptional(questionBank.id);
         verify(this.questionBankRepository, times(1)).delete(questionBank);
     }
+
+    @Test
+    @DisplayName("Should update question order in question bank")
+    void test16UpdateQuestionOrder() {
+        ObjectId bankId = new ObjectId();
+        QuestionBank questionBank = createTestQuestionBank("Ordered Bank");
+        questionBank.id = bankId;
+
+        List<String> newOrder = List.of("q1", "q2", "q3");
+
+        when(this.questionBankRepository.findByIdOptional(bankId)).thenReturn(Optional.of(questionBank));
+
+        this.questionBankService.updateQuestionOrder(bankId, newOrder);
+
+        assertEquals(newOrder, questionBank.questions);
+        assertNotNull(questionBank.lastModified);
+
+        verify(this.questionBankRepository, times(1)).update(questionBank);
+    }
+
 }
