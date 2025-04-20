@@ -1,12 +1,12 @@
 import {AttemptDetails} from "../components/attempt/AttemptDetails.tsx";
 import {AttemptsList} from "../components/attempt/AttemptsList.tsx";
-import {ReviewHeader} from "../components/attempt/ReviewHeader.tsx";
 import {useAuth} from "../hooks/useAuth.ts";
 import {useGetQuizAttemptsByUser} from "../hooks/quizAttempt/useGetQuizAttemptsByUser.ts";
 import {useGetQuizPublicationById} from "../hooks/quizPublication/useGetQuizPublicationById.ts";
 import React from "react";
 import {QuizAttemptDTO} from "@dti-isin/backend-api-client";
 import {AttemptBadgeDisplay} from "../components/badge/AttemptBadgeDisplay.tsx";
+import {QuizReviewPageHeader} from "../components/quiz-results/QuizReviewPageHeader.tsx";
 
 const QuizReviewPage: React.FC = () => {
     const {user} = useAuth();
@@ -28,12 +28,13 @@ const QuizReviewPage: React.FC = () => {
     if (!user) return null;
 
     return (
-        <div className="h-[calc(100vh-4rem)]">
-            <div className="h-full bg-gradient-to-r from-primary/5 to-secondary/5 p-4 sm:p-6 flex flex-col">
-                <ReviewHeader totalAttempts={attempts.length}/>
+        <div className="min-h-screen bg-gradient-to-br from-primary/5 to-secondary/5 py-12 px-4">
+            <div className="max-w-7xl mx-auto">
+                <QuizReviewPageHeader totalAttempts={attempts.length} />
 
-                <div className="flex-1 flex gap-6 min-h-0">
-                    <div className="w-96 flex-shrink-0">
+                <div className="flex flex-col lg:flex-row gap-6 min-h-[600px]">
+                    {/* Sidebar */}
+                    <div className="lg:w-80 flex-shrink-0">
                         <AttemptsList
                             attempts={attempts}
                             isLoading={isLoadingAttempts}
@@ -42,10 +43,11 @@ const QuizReviewPage: React.FC = () => {
                         />
                     </div>
 
-                    <div className="flex-grow flex flex-col min-h-0">
+                    {/* Main content */}
+                    <div className="flex-grow flex flex-col">
                         {selectedAttempt && hasBadge && badge && (
-                            <div className="animate-fadeIn shrink-0">
-                                <AttemptBadgeDisplay badge={badge} />
+                            <div className="animate-fadeIn shrink-0 mb-4">
+                                <AttemptBadgeDisplay badge={badge}/>
                             </div>
                         )}
 
@@ -56,7 +58,7 @@ const QuizReviewPage: React.FC = () => {
                                         <span className="loading loading-spinner loading-lg"></span>
                                     </div>
                                 ) : publication ? (
-                                    <div className="flex-1 overflow-auto"> {/* Scroll container */}
+                                    <div className="flex-1 overflow-auto">
                                         <AttemptDetails
                                             attempt={selectedAttempt}
                                             publication={publication}

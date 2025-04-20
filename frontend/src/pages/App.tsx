@@ -9,7 +9,7 @@ import {AuthProvider} from "../provider/AuthProvider.tsx";
 import AdminDashboard from "./admin/AdminDashboard.tsx";
 import ProtectedRoute from "../routes/ProtectedRoute.tsx";
 import {Role} from "@dti-isin/backend-api-client";
-import {TeacherDashboard} from "./teacher/TeacherDashboard.tsx";
+import {CoursesDashboard} from "./teacher/CoursesDashboard.tsx";
 import PublicHome from "./no-logged/PublicHome.tsx";
 import {AdminProvider} from "../provider/AdminProvider.tsx";
 import UserProfile from "../components/user/UserProfile.tsx";
@@ -84,7 +84,7 @@ const App = () => {
                                         </ProtectedRoute>
                                     }
                                 >
-                                    <Route index element={<TeacherDashboard/>}/>
+                                    <Route index element={<CoursesDashboard/>}/>
                                     <Route path=":courseId" element={<CourseDetailsPage/>}/>
                                     <Route
                                         path=":courseId/folders/:folderId/quizzes/:quizId/edit"
