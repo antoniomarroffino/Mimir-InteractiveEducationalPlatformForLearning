@@ -19,7 +19,7 @@ export const FolderRow = ({folder, courseId, isSelected, onToggleSelect}: Folder
     const [isExpanded, setIsExpanded] = useState(false);
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [quizName, setQuizName] = useState("");
-    const {createQuiz, isCreatingQuiz} = useQuizCRUD();
+    const {createQuiz} = useQuizCRUD();
     const [isEditing, setIsEditing] = useState(false);
     const [editedName, setEditedName] = useState(folder.name);
     const {updateFolder, isUpdatingFolder, errorUpdateFolder} = useFolderCRUD();
@@ -46,7 +46,11 @@ export const FolderRow = ({folder, courseId, isSelected, onToggleSelect}: Folder
         e.stopPropagation();
 
         try {
-            const createdQuizDTO = await createQuiz(courseId!, folder.id!, {name: quizName.trim()});
+            const createdQuizDTO = await createQuiz.mutateAsync({
+                courseId: courseId!,
+                folderId: folder.id!,
+                quizDTO: { name: quizName.trim() }
+            });
             setQuizName("");
             setShowCreateForm(false);
             navigate(`/courses/${courseId}/folders/${folder.id}/quizzes/${createdQuizDTO.id}/edit`);
@@ -139,7 +143,7 @@ export const FolderRow = ({folder, courseId, isSelected, onToggleSelect}: Folder
                                             onChange={(e) => setQuizName(e.target.value)}
                                             placeholder="Quiz name"
                                             className="input input-bordered w-full pl-11 focus:ring-2 focus:ring-primary/50"
-                                            disabled={isCreatingQuiz}
+                                            disabled={createQuiz.isLoading}
                                             maxLength={50}
                                             autoFocus
                                         />
@@ -150,9 +154,9 @@ export const FolderRow = ({folder, courseId, isSelected, onToggleSelect}: Folder
                                         <button
                                             type="submit"
                                             className="btn btn-primary flex-1 gap-2"
-                                            disabled={isCreatingQuiz || !quizName.trim()}
+                                            disabled={createQuiz.isLoading || !quizName.trim()}
                                         >
-                                            {isCreatingQuiz ? (
+                                            {createQuiz.isLoading ? (
                                                 <span className="loading loading-spinner"></span>
                                             ) : (
                                                 <>

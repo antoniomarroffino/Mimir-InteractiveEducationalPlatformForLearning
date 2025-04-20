@@ -27,7 +27,12 @@ export const DeleteQuizModal: React.FC<DeleteQuizModalProps> = ({
     const handleDelete = async () => {
         try {
             setError(null);
-            await deleteQuiz(courseId, folderId, quiz.id!);
+            await deleteQuiz.mutateAsync({
+                courseId,
+                folderId,
+                quizId: quiz.id!
+            });
+
             onClose();
         } catch (err) {
             console.error('Quiz deletion failed:', err);
