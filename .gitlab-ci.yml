@@ -98,6 +98,9 @@ deploy_backend:
     - gcloud config set project $GCP_PROJECT_ID
     - gcloud config set run/region $GCP_REGION
 
+    - gcloud auth configure-docker ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev --quiet
+    - cat gcp_key.json | docker login -u _json_key --password-stdin ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev
+
     # build & push dell'immagine backend
     - cd backend
     - docker build -t ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/backend:$CI_COMMIT_SHORT_SHA .
@@ -124,6 +127,10 @@ deploy_frontend:
     - gcloud auth activate-service-account --key-file=gcp_key.json
     - gcloud config set project $GCP_PROJECT_ID
     - gcloud config set run/region $GCP_REGION
+
+
+    - gcloud auth configure-docker ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev --quiet
+    - cat gcp_key.json | docker login -u _json_key --password-stdin ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev
 
     # build & push dell'immagine frontend
     - cd frontend
