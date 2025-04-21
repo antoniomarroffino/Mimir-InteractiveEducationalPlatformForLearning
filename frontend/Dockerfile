@@ -1,5 +1,9 @@
 FROM node:22.14-alpine AS builder
 WORKDIR /app
+
+RUN echo "//gitlab-edu.supsi.ch/api/v4/projects/1051/packages/npm/:_authToken=${CI_JOB_TOKEN}" > .npmrc
+RUN echo "@dti-isin:registry=https://gitlab-edu.supsi.ch/api/v4/projects/1051/packages/npm/" >> .npmrc
+
 COPY package.json .
 RUN npm install
 COPY . .

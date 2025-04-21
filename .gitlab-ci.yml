@@ -107,7 +107,7 @@ deploy_backend:
     - docker push ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/backend:$CI_COMMIT_SHORT_SHA
 
     # deploy su Cloud Run (servizio pubblico)
-    - gcloud run deploy backend-service --image ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/backend:$CI_COMMIT_SHORT_SHA --platform managed --allow-unauthenticated --set-env-vars QUARKUS_PROFILE=prod
+    - gcloud run deploy backend-service --image ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/backend:$CI_COMMIT_SHORT_SHA --platform managed --allow-unauthenticated --set-env-vars QUARKUS_PROFILE=prod --timeout 15m
   only:
     - dev
     - spike/103-deployment-AWS
@@ -124,9 +124,6 @@ deploy_frontend:
     VITE_LOGOUT_REDIRECT_URI: "/"
     VITE_BACKEND_CLIENT_ID: "527ea26f-be1b-428f-8d09-2849729fe4fe"
     VITE_BACKEND_URL: ""
-  before_script:
-    - echo "//${CI_SERVER_HOST}/api/v4/projects/1051/packages/npm/:_authToken=${CI_JOB_TOKEN}" > frontend/.npmrc
-    - echo "${NPM_SCOPE}:registry=${NPM_REGISTRY_URL}" >> frontend/.npmrc
   script:
     - echo "$GCP_SERVICE_KEY" > gcp_key.json
     - gcloud auth activate-service-account --key-file=gcp_key.json
