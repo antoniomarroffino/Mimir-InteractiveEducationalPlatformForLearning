@@ -12,7 +12,7 @@ structure:
     - '[ -d frontend ] || exit 1'
   only:
     - dev
-    - spike/103-deployment-AWS
+    #- spike/103-deployment-AWS
 
 services:
   - name: docker:dind
@@ -95,8 +95,9 @@ deploy_backend:
     GOOGLE_APPLICATION_CREDENTIALS: "$CI_PROJECT_DIR/gcp_key.json"
   script:
     # autentico il service account
-    - echo "${GCP_SERVICE_KEY}"
-    - cp "$GCP_SERVICE_KEY" "$GOOGLE_APPLICATION_CREDENTIALS"
+    - echo $GCP_SERVICE_KEY
+    - echo "$GCP_SERVICE_KEY"
+    - echo "$GCP_SERVICE_KEY" > $GOOGLE_APPLICATION_CREDENTIALS
     - gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
     - gcloud config set project $GCP_PROJECT_ID
     - gcloud config set run/region $GCP_REGION
@@ -128,7 +129,7 @@ deploy_frontend:
     GOOGLE_APPLICATION_CREDENTIALS: "$CI_PROJECT_DIR/gcp_key.json"
   script:
     # autentico il service account
-    - cp "$GCP_SERVICE_KEY" "$GOOGLE_APPLICATION_CREDENTIALS"
+    - echo "$GCP_SERVICE_KEY" > $GOOGLE_APPLICATION_CREDENTIALS
     - gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
     - gcloud config set project $GCP_PROJECT_ID
     - gcloud config set run/region $GCP_REGION
