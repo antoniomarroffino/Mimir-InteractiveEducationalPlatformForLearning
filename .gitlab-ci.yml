@@ -3,7 +3,8 @@ stages:
   - build_backend
   - publish_npm_package
   - build_frontend
-  - deploy
+  - deploy_backend
+  - deploy_frontend
 
 structure:
   stage: structure
@@ -87,7 +88,7 @@ build_frontend:
     #- spike/103-deployment-AWS
 
 deploy_backend:
-  stage: deploy
+  stage: deploy_backend
   image:
     name: google/cloud-sdk:slim
     entrypoint: [""]
@@ -113,7 +114,7 @@ deploy_backend:
     - spike/103-deployment-AWS
 
 deploy_frontend:
-  stage: deploy
+  stage: deploy_frontend
   image:
     name: google/cloud-sdk:slim
     entrypoint: [""]
