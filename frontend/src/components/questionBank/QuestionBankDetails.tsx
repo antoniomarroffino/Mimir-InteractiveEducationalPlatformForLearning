@@ -88,10 +88,18 @@ const QuestionBankDetails: React.FC = () => {
 
 
     const handleDeleteQuestion = async (questionId: string) => {
-        if (questionBank) {
-            await deleteQuestion(questionId, questionBankId!);
+        if (questionBank?.id) {
+            try {
+                console.log("PRIMA");
+                await deleteQuestion(questionId, questionBank.id);
+                console.log("DOPO");
+            } catch (err) {
+                console.error("Failed to delete question:", err);
+            }
+        } else {
+            console.log("No question bank ID found when trying to delete.");
         }
-    }
+    };
 
     if (isLoading) {
         return <Spinner size="lg"/>;
@@ -272,7 +280,6 @@ const QuestionBankDetails: React.FC = () => {
 `}>
                     <div className="bg-base-100 rounded-xl p-6 shadow-xl space-y-6">
                         <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-lg font-semibold">Questions</h3>
                             <button
                                 className="btn btn-circle btn-sm lg:hidden"
                                 onClick={() => setIsSidebarOpen(false)}

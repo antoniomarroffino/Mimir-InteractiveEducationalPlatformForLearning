@@ -76,21 +76,31 @@ const SortableQuestionElement: React.FC<SortableQuestionElementProps> = ({
                                                                              onDelete,
                                                                              onStartEditing
                                                                          }) => {
-    const {attributes, listeners, setNodeRef, transform, transition} = useSortable({id: question.id!});
-
-    const style = {
-        transform: CSS.Transform.toString(transform),
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
         transition,
+        isDragging
+    } = useSortable({ id: question.id! });
+
+    const style: React.CSSProperties = {
+        transform: CSS.Transform.toString(transform),
+        transition: isDragging ? transition : "transform 0s",
+        zIndex: isDragging ? 999 : undefined,
     };
 
     return (
-        <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+        <div ref={setNodeRef} style={style} {...attributes}>
             <QuestionElement
                 question={question}
                 index={index}
                 onDelete={onDelete}
                 onStartEditing={() => onStartEditing?.(question)}
+                dragListeners={listeners}
             />
         </div>
     );
 };
+
