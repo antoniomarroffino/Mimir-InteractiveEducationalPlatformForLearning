@@ -21,11 +21,8 @@ public class AdminInitializer {
     AdminConfig adminConfig;
 
     public void onStart(@Observes StartupEvent ev) {
+        System.out.println("Admin Initializing");
         this.createAdmins();
-    }
-
-    public void onStop(@Observes ShutdownEvent ev) {
-        this.adminService.deleteAdmins();
     }
 
     private void createAdmins() {

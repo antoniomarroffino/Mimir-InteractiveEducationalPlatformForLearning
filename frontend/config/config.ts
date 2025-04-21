@@ -13,7 +13,7 @@ import {
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-    baseURL: "https://backend-service-1031980811194.europe-west12.run.app",
+    baseURL: import.meta.env.VITE_BACKEND_URL || "https://backend-service-1031980811194.europe-west12.run.app",
     headers: {
         'Content-Type': 'application/json'
     }
@@ -28,7 +28,7 @@ export const setAuthToken = (token: string | null) => {
 };
 
 const config = new Configuration({
-    basePath: "https://backend-service-1031980811194.europe-west12.run.app",
+    basePath: import.meta.env.VITE_BACKEND_URL || "https://backend-service-1031980811194.europe-west12.run.app",
     baseOptions: axiosInstance.defaults
 });
 
