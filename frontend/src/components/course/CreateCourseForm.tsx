@@ -21,14 +21,14 @@ export const CreateCourseForm = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-3">
+        <form onSubmit={handleSubmit} className="space-y-4">
             <div className="form-control">
                 <input
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Course Title"
-                    className="input input-bordered input-sm w-full focus:ring-1 ring-primary/50"
+                    className="input input-sm w-full rounded-lg border border-indigo-200 bg-white text-sm shadow-sm focus:ring-2 ring-indigo-300 transition-all duration-200"
                     disabled={isCreatingCourse}
                     required
                 />
@@ -39,7 +39,7 @@ export const CreateCourseForm = () => {
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Course Description (Optional)"
-                    className="textarea textarea-bordered textarea-xs w-full focus:ring-1 ring-primary/50"
+                    className="textarea textarea-sm w-full rounded-lg border border-indigo-200 bg-white text-sm shadow-sm focus:ring-2 ring-indigo-300 transition-all duration-200 resize-none"
                     disabled={isCreatingCourse}
                     rows={2}
                 />
@@ -47,15 +47,15 @@ export const CreateCourseForm = () => {
 
             <button
                 type="submit"
-                className="btn btn-primary btn-sm w-full"
+                className="btn btn-sm btn-primary w-full flex items-center justify-center gap-2 transition-all duration-200"
                 disabled={isCreatingCourse || !name.trim()}
             >
                 {isCreatingCourse ? (
                     <span className="loading loading-spinner loading-xs"></span>
                 ) : (
                     <>
-                        <FiPlus className="text-lg mr-1"/>
-                        Create
+                        <FiPlus className="text-base" />
+                        <span>Create</span>
                     </>
                 )}
             </button>

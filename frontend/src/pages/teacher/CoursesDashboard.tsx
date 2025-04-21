@@ -6,6 +6,7 @@ import {CourseSearch} from "../../components/course/CourseSearch.tsx";
 import {LightBulbIcon, PlusCircleIcon} from "@heroicons/react/24/outline";
 import {CoursesPageHeader} from "../../components/course/CoursesPageHeader.tsx";
 import {CoursesInfoAlert} from "../../components/course/CoursesInfoAlert.tsx";
+
 export const CoursesDashboard = () => {
     const [showInfo, setShowInfo] = useState(false);
 
@@ -23,49 +24,47 @@ export const CoursesDashboard = () => {
 
                 {showInfo && <CoursesInfoAlert />}
 
-                <div className="grid md:grid-cols-5 gap-8">
+                <div className="grid lg:grid-cols-4 gap-8 mt-8 items-start">
+                    {/* Form: più compatto */}
                     <motion.div
                         initial={{opacity: 0, y: 10}}
                         animate={{opacity: 1, y: 0}}
                         transition={{delay: 0.2}}
-                        className="md:col-span-2 bg-white rounded-2xl p-6 shadow-xl border border-indigo-100"
+                        className="lg:col-span-1"
                     >
-                        <h2 className="text-xl font-semibold flex items-center gap-2 mb-4 text-indigo-900">
-                            <PlusCircleIcon className="w-6 h-6"/>
-                            Create New Course
-                        </h2>
-                        <p className="text-sm text-base-content/70 mb-4">
-                            Transform your knowledge into an interactive journey for your students.
-                        </p>
-                        <CreateCourseForm/>
+                        <div className="bg-white rounded-2xl p-6 shadow-xl border border-indigo-100 max-w-sm mx-auto">
+                            <h2 className="text-xl font-semibold flex items-center gap-2 mb-2 text-indigo-900">
+                                <PlusCircleIcon className="w-5 h-5"/>
+                                Create New Course
+                            </h2>
+                            <p className="text-sm text-base-content/70 mb-4">
+                                Transform your knowledge into an interactive journey for your students.
+                            </p>
+                            <CreateCourseForm/>
+                        </div>
                     </motion.div>
 
+                    {/* Contenuto principale: si espande */}
                     <motion.div
                         initial={{opacity: 0, y: 10}}
                         animate={{opacity: 1, y: 0}}
                         transition={{delay: 0.3}}
-                        className="md:col-span-3 bg-secondary/10 rounded-2xl p-6 shadow-xl"
+                        className="lg:col-span-3 space-y-6"
                     >
-                        <h2 className="text-xl font-semibold flex items-center gap-2 mb-4 text-secondary">
-                            <LightBulbIcon className="w-6 h-6"/>
-                            Your Teaching Impact
-                        </h2>
-                        <p className="text-sm text-base-content/70 mb-4">
-                            Every course is an opportunity to spark curiosity and growth.
-                        </p>
-                        <CourseList/>
+                        <div className="bg-white rounded-2xl p-6 shadow-xl border border-secondary/20">
+                            <h2 className="text-xl font-semibold flex items-center gap-2 mb-2 text-secondary">
+                                <LightBulbIcon className="w-5 h-5"/>
+                                Your Teaching Impact
+                            </h2>
+                            <p className="text-sm text-base-content/70 mb-4">
+                                Every course is an opportunity to spark curiosity and growth.
+                            </p>
+                            <CourseList/>
+                        </div>
+
+                        <CourseSearch/>
                     </motion.div>
                 </div>
-
-                <motion.div
-                    initial={{opacity: 0, y: 10}}
-                    animate={{opacity: 1, y: 0}}
-                    transition={{delay: 0.4}}
-                    className="bg-white shadow-lg rounded-2xl mt-12 p-6 border border-purple-100"
-                >
-                    <h3 className="text-xl font-bold text-purple-800 mb-6">Explore Your Courses</h3>
-                    <CourseSearch/>
-                </motion.div>
             </div>
         </motion.section>
     );
