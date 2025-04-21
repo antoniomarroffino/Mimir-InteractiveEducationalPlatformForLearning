@@ -93,7 +93,7 @@ deploy_backend:
     entrypoint: [""]
   script:
     # autentico il service account
-    - gcloud auth activate-service-account --key-file="$GCP_SERVICE_KEY"
+    - gcloud auth activate-service-account --key-file=${GCP_SERVICE_KEY}
     - gcloud config set project $GCP_PROJECT_ID
     - gcloud config set run/region $GCP_REGION
 
@@ -122,7 +122,7 @@ deploy_frontend:
     entrypoint: [""]
   variables:
   script:
-    - gcloud auth activate-service-account --key-file="$GCP_SERVICE_KEY"
+    - gcloud auth activate-service-account --key-file=${GCP_SERVICE_KEY}
     - gcloud config set project $GCP_PROJECT_ID
     - gcloud config set run/region $GCP_REGION
 
