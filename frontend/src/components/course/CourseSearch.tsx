@@ -4,6 +4,7 @@ import {CourseCard} from './CourseCard';
 import {SkeletonLoader} from '../common/SkeletonLoader';
 import {useCourseList} from "../../hooks/course/useCourseList";
 import {useCourseCRUD} from "../../hooks/course/useCourseCRUD.ts";
+import {motion} from "framer-motion";
 
 type SearchType = 'name' | 'id';
 
@@ -43,32 +44,28 @@ export const CourseSearch = () => {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-
     if (errorAllCourses) {
         return (
             <div className="alert alert-error shadow-lg">
-                <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none"
-                     viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                          d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                <div>
-                    <h3 className="font-bold">Error Loading Courses</h3>
-                    <div className="text-xs">{errorAllCourses.message}</div>
-                </div>
+                <h3 className="font-bold">Error Loading Courses</h3>
+                <p className="text-sm">{errorAllCourses.message}</p>
             </div>
         );
     }
 
     return (
         <div className="bg-white border border-purple-100 rounded-2xl p-6 shadow-xl space-y-8">
+            <div>
+                <h2 className="text-xl font-semibold text-purple-800 mb-1">Join Existing Courses</h2>
+                <p className="text-sm text-base-content/70">
+                    Search for public courses already created by others and assign them to yourself.
+                </p>
+            </div>
             {errorAssignCourse && (
                 <div className="alert alert-error shadow-lg">
                     <span className="font-bold">Assignment Error:</span> {errorAssignCourse.message}
                 </div>
             )}
-
-            {/* Search bar */}
             <div className="relative w-full">
                 <input
                     type="text"
@@ -83,17 +80,16 @@ export const CourseSearch = () => {
                         className="absolute right-10 top-1/2 -translate-y-1/2 text-base-content/50 hover:text-error"
                         onClick={() => setSearchTerm('')}
                     >
-                        <FiX />
+                        <FiX/>
                     </button>
                 )}
-                {/* Filter Button */}
                 <div className="absolute right-2 top-1/2 -translate-y-1/2" ref={dropdownRef}>
                     <button
                         className="btn btn-ghost btn-xs btn-square"
                         onClick={() => setShowFilterDropdown(!showFilterDropdown)}
                         title="Filter"
                     >
-                        <FiFilter className="text-lg" />
+                        <FiFilter className="text-lg"/>
                     </button>
                     {showFilterDropdown && (
                         <div className="absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-lg z-50">
@@ -125,8 +121,6 @@ export const CourseSearch = () => {
                     )}
                 </div>
             </div>
-
-            {/* Course Results */}
             {isLoadingAllCourses ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {[...Array(6)].map((_, i) => (
@@ -152,19 +146,34 @@ export const CourseSearch = () => {
                             Showing <strong>{filteredCourses.length}</strong> result{filteredCourses.length > 1 && 's'} for "<em>{searchTerm}</em>"
                         </p>
                     )}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
+                    <motion.div
+                        initial="hidden"
+                        animate="visible"
+                        variants={{
+                            hidden: {opacity: 0},
+                            visible: {
+                                opacity: 1,
+                                transition: {staggerChildren: 0.1}
+                            }
+                        }}
+                        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in"
+                    >
                         {filteredCourses.map(course => (
-                            <CourseCard
+                            <motion.div
                                 key={course.id}
-                                course={course}
-                                showAssignButton
-                                isAssigned={teacherCourses.some(tc => tc.id === course.id)}
-                                onAssign={handleAssign}
-                                isAssigning={isAssigningCourse}
-                                assignError={errorAssignCourse}
-                            />
+                                variants={{hidden: {opacity: 0, y: 10}, visible: {opacity: 1, y: 0}}}
+                            >
+                                <CourseCard
+                                    course={course}
+                                    showAssignButton
+                                    isAssigned={teacherCourses.some(tc => tc.id === course.id)}
+                                    onAssign={handleAssign}
+                                    isAssigning={isAssigningCourse}
+                                    assignError={errorAssignCourse}
+                                />
+                            </motion.div>
                         ))}
-                    </div>
+                    </motion.div>
                 </>
             )}
         </div>
