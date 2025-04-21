@@ -5,19 +5,29 @@ import BadgeCard from './BadgeCard';
 import React from "react";
 
 interface Props {
-    groupedBadges: GroupedBadge[];
+    groupedBadges?: GroupedBadge[];
     formatDate: (date?: string) => string;
 }
 
-export const BadgeCollectionGrid: React.FC<Props> = ({ groupedBadges, formatDate }) => {
+export const BadgeCollectionGrid: React.FC<Props> = ({ groupedBadges = [], formatDate }) => {
     return (
-        <motion.div variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 }}} initial="hidden" animate="visible">
+        <motion.div
+            variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                    opacity: 1,
+                    transition: { staggerChildren: 0.1 },
+                },
+            }}
+            initial="hidden"
+            animate="visible"
+        >
             <h2 className="text-3xl font-bold mb-8">Your Collection</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {groupedBadges.map((group, index) => (
                     <BadgeCard key={index} groupedBadge={group} formatDate={formatDate} />
                 ))}
-                {/* Placeholder per il prossimo achievement */}
+
                 <motion.div
                     className="bg-base-100/50 rounded-2xl p-6 border-2 border-dashed border-base-300 flex flex-col items-center justify-center text-center gap-4 group hover:border-primary hover:bg-base-100/80 transition-all duration-300"
                 >
