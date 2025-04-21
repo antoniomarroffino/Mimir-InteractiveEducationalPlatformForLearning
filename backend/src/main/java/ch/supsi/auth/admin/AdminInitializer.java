@@ -21,7 +21,6 @@ public class AdminInitializer {
     AdminConfig adminConfig;
 
     public void onStart(@Observes StartupEvent ev) {
-        System.out.println("Admin Initializing");
         this.createAdmins();
     }
 
