@@ -24,10 +24,6 @@ public class AdminInitializer {
         this.createAdmins();
     }
 
-    public void onStop(@Observes ShutdownEvent ev) {
-        this.adminService.deleteAdmins();
-    }
-
     private void createAdmins() {
         for (String mail : this.adminConfig.getAdminEmails())
             this.adminService.createAdmin(this.microsoftGraphService.getUserByEmail(mail));
