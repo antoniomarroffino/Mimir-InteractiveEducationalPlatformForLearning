@@ -163,7 +163,7 @@ export const QuestionElement: React.FC<QuestionElementProps> = ({
 
             {showConfirmPopup && (
                 <ConfirmDeleteQuestionPopup
-                    questionText={`Are you sure you want to delete question: ${question.questionText}`}
+                    questionText={question.questionText}
                     onConfirm={handleConfirmDelete}
                     onCancel={() => {
                         setShowConfirmPopup(false);

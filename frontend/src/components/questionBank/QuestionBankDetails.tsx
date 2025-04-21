@@ -86,18 +86,9 @@ const QuestionBankDetails: React.FC = () => {
         await reorderQuestionBank(questionBank.id!, orderedIds);
     };
 
-
     const handleDeleteQuestion = async (questionId: string) => {
         if (questionBank?.id) {
-            try {
-                console.log("PRIMA");
-                await deleteQuestion(questionId, questionBank.id);
-                console.log("DOPO");
-            } catch (err) {
-                console.error("Failed to delete question:", err);
-            }
-        } else {
-            console.log("No question bank ID found when trying to delete.");
+            await deleteQuestion(questionId, questionBank.id);
         }
     };
 
