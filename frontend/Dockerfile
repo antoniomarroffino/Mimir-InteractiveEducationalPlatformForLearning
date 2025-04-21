@@ -1,6 +1,8 @@
 FROM node:22.14-alpine AS builder
 WORKDIR /app
 
+ARG CI_JOB_TOKEN
+
 RUN echo "//gitlab-edu.supsi.ch/api/v4/projects/1051/packages/npm/:_authToken=${CI_JOB_TOKEN}" > .npmrc
 RUN echo "@dti-isin:registry=https://gitlab-edu.supsi.ch/api/v4/projects/1051/packages/npm/" >> .npmrc
 
