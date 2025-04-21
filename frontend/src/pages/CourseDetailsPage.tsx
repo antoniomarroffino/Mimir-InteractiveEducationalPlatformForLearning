@@ -6,7 +6,7 @@ import {useCourseList} from "../hooks/course/useCourseList.ts";
 import {useCourseCRUD} from "../hooks/course/useCourseCRUD.ts";
 import {FiFolder} from "react-icons/fi";
 import {BsBoxArrowRight, BsPencil, BsTrash} from "react-icons/bs";
-import {BreadcrumbCourses} from "../components/common/BreadcrumbCourses.tsx";
+import {BreadcrumbCourses} from "../components/course/BreadcrumbCourses.tsx";
 import {useFolderCRUD} from "../hooks/folder/useFolderCRUD.ts";
 import {useGetCourseById} from "../hooks/course/useGetCourseById.ts";
 import {LoadingSpinner} from "../components/common/LoadingSpinner.tsx";

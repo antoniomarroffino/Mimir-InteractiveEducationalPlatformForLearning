@@ -1,6 +1,6 @@
 import {useParams} from 'react-router-dom';
 import {QuestionDTO, QuestionType} from '@dti-isin/backend-api-client';
-import {BreadcrumbCourses} from "../components/common/BreadcrumbCourses.tsx";
+import {BreadcrumbCourses} from "../components/course/BreadcrumbCourses.tsx";
 import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {BsLayoutSidebar, BsListTask, BsListUl, BsPencil, BsQuestionDiamond} from 'react-icons/bs';
 import {useQuizCRUD} from "../hooks/quiz/useQuizCRUD.ts";
