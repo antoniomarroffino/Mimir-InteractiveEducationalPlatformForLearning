@@ -74,8 +74,8 @@ export const AuthProvider = ({children}: { children: React.ReactNode }) => {
         if (accounts.length > 0) {
             await instance.logoutPopup({
                 account: accounts[0],
-                postLogoutRedirectUri: import.meta.env.VITE_LOGOUT_REDIRECT_URI,
-                mainWindowRedirectUri: import.meta.env.VITE_LOGOUT_REDIRECT_URI
+                postLogoutRedirectUri: "https://frontend-service-1031980811194.europe-west12.run.app",
+                mainWindowRedirectUri: "https://frontend-service-1031980811194.europe-west12.run.app"
             });
         }
         // 7. Configurazione corretta del logout
