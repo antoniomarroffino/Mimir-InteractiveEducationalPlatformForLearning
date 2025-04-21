@@ -91,14 +91,9 @@ deploy_backend:
   image:
     name: google/cloud-sdk:slim
     entrypoint: [""]
-  variables:
-    GOOGLE_APPLICATION_CREDENTIALS: "$CI_PROJECT_DIR/gcp_key.json"
   script:
     # autentico il service account
-    - echo $GCP_SERVICE_KEY
-    - echo "$GCP_SERVICE_KEY"
-    - echo "$GCP_SERVICE_KEY" > $GOOGLE_APPLICATION_CREDENTIALS
-    - gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
+    - gcloud auth activate-service-account --key-file="$GCP_SERVICE_KEY"
     - gcloud config set project $GCP_PROJECT_ID
     - gcloud config set run/region $GCP_REGION
 
@@ -126,11 +121,8 @@ deploy_frontend:
     name: google/cloud-sdk:slim
     entrypoint: [""]
   variables:
-    GOOGLE_APPLICATION_CREDENTIALS: "$CI_PROJECT_DIR/gcp_key.json"
   script:
-    # autentico il service account
-    - echo "$GCP_SERVICE_KEY" > $GOOGLE_APPLICATION_CREDENTIALS
-    - gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
+    - gcloud auth activate-service-account --key-file="$GCP_SERVICE_KEY"
     - gcloud config set project $GCP_PROJECT_ID
     - gcloud config set run/region $GCP_REGION
 
