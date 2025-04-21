@@ -100,11 +100,8 @@ deploy_backend:
 
     # build & push dell'immagine backend
     - cd backend
-    - docker build \
-      -t ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/backend:$CI_COMMIT_SHORT_SHA \
-      .
-    - docker push \
-      ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/backend:$CI_COMMIT_SHORT_SHA
+    - docker build -t ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/backend:$CI_COMMIT_SHORT_SHA .
+    - docker push ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/backend:$CI_COMMIT_SHORT_SHA
 
     # deploy su Cloud Run (servizio pubblico)
     - gcloud run deploy backend-service \
@@ -130,11 +127,8 @@ deploy_frontend:
 
     # build & push dell'immagine frontend
     - cd frontend
-    - docker build \
-      -t ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/frontend:$CI_COMMIT_SHORT_SHA \
-      .
-    - docker push \
-      ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/frontend:$CI_COMMIT_SHORT_SHA
+    - docker build -t ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/frontend:$CI_COMMIT_SHORT_SHA .
+    - docker push ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/frontend:$CI_COMMIT_SHORT_SHA
 
     # deploy su Cloud Run (servizio pubblico)
     - gcloud run deploy frontend-service \
