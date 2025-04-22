@@ -39,7 +39,7 @@ export const QuestionsList: React.FC<QuestionsListProps> = ({
 
     return (
         <div className="flex flex-col gap-6">
-            <div className="flex-1 max-h-[400px] overflow-y-auto pr-2">
+            <div className="flex-1 max-h-[400px] overflow-y-auto pr-2 bg-base-300 p-2">
                 <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                     <SortableContext
                         items={questions.map(q => q.id!)}

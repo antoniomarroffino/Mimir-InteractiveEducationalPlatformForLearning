@@ -44,7 +44,7 @@ export const SidebarQuestionList: React.FC<SidebarQuestionListProps> = ({
             overflow-y-auto
             px-4 lg:px-0
         `}>
-            <div className="card bg-base-100 shadow-lg h-full rounded-xl">
+            <div className="card bg-base-100 h-full rounded-xl">
                 <div className="card-body p-6 space-y-4">
                     <div className="relative flex justify-center items-center mb-2">
                         <h2 className="text-lg font-semibold text-center">Questions</h2>

@@ -7,16 +7,16 @@ import {SpecificQuestionDTO, useQuestionCreation} from "../../hooks/question/use
 import {
     BsLayoutSidebar,
     BsListUl,
-    BsQuestionDiamond,
 } from "react-icons/bs";
-import {QuestionEditor} from "../question/QuestionEditor.tsx";
 import {QuestionTypeSelector} from "../question/QuestionTypeSelector.tsx";
 import {QuestionType} from "@dti-isin/backend-api-client";
-import {XMarkIcon} from "@heroicons/react/16/solid";
 import {useQuestionCRUD} from "../../hooks/question/useQuestionCRUD.ts";
 import {QuestionBankDetailsHeader} from "./QuestionBankDetailsHeader.tsx";
 import {DeleteQuestionBankDialog} from "./DeleteQuestionBankPopup.tsx";
 import {SidebarQuestionList} from "../question/SidebarQuestionList.tsx";
+import {QuestionEditorCard} from "../question/QuestionEditorCard.tsx";
+import {EmptyQuestionTypeCard} from "../question/EmptyQuestionTypeCard.tsx";
+import {ErrorAlert} from "../common/ErrorAlert.tsx";
 
 const QuestionBankDetails: React.FC = () => {
     const {questionBankId} = useParams();
@@ -47,7 +47,7 @@ const QuestionBankDetails: React.FC = () => {
         if (isSidebarOpen && window.innerWidth < 1024) {
             setIsSidebarOpen(false);
         }
-    }, [isCreatingQuestion, selectedQuestionType]);
+    }, [isCreatingQuestion, isSidebarOpen, selectedQuestionType]);
 
     const saveNewQuestion = async (questionDTO: SpecificQuestionDTO) => {
         if (questionDTO) {
@@ -90,23 +90,17 @@ const QuestionBankDetails: React.FC = () => {
     }
 
     if (errorGetQuestionBank) {
-        return (
-            <div className="alert alert-error shadow-lg mt-8">
-                <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none"
-                     viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                          d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                <div>
-                    <h3 className="font-bold">Error loading question bank!</h3>
-                    <div className="text-xs">{errorGetQuestionBank.message}</div>
-                </div>
-            </div>
-        );
+        return <ErrorAlert
+                title="Error loading question bank!"
+                message={errorGetQuestionBank.message}
+            />
     }
 
     if (!questionBank) {
-        return <div>Question bank not found</div>;
+        return <ErrorAlert
+            title="Error loading question bank!"
+            message={"Question bank not found!"}
+        />
     }
 
     return (
@@ -160,41 +154,23 @@ const QuestionBankDetails: React.FC = () => {
                     </div>
 
                     <div className="lg:col-span-5 order-first lg:order-none">
-                        <div className="card bg-base-100 shadow-lg">
-                            <div className="card-body">
-                                <div className="flex justify-between items-center mb-4">
-                                    <h3 className="card-title">
-                                        {isCreatingQuestion ? "New Question" : "Question Editor"}
-                                    </h3>
-                                    {isCreatingQuestion && (
-                                        <button
-                                            onClick={resetQuestionCreation}
-                                            className="btn btn-outline btn-secondary gap-2 hover:bg-secondary/10"
-                                        >
-                                            <XMarkIcon className="w-5 h-5"/>
-                                            Discard Draft
-                                        </button>
-                                    )}
-                                </div>
-                                <QuestionEditor
-                                    questionType={selectedQuestionType || QuestionType.TrueFalse}
-                                    template={questionTemplate || {
-                                        questionText: '',
-                                        type: QuestionType.TrueFalse,
-                                        correctAnswer: true,
-                                        points: 1
-                                    }}
-                                    onSave={saveNewQuestion}
-                                    onCancel={resetQuestionCreation}
-                                    onQuestionTextChange={(text) => setDraftQuestion(prev => ({
-                                        ...prev,
-                                        questionText: text
-                                    }))}
-                                    disabled={!isCreatingQuestion || !selectedQuestionType}
-                                    isEditingExistingQuestion={isEditingExistingQuestion}
-                                />
-                            </div>
-                        </div>
+                        <QuestionEditorCard
+                            isCreatingQuestion={isCreatingQuestion}
+                            selectedQuestionType={selectedQuestionType}
+                            questionTemplate={questionTemplate || {
+                                questionText: '',
+                                type: QuestionType.TrueFalse,
+                                correctAnswer: true,
+                                points: 1
+                            }}
+                            isEditingExistingQuestion={isEditingExistingQuestion}
+                            onCancel={resetQuestionCreation}
+                            onSave={saveNewQuestion}
+                            onQuestionTextChange={(text) => setDraftQuestion(prev => ({
+                                ...prev,
+                                questionText: text
+                            }))}
+                        />
                     </div>
 
                     <div className="lg:col-span-3">
@@ -206,13 +182,7 @@ const QuestionBankDetails: React.FC = () => {
                                 currentType={selectedQuestionType}
                             />
                         ) : (
-                            <div className="bg-base-100 rounded-xl p-6 shadow-xl opacity-50 text-center">
-                                <BsQuestionDiamond className="text-6xl mx-auto mb-4 text-base-content/30"/>
-                                <h2 className="text-lg font-semibold mb-3">Question Type</h2>
-                                <p className="text-base-content/70">
-                                    Select "Create New Question" to start
-                                </p>
-                            </div>
+                            <EmptyQuestionTypeCard />
                         )}
                     </div>
                 </div>
