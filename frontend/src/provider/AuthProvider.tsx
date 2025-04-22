@@ -78,24 +78,6 @@ export const AuthProvider = ({children}: { children: React.ReactNode }) => {
                 mainWindowRedirectUri: import.meta.env.VITE_LOGOUT_REDIRECT_URI
             });
         }
-        // 7. Configurazione corretta del logout
-        /*const logoutRequest = {
-            account: activeAccount,
-            postLogoutRedirectUri: import.meta.env.VITE_LOGOUT_REDIRECT_URI,
-            mainWindowRedirectUri: import.meta.env.VITE_LOGOUT_REDIRECT_URI
-        };
-
-        // 8. Effettua il logout e pulisci lo stato
-        instance.logoutPopup(logoutRequest)
-            .then(() => {
-                setAuthToken(null);
-                setToken(null);
-                setUser(null);
-                queryClient.clear();
-            })
-            .catch(e => {
-                console.error("Logout error:", e);
-            });*/
     };
 
     const loadUserData = async () => {

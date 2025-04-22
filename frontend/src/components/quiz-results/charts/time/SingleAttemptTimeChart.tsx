@@ -1,22 +1,22 @@
-import React, { useMemo, useState } from 'react';
-import { Bar } from 'react-chartjs-2';
+import React, {useMemo, useState} from 'react';
+import {Bar} from 'react-chartjs-2';
 import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
     BarElement,
-    Title,
-    Tooltip,
-    Legend,
-    ChartOptions,
+    CategoryScale,
+    Chart as ChartJS,
     ChartData,
-    Colors
+    ChartOptions,
+    Colors,
+    Legend,
+    LinearScale,
+    Title,
+    Tooltip
 } from 'chart.js';
-import { QuizAttemptDTO, QuestionDTO } from 'backend/target/backend-api-client/index.ts';
-import { formatSeconds, formatTicks, createVerticalGradient } from '../../../../utils/chartUtils.ts';
-import { QuestionListForResults } from "../../QuestionListForResults.tsx";
-import { AttemptsTableMini } from "../../AttemptsTableMini.tsx";
-import { motion, AnimatePresence } from 'framer-motion';
+import {QuestionDTO, QuizAttemptDTO} from 'backend/target/backend-api-client/index.ts';
+import {createVerticalGradient, formatSeconds, formatTicks} from '../../../../utils/chartUtils.ts';
+import {QuestionListForResults} from "../../QuestionListForResults.tsx";
+import {AttemptsTableMini} from "../../AttemptsTableMini.tsx";
+import {AnimatePresence, motion} from 'framer-motion';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, Colors);
 
@@ -42,7 +42,7 @@ export const SingleAttemptTimeChart: React.FC<SingleAttemptTimeChartProps> = ({
                 return response?.timeSpent ?? 0;
             }),
             backgroundColor: (context) => {
-                const { ctx, chartArea } = context.chart;
+                const {ctx, chartArea} = context.chart;
                 if (!chartArea) return undefined;
                 return createVerticalGradient(ctx, chartArea);
             },
@@ -62,12 +62,12 @@ export const SingleAttemptTimeChart: React.FC<SingleAttemptTimeChartProps> = ({
             duration: 500,
         },
         plugins: {
-            legend: { display: false },
+            legend: {display: false},
             tooltip: {
                 backgroundColor: 'rgba(255, 255, 255, 0.9)',
                 titleColor: '#6366f1',
                 bodyColor: '#1f2937',
-                bodyFont: { size: 14 },
+                bodyFont: {size: 14},
                 padding: 12,
                 cornerRadius: 8,
                 displayColors: false,
@@ -82,13 +82,13 @@ export const SingleAttemptTimeChart: React.FC<SingleAttemptTimeChartProps> = ({
                 beginAtZero: true,
                 ticks: {
                     callback: (value) => formatTicks(Number(value)),
-                    font: { size: 12 },
+                    font: {size: 12},
                 },
-                grid: { color: 'rgba(0, 0, 0, 0.1)' },
+                grid: {color: 'rgba(0, 0, 0, 0.1)'},
             },
             x: {
-                grid: { display: false },
-                ticks: { font: { size: 12 } },
+                grid: {display: false},
+                ticks: {font: {size: 12}},
             },
         },
     }), []);
@@ -114,17 +114,17 @@ export const SingleAttemptTimeChart: React.FC<SingleAttemptTimeChartProps> = ({
             <AnimatePresence mode="wait">
                 <motion.div
                     key={selectedAttempt?.id}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
+                    initial={{opacity: 0}}
+                    animate={{opacity: 1}}
+                    exit={{opacity: 0}}
                     className="lg:col-span-6 h-[400px]"
                 >
-                    <Bar data={chartData} options={chartOptions} />
+                    <Bar data={chartData} options={chartOptions}/>
                 </motion.div>
             </AnimatePresence>
 
             <div className="lg:col-span-3 h-[400px]">
-                <QuestionListForResults questions={questions} />
+                <QuestionListForResults questions={questions}/>
             </div>
         </div>
     );

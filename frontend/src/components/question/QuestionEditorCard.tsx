@@ -1,8 +1,8 @@
 import React from "react";
-import { QuestionType } from "@dti-isin/backend-api-client";
-import { XMarkIcon } from "@heroicons/react/16/solid";
-import { QuestionEditor } from "./QuestionEditor";
-import { SpecificQuestionDTO } from "../../hooks/question/useQuestionCreation";
+import {QuestionType} from "@dti-isin/backend-api-client";
+import {XMarkIcon} from "@heroicons/react/16/solid";
+import {QuestionEditor} from "./QuestionEditor";
+import {SpecificQuestionDTO} from "../../hooks/question/useQuestionCreation";
 
 interface QuestionEditorCardProps {
     isCreatingQuestion: boolean;
@@ -35,7 +35,7 @@ export const QuestionEditorCard: React.FC<QuestionEditorCardProps> = ({
                             onClick={onCancel}
                             className="btn btn-outline btn-secondary gap-2 hover:bg-secondary/10"
                         >
-                            <XMarkIcon className="w-5 h-5" />
+                            <XMarkIcon className="w-5 h-5"/>
                             Discard Draft
                         </button>
                     )}

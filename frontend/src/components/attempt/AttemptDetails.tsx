@@ -1,14 +1,11 @@
 import React from 'react';
-import {
-    QuizAttemptDTO,
-    QuizPublicationDTO
-} from '@dti-isin/backend-api-client';
-import { QuizReview } from "../quiz-results/QuizReview";
-import { BadgeAssignment } from "../badge/BadgeAssignment";
-import { FaTimes, FaTrophy, FaCheckCircle } from 'react-icons/fa';
-import { AttemptHeader } from "../publication-stats/AttemptHeader";
-import { useAuth } from "../../hooks/useAuth";
-import { formatDateTime } from "../../utils/timeUtils";
+import {QuizAttemptDTO, QuizPublicationDTO} from '@dti-isin/backend-api-client';
+import {QuizReview} from "../quiz-results/QuizReview";
+import {BadgeAssignment} from "../badge/BadgeAssignment";
+import {FaCheckCircle, FaTimes, FaTrophy} from 'react-icons/fa';
+import {AttemptHeader} from "../publication-stats/AttemptHeader";
+import {useAuth} from "../../hooks/useAuth";
+import {formatDateTime} from "../../utils/timeUtils";
 
 interface AttemptDetailsProps {
     attempt: QuizAttemptDTO;
@@ -23,7 +20,7 @@ export const AttemptDetails: React.FC<AttemptDetailsProps> = ({
                                                                   onClose,
                                                                   showBadgeAssignment = true
                                                               }) => {
-    const { user } = useAuth();
+    const {user} = useAuth();
     const hasBestAttemptBadge = (attempt.badges ?? []).length > 0;
 
     if (!attempt) {
@@ -66,7 +63,7 @@ export const AttemptDetails: React.FC<AttemptDetailsProps> = ({
                         onClick={onClose}
                         aria-label="Close attempt review"
                     >
-                        <FaTimes className="w-5 h-5" />
+                        <FaTimes className="w-5 h-5"/>
                     </button>
                 )}
             </div>
@@ -80,7 +77,7 @@ export const AttemptDetails: React.FC<AttemptDetailsProps> = ({
                                 <div className="flex items-center gap-4">
                                     <div className="w-12 h-12 rounded-full bg-warning/10
                                                   flex items-center justify-center">
-                                        <FaTrophy className="text-warning text-xl" />
+                                        <FaTrophy className="text-warning text-xl"/>
                                     </div>
                                     <div>
                                         <h3 className="font-medium text-base">Best Attempt Badge</h3>
@@ -99,7 +96,7 @@ export const AttemptDetails: React.FC<AttemptDetailsProps> = ({
                                     />
                                     {hasBestAttemptBadge && (
                                         <div className="badge badge-success gap-2 py-3">
-                                            <FaCheckCircle className="w-3 h-3" />
+                                            <FaCheckCircle className="w-3 h-3"/>
                                             <span className="font-medium">Awarded</span>
                                         </div>
                                     )}

@@ -1,18 +1,18 @@
-import { motion } from 'framer-motion';
+import {motion} from 'framer-motion';
 import {BsCheckCircle, BsGraphUp} from 'react-icons/bs';
 
 const NoPublicationsPlaceholder: React.FC = () => {
     return (
         <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+            initial={{opacity: 0, y: 20}}
+            animate={{opacity: 1, y: 0}}
+            transition={{duration: 0.5}}
             className="flex flex-col items-center justify-center min-h-screen p-8 text-center"
         >
             <div className="max-w-2xl space-y-6">
                 <div className="flex justify-center">
                     <div className="p-6 bg-primary/10 rounded-full">
-                        <BsGraphUp className="text-6xl text-primary" />
+                        <BsGraphUp className="text-6xl text-primary"/>
                     </div>
                 </div>
 
@@ -29,14 +29,14 @@ const NoPublicationsPlaceholder: React.FC = () => {
                     <h3 className="text-xl font-semibold mb-4">Why publish your quiz?</h3>
                     <div className="grid md:grid-cols-2 gap-4 text-left">
                         <div className="flex items-start gap-3">
-                            <BsGraphUp className="text-2xl text-primary mt-1" />
+                            <BsGraphUp className="text-2xl text-primary mt-1"/>
                             <div>
                                 <h4 className="font-semibold">Track Performance</h4>
                                 <p className="text-sm opacity-80">Get detailed insights into student answers</p>
                             </div>
                         </div>
                         <div className="flex items-start gap-3">
-                            <BsCheckCircle className="text-2xl text-primary mt-1" />
+                            <BsCheckCircle className="text-2xl text-primary mt-1"/>
                             <div>
                                 <h4 className="font-semibold">Identify Weaknesses</h4>
                                 <p className="text-sm opacity-80">Discover which questions need improvement</p>

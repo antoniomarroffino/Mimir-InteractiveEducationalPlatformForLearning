@@ -1,13 +1,10 @@
-import {
-    QuizAttemptDTO,
-    QuizPublicationDTO
-} from "@dti-isin/backend-api-client";
-import React, { useState } from "react";
-import { FaTrophy } from "react-icons/fa";
+import {QuizAttemptDTO, QuizPublicationDTO} from "@dti-isin/backend-api-client";
+import React, {useState} from "react";
+import {FaTrophy} from "react-icons/fa";
 import {
     calculateEarnedPoints,
-    calculateTotalAvailablePoints,
-    calculateScorePercentage
+    calculateScorePercentage,
+    calculateTotalAvailablePoints
 } from "../../utils/scoreUtils.ts";
 import {formatDateTime} from "../../utils/timeUtils.ts";
 
@@ -113,7 +110,8 @@ export const AttemptsTable: React.FC<AttemptsTableProps> = ({
 
                                     {(attempt.badges ?? []).length > 0 && (
                                         <div className="text-warning">
-                                            <FaTrophy className="text-xl transform hover:scale-110 transition-transform" />
+                                            <FaTrophy
+                                                className="text-xl transform hover:scale-110 transition-transform"/>
                                         </div>
                                     )}
                                 </div>

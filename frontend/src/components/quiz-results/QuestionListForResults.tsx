@@ -1,12 +1,12 @@
 import React from "react";
-import { QuestionDTO } from "@dti-isin/backend-api-client";
-import { motion } from "framer-motion";
+import {QuestionDTO} from "@dti-isin/backend-api-client";
+import {motion} from "framer-motion";
 
 interface QuestionListForResultsProps {
     questions: QuestionDTO[];
 }
 
-export const QuestionListForResults: React.FC<QuestionListForResultsProps> = ({ questions }) => {
+export const QuestionListForResults: React.FC<QuestionListForResultsProps> = ({questions}) => {
     if (!questions.length) {
         return (
             <div className="w-full h-full flex items-center justify-center text-base-content/70">
@@ -39,8 +39,8 @@ export const QuestionListForResults: React.FC<QuestionListForResultsProps> = ({ 
                             <motion.li
                                 key={q.id}
                                 variants={{
-                                    hidden: { opacity: 0, x: -20 },
-                                    visible: { opacity: 1, x: 0 }
+                                    hidden: {opacity: 0, x: -20},
+                                    visible: {opacity: 1, x: 0}
                                 }}
                                 className="group flex items-start gap-2 p-2 bg-base-100 rounded-lg
                                          shadow-sm border border-base-200 hover:bg-base-200

@@ -37,22 +37,18 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("integration")
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class QuizPublicationResourceIT {
-    @Inject
-    QuizPublicationRepository publicationRepository;
-
-    @Inject
-    UserRepository userRepository;
-
-    @Inject
-    CourseRepository courseRepository;
-
-    @Inject
-    QuestionRepository questionRepository;
-
     private static Course course;
     private static Folder folder;
     private static Quiz quiz;
     private static TrueFalseQuestion question;
+    @Inject
+    QuizPublicationRepository publicationRepository;
+    @Inject
+    UserRepository userRepository;
+    @Inject
+    CourseRepository courseRepository;
+    @Inject
+    QuestionRepository questionRepository;
 
     @BeforeEach
     public void beforeEach() {

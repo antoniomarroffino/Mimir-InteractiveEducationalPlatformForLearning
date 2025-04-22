@@ -1,19 +1,7 @@
-import React, { useState } from 'react';
-import {
-    MultipleChoiceQuestionDTO,
-    QuestionDTO,
-    QuestionType,
-    TrueFalseQuestionDTO
-} from '@dti-isin/backend-api-client';
-import {
-    BsCheckCircle,
-    BsLightbulb,
-    BsListCheck,
-    BsToggleOn,
-    BsTrash,
-    BsXCircle
-} from 'react-icons/bs';
-import { ConfirmDeleteQuestionPopup } from "./ConfirmDeleteQuestionPopup.tsx";
+import React, {useState} from 'react';
+import {MultipleChoiceQuestionDTO, QuestionDTO, QuestionType, TrueFalseQuestionDTO} from '@dti-isin/backend-api-client';
+import {BsCheckCircle, BsLightbulb, BsListCheck, BsToggleOn, BsTrash, BsXCircle} from 'react-icons/bs';
+import {ConfirmDeleteQuestionPopup} from "./ConfirmDeleteQuestionPopup.tsx";
 
 type SpecificQuestionDTO =
     | QuestionDTO
@@ -41,14 +29,14 @@ export const QuestionElement: React.FC<QuestionElementProps> = ({
         switch (question.type) {
             case QuestionType.TrueFalse:
                 return {
-                    icon: <BsToggleOn className="text-green-600" />,
+                    icon: <BsToggleOn className="text-green-600"/>,
                     borderColor: 'border-green-500',
                     bgColor: 'bg-green-200',
                     textColor: 'text-green-700'
                 };
             case QuestionType.MultipleChoice:
                 return {
-                    icon: <BsListCheck className="text-blue-600" />,
+                    icon: <BsListCheck className="text-blue-600"/>,
                     borderColor: 'border-blue-500',
                     bgColor: 'bg-blue-200',
                     textColor: 'text-blue-700'
@@ -70,9 +58,9 @@ export const QuestionElement: React.FC<QuestionElementProps> = ({
                 return (
                     <div className="flex items-center gap-2 text-xs">
                         {tfQuestion.correctAnswer ? (
-                            <BsCheckCircle className="text-success" />
+                            <BsCheckCircle className="text-success"/>
                         ) : (
-                            <BsXCircle className="text-error" />
+                            <BsXCircle className="text-error"/>
                         )}
                         <span className="text-base-content/70">
                             {tfQuestion.correctAnswer ? 'True' : 'False'}
@@ -84,7 +72,7 @@ export const QuestionElement: React.FC<QuestionElementProps> = ({
                 const mcQuestion = question as MultipleChoiceQuestionDTO;
                 return (
                     <div className="flex items-center gap-2 text-xs">
-                        <BsLightbulb className="text-warning" />
+                        <BsLightbulb className="text-warning"/>
                         <span className="text-base-content/70">
                             {mcQuestion.choices.length} Choices
                         </span>
@@ -122,7 +110,8 @@ export const QuestionElement: React.FC<QuestionElementProps> = ({
                     shadow-sm hover:shadow-md transition-all group cursor-pointer flex items-start`}
                 onClick={() => onStartEditing?.()}
             >
-                <div className={`absolute left-0 top-0 bottom-0 w-1.5 rounded-l-lg ${typeStyles.bgColor} ${typeStyles.borderColor}`} />
+                <div
+                    className={`absolute left-0 top-0 bottom-0 w-1.5 rounded-l-lg ${typeStyles.bgColor} ${typeStyles.borderColor}`}/>
 
                 <div className="flex items-start w-full pl-3">
                     <div className="mr-3 mt-1">
@@ -147,7 +136,7 @@ export const QuestionElement: React.FC<QuestionElementProps> = ({
                                 setShowConfirmPopup(true);
                             }}
                         >
-                            <BsTrash className="text-xs" />
+                            <BsTrash className="text-xs"/>
                         </button>
 
                         <div

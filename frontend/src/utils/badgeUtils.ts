@@ -1,4 +1,4 @@
-import { BadgeDTO, BadgeType } from '@dti-isin/backend-api-client';
+import {BadgeDTO, BadgeType} from '@dti-isin/backend-api-client';
 
 export interface GroupedBadge {
     type: BadgeType | undefined;

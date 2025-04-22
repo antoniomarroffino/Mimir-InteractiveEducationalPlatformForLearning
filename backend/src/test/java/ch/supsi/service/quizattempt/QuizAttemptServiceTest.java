@@ -55,6 +55,34 @@ public class QuizAttemptServiceTest {
     @InjectMock
     IPointsCalculatorBuilder pointsCalculatorBuilder;
 
+    public static QuizAttempt createTestQuizAttempt() {
+        QuizAttempt quizAttempt = new QuizAttempt();
+        quizAttempt.id = new ObjectId();
+        quizAttempt.quizPublicationId = new ObjectId();
+        quizAttempt.startedAt = LocalDateTime.now();
+        return quizAttempt;
+    }
+
+    public static QuizAttempt createTestQuizAttempt(String userOid, ObjectId publicationId, List<QuestionResponse> responses) {
+        QuizAttempt quizAttempt = new QuizAttempt();
+        quizAttempt.id = new ObjectId();
+        quizAttempt.quizPublicationId = publicationId;
+        quizAttempt.startedAt = LocalDateTime.now();
+        quizAttempt.responses = responses;
+        quizAttempt.userAzureOID = userOid;
+        return quizAttempt;
+    }
+
+    public static QuizAttemptDTO convertToDTO(QuizAttempt quizAttempt) {
+        QuizAttemptDTO quizAttemptDTO = new QuizAttemptDTO();
+        quizAttemptDTO.setId(quizAttempt.id.toString());
+        quizAttemptDTO.setQuizPublicationId(quizAttempt.quizPublicationId.toString());
+        quizAttemptDTO.setUser(new UserWithoutCoursesDTO(quizAttempt.userAzureOID, "name", "email@email.com", Role.STUDENT));
+        quizAttemptDTO.setStartedAt(quizAttempt.startedAt);
+        quizAttemptDTO.setCompletedAt(quizAttempt.completedAt);
+        return quizAttemptDTO;
+    }
+
     @Test
     @DisplayName("Should create new QuizAttempt with IN_PROGRESS status and no completedAt")
     void test01CreateNewQuizAttempt() {
@@ -84,8 +112,6 @@ public class QuizAttemptServiceTest {
 
         verify(this.quizAttemptRepository, times(1)).persist(expected);
     }
-
-
 
     @Test
     @DisplayName("Should verify if QuizAttemptDTO passed is valid")
@@ -381,35 +407,5 @@ public class QuizAttemptServiceTest {
         );
 
         assertEquals("Quiz responses cannot be null or empty", exception.getMessage());
-    }
-
-
-
-    public static QuizAttempt createTestQuizAttempt() {
-        QuizAttempt quizAttempt = new QuizAttempt();
-        quizAttempt.id = new ObjectId();
-        quizAttempt.quizPublicationId = new ObjectId();
-        quizAttempt.startedAt = LocalDateTime.now();
-        return quizAttempt;
-    }
-
-    public static QuizAttempt createTestQuizAttempt(String userOid, ObjectId publicationId, List<QuestionResponse> responses) {
-        QuizAttempt quizAttempt = new QuizAttempt();
-        quizAttempt.id = new ObjectId();
-        quizAttempt.quizPublicationId = publicationId;
-        quizAttempt.startedAt = LocalDateTime.now();
-        quizAttempt.responses = responses;
-        quizAttempt.userAzureOID = userOid;
-        return quizAttempt;
-    }
-
-    public static QuizAttemptDTO convertToDTO(QuizAttempt quizAttempt) {
-        QuizAttemptDTO quizAttemptDTO = new QuizAttemptDTO();
-        quizAttemptDTO.setId(quizAttempt.id.toString());
-        quizAttemptDTO.setQuizPublicationId(quizAttempt.quizPublicationId.toString());
-        quizAttemptDTO.setUser(new UserWithoutCoursesDTO(quizAttempt.userAzureOID, "name", "email@email.com", Role.STUDENT));
-        quizAttemptDTO.setStartedAt(quizAttempt.startedAt);
-        quizAttemptDTO.setCompletedAt(quizAttempt.completedAt);
-        return quizAttemptDTO;
     }
 }

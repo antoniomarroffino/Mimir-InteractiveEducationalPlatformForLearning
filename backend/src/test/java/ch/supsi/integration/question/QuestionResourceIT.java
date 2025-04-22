@@ -9,7 +9,6 @@ import ch.supsi.model.api.question.TrueFalseQuestion;
 import ch.supsi.model.api.user.Role;
 import ch.supsi.model.api.user.User;
 import ch.supsi.model.dto.api.question.MultipleChoiceQuestionDTO;
-import ch.supsi.model.dto.api.question.QuestionDTO;
 import ch.supsi.model.dto.api.question.TrueFalseQuestionDTO;
 import ch.supsi.repository.QuestionBankRepository;
 import ch.supsi.repository.QuestionRepository;
@@ -37,16 +36,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("integration")
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class QuestionResourceIT {
+    private static QuestionBank questionBank;
     @Inject
     QuestionRepository questionRepository;
-
     @Inject
     QuestionBankRepository questionBankRepository;
-
     @Inject
     UserRepository userRepository;
-
-    private static QuestionBank questionBank;
 
     @BeforeEach
     public void beforeEach() {

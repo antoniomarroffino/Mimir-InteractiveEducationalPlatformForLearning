@@ -1,8 +1,8 @@
 import React from "react";
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import { SpecificQuestionDTO } from "../../hooks/question/useQuestionCreation";
-import { QuestionElement } from "./QuestionElement";
+import {useSortable} from "@dnd-kit/sortable";
+import {CSS} from "@dnd-kit/utilities";
+import {SpecificQuestionDTO} from "../../hooks/question/useQuestionCreation";
+import {QuestionElement} from "./QuestionElement";
 
 interface SortableQuestionElementProps {
     question: SpecificQuestionDTO;
@@ -24,7 +24,7 @@ export const SortableQuestionElement: React.FC<SortableQuestionElementProps> = (
         transform,
         transition,
         isDragging
-    } = useSortable({ id: question.id! });
+    } = useSortable({id: question.id!});
 
     const style: React.CSSProperties = {
         transform: CSS.Transform.toString(transform),

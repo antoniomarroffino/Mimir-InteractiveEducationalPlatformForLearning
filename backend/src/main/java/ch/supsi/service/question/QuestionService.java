@@ -14,8 +14,6 @@ import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.NotFoundException;
 import org.bson.types.ObjectId;
 
-import java.util.Optional;
-
 @ApplicationScoped
 public class QuestionService implements IQuestionService {
 

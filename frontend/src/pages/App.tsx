@@ -54,10 +54,8 @@ const App = () => {
                         <QuizAttemptProviders>
                             <Header/>
                             <Routes>
-                                {/* Public Route */}
                                 <Route path="/" element={<PublicHome/>}/>
 
-                                {/* Admin Routes */}
                                 <Route
                                     path="/admin"
                                     element={
@@ -69,7 +67,6 @@ const App = () => {
                                     }
                                 />
 
-                                {/* Teacher Routes */}
                                 <Route
                                     path="/courses"
                                     element={
@@ -123,16 +120,6 @@ const App = () => {
 
                                 </Route>
 
-                                {/* Student Routes */}
-                                {/*<Route
-                                    path="/student"
-                                    element={
-                                        <ProtectedRoute allowedRoles={[Role.Student]}>
-                                            <StudentDashboard/>
-                                        </ProtectedRoute>
-                                    }
-                                />*/}
-
                                 <Route
                                     path="/profile"
                                     element={
@@ -164,7 +151,7 @@ const App = () => {
                                     element={<QuizScreenPage/>}
                                 />
 
-                                <Route path="/quiz/:accessCode/questions" element={<QuizQuestionsPage />} />
+                                <Route path="/quiz/:accessCode/questions" element={<QuizQuestionsPage/>}/>
 
                                 <Route
                                     path="/results/:quizAttemptId"

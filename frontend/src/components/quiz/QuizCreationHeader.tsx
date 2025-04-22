@@ -1,8 +1,8 @@
 import React from "react";
-import { BsPatchQuestion, BsPencil, BsQuestionDiamond} from "react-icons/bs";
-import { CheckIcon, XMarkIcon } from "@heroicons/react/16/solid";
-import { format } from "date-fns";
-import { QuizDTO, CourseDTO, FolderDTO } from "@dti-isin/backend-api-client";
+import {BsPatchQuestion, BsPencil, BsQuestionDiamond} from "react-icons/bs";
+import {CheckIcon, XMarkIcon} from "@heroicons/react/16/solid";
+import {format} from "date-fns";
+import {CourseDTO, FolderDTO, QuizDTO} from "@dti-isin/backend-api-client";
 import {QuizTimeLimit} from "./QuizTimeLimit.tsx";
 import {BreadcrumbEditQuiz} from "./BreadcrumbEditQuiz.tsx";
 
@@ -33,13 +33,14 @@ export const QuizCreationHeader: React.FC<QuizCreationHeaderProps> = ({
                                                                       }) => {
     return (
         <header className="space-y-2 mb-2">
-            <div className="bg-gradient-to-tr from-primary/5 to-base-100 border border-primary/10 p-4 sm:p-6 rounded-2xl shadow-md transition-all duration-300 hover:shadow-xl">
-                <BreadcrumbEditQuiz course={course} folder={folder} quiz={quiz} />
+            <div
+                className="bg-gradient-to-tr from-primary/5 to-base-100 border border-primary/10 p-4 sm:p-6 rounded-2xl shadow-md transition-all duration-300 hover:shadow-xl">
+                <BreadcrumbEditQuiz course={course} folder={folder} quiz={quiz}/>
 
                 <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 lg:gap-6 mt-4">
                     <div className="flex-1 flex items-start gap-3 sm:gap-4">
                         <div className="p-2 sm:p-3 rounded-full bg-primary/10 text-primary">
-                            <BsPatchQuestion className="w-5 h-5 sm:w-6 sm:h-6" />
+                            <BsPatchQuestion className="w-5 h-5 sm:w-6 sm:h-6"/>
                         </div>
 
                         <div className="flex-1 min-w-0 space-y-2">
@@ -57,13 +58,14 @@ export const QuizCreationHeader: React.FC<QuizCreationHeaderProps> = ({
                                         className="btn btn-circle btn-sm btn-success"
                                         disabled={quiz.name === newName || isSaving}
                                     >
-                                        {isSaving ? <span className="loading loading-spinner w-4 h-4" /> : <CheckIcon className="w-4 h-4" />}
+                                        {isSaving ? <span className="loading loading-spinner w-4 h-4"/> :
+                                            <CheckIcon className="w-4 h-4"/>}
                                     </button>
                                     <button
                                         onClick={onEditToggle}
                                         className="btn btn-circle btn-sm btn-error"
                                     >
-                                        <XMarkIcon className="w-4 h-4" />
+                                        <XMarkIcon className="w-4 h-4"/>
                                     </button>
                                 </div>
                             ) : (
@@ -75,14 +77,14 @@ export const QuizCreationHeader: React.FC<QuizCreationHeaderProps> = ({
                                         className="btn btn-ghost btn-square hover:bg-primary/10 p-2"
                                         onClick={onEditToggle}
                                     >
-                                        <BsPencil className="text-lg text-primary" />
+                                        <BsPencil className="text-lg text-primary"/>
                                     </button>
                                 </div>
                             )}
 
                             <div className="flex flex-wrap items-center gap-2 text-sm text-base-content/60">
                                 <span className="flex items-center gap-1">
-                                    <BsQuestionDiamond />
+                                    <BsQuestionDiamond/>
                                     {quiz.questions?.length || 0} questions
                                 </span>
                                 <span>•</span>
@@ -93,7 +95,8 @@ export const QuizCreationHeader: React.FC<QuizCreationHeaderProps> = ({
                         </div>
                     </div>
 
-                    <div className="bg-primary/10 rounded-xl p-3 sm:p-4 text-sm text-primary/80 max-w-xs w-full sm:w-auto">
+                    <div
+                        className="bg-primary/10 rounded-xl p-3 sm:p-4 text-sm text-primary/80 max-w-xs w-full sm:w-auto">
                         <QuizTimeLimit
                             timeLimit={quiz.timeLimitMinutes}
                             onTimeChange={onTimeLimitChange}

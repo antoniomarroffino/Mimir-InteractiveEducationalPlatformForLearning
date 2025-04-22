@@ -1,9 +1,7 @@
 package ch.supsi.controller.folder;
 
-import ch.supsi.model.api.Course;
 import ch.supsi.model.dto.api.CourseDTO;
 import ch.supsi.model.dto.api.FolderDTO;
-import ch.supsi.service.course.CourseServiceTest;
 import ch.supsi.service.course.ICourseService;
 import ch.supsi.service.folder.IFolderService;
 import io.quarkus.hibernate.validator.runtime.jaxrs.ResteasyReactiveViolationException;
@@ -14,7 +12,10 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.Response;
 import org.bson.types.ObjectId;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import java.util.Collections;
 import java.util.List;

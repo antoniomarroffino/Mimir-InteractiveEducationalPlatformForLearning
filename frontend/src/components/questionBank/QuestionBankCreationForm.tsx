@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
 import {useQuestionBankCRUD} from "../../hooks/questionBank/useQuestionBankCRUD.ts";
 import {useQuestionBankList} from "../../hooks/questionBank/useQuestionBankList.ts";
-import {FiPlusCircle, FiCheckCircle} from "react-icons/fi";
-import {motion, AnimatePresence} from "framer-motion";
+import {FiCheckCircle, FiPlusCircle} from "react-icons/fi";
+import {AnimatePresence, motion} from "framer-motion";
 
 export const QuestionBankCreationForm = () => {
     const [name, setName] = useState('');
@@ -59,7 +59,6 @@ export const QuestionBankCreationForm = () => {
                 )}
             </button>
 
-            {/* ✅ Success Animation */}
             <AnimatePresence>
                 {showSuccess && (
                     <motion.div

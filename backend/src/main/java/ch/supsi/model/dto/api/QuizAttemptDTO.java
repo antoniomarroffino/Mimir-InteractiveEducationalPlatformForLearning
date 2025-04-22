@@ -1,7 +1,6 @@
 package ch.supsi.model.dto.api;
 
 import ch.supsi.model.api.AttemptStatus;
-import ch.supsi.model.api.user.User;
 import ch.supsi.model.dto.api.response.QuestionResponseDTO;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.validation.constraints.NotNull;
@@ -82,7 +81,7 @@ public class QuizAttemptDTO {
     }
 
     public void setResponses(List<QuestionResponseDTO> responses) {
-        this.responses = responses != null? responses : new ArrayList<>();
+        this.responses = responses != null ? responses : new ArrayList<>();
     }
 
     public List<BadgeDTO> getBadges() {

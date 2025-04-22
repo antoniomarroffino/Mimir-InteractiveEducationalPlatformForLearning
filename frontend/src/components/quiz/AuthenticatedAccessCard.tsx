@@ -1,5 +1,5 @@
 import React from 'react';
-import { ClockIcon } from '@heroicons/react/24/outline';
+import {ClockIcon} from '@heroicons/react/24/outline';
 
 interface AuthenticatedAccessCardProps {
     onStart: () => void;
@@ -19,7 +19,7 @@ export const AuthenticatedAccessCard: React.FC<AuthenticatedAccessCardProps> = (
                 <h3 className="text-2xl font-bold text-primary">Are you ready?</h3>
 
                 <div className="flex items-center justify-center gap-2 mt-6 text-base-content/70">
-                    <ClockIcon className="w-5 h-5" />
+                    <ClockIcon className="w-5 h-5"/>
                     <span>{timeLimit}</span>
                 </div>
 

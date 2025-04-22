@@ -1,6 +1,6 @@
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { BsBoxArrowRight } from 'react-icons/bs';
+import {AnimatePresence, motion} from 'framer-motion';
+import {BsBoxArrowRight} from 'react-icons/bs';
 
 interface LeaveCoursePopupProps {
     courseName: string;
@@ -17,23 +17,23 @@ export const LeaveCoursePopup: React.FC<LeaveCoursePopupProps> = ({
         <AnimatePresence>
             <motion.div
                 className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
+                initial={{opacity: 0}}
+                animate={{opacity: 1}}
+                exit={{opacity: 0}}
             >
                 <motion.div
                     className="bg-warning text-white rounded-xl shadow-2xl max-w-md w-full p-6 text-center border-4 border-white relative"
-                    initial={{ scale: 0.9, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    exit={{ scale: 0.9, opacity: 0 }}
-                    transition={{ duration: 0.3 }}
+                    initial={{scale: 0.9, opacity: 0}}
+                    animate={{scale: 1, opacity: 1}}
+                    exit={{scale: 0.9, opacity: 0}}
+                    transition={{duration: 0.3}}
                 >
                     <div className="flex justify-center mb-4">
-                        <BsBoxArrowRight className="w-10 h-10 text-white animate-pulse" />
+                        <BsBoxArrowRight className="w-10 h-10 text-white animate-pulse"/>
                     </div>
                     <h2 className="text-2xl font-bold mb-2">Leave Course</h2>
                     <p className="text-md mb-4">
-                        Are you sure you want to leave <strong>{courseName}</strong>?<br />
+                        Are you sure you want to leave <strong>{courseName}</strong>?<br/>
                         You will lose access until you rejoin.
                     </p>
                     <div className="flex justify-center gap-4 mt-6">
@@ -47,7 +47,7 @@ export const LeaveCoursePopup: React.FC<LeaveCoursePopupProps> = ({
                             onClick={onConfirm}
                             className="btn btn-white text-warning bg-white hover:brightness-90"
                         >
-                            <BsBoxArrowRight className="mr-1" />
+                            <BsBoxArrowRight className="mr-1"/>
                             Leave
                         </button>
                     </div>

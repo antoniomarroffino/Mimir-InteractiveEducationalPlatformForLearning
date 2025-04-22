@@ -23,7 +23,8 @@ export const QuestionBankSearch: React.FC<QuestionBankSearchProps> = ({searchTer
                 value={localSearchTerm}
                 onChange={(e) => setLocalSearchTerm(e.target.value)}
             />
-            <MagnifyingGlassIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-purple-400 pointer-events-none"/>
+            <MagnifyingGlassIcon
+                className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-purple-400 pointer-events-none"/>
             {localSearchTerm && (
                 <button
                     className="absolute right-4 top-1/2 -translate-y-1/2 p-1 hover:bg-purple-100 rounded-full transition-all"

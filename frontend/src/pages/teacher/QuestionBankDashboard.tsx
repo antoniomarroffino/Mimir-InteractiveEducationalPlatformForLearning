@@ -25,7 +25,7 @@ export const QuestionBankDashboard = () => {
                     showInfoToggle
                 />
 
-                {showInfo && <QuestionBankInfoAlert />}
+                {showInfo && <QuestionBankInfoAlert/>}
 
                 <div className="grid lg:grid-cols-4 gap-8">
                     <motion.div

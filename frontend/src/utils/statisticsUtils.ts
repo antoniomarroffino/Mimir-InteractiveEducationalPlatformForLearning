@@ -1,5 +1,5 @@
-import { QuestionDTO, QuizAttemptDTO } from "@dti-isin/backend-api-client";
-import { isResponseCorrect } from "./responseUtils";
+import {QuestionDTO, QuizAttemptDTO} from "@dti-isin/backend-api-client";
+import {isResponseCorrect} from "./responseUtils";
 
 export interface QuestionStat {
     question: QuestionDTO;

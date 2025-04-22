@@ -1,9 +1,6 @@
 package ch.supsi.mapper.questionBank;
 
 import ch.supsi.model.api.QuestionBank;
-import ch.supsi.model.api.question.MultipleChoiceQuestion;
-import ch.supsi.model.api.question.Question;
-import ch.supsi.model.api.question.TrueFalseQuestion;
 import ch.supsi.model.dto.api.QuestionBankDTO;
 import ch.supsi.model.dto.api.question.MultipleChoiceQuestionDTO;
 import ch.supsi.model.dto.api.question.QuestionDTO;
@@ -20,7 +17,6 @@ import org.junit.jupiter.api.TestMethodOrder;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 

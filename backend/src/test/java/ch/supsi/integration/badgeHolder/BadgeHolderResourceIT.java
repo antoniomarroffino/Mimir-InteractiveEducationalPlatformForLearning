@@ -16,7 +16,6 @@ import io.quarkus.test.InjectMock;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.security.TestSecurity;
-import io.quarkus.test.security.jwt.JwtSecurity;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.*;
@@ -24,7 +23,6 @@ import org.junit.jupiter.api.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;

@@ -1,7 +1,7 @@
 import React from 'react';
-import { QuizRow } from './QuizRow';
-import { useGetQuizzesInFolderIdInCourseId } from "../../hooks/quiz/useGetQuizzesInFolderIdInCourseId.ts";
-import { ErrorAlert } from "../common/ErrorAlert.tsx";
+import {QuizRow} from './QuizRow';
+import {useGetQuizzesInFolderIdInCourseId} from "../../hooks/quiz/useGetQuizzesInFolderIdInCourseId.ts";
+import {ErrorAlert} from "../common/ErrorAlert.tsx";
 import {EmptyStateQuizzes} from "./EmptyStateQuizzes.tsx";
 import {SkeletonLoaderQuizzes} from "./SkeletonLoaderQuizzes.tsx";
 
@@ -10,7 +10,7 @@ interface QuizListProps {
     folderId: string;
 }
 
-export const QuizList: React.FC<QuizListProps> = ({ courseId, folderId }) => {
+export const QuizList: React.FC<QuizListProps> = ({courseId, folderId}) => {
     const {
         data: quizzes,
         isLoading: isLoadingQuizzes,
@@ -18,7 +18,7 @@ export const QuizList: React.FC<QuizListProps> = ({ courseId, folderId }) => {
     } = useGetQuizzesInFolderIdInCourseId(courseId, folderId);
 
     if (isLoadingQuizzes) {
-        return <SkeletonLoaderQuizzes />;
+        return <SkeletonLoaderQuizzes/>;
     }
 
     if (errorQuizzes) {
@@ -31,7 +31,7 @@ export const QuizList: React.FC<QuizListProps> = ({ courseId, folderId }) => {
     }
 
     if (!quizzes?.length) {
-        return <EmptyStateQuizzes />;
+        return <EmptyStateQuizzes/>;
     }
 
     return (

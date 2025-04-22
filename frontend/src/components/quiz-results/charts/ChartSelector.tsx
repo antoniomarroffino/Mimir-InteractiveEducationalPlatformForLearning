@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { FaClock, FaTrophy, FaCheckCircle, FaChartLine } from 'react-icons/fa';
-import { QuestionDTO, QuizAttemptDTO } from '@dti-isin/backend-api-client';
-import { ResponseTimeChart } from "./time/ResponseTimeChart";
-import { ScoreDistributionChart } from "./points/ScoreDistributionChart";
+import React, {useState} from 'react';
+import {AnimatePresence, motion} from 'framer-motion';
+import {FaChartLine, FaCheckCircle, FaClock, FaTrophy} from 'react-icons/fa';
+import {QuestionDTO, QuizAttemptDTO} from '@dti-isin/backend-api-client';
+import {ResponseTimeChart} from "./time/ResponseTimeChart";
+import {ScoreDistributionChart} from "./points/ScoreDistributionChart";
 
 interface ChartSelectorProps {
     questionStats: {
@@ -35,7 +35,7 @@ export const ChartSelector: React.FC<ChartSelectorProps> = ({
     const chartOptions: ChartOption[] = [
         {
             id: 'time',
-            icon: <FaClock className="w-6 h-6" />,
+            icon: <FaClock className="w-6 h-6"/>,
             label: 'Response Time',
             description: 'Analyze time spent on questions',
             component: (
@@ -48,7 +48,7 @@ export const ChartSelector: React.FC<ChartSelectorProps> = ({
         },
         {
             id: 'score',
-            icon: <FaTrophy className="w-6 h-6" />,
+            icon: <FaTrophy className="w-6 h-6"/>,
             label: 'Score Distribution',
             description: 'View score statistics',
             component: (
@@ -74,9 +74,8 @@ export const ChartSelector: React.FC<ChartSelectorProps> = ({
 
     return (
         <div className="space-y-6">
-            {/* Header */}
             <div className="flex items-center gap-3">
-                <FaChartLine className="text-primary w-6 h-6" />
+                <FaChartLine className="text-primary w-6 h-6"/>
                 <div>
                     <h2 className="text-xl font-bold text-base-content">Analytics Dashboard</h2>
                     <p className="text-sm text-base-content/70">
@@ -85,7 +84,6 @@ export const ChartSelector: React.FC<ChartSelectorProps> = ({
                 </div>
             </div>
 
-            {/* Chart Selection */}
             <div className="flex flex-wrap gap-4">
                 {chartOptions.map((chart) => (
                     <motion.button
@@ -99,18 +97,18 @@ export const ChartSelector: React.FC<ChartSelectorProps> = ({
                             : 'bg-base-200 hover:bg-base-300'
                         }
                         `}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
+                        whileHover={{scale: 1.02}}
+                        whileTap={{scale: 0.98}}
                     >
                         <div className="relative">
                             {chart.icon}
                             {activeCharts.has(chart.id) && (
                                 <motion.div
-                                    initial={{ scale: 0 }}
-                                    animate={{ scale: 1 }}
+                                    initial={{scale: 0}}
+                                    animate={{scale: 1}}
                                     className="absolute -top-2 -right-2 bg-success rounded-full p-1"
                                 >
-                                    <FaCheckCircle className="w-3 h-3 text-white" />
+                                    <FaCheckCircle className="w-3 h-3 text-white"/>
                                 </motion.div>
                             )}
                         </div>
@@ -122,7 +120,6 @@ export const ChartSelector: React.FC<ChartSelectorProps> = ({
                 ))}
             </div>
 
-            {/* Charts Display */}
             <AnimatePresence mode="popLayout">
                 {Array.from(activeCharts).map((chartId) => {
                     const chart = chartOptions.find(c => c.id === chartId);
@@ -131,10 +128,10 @@ export const ChartSelector: React.FC<ChartSelectorProps> = ({
                     return (
                         <motion.div
                             key={chartId}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
-                            transition={{ duration: 0.3 }}
+                            initial={{opacity: 0, y: 20}}
+                            animate={{opacity: 1, y: 0}}
+                            exit={{opacity: 0, y: -20}}
+                            transition={{duration: 0.3}}
                             className="bg-base-200 rounded-xl p-6"
                         >
                             {chart.component}
@@ -143,14 +140,13 @@ export const ChartSelector: React.FC<ChartSelectorProps> = ({
                 })}
             </AnimatePresence>
 
-            {/* Empty State */}
             {activeCharts.size === 0 && (
                 <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
+                    initial={{opacity: 0}}
+                    animate={{opacity: 1}}
                     className="flex flex-col items-center justify-center py-12 text-base-content/60"
                 >
-                    <FaChartLine className="w-12 h-12 mb-4 opacity-50" />
+                    <FaChartLine className="w-12 h-12 mb-4 opacity-50"/>
                     <h3 className="text-lg font-semibold">No Charts Selected</h3>
                     <p className="text-sm mt-2">Select visualizations above to begin analysis</p>
                 </motion.div>

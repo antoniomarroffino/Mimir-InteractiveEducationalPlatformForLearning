@@ -1,22 +1,22 @@
-import React, { useState } from 'react';
-import { useFolderCRUD } from '../../hooks/folder/useFolderCRUD';
-import { FiAlertCircle, FiCalendar, FiFolder, FiFolderPlus, FiPlus } from 'react-icons/fi';
-import { format, startOfWeek } from 'date-fns';
-import { clampWeekNumber, generateWeekRanges } from '../../utils/folderUtils';
+import React, {useState} from 'react';
+import {useFolderCRUD} from '../../hooks/folder/useFolderCRUD';
+import {FiAlertCircle, FiCalendar, FiFolder, FiFolderPlus, FiPlus} from 'react-icons/fi';
+import {format, startOfWeek} from 'date-fns';
+import {clampWeekNumber, generateWeekRanges} from '../../utils/folderUtils';
 
 interface CreateFolderFormProps {
     courseId: string;
 }
 
-export const CreateFolderForm: React.FC<CreateFolderFormProps> = ({ courseId }) => {
+export const CreateFolderForm: React.FC<CreateFolderFormProps> = ({courseId}) => {
     const [name, setName] = useState('');
     const [mode, setMode] = useState<'manual' | 'weekly'>('manual');
     const [weeksNumber, setWeeksNumber] = useState(1);
     const [startDate, setStartDate] = useState(() =>
-        format(startOfWeek(new Date(), { weekStartsOn: 1 }), 'yyyy-MM-dd')
+        format(startOfWeek(new Date(), {weekStartsOn: 1}), 'yyyy-MM-dd')
     );
 
-    const { createFolder, isCreatingFolder, errorCreateFolder } = useFolderCRUD();
+    const {createFolder, isCreatingFolder, errorCreateFolder} = useFolderCRUD();
 
     const handleWeeksChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setWeeksNumber(clampWeekNumber(e.target.value));
@@ -27,15 +27,15 @@ export const CreateFolderForm: React.FC<CreateFolderFormProps> = ({ courseId }) 
         try {
             if (mode === 'manual') {
                 if (!name.trim()) return;
-                await createFolder(courseId, { name: name.trim() });
+                await createFolder(courseId, {name: name.trim()});
                 setName('');
             } else {
                 const weeks = generateWeekRanges(startDate, weeksNumber);
-                for (const { start, end } of weeks) {
+                for (const {start, end} of weeks) {
                     const weekName = `${format(start, 'd MMMM')} - ${format(end, 'd MMMM')}`;
-                    await createFolder(courseId, { name: weekName });
+                    await createFolder(courseId, {name: weekName});
                 }
-                setStartDate(format(startOfWeek(new Date(), { weekStartsOn: 1 }), 'yyyy-MM-dd'));
+                setStartDate(format(startOfWeek(new Date(), {weekStartsOn: 1}), 'yyyy-MM-dd'));
                 setWeeksNumber(1);
             }
         } catch (error) {
@@ -48,7 +48,7 @@ export const CreateFolderForm: React.FC<CreateFolderFormProps> = ({ courseId }) 
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="flex items-center justify-between gap-4 flex-wrap">
                     <div className="flex items-center gap-3">
-                        <FiFolder className="text-2xl text-primary" />
+                        <FiFolder className="text-2xl text-primary"/>
                         <h3 className="text-xl font-bold text-primary">New Folder</h3>
                     </div>
                     <div role="group" className="join">
@@ -80,7 +80,7 @@ export const CreateFolderForm: React.FC<CreateFolderFormProps> = ({ courseId }) 
                             disabled={isCreatingFolder}
                             maxLength={50}
                         />
-                        <FiFolderPlus className="absolute left-4 top-1/2 -translate-y-1/2 text-base-content/40" />
+                        <FiFolderPlus className="absolute left-4 top-1/2 -translate-y-1/2 text-base-content/40"/>
                         <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-base-content/40">
                             {name.length}/50
                         </span>
@@ -107,7 +107,7 @@ export const CreateFolderForm: React.FC<CreateFolderFormProps> = ({ courseId }) 
                                 className="input input-bordered w-full pl-11 pr-4 py-2 text-sm"
                                 disabled={isCreatingFolder}
                             />
-                            <FiCalendar className="absolute left-4 top-1/2 -translate-y-1/2 text-base-content/40" />
+                            <FiCalendar className="absolute left-4 top-1/2 -translate-y-1/2 text-base-content/40"/>
                         </div>
                     </div>
 
@@ -123,10 +123,10 @@ export const CreateFolderForm: React.FC<CreateFolderFormProps> = ({ courseId }) 
                     }
                 >
                     {isCreatingFolder ? (
-                        <span className="loading loading-spinner" />
+                        <span className="loading loading-spinner"/>
                     ) : (
                         <>
-                            <FiPlus className="text-lg" />
+                            <FiPlus className="text-lg"/>
                             {mode === 'manual'
                                 ? 'Create Folder'
                                 : `Create ${weeksNumber} Week${weeksNumber > 1 ? 's' : ''}`}
@@ -136,7 +136,7 @@ export const CreateFolderForm: React.FC<CreateFolderFormProps> = ({ courseId }) 
 
                 {errorCreateFolder && (
                     <div className="text-error text-sm flex items-center gap-2">
-                        <FiAlertCircle />
+                        <FiAlertCircle/>
                         {errorCreateFolder.message}
                     </div>
                 )}

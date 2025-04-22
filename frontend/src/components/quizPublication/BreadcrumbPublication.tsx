@@ -1,8 +1,8 @@
 import React from "react";
-import { CourseDTO, FolderDTO, QuizDTO } from "@dti-isin/backend-api-client";
-import { FiBook, FiBookOpen, FiHome } from "react-icons/fi";
-import { BsFolder2, BsPatchQuestion, BsRocket } from "react-icons/bs";
-import { BaseBreadcrumb, Crumb } from "../common/BaseBreadcrumb.tsx";
+import {CourseDTO, FolderDTO, QuizDTO} from "@dti-isin/backend-api-client";
+import {FiBook, FiBookOpen, FiHome} from "react-icons/fi";
+import {BsFolder2, BsPatchQuestion, BsRocket} from "react-icons/bs";
+import {BaseBreadcrumb, Crumb} from "../common/BaseBreadcrumb.tsx";
 
 interface BreadcrumbPublicationProps {
     course?: CourseDTO;
@@ -16,20 +16,20 @@ export const BreadcrumbPublication: React.FC<BreadcrumbPublicationProps> = ({
                                                                                 quiz,
                                                                             }) => {
     const crumbs: Crumb[] = [
-        { label: "Home", to: "/", icon: <FiHome /> },
+        {label: "Home", to: "/", icon: <FiHome/>},
     ];
 
     if (course) {
         crumbs.push({
             label: "Courses",
             to: "/courses",
-            icon: <FiBook />,
+            icon: <FiBook/>,
         });
 
         crumbs.push({
             label: course.name,
             to: `/courses/${course.id}`,
-            icon: <FiBookOpen />,
+            icon: <FiBookOpen/>,
         });
     }
 
@@ -37,7 +37,7 @@ export const BreadcrumbPublication: React.FC<BreadcrumbPublicationProps> = ({
         crumbs.push({
             label: folder.name,
             to: `/courses/${course?.id}`,
-            icon: <BsFolder2 />,
+            icon: <BsFolder2/>,
         });
     }
 
@@ -45,14 +45,14 @@ export const BreadcrumbPublication: React.FC<BreadcrumbPublicationProps> = ({
         crumbs.push({
             label: quiz.name,
             to: `/courses/${course?.id}`,
-            icon: <BsPatchQuestion />,
+            icon: <BsPatchQuestion/>,
         });
 
         crumbs.push({
             label: "Publication",
-            icon: <BsRocket />,
+            icon: <BsRocket/>,
         });
     }
 
-    return <BaseBreadcrumb crumbs={crumbs} />;
+    return <BaseBreadcrumb crumbs={crumbs}/>;
 };

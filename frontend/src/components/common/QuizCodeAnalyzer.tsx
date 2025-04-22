@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
-import { useGetQuizPublicationByCode } from "../../hooks/quizPublication/useGetQuizPublicationByCode.ts";
-import { useGetQuizById } from "../../hooks/quiz/useGetQuizById.ts";
-import { QuizDTO, QuizPublicationDTO } from "@dti-isin/backend-api-client";
+import React, {useEffect} from 'react';
+import {useGetQuizPublicationByCode} from "../../hooks/quizPublication/useGetQuizPublicationByCode.ts";
+import {useGetQuizById} from "../../hooks/quiz/useGetQuizById.ts";
+import {QuizDTO, QuizPublicationDTO} from "@dti-isin/backend-api-client";
 
 interface QuizCodeAnalyzerProps {
     publicationCode: string;
@@ -28,7 +28,7 @@ export const QuizCodeAnalyzer: React.FC<QuizCodeAnalyzerProps> = ({
         publication?.courseId ?? '',
         publication?.folderId ?? '',
         publication?.quizId ?? '',
-        { enabled: !!publication }
+        {enabled: !!publication}
     );
 
     useEffect(() => {

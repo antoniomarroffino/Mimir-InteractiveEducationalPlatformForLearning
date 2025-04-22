@@ -19,13 +19,11 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 })
 @RegisterForReflection
 public abstract class QuestionDTO {
-    private String id;
-    private String questionText;
-
     @Schema(required = true)
     @NotNull(message = "Question type cannot be null")
     private final QuestionType type;
-
+    private String id;
+    private String questionText;
     private String questionBankId;
 
     @Schema(description = "Points awarded for correct answer", defaultValue = "1")

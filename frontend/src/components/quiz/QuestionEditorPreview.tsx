@@ -1,8 +1,8 @@
 import React from "react";
-import { QuestionEditor } from "../question/QuestionEditor";
-import { QuestionType } from "@dti-isin/backend-api-client";
-import { XMarkIcon } from "@heroicons/react/16/solid";
-import { SpecificQuestionDTO } from "../../hooks/question/useQuestionCreation";
+import {QuestionEditor} from "../question/QuestionEditor";
+import {QuestionType} from "@dti-isin/backend-api-client";
+import {XMarkIcon} from "@heroicons/react/16/solid";
+import {SpecificQuestionDTO} from "../../hooks/question/useQuestionCreation";
 
 interface QuestionEditorPreviewProps {
     questionTemplate: SpecificQuestionDTO;
@@ -36,7 +36,7 @@ export const QuestionEditorPreview: React.FC<QuestionEditorPreviewProps> = ({
                             className="btn btn-outline btn-error btn-sm gap-2"
                             onClick={onCancel}
                         >
-                            <XMarkIcon className="h-4 w-4" />
+                            <XMarkIcon className="h-4 w-4"/>
                             Exit Preview
                         </button>
                     )}

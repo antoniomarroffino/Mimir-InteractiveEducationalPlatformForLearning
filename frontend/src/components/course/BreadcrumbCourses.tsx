@@ -1,8 +1,8 @@
 import React from "react";
-import { CourseDTO, FolderDTO, QuizDTO } from "@dti-isin/backend-api-client";
+import {CourseDTO, FolderDTO, QuizDTO} from "@dti-isin/backend-api-client";
 import {FiBook, FiBookOpen, FiHome} from "react-icons/fi";
 import {BsFolder2, BsPatchQuestion} from "react-icons/bs";
-import { BaseBreadcrumb, Crumb } from "../common/BaseBreadcrumb.tsx";
+import {BaseBreadcrumb, Crumb} from "../common/BaseBreadcrumb.tsx";
 
 interface BreadcrumbCoursesProps {
     course?: CourseDTO;
@@ -10,21 +10,21 @@ interface BreadcrumbCoursesProps {
     quiz?: QuizDTO;
 }
 
-export const BreadcrumbCourses: React.FC<BreadcrumbCoursesProps> = ({ course, folder, quiz }) => {
+export const BreadcrumbCourses: React.FC<BreadcrumbCoursesProps> = ({course, folder, quiz}) => {
     const crumbs: Crumb[] = [
-        { label: "Home", to: "/", icon: <FiHome /> }
+        {label: "Home", to: "/", icon: <FiHome/>}
     ];
 
     if (course) {
         crumbs.push({
             label: "Courses",
             to: "/courses",
-            icon: <FiBook />
+            icon: <FiBook/>
         });
         crumbs.push({
             label: course.name,
             to: `/courses/${course.id}`,
-            icon: <FiBookOpen />
+            icon: <FiBookOpen/>
         });
     }
 
@@ -32,16 +32,16 @@ export const BreadcrumbCourses: React.FC<BreadcrumbCoursesProps> = ({ course, fo
         crumbs.push({
             label: folder.name,
             to: `/courses/${course?.id}`,
-            icon: <BsFolder2 />
+            icon: <BsFolder2/>
         });
     }
 
     if (quiz) {
         crumbs.push({
             label: quiz.name,
-            icon: <BsPatchQuestion />
+            icon: <BsPatchQuestion/>
         });
     }
 
-    return <BaseBreadcrumb crumbs={crumbs} />;
+    return <BaseBreadcrumb crumbs={crumbs}/>;
 };

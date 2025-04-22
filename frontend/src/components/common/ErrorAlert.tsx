@@ -5,7 +5,7 @@ interface ErrorAlertProps {
     message?: string;
 }
 
-export const ErrorAlert: React.FC<ErrorAlertProps> = ({ title, message }) => {
+export const ErrorAlert: React.FC<ErrorAlertProps> = ({title, message}) => {
     return (
         <div className="alert alert-error shadow-lg mt-8">
             <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none"

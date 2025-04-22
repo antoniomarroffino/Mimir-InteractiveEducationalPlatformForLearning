@@ -1,7 +1,7 @@
 import React from 'react';
-import { QuizDTO } from '@dti-isin/backend-api-client';
-import { useNavigate } from 'react-router-dom';
-import { BsBarChart, BsPencil, BsRocket, BsTrash } from 'react-icons/bs';
+import {QuizDTO} from '@dti-isin/backend-api-client';
+import {useNavigate} from 'react-router-dom';
+import {BsBarChart, BsPencil, BsRocket, BsTrash} from 'react-icons/bs';
 
 interface QuizActionsMenuProps {
     quiz: QuizDTO;
@@ -50,7 +50,7 @@ export const QuizActionsMenu: React.FC<QuizActionsMenuProps> = ({
         <div className="flex gap-3">
             <ActionButton
                 onClick={onRequestPublish}
-                icon={<BsRocket />}
+                icon={<BsRocket/>}
                 label="Publish"
                 color="success"
             />
@@ -58,7 +58,7 @@ export const QuizActionsMenu: React.FC<QuizActionsMenuProps> = ({
                 onClick={() =>
                     navigate(`/courses/${courseId}/folders/${folderId}/quizzes/${quiz.id}/results`)
                 }
-                icon={<BsBarChart />}
+                icon={<BsBarChart/>}
                 label="Results"
                 color="info"
             />
@@ -66,13 +66,13 @@ export const QuizActionsMenu: React.FC<QuizActionsMenuProps> = ({
                 onClick={() =>
                     navigate(`/courses/${courseId}/folders/${folderId}/quizzes/${quiz.id}/edit`)
                 }
-                icon={<BsPencil />}
+                icon={<BsPencil/>}
                 label="Edit"
                 color="primary"
             />
             <ActionButton
                 onClick={onRequestDelete}
-                icon={<BsTrash />}
+                icon={<BsTrash/>}
                 label="Delete"
                 color="error"
             />

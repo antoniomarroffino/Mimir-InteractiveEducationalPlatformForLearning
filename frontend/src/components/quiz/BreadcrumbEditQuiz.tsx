@@ -1,8 +1,8 @@
 import React from "react";
-import { CourseDTO, FolderDTO, QuizDTO } from "@dti-isin/backend-api-client";
-import { FiBook, FiBookOpen, FiHome } from "react-icons/fi";
+import {CourseDTO, FolderDTO, QuizDTO} from "@dti-isin/backend-api-client";
+import {FiBook, FiBookOpen, FiHome} from "react-icons/fi";
 import {BsFolder2, BsPatchQuestion, BsPencil} from "react-icons/bs";
-import { BaseBreadcrumb, Crumb } from "../common/BaseBreadcrumb.tsx";
+import {BaseBreadcrumb, Crumb} from "../common/BaseBreadcrumb.tsx";
 
 interface BreadcrumbEditQuizProps {
     course?: CourseDTO;
@@ -11,25 +11,25 @@ interface BreadcrumbEditQuizProps {
 }
 
 export const BreadcrumbEditQuiz: React.FC<BreadcrumbEditQuizProps> = ({
-                                                                                course,
-                                                                                folder,
-                                                                                quiz,
-                                                                            }) => {
+                                                                          course,
+                                                                          folder,
+                                                                          quiz,
+                                                                      }) => {
     const crumbs: Crumb[] = [
-        { label: "Home", to: "/", icon: <FiHome /> },
+        {label: "Home", to: "/", icon: <FiHome/>},
     ];
 
     if (course) {
         crumbs.push({
             label: "Courses",
             to: "/courses",
-            icon: <FiBook />,
+            icon: <FiBook/>,
         });
 
         crumbs.push({
             label: course.name,
             to: `/courses/${course.id}`,
-            icon: <FiBookOpen />,
+            icon: <FiBookOpen/>,
         });
     }
 
@@ -37,7 +37,7 @@ export const BreadcrumbEditQuiz: React.FC<BreadcrumbEditQuizProps> = ({
         crumbs.push({
             label: folder.name,
             to: `/courses/${course?.id}`,
-            icon: <BsFolder2 />,
+            icon: <BsFolder2/>,
         });
     }
 
@@ -45,14 +45,14 @@ export const BreadcrumbEditQuiz: React.FC<BreadcrumbEditQuizProps> = ({
         crumbs.push({
             label: quiz.name,
             to: `/courses/${course?.id}`,
-            icon: <BsPatchQuestion />,
+            icon: <BsPatchQuestion/>,
         });
 
         crumbs.push({
             label: "Edit",
-            icon: <BsPencil />,
+            icon: <BsPencil/>,
         });
     }
 
-    return <BaseBreadcrumb crumbs={crumbs} />;
+    return <BaseBreadcrumb crumbs={crumbs}/>;
 };

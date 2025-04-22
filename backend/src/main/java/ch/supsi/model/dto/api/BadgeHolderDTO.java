@@ -1,9 +1,6 @@
 package ch.supsi.model.dto.api;
 
-import ch.supsi.model.api.badge.Badge;
-import com.microsoft.graph.models.User;
 import io.quarkus.runtime.annotations.RegisterForReflection;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.ArrayList;

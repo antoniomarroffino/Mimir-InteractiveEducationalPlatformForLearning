@@ -1,13 +1,9 @@
 import React from "react";
-import { SpecificQuestionDTO } from "../../hooks/question/useQuestionCreation";
-import { closestCenter, DndContext, DragEndEvent } from "@dnd-kit/core";
-import {
-    arrayMove,
-    SortableContext,
-    verticalListSortingStrategy
-} from "@dnd-kit/sortable";
-import { SortableQuestionElement } from "./SortableQuestionElement";
-import { CreateQuestionForm } from "./CreateQuestionForm.tsx";
+import {SpecificQuestionDTO} from "../../hooks/question/useQuestionCreation";
+import {closestCenter, DndContext, DragEndEvent} from "@dnd-kit/core";
+import {arrayMove, SortableContext, verticalListSortingStrategy} from "@dnd-kit/sortable";
+import {SortableQuestionElement} from "./SortableQuestionElement";
+import {CreateQuestionForm} from "./CreateQuestionForm.tsx";
 
 interface QuestionsListProps {
     questions: SpecificQuestionDTO[];
@@ -27,7 +23,7 @@ export const QuestionsList: React.FC<QuestionsListProps> = ({
                                                                 draftQuestionElement
                                                             }) => {
     const handleDragEnd = (event: DragEndEvent) => {
-        const { active, over } = event;
+        const {active, over} = event;
 
         if (active.id !== over?.id) {
             const oldIndex = questions.findIndex(q => q.id === active.id);
@@ -67,7 +63,8 @@ export const QuestionsList: React.FC<QuestionsListProps> = ({
             </div>
 
             <div className="pt-2">
-                <CreateQuestionForm onStartCreation={onStartCreation ?? (() => {})} />
+                <CreateQuestionForm onStartCreation={onStartCreation ?? (() => {
+                })}/>
             </div>
         </div>
     );

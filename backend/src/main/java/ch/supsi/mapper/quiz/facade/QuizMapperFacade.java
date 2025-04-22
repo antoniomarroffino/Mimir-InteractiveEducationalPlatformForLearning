@@ -13,7 +13,6 @@ import org.bson.types.ObjectId;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class QuizMapperFacade implements IQuizMapperFacade {

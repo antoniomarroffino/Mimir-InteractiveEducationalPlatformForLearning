@@ -1,6 +1,5 @@
 package ch.supsi.controller.questionBank;
 
-import ch.supsi.model.api.QuestionBank;
 import ch.supsi.model.dto.api.QuestionBankDTO;
 import ch.supsi.model.dto.api.question.TrueFalseQuestionDTO;
 import ch.supsi.service.question.IQuestionService;
@@ -18,7 +17,6 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 

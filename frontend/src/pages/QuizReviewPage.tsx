@@ -46,7 +46,6 @@ const QuizReviewPage: React.FC = () => {
                 {showInfo && <QuizReviewInfoAlert/>}
 
                 <div className="flex flex-col lg:flex-row gap-6 min-h-[600px] mt-6">
-                    {/* Sidebar */}
                     <motion.div
                         initial={{opacity: 0, y: 10}}
                         animate={{opacity: 1, y: 0}}
@@ -61,7 +60,6 @@ const QuizReviewPage: React.FC = () => {
                         />
                     </motion.div>
 
-                    {/* Main content */}
                     <motion.div
                         initial={{opacity: 0, y: 10}}
                         animate={{opacity: 1, y: 0}}

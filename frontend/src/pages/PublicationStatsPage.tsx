@@ -1,36 +1,36 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {
-    QuestionType,
-    QuizPublicationDTO,
-    QuizAttemptDTO,
-    TrueFalseQuestionDTO,
     MultipleChoiceQuestionDTO,
-    TrueFalseQuestionResponseDTO,
-    MultipleChoiceQuestionResponseDTO
+    MultipleChoiceQuestionResponseDTO,
+    QuestionType,
+    QuizAttemptDTO,
+    QuizPublicationDTO,
+    TrueFalseQuestionDTO,
+    TrueFalseQuestionResponseDTO
 } from '@dti-isin/backend-api-client';
-import { useParams } from "react-router-dom";
-import { PublicationDetails } from "../components/quizPublication/PublicationDetails";
-import { AnimatePresence, motion } from 'framer-motion';
-import { useGetQuizPublicationsByQuizId } from "../hooks/quizPublication/useGetQuizPublicationsByQuizId";
+import {useParams} from "react-router-dom";
+import {PublicationDetails} from "../components/quizPublication/PublicationDetails";
+import {AnimatePresence, motion} from 'framer-motion';
+import {useGetQuizPublicationsByQuizId} from "../hooks/quizPublication/useGetQuizPublicationsByQuizId";
 import NoPublicationsPlaceholder from "../components/quizPublication/NoPublicationsPlaceholder";
-import { useGetQuizAttemptsByPublication } from "../hooks/quizAttempt/useGetQuizAttemptsByPublication";
-import { QuestionStatistics } from "../components/publication-stats/QuestionStatistics";
-import { AttemptsTable } from "../components/publication-stats/AttemptsTable";
-import { AttemptDetails } from "../components/attempt/AttemptDetails";
-import { PublicationSelector } from "../components/publication-stats/PublicationSelector";
-import { useGetQuizById } from "../hooks/quiz/useGetQuizById";
-import { useGetCourseById } from "../hooks/course/useGetCourseById";
-import { useGetFolderById } from "../hooks/folder/useGetFolderById";
-import { QuizResultsPageHeader } from "../components/quiz-results/QuizResultPageHeader";
+import {useGetQuizAttemptsByPublication} from "../hooks/quizAttempt/useGetQuizAttemptsByPublication";
+import {QuestionStatistics} from "../components/publication-stats/QuestionStatistics";
+import {AttemptsTable} from "../components/publication-stats/AttemptsTable";
+import {AttemptDetails} from "../components/attempt/AttemptDetails";
+import {PublicationSelector} from "../components/publication-stats/PublicationSelector";
+import {useGetQuizById} from "../hooks/quiz/useGetQuizById";
+import {useGetCourseById} from "../hooks/course/useGetCourseById";
+import {useGetFolderById} from "../hooks/folder/useGetFolderById";
+import {QuizResultsPageHeader} from "../components/quiz-results/QuizResultPageHeader";
 import {ChartSelector} from "../components/quiz-results/charts/ChartSelector.tsx";
 import {FaCalendar} from "react-icons/fa";
 
 const PublicationStatsPage: React.FC = () => {
-    const { quizId, courseId, folderId } = useParams();
-    const { data: currentQuiz } = useGetQuizById(courseId!, folderId!, quizId!);
-    const { data: currentCourse } = useGetCourseById(courseId!);
-    const { data: currentFolder } = useGetFolderById(courseId!, folderId!);
-    const { data: publications, isLoading: isGettingPublicationsByQuizId } = useGetQuizPublicationsByQuizId(quizId!);
+    const {quizId, courseId, folderId} = useParams();
+    const {data: currentQuiz} = useGetQuizById(courseId!, folderId!, quizId!);
+    const {data: currentCourse} = useGetCourseById(courseId!);
+    const {data: currentFolder} = useGetFolderById(courseId!, folderId!);
+    const {data: publications, isLoading: isGettingPublicationsByQuizId} = useGetQuizPublicationsByQuizId(quizId!);
     const [selectedPublication, setSelectedPublication] = useState<QuizPublicationDTO | null>(null);
     const {
         data: attempts,
@@ -113,13 +113,13 @@ const PublicationStatsPage: React.FC = () => {
     }
 
     if (!publications || publications.length === 0 || !currentQuiz || !currentCourse || !currentFolder) {
-        return <NoPublicationsPlaceholder />;
+        return <NoPublicationsPlaceholder/>;
     }
 
     return (
         <motion.section
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial={{opacity: 0}}
+            animate={{opacity: 1}}
             className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 py-12 px-4"
         >
             <div className="max-w-7xl mx-auto space-y-8">
@@ -133,7 +133,7 @@ const PublicationStatsPage: React.FC = () => {
                     <div className="card-body space-y-6">
                         <div className="flex items-center justify-between gap-4">
                             <h2 className="text-xl font-bold text-base-content flex items-center gap-2">
-                                <FaCalendar className="text-primary" />
+                                <FaCalendar className="text-primary"/>
                                 Publication Details
                             </h2>
                             <div className="w-96">
@@ -146,7 +146,7 @@ const PublicationStatsPage: React.FC = () => {
                         </div>
 
                         {selectedPublication && (
-                            <PublicationDetails publication={selectedPublication} />
+                            <PublicationDetails publication={selectedPublication}/>
                         )}
                     </div>
                 </div>
@@ -155,9 +155,9 @@ const PublicationStatsPage: React.FC = () => {
                     {selectedPublication && questionStats && (
                         <motion.div
                             key={selectedPublication.id}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
+                            initial={{opacity: 0}}
+                            animate={{opacity: 1}}
+                            exit={{opacity: 0}}
                             className="space-y-8"
                         >
                             <div className="card bg-base-100 shadow-lg">
@@ -201,7 +201,8 @@ const PublicationStatsPage: React.FC = () => {
                                                         showBadgeAssignment={!selectedPublication.anonymous}
                                                     />
                                                 ) : (
-                                                    <div className="flex items-center justify-center text-center h-full">
+                                                    <div
+                                                        className="flex items-center justify-center text-center h-full">
                                                         <div>
                                                             <div className="text-6xl mb-4">👆</div>
                                                             <h3 className="text-xl font-bold text-base-content/70">

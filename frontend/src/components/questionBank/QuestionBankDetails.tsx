@@ -82,14 +82,14 @@ const QuestionBankDetails: React.FC = () => {
         }
     };
 
-    if (isLoading) return <Spinner size="lg" />;
+    if (isLoading) return <Spinner size="lg"/>;
 
     if (errorGetQuestionBank) {
-        return <ErrorAlert title="Error loading question bank!" message={errorGetQuestionBank.message} />
+        return <ErrorAlert title="Error loading question bank!" message={errorGetQuestionBank.message}/>
     }
 
     if (!questionBank) {
-        return <ErrorAlert title="Error loading question bank!" message={"Question bank not found!"} />
+        return <ErrorAlert title="Error loading question bank!" message={"Question bank not found!"}/>
     }
 
     return (
@@ -150,7 +150,7 @@ const QuestionBankDetails: React.FC = () => {
                             isEditingExistingQuestion={isEditingExistingQuestion}
                             onCancel={resetQuestionCreation}
                             onSave={saveNewQuestion}
-                            onQuestionTextChange={(text) => setDraftQuestion(prev => ({ ...prev, questionText: text }))}
+                            onQuestionTextChange={(text) => setDraftQuestion(prev => ({...prev, questionText: text}))}
                         />
                     }
                     rightContent={
@@ -162,7 +162,7 @@ const QuestionBankDetails: React.FC = () => {
                                 currentType={selectedQuestionType}
                             />
                         ) : (
-                            <EmptyQuestionTypeCard />
+                            <EmptyQuestionTypeCard/>
                         )
                     }
                 />

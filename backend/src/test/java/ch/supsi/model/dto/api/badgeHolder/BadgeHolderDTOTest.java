@@ -1,6 +1,5 @@
 package ch.supsi.model.dto.api.badgeHolder;
 
-import ch.supsi.model.api.badge.Badge;
 import ch.supsi.model.dto.api.BadgeDTO;
 import ch.supsi.model.dto.api.BadgeHolderDTO;
 import ch.supsi.model.dto.api.UserWithoutCoursesDTO;
@@ -11,7 +10,6 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;

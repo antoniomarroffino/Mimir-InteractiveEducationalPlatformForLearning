@@ -1,6 +1,6 @@
-import { motion } from 'framer-motion';
-import React, { ReactNode } from 'react';
-import { FiInfo } from 'react-icons/fi';
+import {motion} from 'framer-motion';
+import React, {ReactNode} from 'react';
+import {FiInfo} from 'react-icons/fi';
 
 interface BasePageHeaderProps {
     title: string;
@@ -23,8 +23,8 @@ export const BasePageHeader: React.FC<BasePageHeaderProps> = ({
                                                               }) => {
     return (
         <motion.div
-            initial={{ y: -20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
+            initial={{y: -20, opacity: 0}}
+            animate={{y: 0, opacity: 1}}
             className={`relative overflow-hidden rounded-3xl bg-gradient-to-br ${gradientFrom} via-indigo-500 ${gradientTo} p-10 mb-12 text-white shadow-xl`}
         >
             <div className="flex items-center justify-between flex-col md:flex-row gap-6">
@@ -33,13 +33,13 @@ export const BasePageHeader: React.FC<BasePageHeaderProps> = ({
                         <h1 className="text-4xl font-bold">{title}</h1>
                         {showInfoToggle && (
                             <motion.button
-                                whileHover={{ scale: 1.15 }}
-                                whileTap={{ scale: 0.95 }}
+                                whileHover={{scale: 1.15}}
+                                whileTap={{scale: 0.95}}
                                 onClick={onToggleInfo}
                                 className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all shadow-sm border border-white/20"
                                 title="More info"
                             >
-                                <FiInfo className="w-5 h-5" />
+                                <FiInfo className="w-5 h-5"/>
                             </motion.button>
                         )}
                     </div>
@@ -50,8 +50,8 @@ export const BasePageHeader: React.FC<BasePageHeaderProps> = ({
 
                 {icon && (
                     <motion.div
-                        animate={{ rotate: [0, 5, -5, 0] }}
-                        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+                        animate={{rotate: [0, 5, -5, 0]}}
+                        transition={{duration: 4, repeat: Infinity, ease: 'easeInOut'}}
                     >
                         {icon}
                     </motion.div>

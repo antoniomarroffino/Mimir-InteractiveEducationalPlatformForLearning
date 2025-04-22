@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { FiFolder } from 'react-icons/fi';
-import { BsTrash } from 'react-icons/bs';
-import { CourseDTO } from '@dti-isin/backend-api-client';
-import { FolderList } from './FolderList.tsx';
+import React, {useState} from 'react';
+import {FiFolder} from 'react-icons/fi';
+import {BsTrash} from 'react-icons/bs';
+import {CourseDTO} from '@dti-isin/backend-api-client';
+import {FolderList} from './FolderList.tsx';
 import {DeleteFolderPopup} from "./DeleteFolderPopup.tsx";
 
 interface CourseFoldersPanelProps {
@@ -34,7 +34,7 @@ export const CourseFoldersPanel: React.FC<CourseFoldersPanelProps> = ({
         <div className="bg-white rounded-2xl p-6 shadow-xl border border-secondary/20">
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
-                    <FiFolder className="text-primary" />
+                    <FiFolder className="text-primary"/>
                     Course Folders
                 </h2>
 
@@ -45,7 +45,7 @@ export const CourseFoldersPanel: React.FC<CourseFoldersPanelProps> = ({
                             className="btn btn-error btn-sm gap-2"
                             disabled={isDeletingFolder}
                         >
-                            <BsTrash />
+                            <BsTrash/>
                             Delete ({selectedFolders.length})
                         </button>
                     )}

@@ -1,20 +1,20 @@
-import React, { useState, useMemo } from 'react';
-import { Bar } from 'react-chartjs-2';
-import { QuestionDTO } from 'backend/target/backend-api-client/index.ts';
+import React, {useMemo, useState} from 'react';
+import {Bar} from 'react-chartjs-2';
+import {QuestionDTO} from 'backend/target/backend-api-client/index.ts';
 import {
     BarElement,
     CategoryScale,
     Chart as ChartJS,
+    ChartData,
+    ChartOptions,
+    Colors,
     Legend,
     LinearScale,
     Title,
     Tooltip,
-    Colors,
-    ChartData,
-    ChartOptions,
 } from 'chart.js';
-import { formatSeconds, formatTicks, createVerticalGradient } from '../../../../utils/chartUtils.ts';
-import { QuestionListForResults } from "../../QuestionListForResults.tsx";
+import {createVerticalGradient, formatSeconds, formatTicks} from '../../../../utils/chartUtils.ts';
+import {QuestionListForResults} from "../../QuestionListForResults.tsx";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, Colors);
 
@@ -25,7 +25,7 @@ interface GeneralTimeChartProps {
     }[];
 }
 
-export const GeneralTimeChart: React.FC<GeneralTimeChartProps> = ({ questionStats }) => {
+export const GeneralTimeChart: React.FC<GeneralTimeChartProps> = ({questionStats}) => {
     const [chartId] = useState(() => `chart-${Math.random().toString(36).slice(2, 11)}`);
 
     const chartData: ChartData<'bar'> = useMemo(() => ({
@@ -35,7 +35,7 @@ export const GeneralTimeChart: React.FC<GeneralTimeChartProps> = ({ questionStat
                 label: 'Average Time',
                 data: questionStats.map((stat) => stat.averageTimeSpent),
                 backgroundColor: (context) => {
-                    const { ctx, chartArea } = context.chart;
+                    const {ctx, chartArea} = context.chart;
                     if (!chartArea) return undefined;
                     return createVerticalGradient(ctx, chartArea);
                 },
@@ -57,13 +57,13 @@ export const GeneralTimeChart: React.FC<GeneralTimeChartProps> = ({ questionStat
             easing: 'easeInOutQuart',
         },
         plugins: {
-            legend: { display: false },
-            title: { display: false },
+            legend: {display: false},
+            title: {display: false},
             tooltip: {
                 backgroundColor: 'rgba(255, 255, 255, 0.9)',
                 titleColor: '#6366f1',
                 bodyColor: '#1f2937',
-                bodyFont: { size: 14 },
+                bodyFont: {size: 14},
                 padding: 12,
                 cornerRadius: 8,
                 displayColors: false,
@@ -82,12 +82,12 @@ export const GeneralTimeChart: React.FC<GeneralTimeChartProps> = ({ questionStat
                 },
                 ticks: {
                     callback: (value) => formatTicks(Number(value)),
-                    font: { size: 12 },
+                    font: {size: 12},
                 },
             },
             x: {
-                grid: { display: false },
-                ticks: { font: { size: 12 } },
+                grid: {display: false},
+                ticks: {font: {size: 12}},
             },
         },
     }), []);
@@ -110,7 +110,7 @@ export const GeneralTimeChart: React.FC<GeneralTimeChartProps> = ({ questionStat
                     className="filter drop-shadow-md"
                 />
             </div>
-            <QuestionListForResults questions={questionStats.map((q) => q.question)} />
+            <QuestionListForResults questions={questionStats.map((q) => q.question)}/>
         </div>
     );
 };

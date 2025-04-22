@@ -1,6 +1,6 @@
 import React from "react";
-import { XMarkIcon } from "@heroicons/react/16/solid";
-import { BsLayoutSidebar, BsListUl } from "react-icons/bs";
+import {XMarkIcon} from "@heroicons/react/16/solid";
+import {BsLayoutSidebar, BsListUl} from "react-icons/bs";
 
 interface ThreeColumnLayoutProps {
     sidebarContent: React.ReactNode;
@@ -30,7 +30,7 @@ export const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 relative">
             <div className="lg:hidden absolute top-0 right-0 z-50">
                 <button className="btn btn-ghost" onClick={onSidebarToggle}>
-                    {isSidebarOpen ? <BsLayoutSidebar /> : <BsListUl />}
+                    {isSidebarOpen ? <BsLayoutSidebar/> : <BsListUl/>}
                 </button>
             </div>
             <div
@@ -53,7 +53,7 @@ export const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
                             className="btn btn-circle btn-sm lg:hidden"
                             onClick={onSidebarClose}
                         >
-                            <XMarkIcon className="w-4 h-4" />
+                            <XMarkIcon className="w-4 h-4"/>
                         </button>
                     </div>
                     {sidebarContent}

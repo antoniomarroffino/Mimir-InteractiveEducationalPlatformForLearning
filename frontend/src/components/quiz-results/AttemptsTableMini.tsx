@@ -1,5 +1,5 @@
 import React from 'react';
-import { QuizAttemptDTO } from '@dti-isin/backend-api-client';
+import {QuizAttemptDTO} from '@dti-isin/backend-api-client';
 
 interface AttemptsTableMiniProps {
     attempts: QuizAttemptDTO[];

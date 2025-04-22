@@ -1,7 +1,7 @@
-import React, { useMemo } from 'react';
-import { Bar } from 'react-chartjs-2';
-import { QuestionDTO, QuizAttemptDTO } from '@dti-isin/backend-api-client';
-import { ChartData, ChartOptions } from 'chart.js';
+import React, {useMemo} from 'react';
+import {Bar} from 'react-chartjs-2';
+import {QuestionDTO, QuizAttemptDTO} from '@dti-isin/backend-api-client';
+import {ChartData, ChartOptions} from 'chart.js';
 
 interface GeneralScoreChartProps {
     attempts: QuizAttemptDTO[];
@@ -24,8 +24,7 @@ export const GeneralScoreChart: React.FC<GeneralScoreChartProps> = ({
         [questions]
     );
 
-    const { chartData, statistics } = useMemo(() => {
-        // Calcola il punteggio totale per ogni tentativo
+    const {chartData, statistics} = useMemo(() => {
         const attemptScores = attempts.map(attempt => {
             if (!attempt.responses) return 0;
             return attempt.responses.reduce((sum, response) =>
@@ -33,7 +32,6 @@ export const GeneralScoreChart: React.FC<GeneralScoreChartProps> = ({
             );
         });
 
-        // Crea l'array delle frequenze
         const scoreFrequency = new Array(maxPossibleScore + 1).fill(0);
         attemptScores.forEach(score => {
             if (score !== null && score !== undefined) {
@@ -41,7 +39,6 @@ export const GeneralScoreChart: React.FC<GeneralScoreChartProps> = ({
             }
         });
 
-        // Calcola statistiche
         const totalAttempts = attempts.length;
         const averageScore = totalAttempts > 0
             ? attemptScores.reduce((sum, score) => sum + (score ?? 0), 0) / totalAttempts
@@ -58,7 +55,7 @@ export const GeneralScoreChart: React.FC<GeneralScoreChartProps> = ({
         };
 
         const data: ChartData<'bar'> = {
-            labels: Array.from({ length: maxPossibleScore + 1 }, (_, i) => i.toString()),
+            labels: Array.from({length: maxPossibleScore + 1}, (_, i) => i.toString()),
             datasets: [{
                 label: 'Number of Students',
                 data: scoreFrequency,
@@ -78,19 +75,19 @@ export const GeneralScoreChart: React.FC<GeneralScoreChartProps> = ({
             }]
         };
 
-        return { chartData: data, statistics };
+        return {chartData: data, statistics};
     }, [attempts, maxPossibleScore]);
 
     const chartOptions: ChartOptions<'bar'> = {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-            legend: { display: false },
+            legend: {display: false},
             tooltip: {
                 backgroundColor: 'rgba(255, 255, 255, 0.9)',
                 titleColor: '#6366f1',
                 bodyColor: '#1f2937',
-                bodyFont: { size: 14 },
+                bodyFont: {size: 14},
                 padding: 12,
                 cornerRadius: 8,
                 displayColors: false,
@@ -116,7 +113,7 @@ export const GeneralScoreChart: React.FC<GeneralScoreChartProps> = ({
                     text: `Score (max: ${maxPossibleScore})`,
                     color: '#6366f1'
                 },
-                grid: { display: false }
+                grid: {display: false}
             },
             y: {
                 title: {
@@ -125,7 +122,7 @@ export const GeneralScoreChart: React.FC<GeneralScoreChartProps> = ({
                     color: '#6366f1'
                 },
                 beginAtZero: true,
-                ticks: { stepSize: 1 }
+                ticks: {stepSize: 1}
             }
         }
     };
@@ -180,7 +177,7 @@ export const GeneralScoreChart: React.FC<GeneralScoreChartProps> = ({
                 </div>
             </div>
             <div className="h-[400px]">
-                <Bar data={chartData} options={chartOptions} />
+                <Bar data={chartData} options={chartOptions}/>
             </div>
         </div>
     );

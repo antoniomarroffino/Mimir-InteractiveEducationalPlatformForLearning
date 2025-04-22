@@ -3,7 +3,7 @@ import {useAuth} from "../../hooks/useAuth.ts";
 import {FiHash} from "react-icons/fi";
 import {QuizCodeAnalyzer} from "./QuizCodeAnalyzer.tsx";
 import {useNavigate} from 'react-router-dom';
-import {QuizPublicationDTO, QuizDTO} from "@dti-isin/backend-api-client";
+import {QuizDTO, QuizPublicationDTO} from "@dti-isin/backend-api-client";
 
 export const QuizSessionComponent = () => {
     const {user} = useAuth();

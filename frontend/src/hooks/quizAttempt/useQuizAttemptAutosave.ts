@@ -1,11 +1,11 @@
-import { useEffect, useRef } from 'react';
-import { useQuizAttemptLocal } from './useQuizAttemptLocal';
-import { useQuizAttemptCRUD } from './useQuizAttemptCRUD';
-import { AttemptStatus } from "@dti-isin/backend-api-client";
+import {useEffect, useRef} from 'react';
+import {useQuizAttemptLocal} from './useQuizAttemptLocal';
+import {useQuizAttemptCRUD} from './useQuizAttemptCRUD';
+import {AttemptStatus} from "@dti-isin/backend-api-client";
 
 export const useQuizAttemptAutosave = (intervalMs: number = 15000) => {
-    const { currentAttempt } = useQuizAttemptLocal();
-    const { updateAttemptPartial } = useQuizAttemptCRUD();
+    const {currentAttempt} = useQuizAttemptLocal();
+    const {updateAttemptPartial} = useQuizAttemptCRUD();
     const autosaveTimerRef = useRef<NodeJS.Timeout | null>(null);
 
     const attemptRef = useRef(currentAttempt);

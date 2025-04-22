@@ -3,8 +3,6 @@ package ch.supsi.service.quizattempt.points.strategy;
 import ch.supsi.model.api.question.MultipleChoiceQuestion;
 import ch.supsi.model.api.response.MultipleChoiceQuestionResponse;
 import io.quarkus.test.junit.QuarkusTest;
-import jakarta.inject.Inject;
-import org.eclipse.microprofile.openapi.models.parameters.Parameter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;

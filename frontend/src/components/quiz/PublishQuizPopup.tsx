@@ -1,7 +1,7 @@
 import React from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
-import { BsRocket, BsShieldLock, BsPersonCheck } from 'react-icons/bs';
-import { QuizDTO } from '@dti-isin/backend-api-client';
+import {AnimatePresence, motion} from 'framer-motion';
+import {BsPersonCheck, BsRocket, BsShieldLock} from 'react-icons/bs';
+import {QuizDTO} from '@dti-isin/backend-api-client';
 
 interface PublishQuizPopupProps {
     quiz: QuizDTO;
@@ -28,23 +28,23 @@ export const PublishQuizPopup: React.FC<PublishQuizPopupProps> = ({
         <AnimatePresence>
             <motion.div
                 className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
+                initial={{opacity: 0}}
+                animate={{opacity: 1}}
+                exit={{opacity: 0}}
             >
                 <motion.div
                     className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 text-center border-4 border-primary/20"
-                    initial={{ scale: 0.9, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    exit={{ scale: 0.9, opacity: 0 }}
-                    transition={{ duration: 0.3 }}
+                    initial={{scale: 0.9, opacity: 0}}
+                    animate={{scale: 1, opacity: 1}}
+                    exit={{scale: 0.9, opacity: 0}}
+                    transition={{duration: 0.3}}
                 >
                     <div className="flex justify-center mb-4">
-                        <BsRocket className="w-10 h-10 text-primary animate-pulse" />
+                        <BsRocket className="w-10 h-10 text-primary animate-pulse"/>
                     </div>
                     <h2 className="text-2xl font-bold mb-2 text-primary">Publish Quiz</h2>
                     <p className="text-base mb-4 text-base-content/70">
-                        Are you sure you want to publish <strong>"{quiz.name}"</strong>?<br />
+                        Are you sure you want to publish <strong>"{quiz.name}"</strong>?<br/>
                         It will become accessible to students via a unique code.
                     </p>
 
@@ -57,7 +57,7 @@ export const PublishQuizPopup: React.FC<PublishQuizPopupProps> = ({
                     <div className="bg-base-100 rounded-lg p-4 shadow-sm mb-4">
                         <div className="flex justify-between items-center">
                             <div className="flex items-center gap-3">
-                                <BsShieldLock className={`text-lg ${isAnonymous ? 'text-secondary' : 'text-primary'}`} />
+                                <BsShieldLock className={`text-lg ${isAnonymous ? 'text-secondary' : 'text-primary'}`}/>
                                 <span className="font-medium text-sm text-base-content/70">
                                     Allow anonymous access
                                 </span>
@@ -70,9 +70,10 @@ export const PublishQuizPopup: React.FC<PublishQuizPopupProps> = ({
                             />
                         </div>
 
-                        <div className={`mt-3 p-3 rounded-lg ${isAnonymous ? 'bg-secondary/10 border-l-4 border-secondary' : 'bg-error/10 border-l-4 border-error'}`}>
+                        <div
+                            className={`mt-3 p-3 rounded-lg ${isAnonymous ? 'bg-secondary/10 border-l-4 border-secondary' : 'bg-error/10 border-l-4 border-error'}`}>
                             <div className="flex items-center gap-2">
-                                <BsPersonCheck className={isAnonymous ? 'text-secondary' : 'text-error'} />
+                                <BsPersonCheck className={isAnonymous ? 'text-secondary' : 'text-error'}/>
                                 <p className={`font-semibold text-sm ${isAnonymous ? 'text-secondary' : 'text-error'}`}>
                                     {isAnonymous
                                         ? 'Students can take the quiz without logging in.'
@@ -94,7 +95,7 @@ export const PublishQuizPopup: React.FC<PublishQuizPopupProps> = ({
                             className="btn btn-primary"
                             disabled={isCreating}
                         >
-                            {isCreating ? <span className="loading loading-spinner" /> : 'Publish'}
+                            {isCreating ? <span className="loading loading-spinner"/> : 'Publish'}
                         </button>
                     </div>
                 </motion.div>

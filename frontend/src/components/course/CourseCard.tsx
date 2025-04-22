@@ -30,7 +30,7 @@ export const CourseCard = ({
     const [localError, setLocalError] = useState<string | null>(null);
 
     if (isLoadingFolders) {
-        return <LoadingSpinner fullScreen />;
+        return <LoadingSpinner fullScreen/>;
     }
 
     const handleAssign = async () => {
@@ -52,7 +52,7 @@ export const CourseCard = ({
         >
             <div className="flex items-center gap-4 mb-4">
                 <div className="bg-primary/10 p-3 rounded-full text-primary">
-                    <FiBookOpen className="text-2xl" />
+                    <FiBookOpen className="text-2xl"/>
                 </div>
                 <div>
                     <h3 className="text-lg font-bold text-base-content">{course.name}</h3>
@@ -70,8 +70,9 @@ export const CourseCard = ({
                         </div>
                     )}
                     {isAssigned ? (
-                        <div className="bg-emerald-50 text-emerald-700 py-2 px-4 rounded-lg text-center flex items-center justify-center gap-2 border border-emerald-200">
-                            <FiUserCheck />
+                        <div
+                            className="bg-emerald-50 text-emerald-700 py-2 px-4 rounded-lg text-center flex items-center justify-center gap-2 border border-emerald-200">
+                            <FiUserCheck/>
                             Assigned to you
                         </div>
                     ) : (
@@ -84,7 +85,7 @@ export const CourseCard = ({
                                 <span className="loading loading-spinner loading-sm"></span>
                             ) : (
                                 <>
-                                    <FiUserPlus />
+                                    <FiUserPlus/>
                                     Assign Course
                                 </>
                             )}
@@ -94,14 +95,14 @@ export const CourseCard = ({
             ) : (
                 <div className="flex justify-between items-center mt-6 text-sm text-base-content/70">
                     <div className="flex items-center gap-2">
-                        <FiFolder />
+                        <FiFolder/>
                         <span>{folders?.length || 0} Folders</span>
                     </div>
                     <Link
                         to={`/courses/${course.id}`}
                         className="text-primary font-medium hover:underline hover:text-primary/80 flex items-center gap-1"
                     >
-                        View Details <FiChevronRight className="mt-0.5" />
+                        View Details <FiChevronRight className="mt-0.5"/>
                     </Link>
                 </div>
             )}

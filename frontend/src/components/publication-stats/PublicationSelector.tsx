@@ -1,5 +1,5 @@
 import React from "react";
-import { QuizPublicationDTO } from "@dti-isin/backend-api-client";
+import {QuizPublicationDTO} from "@dti-isin/backend-api-client";
 import {formatDateTime} from "../../utils/timeUtils.ts";
 
 interface PublicationSelectorProps {

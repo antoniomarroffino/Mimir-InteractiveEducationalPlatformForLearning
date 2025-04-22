@@ -3,7 +3,6 @@ package ch.supsi.service.badgeholder;
 import ch.supsi.mapper.BadgeHolderMapper;
 import ch.supsi.mapper.BadgeMapper;
 import ch.supsi.model.api.BadgeHolder;
-import ch.supsi.model.api.badge.Badge;
 import ch.supsi.model.dto.api.BadgeDTO;
 import ch.supsi.model.dto.api.BadgeHolderDTO;
 import ch.supsi.repository.BadgeHolderRepository;

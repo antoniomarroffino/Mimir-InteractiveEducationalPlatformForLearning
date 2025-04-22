@@ -15,7 +15,8 @@ export const QuestionBankCard = ({bank}: { bank: QuestionBankDTO }) => {
         >
             <div className="flex flex-col h-full justify-between gap-6">
                 <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-purple-200 to-purple-400 flex items-center justify-center">
+                    <div
+                        className="w-12 h-12 rounded-xl bg-gradient-to-tr from-purple-200 to-purple-400 flex items-center justify-center">
                         <FiArchive className="text-purple-800 text-xl"/>
                     </div>
                     <div>

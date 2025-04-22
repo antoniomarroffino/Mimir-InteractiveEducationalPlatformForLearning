@@ -1,7 +1,7 @@
-import { QuestionBankDTO } from '@dti-isin/backend-api-client';
-import { QuestionBankItem } from "./QuestionBankItem.tsx";
-import React, { useMemo, useState } from "react";
-import { QuestionBankSearch } from "../questionBank/QuestionBankSearch.tsx";
+import {QuestionBankDTO} from '@dti-isin/backend-api-client';
+import {QuestionBankItem} from "./QuestionBankItem.tsx";
+import React, {useMemo, useState} from "react";
+import {QuestionBankSearch} from "../questionBank/QuestionBankSearch.tsx";
 
 interface QuestionBankListProps {
     banks: QuestionBankDTO[];

@@ -1,8 +1,8 @@
 import React from "react";
-import { XMarkIcon } from "@heroicons/react/16/solid";
-import { QuestionsList } from "../question/QuestionList.tsx";
-import { QuestionDTO } from "@dti-isin/backend-api-client";
-import { SpecificQuestionDTO } from "../../hooks/question/useQuestionCreation.ts";
+import {XMarkIcon} from "@heroicons/react/16/solid";
+import {QuestionsList} from "../question/QuestionList.tsx";
+import {QuestionDTO} from "@dti-isin/backend-api-client";
+import {SpecificQuestionDTO} from "../../hooks/question/useQuestionCreation.ts";
 
 interface SidebarQuizCreationProps {
     isSidebarOpen: boolean;
@@ -41,7 +41,7 @@ export const SidebarQuizCreation: React.FC<SidebarQuizCreationProps> = ({
                             className="btn btn-circle btn-sm absolute right-0 lg:hidden"
                             onClick={onCloseSidebar}
                         >
-                            <XMarkIcon className="w-4 h-4" />
+                            <XMarkIcon className="w-4 h-4"/>
                         </button>
                     </div>
 

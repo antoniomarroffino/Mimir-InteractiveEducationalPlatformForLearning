@@ -1,6 +1,6 @@
 import React from "react";
-import { FiChevronRight } from "react-icons/fi";
-import { Link } from "react-router-dom";
+import {FiChevronRight} from "react-icons/fi";
+import {Link} from "react-router-dom";
 
 export interface Crumb {
     label: string;
@@ -12,13 +12,13 @@ interface BaseBreadcrumbProps {
     crumbs: Crumb[];
 }
 
-export const BaseBreadcrumb: React.FC<BaseBreadcrumbProps> = ({ crumbs }) => {
+export const BaseBreadcrumb: React.FC<BaseBreadcrumbProps> = ({crumbs}) => {
     return (
         <nav className="mb-2">
             <ul className="flex flex-wrap items-center gap-2 text-sm bg-base-100 px-4 py-2 rounded-full">
                 {crumbs.map((crumb, index) => (
                     <React.Fragment key={index}>
-                        {index > 0 && <FiChevronRight className="text-base-content/40" />}
+                        {index > 0 && <FiChevronRight className="text-base-content/40"/>}
                         <li>
                             {crumb.to ? (
                                 <Link

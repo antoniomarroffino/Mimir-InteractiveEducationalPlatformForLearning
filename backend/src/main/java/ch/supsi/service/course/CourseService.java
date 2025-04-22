@@ -57,7 +57,7 @@ public class CourseService implements ICourseService {
     public CourseDTO createCourse(CourseDTO courseDTO, User currentUser) {
         this.verifyUserIsValid(currentUser);
 
-        if(courseDTO == null) {
+        if (courseDTO == null) {
             throw new BadRequestException("Course data cannot be null");
         }
 
@@ -93,7 +93,7 @@ public class CourseService implements ICourseService {
     public CourseDTO updateCourse(ObjectId id, CourseDTO courseDTO, User currentUser) {
         this.verifyUserIsValid(currentUser);
 
-        if(courseDTO == null) {
+        if (courseDTO == null) {
             throw new BadRequestException("Course data cannot be null");
         }
 
@@ -101,7 +101,7 @@ public class CourseService implements ICourseService {
 
         this.verifyUserIsOwner(id, currentUser);
 
-        if(!course.name.equalsIgnoreCase(courseDTO.getName())) {
+        if (!course.name.equalsIgnoreCase(courseDTO.getName())) {
             this.verifyCourseNameIsValid(courseDTO.getName());
         }
 
@@ -126,7 +126,7 @@ public class CourseService implements ICourseService {
         this.courseRepository.delete(course);
     }
 
-    private void verifyUserIsValid(User user){
+    private void verifyUserIsValid(User user) {
         if (user == null)
             throw new InternalServerErrorException("User logged is null");
     }

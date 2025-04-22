@@ -1,20 +1,20 @@
 import React from 'react';
-import { QRCodeSVG } from 'qrcode.react';
-import { useQuizPublicationCRUD } from "../hooks/quizPublication/useQuizPublicationCRUD.ts";
-import { useNavigate, useParams } from "react-router-dom";
-import { useGetQuizPublicationById } from "../hooks/quizPublication/useGetQuizPublicationById.ts";
+import {QRCodeSVG} from 'qrcode.react';
+import {useQuizPublicationCRUD} from "../hooks/quizPublication/useQuizPublicationCRUD.ts";
+import {useNavigate, useParams} from "react-router-dom";
+import {useGetQuizPublicationById} from "../hooks/quizPublication/useGetQuizPublicationById.ts";
 import QRCodeModal from "../components/quizPublication/QRCodeModal.tsx";
-import { QuizPublicationHeader } from "../components/quizPublication/QuizPublicationHeader.tsx";
-import { Spinner } from "../components/common/Spinner.tsx";
-import { ErrorAlert } from "../components/common/ErrorAlert.tsx";
-import { ConfirmUnpublishPopup } from "../components/quizPublication/ConfirmUnpublishPopup.tsx";
-import { motion } from 'framer-motion';
+import {QuizPublicationHeader} from "../components/quizPublication/QuizPublicationHeader.tsx";
+import {Spinner} from "../components/common/Spinner.tsx";
+import {ErrorAlert} from "../components/common/ErrorAlert.tsx";
+import {ConfirmUnpublishPopup} from "../components/quizPublication/ConfirmUnpublishPopup.tsx";
+import {motion} from 'framer-motion';
 
 export const QuizPublicationPage: React.FC = () => {
     const navigate = useNavigate();
-    const { publicationId } = useParams<{ publicationId: string }>();
-    const { deactivatePublication, isDeactivatingPublication } = useQuizPublicationCRUD();
-    const { data: publication, isLoading, error } = useGetQuizPublicationById(publicationId!);
+    const {publicationId} = useParams<{ publicationId: string }>();
+    const {deactivatePublication, isDeactivatingPublication} = useQuizPublicationCRUD();
+    const {data: publication, isLoading, error} = useGetQuizPublicationById(publicationId!);
 
     const [isQRModalOpen, setIsQRModalOpen] = React.useState(false);
     const [isConfirmModalOpen, setIsConfirmModalOpen] = React.useState(false);
@@ -29,7 +29,7 @@ export const QuizPublicationPage: React.FC = () => {
         }
     };
 
-    if (isLoading) return <Spinner />;
+    if (isLoading) return <Spinner/>;
 
     if (error || !publication) {
         return (
@@ -55,8 +55,8 @@ export const QuizPublicationPage: React.FC = () => {
 
     return (
         <motion.section
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial={{opacity: 0}}
+            animate={{opacity: 1}}
             className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 py-12 px-4"
         >
             <div className="max-w-7xl mx-auto space-y-8">
@@ -68,28 +68,26 @@ export const QuizPublicationPage: React.FC = () => {
                 />
 
                 <div className="grid lg:grid-cols-2 gap-8 items-start">
-                    {/* Left Column */}
                     <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2 }}
+                        initial={{opacity: 0, y: 10}}
+                        animate={{opacity: 1, y: 0}}
+                        transition={{delay: 0.2}}
                         className="space-y-6"
                     >
-                        {/* Access Code */}
                         <div className="card bg-base-100 shadow-md hover:shadow-xl transition-all rounded-xl">
                             <div className="card-body p-6">
                                 <h2 className="card-title text-lg flex items-center gap-2 text-primary">
                                     🎯 Access Code
                                 </h2>
                                 <div className="mt-4 p-4 bg-base-200 rounded-xl shadow-inner">
-                                    <div className="text-4xl font-mono text-center font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                                    <div
+                                        className="text-4xl font-mono text-center font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                                         {publication.publicationCode}
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Status */}
                         <div className="card bg-base-100 shadow-md hover:shadow-xl transition-all rounded-xl">
                             <div className="card-body p-6">
                                 <h2 className="card-title text-lg flex items-center gap-2 text-secondary">
@@ -106,7 +104,7 @@ export const QuizPublicationPage: React.FC = () => {
                                     <span className="flex items-center gap-2">
                                         <span className={`w-2 h-2 rounded-full ${
                                             publication.published ? 'bg-success animate-pulse' : 'bg-error'
-                                        }`} />
+                                        }`}/>
                                         {publication.published ? 'Active' : 'Inactive'}
                                     </span>
                                         </div>
@@ -116,11 +114,10 @@ export const QuizPublicationPage: React.FC = () => {
                         </div>
                     </motion.div>
 
-                    {/* QR Code */}
                     <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.3 }}
+                        initial={{opacity: 0, y: 10}}
+                        animate={{opacity: 1, y: 0}}
+                        transition={{delay: 0.3}}
                     >
                         <div className="card bg-base-100 shadow-md hover:shadow-xl transition-all rounded-xl">
                             <div className="card-body p-6">
@@ -132,16 +129,19 @@ export const QuizPublicationPage: React.FC = () => {
                                         onClick={() => setIsQRModalOpen(true)}
                                         className="group p-4 bg-white rounded-xl shadow-md hover:shadow-xl transition-all relative"
                                     >
-                                        <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/10 rounded-xl transition-all">
-                                    <span className="opacity-0 group-hover:opacity-100 text-white font-medium transition-all">
+                                        <div
+                                            className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/10 rounded-xl transition-all">
+                                    <span
+                                        className="opacity-0 group-hover:opacity-100 text-white font-medium transition-all">
                                         Click to enlarge
                                     </span>
                                         </div>
-                                        <QRCodeSVG value={fullUrl} size={200} className="rounded-lg" />
+                                        <QRCodeSVG value={fullUrl} size={200} className="rounded-lg"/>
                                     </button>
                                     <div className="w-full">
                                         <p className="text-sm text-base-content/70 mb-2">Direct access URL:</p>
-                                        <div className="p-3 bg-base-200 rounded-lg shadow-inner text-xs break-all font-mono">
+                                        <div
+                                            className="p-3 bg-base-200 rounded-lg shadow-inner text-xs break-all font-mono">
                                             {fullUrl}
                                         </div>
                                     </div>

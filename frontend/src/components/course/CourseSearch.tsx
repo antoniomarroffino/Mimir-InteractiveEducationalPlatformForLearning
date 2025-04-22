@@ -143,7 +143,8 @@ export const CourseSearch = () => {
                 <>
                     {searchTerm && (
                         <p className="text-sm text-base-content/60">
-                            Showing <strong>{filteredCourses.length}</strong> result{filteredCourses.length > 1 && 's'} for "<em>{searchTerm}</em>"
+                            Showing <strong>{filteredCourses.length}</strong> result{filteredCourses.length > 1 && 's'} for
+                            "<em>{searchTerm}</em>"
                         </p>
                     )}
                     <motion.div

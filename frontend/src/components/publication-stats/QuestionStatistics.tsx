@@ -1,9 +1,9 @@
-import { QuestionDTO, QuizAttemptDTO } from "@dti-isin/backend-api-client";
-import React, { useMemo } from "react";
-import { FaCheckCircle, FaUsers, FaQuestionCircle } from 'react-icons/fa';
-import { QuestionStatCard } from "../quiz-results/QuestionStatCard";
-import { calculateQuestionStats } from "../../utils/statisticsUtils";
-import { motion } from "framer-motion";
+import {QuestionDTO, QuizAttemptDTO} from "@dti-isin/backend-api-client";
+import React, {useMemo} from "react";
+import {FaCheckCircle, FaQuestionCircle, FaUsers} from 'react-icons/fa';
+import {QuestionStatCard} from "../quiz-results/QuestionStatCard";
+import {calculateQuestionStats} from "../../utils/statisticsUtils";
+import {motion} from "framer-motion";
 
 interface QuestionStatisticsProps {
     questions: QuestionDTO[];
@@ -22,7 +22,7 @@ export const QuestionStatistics: React.FC<QuestionStatisticsProps> = ({
     if (!questions.length || !attempts.length) {
         return (
             <div className="flex flex-col items-center justify-center h-64 text-center">
-                <FaQuestionCircle className="text-primary w-12 h-12 mb-4 opacity-50" />
+                <FaQuestionCircle className="text-primary w-12 h-12 mb-4 opacity-50"/>
                 <h3 className="text-lg font-semibold text-base-content/70">
                     No Question Data
                 </h3>
@@ -40,7 +40,7 @@ export const QuestionStatistics: React.FC<QuestionStatisticsProps> = ({
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                            <FaQuestionCircle className="text-primary w-5 h-5" />
+                            <FaQuestionCircle className="text-primary w-5 h-5"/>
                         </div>
                         <div>
                             <h2 className="text-xl font-bold text-base-content">
@@ -54,11 +54,11 @@ export const QuestionStatistics: React.FC<QuestionStatisticsProps> = ({
 
                     <div className="flex flex-wrap items-center gap-3 text-sm">
                         <div className="badge badge-primary gap-2 py-3 px-4">
-                            <FaUsers className="w-4 h-4" />
+                            <FaUsers className="w-4 h-4"/>
                             <span className="font-medium">Responses</span>
                         </div>
                         <div className="badge badge-success gap-2 py-3 px-4">
-                            <FaCheckCircle className="w-4 h-4" />
+                            <FaCheckCircle className="w-4 h-4"/>
                             <span className="font-medium">Correct</span>
                         </div>
                     </div>
@@ -69,9 +69,9 @@ export const QuestionStatistics: React.FC<QuestionStatisticsProps> = ({
                 {questionStats.map((stat, index) => (
                     <motion.div
                         key={stat.question.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.3, delay: index * 0.1 }}
+                        initial={{opacity: 0, y: 20}}
+                        animate={{opacity: 1, y: 0}}
+                        transition={{duration: 0.3, delay: index * 0.1}}
                     >
                         <QuestionStatCard
                             index={index}

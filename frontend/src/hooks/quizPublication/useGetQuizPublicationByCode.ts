@@ -1,7 +1,7 @@
-import { useQuery, useQueryClient } from "react-query";
-import { useLocation } from "react-router-dom";
-import { quizPublicationApi } from "../../../config/config.ts";
-import { QuizPublicationDTO } from "@dti-isin/backend-api-client";
+import {useQuery, useQueryClient} from "react-query";
+import {useLocation} from "react-router-dom";
+import {quizPublicationApi} from "../../../config/config.ts";
+import {QuizPublicationDTO} from "@dti-isin/backend-api-client";
 
 interface UseGetQuizPublicationByCodeOptions {
     enabled?: boolean;
@@ -25,7 +25,7 @@ export const useGetQuizPublicationByCode = (
         queryKey: ['quizPublication', code],
         queryFn: async () => {
             try {
-                const response = await quizPublicationApi.apiPublicationsByCodeCodeGet({ code });
+                const response = await quizPublicationApi.apiPublicationsByCodeCodeGet({code});
                 return response.data;
             } catch (error) {
                 console.error('Errore nella chiamata API:', error);

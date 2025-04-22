@@ -1,4 +1,4 @@
-import { addWeeks, startOfWeek, endOfWeek } from 'date-fns';
+import {addWeeks, endOfWeek, startOfWeek} from 'date-fns';
 
 export const generateWeekRanges = (startDate: string, weeks: number) => {
     const ranges = [];
@@ -6,8 +6,8 @@ export const generateWeekRanges = (startDate: string, weeks: number) => {
 
     for (let i = 0; i < weeks; i++) {
         ranges.push({
-            start: startOfWeek(current, { weekStartsOn: 1 }),
-            end: endOfWeek(current, { weekStartsOn: 1 }),
+            start: startOfWeek(current, {weekStartsOn: 1}),
+            end: endOfWeek(current, {weekStartsOn: 1}),
         });
         current = addWeeks(current, 1);
     }

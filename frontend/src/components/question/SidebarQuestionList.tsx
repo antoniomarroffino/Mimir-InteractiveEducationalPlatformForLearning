@@ -1,9 +1,9 @@
 import React from "react";
-import { SpecificQuestionDTO } from "../../hooks/question/useQuestionCreation";
-import { QuestionType } from "@dti-isin/backend-api-client";
-import { XMarkIcon } from "@heroicons/react/16/solid";
-import { QuestionsList } from "./QuestionList.tsx";
-import { DraftQuestionElement } from "./DraftQuestionElement.tsx";
+import {SpecificQuestionDTO} from "../../hooks/question/useQuestionCreation";
+import {QuestionType} from "@dti-isin/backend-api-client";
+import {XMarkIcon} from "@heroicons/react/16/solid";
+import {QuestionsList} from "./QuestionList.tsx";
+import {DraftQuestionElement} from "./DraftQuestionElement.tsx";
 
 interface SidebarQuestionListProps {
     isSidebarOpen: boolean;
@@ -52,7 +52,7 @@ export const SidebarQuestionList: React.FC<SidebarQuestionListProps> = ({
                             className="btn btn-circle btn-sm absolute right-0 lg:hidden"
                             onClick={onClose}
                         >
-                            <XMarkIcon className="w-4 h-4" />
+                            <XMarkIcon className="w-4 h-4"/>
                         </button>
                     </div>
 

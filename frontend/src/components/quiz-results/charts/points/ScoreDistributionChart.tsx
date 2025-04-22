@@ -1,9 +1,9 @@
-import React, { useState, useMemo } from 'react';
-import { QuestionDTO, QuizAttemptDTO } from '@dti-isin/backend-api-client';
-import { FaTrophy } from 'react-icons/fa';
-import { GeneralScoreChart } from "./GeneralScoreChart";
-import { SingleAttemptScoreChart } from "./SingleAttemptScoreChart";
-import { motion, AnimatePresence } from 'framer-motion';
+import React, {useMemo, useState} from 'react';
+import {QuestionDTO, QuizAttemptDTO} from '@dti-isin/backend-api-client';
+import {FaTrophy} from 'react-icons/fa';
+import {GeneralScoreChart} from "./GeneralScoreChart";
+import {SingleAttemptScoreChart} from "./SingleAttemptScoreChart";
+import {AnimatePresence, motion} from 'framer-motion';
 
 interface ScoreDistributionChartProps {
     attempts: QuizAttemptDTO[];
@@ -30,7 +30,7 @@ export const ScoreDistributionChart: React.FC<ScoreDistributionChartProps> = ({
     if (!hasData) {
         return (
             <div className="flex flex-col items-center justify-center h-64 text-center">
-                <FaTrophy className="text-primary w-12 h-12 mb-4 opacity-50" />
+                <FaTrophy className="text-primary w-12 h-12 mb-4 opacity-50"/>
                 <h3 className="text-lg font-semibold text-base-content/70">
                     No Score Data
                 </h3>
@@ -46,7 +46,7 @@ export const ScoreDistributionChart: React.FC<ScoreDistributionChartProps> = ({
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
                     <div className="flex items-center gap-2">
-                        <FaTrophy className="text-primary w-6 h-6" />
+                        <FaTrophy className="text-primary w-6 h-6"/>
                         <h3 className="text-xl font-bold text-base-content">
                             Score Distribution
                         </h3>
@@ -80,10 +80,10 @@ export const ScoreDistributionChart: React.FC<ScoreDistributionChartProps> = ({
             <AnimatePresence mode="wait">
                 <motion.div
                     key={mode}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.2 }}
+                    initial={{opacity: 0, y: 10}}
+                    animate={{opacity: 1, y: 0}}
+                    exit={{opacity: 0, y: -10}}
+                    transition={{duration: 0.2}}
                     className="bg-base-200 rounded-xl p-6"
                 >
                     {mode === chartModes.GENERAL ? (

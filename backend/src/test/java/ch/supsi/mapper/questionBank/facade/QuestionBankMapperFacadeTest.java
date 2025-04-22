@@ -5,11 +5,9 @@ import ch.supsi.mapper.question.TrueFalseQuestionMapper;
 import ch.supsi.mapper.question.builder.IQuestionMapperBuilder;
 import ch.supsi.mapper.questionBank.QuestionBankMapper;
 import ch.supsi.model.api.QuestionBank;
-import ch.supsi.model.api.question.Question;
 import ch.supsi.model.api.question.QuestionType;
 import ch.supsi.model.api.question.TrueFalseQuestion;
 import ch.supsi.model.dto.api.QuestionBankDTO;
-import ch.supsi.model.dto.api.QuizPublicationDTO;
 import ch.supsi.model.dto.api.question.TrueFalseQuestionDTO;
 import ch.supsi.repository.QuestionRepository;
 import ch.supsi.service.questionBank.QuestionBankServiceTest;
@@ -25,13 +23,10 @@ import org.junit.jupiter.api.TestMethodOrder;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.when;
 
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.MethodName.class)

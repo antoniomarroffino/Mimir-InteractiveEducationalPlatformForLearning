@@ -1,6 +1,6 @@
-import { createContext } from "react";
-import { UseMutationResult } from "react-query";
-import { QuizDTO } from "@dti-isin/backend-api-client";
+import {createContext} from "react";
+import {UseMutationResult} from "react-query";
+import {QuizDTO} from "@dti-isin/backend-api-client";
 
 export type QuizCRUDContextType = {
     createQuiz: UseMutationResult<

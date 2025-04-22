@@ -1,5 +1,5 @@
 import React from "react";
-import { BsQuestionDiamond } from "react-icons/bs";
+import {BsQuestionDiamond} from "react-icons/bs";
 
 export const EmptyQuestionTypeCard: React.FC = () => {
     return (

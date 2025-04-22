@@ -1,8 +1,8 @@
-import React, { useMemo } from "react";
+import React, {useMemo} from "react";
 import {useMutation, useQueryClient} from "react-query";
-import { QuizAttemptDTO, BadgeType } from "@dti-isin/backend-api-client";
-import { quizAttemptApi } from "../../../config/config.ts";
-import { QuizAttemptCRUDContext } from "../../contexts/quizAttempt/QuizAttemptCRUDContext.ts";
+import {BadgeType, QuizAttemptDTO} from "@dti-isin/backend-api-client";
+import {quizAttemptApi} from "../../../config/config.ts";
+import {QuizAttemptCRUDContext} from "../../contexts/quizAttempt/QuizAttemptCRUDContext.ts";
 
 interface AssignBadgeParams {
     attemptId: string;
@@ -13,7 +13,7 @@ export const QuizAttemptCRUDProvider: React.FC<{ children: React.ReactNode }> = 
     const queryClient = useQueryClient();
     const createQuizAttemptMutation = useMutation(
         (quizAttemptDTO: QuizAttemptDTO) =>
-            quizAttemptApi.apiAttemptsPost({ quizAttemptDTO })
+            quizAttemptApi.apiAttemptsPost({quizAttemptDTO})
                 .then(response => response.data),
         {
             onSuccess: (data) => {
@@ -30,7 +30,7 @@ export const QuizAttemptCRUDProvider: React.FC<{ children: React.ReactNode }> = 
     );
 
     const submitAttemptMutation = useMutation(
-        ({ attemptId, quizAttemptDTO }: { attemptId: string, quizAttemptDTO: QuizAttemptDTO }) =>
+        ({attemptId, quizAttemptDTO}: { attemptId: string, quizAttemptDTO: QuizAttemptDTO }) =>
             quizAttemptApi.apiAttemptsAttemptIdSubmitPost({
                 attemptId,
                 quizAttemptDTO
@@ -43,7 +43,7 @@ export const QuizAttemptCRUDProvider: React.FC<{ children: React.ReactNode }> = 
     );
 
     const assignBadgeMutation = useMutation(
-        ({ attemptId, badgeType }: AssignBadgeParams) =>
+        ({attemptId, badgeType}: AssignBadgeParams) =>
             quizAttemptApi.apiAttemptsAttemptIdBadgesPost({
                 attemptId,
                 type: badgeType
@@ -57,13 +57,13 @@ export const QuizAttemptCRUDProvider: React.FC<{ children: React.ReactNode }> = 
     );
 
     const updateAttemptPartialMutation = useMutation(
-        ({ attemptId, quizAttemptDTO }: { attemptId: string, quizAttemptDTO: QuizAttemptDTO }) =>
+        ({attemptId, quizAttemptDTO}: { attemptId: string, quizAttemptDTO: QuizAttemptDTO }) =>
             quizAttemptApi.apiAttemptsAttemptIdPatch({
                 attemptId,
                 quizAttemptDTO
             }).then(res => res.data),
         {
-            onSuccess: (_, { attemptId }) => {
+            onSuccess: (_, {attemptId}) => {
                 queryClient.invalidateQueries(['quizAttempt', attemptId]);
             }
         }
@@ -81,7 +81,7 @@ export const QuizAttemptCRUDProvider: React.FC<{ children: React.ReactNode }> = 
         },
         submitAttemptFinal: async (attemptId: string, quizAttemptDTO: QuizAttemptDTO): Promise<QuizAttemptDTO> => {
             try {
-                return await submitAttemptMutation.mutateAsync({ attemptId, quizAttemptDTO });
+                return await submitAttemptMutation.mutateAsync({attemptId, quizAttemptDTO});
             } catch (err) {
                 console.error("Final submission of Quiz Attempt failed:", err);
                 throw err;
@@ -89,7 +89,7 @@ export const QuizAttemptCRUDProvider: React.FC<{ children: React.ReactNode }> = 
         },
         assignBadge: async (attemptId: string, badgeType: BadgeType) => {
             try {
-                await assignBadgeMutation.mutateAsync({ attemptId, badgeType });
+                await assignBadgeMutation.mutateAsync({attemptId, badgeType});
             } catch (err) {
                 console.error("Failed to assign badge:", err);
                 throw err;
@@ -97,7 +97,7 @@ export const QuizAttemptCRUDProvider: React.FC<{ children: React.ReactNode }> = 
         },
         updateAttemptPartial: async (attemptId: string, quizAttemptDTO: QuizAttemptDTO): Promise<QuizAttemptDTO> => {
             try {
-                return await updateAttemptPartialMutation.mutateAsync({ attemptId, quizAttemptDTO });
+                return await updateAttemptPartialMutation.mutateAsync({attemptId, quizAttemptDTO});
             } catch (err) {
                 console.error("Partial update of Quiz Attempt failed:", err);
                 throw err;

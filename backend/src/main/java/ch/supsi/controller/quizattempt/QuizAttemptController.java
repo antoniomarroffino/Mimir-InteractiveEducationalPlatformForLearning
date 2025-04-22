@@ -2,7 +2,6 @@ package ch.supsi.controller.quizattempt;
 
 import ch.supsi.model.api.badge.BadgeType;
 import ch.supsi.model.dto.api.BadgeDTO;
-import ch.supsi.model.dto.api.BadgeHolderDTO;
 import ch.supsi.model.dto.api.QuizAttemptDTO;
 import ch.supsi.model.dto.api.UserWithoutCoursesDTO;
 import ch.supsi.service.quizattempt.IQuizAttemptService;
@@ -38,7 +37,7 @@ public class QuizAttemptController {
     IMicrosoftGraphService microsoftGraphService;
 
     @GET
-    @RolesAllowed({"STUDENT","TEACHER"})
+    @RolesAllowed({"STUDENT", "TEACHER"})
     @Path("/user/{userAzureOID}")
     @Operation(summary = "Get all quiz attempts for a specific user")
     @APIResponse(
@@ -63,9 +62,9 @@ public class QuizAttemptController {
                 this.buildUserWithoutCoursesDTOFromQuizAttemptDTO(attempt)
         ));
         attempts.forEach(attempt ->
-                        attempt.getBadges()
-                                .forEach(badgeDTO ->
-                                        badgeDTO.setAssignedBy(this.buildUserWithoutCoursesDTOFromBadgeDTO(badgeDTO))));
+                attempt.getBadges()
+                        .forEach(badgeDTO ->
+                                badgeDTO.setAssignedBy(this.buildUserWithoutCoursesDTOFromBadgeDTO(badgeDTO))));
         return Response.ok(attempts).build();
     }
 
@@ -114,9 +113,9 @@ public class QuizAttemptController {
                 this.buildUserWithoutCoursesDTOFromQuizAttemptDTO(attempt)
         ));
         attempts.forEach(attempt ->
-                        attempt.getBadges()
-                                .forEach(badgeDTO ->
-                                        badgeDTO.setAssignedBy(this.buildUserWithoutCoursesDTOFromBadgeDTO(badgeDTO))));
+                attempt.getBadges()
+                        .forEach(badgeDTO ->
+                                badgeDTO.setAssignedBy(this.buildUserWithoutCoursesDTOFromBadgeDTO(badgeDTO))));
         return Response.ok(attempts).build();
     }
 
@@ -211,9 +210,8 @@ public class QuizAttemptController {
     }
 
 
-
     private UserWithoutCoursesDTO buildUserWithoutCoursesDTOFromQuizAttemptDTO(QuizAttemptDTO quizAttemptDTO) {
-        if(quizAttemptDTO.getUser().getAzureOid() == null)
+        if (quizAttemptDTO.getUser().getAzureOid() == null)
             return null;
 
         return this.buildUserWithoutCoursesDTOFromAzureOid(quizAttemptDTO.getUser().getAzureOid());

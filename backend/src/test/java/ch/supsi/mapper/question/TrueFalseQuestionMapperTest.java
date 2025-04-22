@@ -3,7 +3,6 @@ package ch.supsi.mapper.question;
 import ch.supsi.model.api.question.TrueFalseQuestion;
 import ch.supsi.model.dto.api.question.TrueFalseQuestionDTO;
 import io.quarkus.test.junit.QuarkusTest;
-import jakarta.inject.Inject;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;

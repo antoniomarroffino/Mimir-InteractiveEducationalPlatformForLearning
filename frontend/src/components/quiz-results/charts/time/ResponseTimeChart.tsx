@@ -1,9 +1,9 @@
-import React, { useState, useMemo } from 'react';
-import { QuestionDTO, QuizAttemptDTO } from '@dti-isin/backend-api-client';
-import { FaClock } from 'react-icons/fa';
-import { GeneralTimeChart } from "./GeneralTimeChart.tsx";
-import { SingleAttemptTimeChart } from "./SingleAttemptTimeChart.tsx";
-import { motion, AnimatePresence } from 'framer-motion';
+import React, {useMemo, useState} from 'react';
+import {QuestionDTO, QuizAttemptDTO} from '@dti-isin/backend-api-client';
+import {FaClock} from 'react-icons/fa';
+import {GeneralTimeChart} from "./GeneralTimeChart.tsx";
+import {SingleAttemptTimeChart} from "./SingleAttemptTimeChart.tsx";
+import {AnimatePresence, motion} from 'framer-motion';
 
 interface ResponseTimeChartProps {
     questionStats: {
@@ -35,7 +35,7 @@ export const ResponseTimeChart: React.FC<ResponseTimeChartProps> = ({
     if (!hasData) {
         return (
             <div className="flex flex-col items-center justify-center h-64 text-center">
-                <FaClock className="text-primary w-12 h-12 mb-4 opacity-50" />
+                <FaClock className="text-primary w-12 h-12 mb-4 opacity-50"/>
                 <h3 className="text-lg font-semibold text-base-content/70">
                     No Response Time Data
                 </h3>
@@ -51,7 +51,7 @@ export const ResponseTimeChart: React.FC<ResponseTimeChartProps> = ({
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
                     <div className="flex items-center gap-2">
-                        <FaClock className="text-primary w-6 h-6" />
+                        <FaClock className="text-primary w-6 h-6"/>
                         <h3 className="text-xl font-bold text-base-content">
                             Response Time Analysis
                         </h3>
@@ -85,10 +85,10 @@ export const ResponseTimeChart: React.FC<ResponseTimeChartProps> = ({
             <AnimatePresence mode="wait">
                 <motion.div
                     key={mode}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.2 }}
+                    initial={{opacity: 0, y: 10}}
+                    animate={{opacity: 1, y: 0}}
+                    exit={{opacity: 0, y: -10}}
+                    transition={{duration: 0.2}}
                     className="bg-base-200 rounded-xl p-6"
                 >
                     {mode === chartModes.GENERAL ? (

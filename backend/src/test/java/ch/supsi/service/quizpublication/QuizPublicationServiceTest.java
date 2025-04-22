@@ -37,6 +37,43 @@ public class QuizPublicationServiceTest {
     @InjectMock
     IQuizPublicationMapperFacade quizPublicationMapperFacade;
 
+    public static QuizPublication createTestQuizPublication() {
+        ObjectId courseId = new ObjectId();
+        ObjectId folderId = new ObjectId();
+        ObjectId quizId = new ObjectId();
+
+        QuizPublication quizPublication = new QuizPublication(
+                courseId,
+                folderId,
+                quizId,
+                new ArrayList<>(),
+                ""
+        );
+        quizPublication.id = new ObjectId();
+
+        return quizPublication;
+    }
+
+    public static QuizPublication createTestQuizPublication(ObjectId quizId, String publicationCode) {
+        ObjectId courseId = new ObjectId();
+        ObjectId folderId = new ObjectId();
+        return new QuizPublication(courseId, folderId, quizId, new ArrayList<>(), publicationCode);
+    }
+
+    public static QuizPublicationDTO convertToDTO(QuizPublication quizPublication) {
+        QuizPublicationDTO quizPublicationDTO = new QuizPublicationDTO();
+        quizPublicationDTO.setId(quizPublication.id.toString());
+        quizPublicationDTO.setCourseId(quizPublication.courseId.toString());
+        quizPublicationDTO.setFolderId(quizPublication.folderId.toString());
+        quizPublicationDTO.setQuizId(quizPublication.quizId.toString());
+        quizPublicationDTO.setPublicationCode(quizPublication.publicationCode);
+        quizPublicationDTO.setAnonymous(quizPublication.anonymous);
+        quizPublicationDTO.setPublished(quizPublication.published);
+        quizPublicationDTO.setCreatedAt(quizPublication.createdAt);
+        quizPublicationDTO.setClosedAt(quizPublication.closedAt);
+        return quizPublicationDTO;
+    }
+
     @Test
     @DisplayName("Should publish new quiz and return a QuizPublicationDTO anonymous")
     void test01PublishQuiz_ReturnAQuizPublicationDTOAnonymous() {
@@ -261,42 +298,5 @@ public class QuizPublicationServiceTest {
 
         String validChars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
         assertTrue(code.chars().allMatch(c -> validChars.indexOf(c) >= 0));
-    }
-
-    public static QuizPublication createTestQuizPublication() {
-        ObjectId courseId = new ObjectId();
-        ObjectId folderId = new ObjectId();
-        ObjectId quizId = new ObjectId();
-
-        QuizPublication quizPublication = new QuizPublication(
-                courseId,
-                folderId,
-                quizId,
-                new ArrayList<>(),
-                ""
-        );
-        quizPublication.id = new ObjectId();
-
-        return quizPublication;
-    }
-
-    public static QuizPublication createTestQuizPublication(ObjectId quizId, String publicationCode) {
-        ObjectId courseId = new ObjectId();
-        ObjectId folderId = new ObjectId();
-        return new QuizPublication(courseId, folderId, quizId, new ArrayList<>(), publicationCode);
-    }
-
-    public static QuizPublicationDTO convertToDTO(QuizPublication quizPublication) {
-        QuizPublicationDTO quizPublicationDTO = new QuizPublicationDTO();
-        quizPublicationDTO.setId(quizPublication.id.toString());
-        quizPublicationDTO.setCourseId(quizPublication.courseId.toString());
-        quizPublicationDTO.setFolderId(quizPublication.folderId.toString());
-        quizPublicationDTO.setQuizId(quizPublication.quizId.toString());
-        quizPublicationDTO.setPublicationCode(quizPublication.publicationCode);
-        quizPublicationDTO.setAnonymous(quizPublication.anonymous);
-        quizPublicationDTO.setPublished(quizPublication.published);
-        quizPublicationDTO.setCreatedAt(quizPublication.createdAt);
-        quizPublicationDTO.setClosedAt(quizPublication.closedAt);
-        return quizPublicationDTO;
     }
 }

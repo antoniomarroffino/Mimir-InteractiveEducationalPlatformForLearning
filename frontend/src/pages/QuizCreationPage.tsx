@@ -1,31 +1,31 @@
-import { useParams } from 'react-router-dom';
-import { QuestionDTO, QuestionType } from '@dti-isin/backend-api-client';
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useQuizCRUD } from "../hooks/quiz/useQuizCRUD.ts";
-import { useQuestionBankList } from "../hooks/questionBank/useQuestionBankList.ts";
-import { QuestionBankList } from "../components/quiz/QuestionBankList.tsx";
-import { SpecificQuestionDTO, useQuestionCreation } from "../hooks/question/useQuestionCreation.ts";
-import { useGetQuizById } from "../hooks/quiz/useGetQuizById.ts";
-import { useGetCourseById } from "../hooks/course/useGetCourseById.ts";
-import { useGetFolderById } from "../hooks/folder/useGetFolderById.ts";
-import { LoadingSpinner } from "../components/common/LoadingSpinner.tsx";
-import { QuizCreationHeader } from "../components/quiz/QuizCreationHeader.tsx";
-import { SidebarQuizCreation } from "../components/quiz/SidebarQuizCreation.tsx";
-import { QuestionEditorPreview } from "../components/quiz/QuestionEditorPreview.tsx";
-import { ThreeColumnLayout } from "../components/common/ThreeColumnLayout.tsx";
-import { motion } from "framer-motion";
+import {useParams} from 'react-router-dom';
+import {QuestionDTO, QuestionType} from '@dti-isin/backend-api-client';
+import React, {useCallback, useEffect, useMemo, useState} from "react";
+import {useQuizCRUD} from "../hooks/quiz/useQuizCRUD.ts";
+import {useQuestionBankList} from "../hooks/questionBank/useQuestionBankList.ts";
+import {QuestionBankList} from "../components/quiz/QuestionBankList.tsx";
+import {SpecificQuestionDTO, useQuestionCreation} from "../hooks/question/useQuestionCreation.ts";
+import {useGetQuizById} from "../hooks/quiz/useGetQuizById.ts";
+import {useGetCourseById} from "../hooks/course/useGetCourseById.ts";
+import {useGetFolderById} from "../hooks/folder/useGetFolderById.ts";
+import {LoadingSpinner} from "../components/common/LoadingSpinner.tsx";
+import {QuizCreationHeader} from "../components/quiz/QuizCreationHeader.tsx";
+import {SidebarQuizCreation} from "../components/quiz/SidebarQuizCreation.tsx";
+import {QuestionEditorPreview} from "../components/quiz/QuestionEditorPreview.tsx";
+import {ThreeColumnLayout} from "../components/common/ThreeColumnLayout.tsx";
+import {motion} from "framer-motion";
 
 export const QuizCreationPage: React.FC = () => {
-    const { courseId, folderId, quizId } = useParams();
+    const {courseId, folderId, quizId} = useParams();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const { data: currentQuiz, isLoading: isLoadingQuiz } = useGetQuizById(courseId!, folderId!, quizId!);
-    const { data: currentFolder, isLoading: isLoadingFolder } = useGetFolderById(courseId!, folderId!);
-    const { data: currentCourse, isLoading: isLoadingCourse } = useGetCourseById(courseId!);
+    const {data: currentQuiz, isLoading: isLoadingQuiz} = useGetQuizById(courseId!, folderId!, quizId!);
+    const {data: currentFolder, isLoading: isLoadingFolder} = useGetFolderById(courseId!, folderId!);
+    const {data: currentCourse, isLoading: isLoadingCourse} = useGetCourseById(courseId!);
     const [isEditingQuizName, setIsEditingQuizName] = useState(false);
     const [editedQuizName, setEditedQuizName] = useState(currentQuiz?.name || '');
-    const { updateQuiz } = useQuizCRUD();
+    const {updateQuiz} = useQuizCRUD();
     const [selectedQuestions, setSelectedQuestions] = useState<string[]>([]);
-    const { questionBanks, isLoadingQuestionBanks, errorQuestionBanks } = useQuestionBankList();
+    const {questionBanks, isLoadingQuestionBanks, errorQuestionBanks} = useQuestionBankList();
 
     const {
         selectedQuestionType,
@@ -146,13 +146,13 @@ export const QuizCreationPage: React.FC = () => {
     };
 
     if (isLoadingQuiz || isLoadingFolder || isLoadingCourse || isLoadingQuestionBanks || !currentQuiz || !currentCourse || !currentFolder) {
-        return <LoadingSpinner fullScreen />;
+        return <LoadingSpinner fullScreen/>;
     }
 
     return (
         <motion.section
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial={{opacity: 0}}
+            animate={{opacity: 1}}
             className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 py-12 px-4"
         >
             <div className="max-w-7xl mx-auto space-y-8">
@@ -198,7 +198,7 @@ export const QuizCreationPage: React.FC = () => {
                             isEditingExistingQuestion={isEditingExistingQuestion}
                             onCancel={resetQuestionCreation}
                             onSave={saveNewQuestion}
-                            onQuestionTextChange={(text) => setDraftQuestion(prev => ({ ...prev, questionText: text }))}
+                            onQuestionTextChange={(text) => setDraftQuestion(prev => ({...prev, questionText: text}))}
                             isDisabled={!selectedQuestionType}
                         />
                     }

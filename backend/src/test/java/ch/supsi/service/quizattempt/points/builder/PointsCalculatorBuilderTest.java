@@ -1,8 +1,6 @@
 package ch.supsi.service.quizattempt.points.builder;
 
 import ch.supsi.model.api.question.QuestionType;
-import ch.supsi.service.question.strategy.MultipleChoiceQuestionStrategy;
-import ch.supsi.service.question.strategy.TrueFalseQuestionStrategy;
 import ch.supsi.service.quizattempt.points.strategy.MultipleChoicePointsCalculatorStrategy;
 import ch.supsi.service.quizattempt.points.strategy.TrueFalsePointsCalculatorStrategy;
 import io.quarkus.test.junit.QuarkusTest;
@@ -13,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.MethodName.class)

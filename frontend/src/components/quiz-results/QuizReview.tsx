@@ -1,9 +1,9 @@
 import React from 'react';
-import { QuizAttemptDTO, QuizPublicationDTO } from '@dti-isin/backend-api-client';
-import { QuizResultHeader } from './QuizResultHeader';
-import { QuizScoreStats } from './QuizScoreStats';
-import { QuestionResult } from '../response/QuestionResult';
-import { checkIfAnswered, isResponseCorrect } from '../../utils/responseUtils';
+import {QuizAttemptDTO, QuizPublicationDTO} from '@dti-isin/backend-api-client';
+import {QuizResultHeader} from './QuizResultHeader';
+import {QuizScoreStats} from './QuizScoreStats';
+import {QuestionResult} from '../response/QuestionResult';
+import {checkIfAnswered, isResponseCorrect} from '../../utils/responseUtils';
 import {
     calculateEarnedPoints,
     calculateTotalAvailablePoints,

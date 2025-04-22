@@ -1,7 +1,7 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { FaTrophy } from 'react-icons/fa';
-import { BadgeDTO } from '@dti-isin/backend-api-client';
+import {motion} from 'framer-motion';
+import {FaTrophy} from 'react-icons/fa';
+import {BadgeDTO} from '@dti-isin/backend-api-client';
 
 interface Props {
     badge: BadgeDTO;
@@ -10,7 +10,7 @@ interface Props {
     formatDate: (date?: string) => string;
 }
 
-export const BadgeIconCircle: React.FC<Props> = ({ badge, index, total, formatDate }) => {
+export const BadgeIconCircle: React.FC<Props> = ({badge, index, total, formatDate}) => {
     const angle = (index / total) * 360;
     const radius = 40;
     const x = Math.cos((angle * Math.PI) / 180) * radius;
@@ -18,7 +18,7 @@ export const BadgeIconCircle: React.FC<Props> = ({ badge, index, total, formatDa
 
     return (
         <motion.div
-            whileHover={{ scale: 1.1, zIndex: 50 }}
+            whileHover={{scale: 1.1, zIndex: 50}}
             className="absolute w-12 h-12 rounded-full bg-gradient-to-br from-warning to-warning/60
                        flex items-center justify-center cursor-pointer shadow-md"
             style={{
@@ -27,10 +27,10 @@ export const BadgeIconCircle: React.FC<Props> = ({ badge, index, total, formatDa
             }}
         >
             <div className="group relative">
-                <FaTrophy className="text-white text-lg" />
+                <FaTrophy className="text-white text-lg"/>
                 <motion.div
-                    initial={{ opacity: 0 }}
-                    whileHover={{ opacity: 1 }}
+                    initial={{opacity: 0}}
+                    whileHover={{opacity: 1}}
                     className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-full
                                bg-base-100 p-2 rounded-md shadow-xl text-xs whitespace-nowrap z-50"
                 >

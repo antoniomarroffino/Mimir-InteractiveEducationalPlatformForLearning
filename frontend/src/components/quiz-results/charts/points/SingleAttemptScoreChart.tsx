@@ -1,7 +1,7 @@
-import React, { useState, useMemo } from 'react';
-import { Bar } from 'react-chartjs-2';
-import { QuestionDTO, QuizAttemptDTO } from '@dti-isin/backend-api-client';
-import { ChartData, ChartOptions } from 'chart.js';
+import React, {useMemo, useState} from 'react';
+import {Bar} from 'react-chartjs-2';
+import {QuestionDTO, QuizAttemptDTO} from '@dti-isin/backend-api-client';
+import {ChartData, ChartOptions} from 'chart.js';
 import {AttemptsTableMini} from "../../AttemptsTableMini.tsx";
 
 interface SingleAttemptScoreChartProps {
@@ -18,7 +18,7 @@ export const SingleAttemptScoreChart: React.FC<SingleAttemptScoreChartProps> = (
     );
 
     const chartData: ChartData<'bar'> = useMemo(() => {
-        if (!selectedAttempt) return { labels: [], datasets: [] };
+        if (!selectedAttempt) return {labels: [], datasets: []};
 
         return {
             labels: questions.map((_, idx) => `Q${idx + 1}`),
@@ -27,7 +27,7 @@ export const SingleAttemptScoreChart: React.FC<SingleAttemptScoreChartProps> = (
                     label: 'Points Earned',
                     data: questions.map(q => {
                         const response = selectedAttempt.responses?.find(r => r.questionId === q.id);
-                        return response?.earnedPoints|| 0;
+                        return response?.earnedPoints || 0;
                     }),
                     backgroundColor: 'rgba(99, 102, 241, 0.8)',
                     borderColor: '#6366f1',
@@ -61,19 +61,19 @@ export const SingleAttemptScoreChart: React.FC<SingleAttemptScoreChartProps> = (
                 backgroundColor: 'rgba(255, 255, 255, 0.9)',
                 titleColor: '#6366f1',
                 bodyColor: '#1f2937',
-                bodyFont: { size: 14 },
+                bodyFont: {size: 14},
                 padding: 12,
                 cornerRadius: 8,
             }
         },
         scales: {
             x: {
-                grid: { display: false }
+                grid: {display: false}
             },
             y: {
                 beginAtZero: true,
                 max: Math.max(...questions.map(q => q.points || 0)),
-                ticks: { stepSize: 1 }
+                ticks: {stepSize: 1}
             }
         }
     };
@@ -88,7 +88,7 @@ export const SingleAttemptScoreChart: React.FC<SingleAttemptScoreChartProps> = (
                 />
             </div>
             <div className="lg:col-span-9 h-[400px]">
-                <Bar data={chartData} options={chartOptions} />
+                <Bar data={chartData} options={chartOptions}/>
             </div>
         </div>
     );

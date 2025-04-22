@@ -14,7 +14,7 @@ export const QuestionBankPageHeader: React.FC<QuestionBankPageHeaderProps> = ({
     <BasePageHeader
         title="Question Bank"
         subtitle="Empower your learning journey through shared knowledge"
-        icon={<FiDatabase className="w-10 h-10 text-white" />}
+        icon={<FiDatabase className="w-10 h-10 text-white"/>}
         gradientFrom="from-purple-500"
         gradientTo="to-fuchsia-500"
         showInfoToggle={showInfoToggle}

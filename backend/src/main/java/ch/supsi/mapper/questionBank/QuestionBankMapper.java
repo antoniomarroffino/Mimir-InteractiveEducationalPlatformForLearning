@@ -9,7 +9,6 @@ import org.bson.types.ObjectId;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Set;
 
 @ApplicationScoped
 public class QuestionBankMapper {

@@ -14,8 +14,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class QuestionBankMapperFacade implements IQuestionBankMapperFacade {

@@ -1,9 +1,9 @@
 import React from "react";
-import { FolderRow } from "./FolderRow";
-import { useGetFoldersInCourseId } from "../../hooks/folder/useGetFoldersInCourseId";
-import { SkeletonLoader } from "../common/SkeletonLoader";
-import { ErrorAlert } from "../common/ErrorAlert";
-import { EmptyStateFolders } from "./EmptyStateFolders";
+import {FolderRow} from "./FolderRow";
+import {useGetFoldersInCourseId} from "../../hooks/folder/useGetFoldersInCourseId";
+import {SkeletonLoader} from "../common/SkeletonLoader";
+import {ErrorAlert} from "../common/ErrorAlert";
+import {EmptyStateFolders} from "./EmptyStateFolders";
 
 interface FolderListProps {
     courseId: string;
@@ -16,7 +16,7 @@ export const FolderList: React.FC<FolderListProps> = ({
                                                           selectedFolders,
                                                           onToggleSelect,
                                                       }) => {
-    const { data: folders, isLoading, error } = useGetFoldersInCourseId(courseId);
+    const {data: folders, isLoading, error} = useGetFoldersInCourseId(courseId);
 
     if (!courseId) {
         return (
@@ -31,7 +31,7 @@ export const FolderList: React.FC<FolderListProps> = ({
         return (
             <div className="space-y-3">
                 {[...Array(3)].map((_, i) => (
-                    <SkeletonLoader key={i} className="h-14 rounded-xl w-full" />
+                    <SkeletonLoader key={i} className="h-14 rounded-xl w-full"/>
                 ))}
             </div>
         );
@@ -47,7 +47,7 @@ export const FolderList: React.FC<FolderListProps> = ({
     }
 
     if (!folders?.length) {
-        return <EmptyStateFolders />;
+        return <EmptyStateFolders/>;
     }
 
     return (
