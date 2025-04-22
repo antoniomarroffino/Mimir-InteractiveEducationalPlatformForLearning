@@ -40,7 +40,10 @@ export const CoursesDashboard = () => {
                         <div className="bg-white rounded-2xl p-6 shadow-xl border border-secondary/20">
                             <CourseList/>
                         </div>
-                        <CourseSearch/>
+                        <div className="bg-white rounded-2xl p-6 shadow-xl border border-secondary/20">
+                            <CourseSearch/>
+                        </div>
+
                     </motion.div>
                 </div>
             </div>

@@ -54,7 +54,7 @@ export const CourseSearch = () => {
     }
 
     return (
-        <div className="bg-white border border-purple-100 rounded-2xl p-6 shadow-xl space-y-8">
+        <div className="rounded-2xl space-y-8">
             <div>
                 <h2 className="text-xl font-semibold text-purple-800 mb-1">Join Existing Courses</h2>
                 <p className="text-sm text-base-content/70">
