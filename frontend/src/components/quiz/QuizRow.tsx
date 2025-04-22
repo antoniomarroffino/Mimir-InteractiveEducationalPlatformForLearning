@@ -5,6 +5,8 @@ import { DeleteQuizPopup } from './DeleteQuizPopup.tsx';
 import { PublishQuizPopup } from './PublishQuizPopup.tsx';
 import { BsPatchQuestion } from 'react-icons/bs';
 import { useQuizPublicationCRUD } from '../../hooks/quizPublication/useQuizPublicationCRUD.ts';
+import { useGetQuizPublicationsByQuizId } from '../../hooks/quizPublication/useGetQuizPublicationsByQuizId.ts';
+import { useQuizCRUD } from '../../hooks/quiz/useQuizCRUD.ts';
 import { useNavigate } from 'react-router-dom';
 
 interface QuizRowProps {
@@ -19,8 +21,20 @@ export const QuizRow: React.FC<QuizRowProps> = ({ quiz, courseId, folderId }) =>
     const [isAnonymous, setIsAnonymous] = useState(false);
     const [publishError, setPublishError] = useState<string | null>(null);
 
-    const { createPublication, isCreatingPublication } = useQuizPublicationCRUD();
     const navigate = useNavigate();
+    const { createPublication, isCreatingPublication } = useQuizPublicationCRUD();
+    const { deleteQuiz } = useQuizCRUD();
+    const { data: publications } = useGetQuizPublicationsByQuizId(quiz.id!);
+
+    const currentPublication = publications?.find(pub => pub.published);
+
+    const handlePublishClick = () => {
+        if (currentPublication) {
+            navigate(`/courses/${courseId}/folders/${folderId}/quizzes/${quiz.id}/publications/${currentPublication.id}`);
+        } else {
+            setShowPublishPopup(true);
+        }
+    };
 
     const handleConfirmPublish = async () => {
         try {
@@ -44,6 +58,19 @@ export const QuizRow: React.FC<QuizRowProps> = ({ quiz, courseId, folderId }) =>
         }
     };
 
+    const handleConfirmDelete = async () => {
+        try {
+            await deleteQuiz.mutateAsync({
+                courseId,
+                folderId,
+                quizId: quiz.id!,
+            });
+            setShowDeletePopup(false);
+        } catch (err) {
+            console.error('Failed to delete quiz', err);
+        }
+    };
+
     return (
         <>
             <div className="group p-4 bg-white rounded-xl border border-base-200 hover:border-primary/30 shadow-sm hover:shadow-md transition-all duration-300 ease-out flex items-center justify-between gap-4">
@@ -51,7 +78,12 @@ export const QuizRow: React.FC<QuizRowProps> = ({ quiz, courseId, folderId }) =>
                     <div className="p-2 rounded-lg bg-primary/10 text-primary">
                         <BsPatchQuestion className="text-xl sm:text-2xl" />
                     </div>
-                    <span className="font-medium truncate">{quiz.name}</span>
+                    <div className="flex flex-col">
+                        <span className="font-medium truncate">{quiz.name}</span>
+                        {currentPublication && (
+                            <span className="text-xs text-success font-medium mt-0.5">Published</span>
+                        )}
+                    </div>
                 </div>
 
                 <QuizActionsMenu
@@ -59,7 +91,7 @@ export const QuizRow: React.FC<QuizRowProps> = ({ quiz, courseId, folderId }) =>
                     courseId={courseId}
                     folderId={folderId}
                     onRequestDelete={() => setShowDeletePopup(true)}
-                    onRequestPublish={() => setShowPublishPopup(true)}
+                    onRequestPublish={handlePublishClick}
                 />
             </div>
 
@@ -84,10 +116,7 @@ export const QuizRow: React.FC<QuizRowProps> = ({ quiz, courseId, folderId }) =>
                 <DeleteQuizPopup
                     quiz={quiz}
                     onCancel={() => setShowDeletePopup(false)}
-                    onConfirm={() => {
-                        console.log('Elimina quiz:', quiz.name);
-                        setShowDeletePopup(false);
-                    }}
+                    onConfirm={handleConfirmDelete}
                 />
             )}
         </>
