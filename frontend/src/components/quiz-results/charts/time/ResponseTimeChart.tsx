@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { QuestionDTO, QuizAttemptDTO } from 'backend/target/backend-api-client/index.ts';
+import { QuestionDTO, QuizAttemptDTO } from '@dti-isin/backend-api-client';
 import { FaClock } from 'react-icons/fa';
 import { GeneralTimeChart } from "./GeneralTimeChart.tsx";
 import { SingleAttemptTimeChart } from "./SingleAttemptTimeChart.tsx";
@@ -34,51 +34,49 @@ export const ResponseTimeChart: React.FC<ResponseTimeChartProps> = ({
 
     if (!hasData) {
         return (
-            <div className="bg-base-100 rounded-xl p-6 border border-base-200 shadow-lg">
-                <div className="flex items-center justify-center h-64">
-                    <div className="text-center">
-                        <FaClock className="text-primary w-12 h-12 mx-auto mb-4 opacity-50" />
-                        <h3 className="text-xl font-semibold text-base-content/70">
-                            No response time data available
-                        </h3>
-                        <p className="mt-2 text-base-content/50">
-                            Wait for students to complete the quiz to see time statistics
-                        </p>
-                    </div>
-                </div>
+            <div className="flex flex-col items-center justify-center h-64 text-center">
+                <FaClock className="text-primary w-12 h-12 mb-4 opacity-50" />
+                <h3 className="text-lg font-semibold text-base-content/70">
+                    No Response Time Data
+                </h3>
+                <p className="mt-2 text-sm text-base-content/50 max-w-md">
+                    Wait for students to complete the quiz to see time statistics
+                </p>
             </div>
         );
     }
 
     return (
-        <div className="bg-base-100 rounded-xl p-6 border border-base-200 shadow-lg">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
+        <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
                     <div className="flex items-center gap-2">
-                        <FaClock className="text-primary w-5 h-5" />
-                        <h3 className="text-xl sm:text-2xl font-bold bg-clip-text text-black text-transparent">
+                        <FaClock className="text-primary w-6 h-6" />
+                        <h3 className="text-xl font-bold text-base-content">
                             Response Time Analysis
                         </h3>
                     </div>
-                    <p className="mt-1 text-sm sm:text-base text-base-content/80 font-medium pl-7">
+                    <p className="mt-1 text-sm text-base-content/70">
                         {mode === chartModes.GENERAL
-                            ? 'Average time spent per question'
-                            : 'Individual attempt response times'}
+                            ? 'Average time spent per question across all attempts'
+                            : 'Detailed time analysis for individual attempts'}
                     </p>
                 </div>
 
-                <div className="join border border-base-300 rounded-lg">
+                <div className="flex items-center gap-2">
                     {Object.values(chartModes).map((chartMode) => (
                         <button
                             key={chartMode}
                             onClick={() => setMode(chartMode)}
                             className={`
-                                btn join-item capitalize
-                                ${mode === chartMode ? 'btn-primary' : 'btn-ghost'}
-                                hover:bg-primary/10 transition-colors
+                                btn btn-sm capitalize min-w-[100px]
+                                ${mode === chartMode
+                                ? 'btn-primary'
+                                : 'btn-ghost hover:bg-base-200'
+                            }
                             `}
                         >
-                            {chartMode}
+                            {chartMode === chartModes.GENERAL ? 'Overview' : 'Individual'}
                         </button>
                     ))}
                 </div>
@@ -87,10 +85,11 @@ export const ResponseTimeChart: React.FC<ResponseTimeChartProps> = ({
             <AnimatePresence mode="wait">
                 <motion.div
                     key={mode}
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
+                    exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.2 }}
+                    className="bg-base-200 rounded-xl p-6"
                 >
                     {mode === chartModes.GENERAL ? (
                         <GeneralTimeChart

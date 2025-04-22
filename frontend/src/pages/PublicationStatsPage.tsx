@@ -23,6 +23,7 @@ import { useGetCourseById } from "../hooks/course/useGetCourseById";
 import { useGetFolderById } from "../hooks/folder/useGetFolderById";
 import { QuizResultsPageHeader } from "../components/quiz-results/QuizResultPageHeader";
 import {ChartSelector} from "../components/quiz-results/charts/ChartSelector.tsx";
+import {FaCalendar} from "react-icons/fa";
 
 const PublicationStatsPage: React.FC = () => {
     const { quizId, courseId, folderId } = useParams();
@@ -128,83 +129,80 @@ const PublicationStatsPage: React.FC = () => {
                     quiz={currentQuiz}
                 />
 
-                <div className="bg-base-100 rounded-xl shadow-lg">
-                    <div className="flex flex-col gap-6 p-6 border-b border-base-200">
-                        <h2 className="text-xl font-bold text-base-content">Select Publication Version</h2>
-                        <PublicationSelector
-                            publications={publications}
-                            selectedPublication={selectedPublication}
-                            onPublicationChange={setSelectedPublication}
-                        />
+                <div className="card bg-base-100 shadow-lg">
+                    <div className="card-body space-y-6">
+                        <div className="flex items-center justify-between gap-4">
+                            <h2 className="text-xl font-bold text-base-content flex items-center gap-2">
+                                <FaCalendar className="text-primary" />
+                                Publication Details
+                            </h2>
+                            <div className="w-96">
+                                <PublicationSelector
+                                    publications={publications}
+                                    selectedPublication={selectedPublication}
+                                    onPublicationChange={setSelectedPublication}
+                                />
+                            </div>
+                        </div>
+
+                        {selectedPublication && (
+                            <PublicationDetails publication={selectedPublication} />
+                        )}
                     </div>
+                </div>
 
-                    <div className="flex-1 overflow-y-auto">
-                        <AnimatePresence mode="wait">
-                            {selectedPublication && (
-                                <motion.div
-                                    key={selectedPublication.id}
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    exit={{ opacity: 0 }}
-                                    className="p-6 space-y-6"
-                                >
-                                    <div className="card bg-base-200">
-                                        <div className="card-body">
-                                            <PublicationDetails publication={selectedPublication} />
-                                        </div>
-                                    </div>
+                <AnimatePresence mode="wait">
+                    {selectedPublication && questionStats && (
+                        <motion.div
+                            key={selectedPublication.id}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="space-y-8"
+                        >
+                            <div className="card bg-base-100 shadow-lg">
+                                <div className="card-body">
+                                    <ChartSelector
+                                        questionStats={questionStats}
+                                        attempts={attempts || []}
+                                        questions={selectedPublication.questions || []}
+                                    />
+                                </div>
+                            </div>
 
-                                    {questionStats && (
-                                        <div className="space-y-6">
-                                            <div className="card bg-base-200">
-                                                <div className="card-body">
-                                                    <ChartSelector
-                                                        questionStats={questionStats}
-                                                        attempts={attempts || []}
-                                                        questions={selectedPublication.questions || []}
-                                                    />
-                                                </div>
-                                            </div>
+                            <div className="card bg-base-100 shadow-lg">
+                                <div className="card-body">
+                                    <QuestionStatistics
+                                        questions={selectedPublication.questions || []}
+                                        attempts={attempts || []}
+                                    />
+                                </div>
+                            </div>
 
-                                            <div className="card bg-base-200">
-                                                <div className="card-body">
-                                                    <QuestionStatistics
-                                                        questions={selectedPublication.questions || []}
-                                                        attempts={attempts || []}
-                                                    />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {attempts && (
+                            {attempts && (
+                                <div className="card bg-base-100 shadow-lg">
+                                    <div className="card-body p-6">
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                            <div className="card bg-base-200">
-                                                <div className="card-body p-0">
-                                                    <AttemptsTable
-                                                        attempts={attempts}
-                                                        publication={selectedPublication}
-                                                        onAttemptSelect={setSelectedAttempt}
-                                                        isUpdating={isFetching}
-                                                    />
-                                                </div>
+                                            <div className="border-r border-base-200">
+                                                <AttemptsTable
+                                                    attempts={attempts}
+                                                    publication={selectedPublication}
+                                                    onAttemptSelect={setSelectedAttempt}
+                                                    isUpdating={isFetching}
+                                                />
                                             </div>
 
                                             <div className="md:col-span-2">
                                                 {selectedAttempt && attempts.some(a => a.id === selectedAttempt.id) ? (
-                                                    <div className="card bg-base-200">
-                                                        <div className="card-body">
-                                                            <AttemptDetails
-                                                                attempt={selectedAttempt}
-                                                                publication={selectedPublication}
-                                                                onClose={() => setSelectedAttempt(null)}
-                                                                showBadgeAssignment={!selectedPublication.anonymous}
-                                                            />
-                                                        </div>
-                                                    </div>
+                                                    <AttemptDetails
+                                                        attempt={selectedAttempt}
+                                                        publication={selectedPublication}
+                                                        onClose={() => setSelectedAttempt(null)}
+                                                        showBadgeAssignment={!selectedPublication.anonymous}
+                                                    />
                                                 ) : (
-                                                    <div className="card bg-base-200">
-                                                        <div className="card-body flex items-center justify-center text-center">
+                                                    <div className="flex items-center justify-center text-center h-full">
+                                                        <div>
                                                             <div className="text-6xl mb-4">👆</div>
                                                             <h3 className="text-xl font-bold text-base-content/70">
                                                                 Select an Attempt
@@ -217,12 +215,12 @@ const PublicationStatsPage: React.FC = () => {
                                                 )}
                                             </div>
                                         </div>
-                                    )}
-                                </motion.div>
+                                    </div>
+                                </div>
                             )}
-                        </AnimatePresence>
-                    </div>
-                </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
         </motion.section>
     );
