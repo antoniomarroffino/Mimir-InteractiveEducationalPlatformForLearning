@@ -68,18 +68,20 @@ export const QuizPublicationPage: React.FC = () => {
                 />
 
                 <div className="grid lg:grid-cols-2 gap-8 items-start">
+                    {/* Left Column */}
                     <motion.div
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
                         className="space-y-6"
                     >
-                        <div className="card bg-gradient-to-br from-primary/10 to-secondary/10 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                        {/* Access Code */}
+                        <div className="card bg-base-100 shadow-md hover:shadow-xl transition-all rounded-xl">
                             <div className="card-body p-6">
                                 <h2 className="card-title text-lg flex items-center gap-2 text-primary">
                                     🎯 Access Code
                                 </h2>
-                                <div className="mt-4 p-4 bg-base-100 rounded-xl shadow-inner">
+                                <div className="mt-4 p-4 bg-base-200 rounded-xl shadow-inner">
                                     <div className="text-4xl font-mono text-center font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                                         {publication.publicationCode}
                                     </div>
@@ -87,12 +89,13 @@ export const QuizPublicationPage: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="card bg-gradient-to-br from-secondary/10 to-accent/10 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                        {/* Status */}
+                        <div className="card bg-base-100 shadow-md hover:shadow-xl transition-all rounded-xl">
                             <div className="card-body p-6">
                                 <h2 className="card-title text-lg flex items-center gap-2 text-secondary">
                                     🎮 Publication Status
                                 </h2>
-                                <div className="mt-4 p-4 bg-base-100 rounded-xl shadow-inner">
+                                <div className="mt-4 p-4 bg-base-200 rounded-xl shadow-inner">
                                     <div className="flex justify-between items-center">
                                         <span className="font-medium">Current Status</span>
                                         <div className={`px-4 py-2 rounded-full ${
@@ -100,12 +103,12 @@ export const QuizPublicationPage: React.FC = () => {
                                                 ? 'bg-success/20 text-success-content'
                                                 : 'bg-error/20 text-error-content'
                                         }`}>
-                                            <span className="flex items-center gap-2">
-                                                <span className={`w-2 h-2 rounded-full ${
-                                                    publication.published ? 'bg-success animate-pulse' : 'bg-error'
-                                                }`} />
-                                                {publication.published ? 'Active' : 'Inactive'}
-                                            </span>
+                                    <span className="flex items-center gap-2">
+                                        <span className={`w-2 h-2 rounded-full ${
+                                            publication.published ? 'bg-success animate-pulse' : 'bg-error'
+                                        }`} />
+                                        {publication.published ? 'Active' : 'Inactive'}
+                                    </span>
                                         </div>
                                     </div>
                                 </div>
@@ -113,12 +116,13 @@ export const QuizPublicationPage: React.FC = () => {
                         </div>
                     </motion.div>
 
+                    {/* QR Code */}
                     <motion.div
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.3 }}
                     >
-                        <div className="card bg-gradient-to-br from-accent/10 to-primary/10 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                        <div className="card bg-base-100 shadow-md hover:shadow-xl transition-all rounded-xl">
                             <div className="card-body p-6">
                                 <h2 className="card-title text-lg flex items-center gap-2 text-accent">
                                     📱 QR Code Access
@@ -129,15 +133,15 @@ export const QuizPublicationPage: React.FC = () => {
                                         className="group p-4 bg-white rounded-xl shadow-md hover:shadow-xl transition-all relative"
                                     >
                                         <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/10 rounded-xl transition-all">
-                                            <span className="opacity-0 group-hover:opacity-100 text-white font-medium transition-all">
-                                                Click to enlarge
-                                            </span>
+                                    <span className="opacity-0 group-hover:opacity-100 text-white font-medium transition-all">
+                                        Click to enlarge
+                                    </span>
                                         </div>
                                         <QRCodeSVG value={fullUrl} size={200} className="rounded-lg" />
                                     </button>
                                     <div className="w-full">
                                         <p className="text-sm text-base-content/70 mb-2">Direct access URL:</p>
-                                        <div className="p-3 bg-base-100 rounded-lg shadow-inner text-xs break-all font-mono">
+                                        <div className="p-3 bg-base-200 rounded-lg shadow-inner text-xs break-all font-mono">
                                             {fullUrl}
                                         </div>
                                     </div>
@@ -146,20 +150,21 @@ export const QuizPublicationPage: React.FC = () => {
                         </div>
                     </motion.div>
                 </div>
-
-                <QRCodeModal
-                    isOpen={isQRModalOpen}
-                    onClose={() => setIsQRModalOpen(false)}
-                    url={fullUrl}
-                />
-
-                <ConfirmUnpublishPopup
-                    isOpen={isConfirmModalOpen}
-                    onClose={() => setIsConfirmModalOpen(false)}
-                    onConfirm={handleDeactivate}
-                    isLoading={isDeactivatingPublication}
-                />
             </div>
+
+            <ConfirmUnpublishPopup
+                isOpen={isConfirmModalOpen}
+                onClose={() => setIsConfirmModalOpen(false)}
+                onConfirm={handleDeactivate}
+                isLoading={isDeactivatingPublication}
+            />
+
+            <QRCodeModal
+                isOpen={isQRModalOpen}
+                onClose={() => setIsQRModalOpen(false)}
+                url={fullUrl}
+            />
         </motion.section>
+
     );
 };

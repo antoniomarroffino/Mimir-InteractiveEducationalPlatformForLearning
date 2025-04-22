@@ -1,5 +1,7 @@
 import React from "react";
-import {QRCodeSVG} from "qrcode.react";
+import { QRCodeSVG } from "qrcode.react";
+import { motion, AnimatePresence } from "framer-motion";
+import { XMarkIcon } from "@heroicons/react/24/solid";
 
 interface QRCodeModalProps {
     isOpen: boolean;
@@ -8,31 +10,49 @@ interface QRCodeModalProps {
 }
 
 const QRCodeModal: React.FC<QRCodeModalProps> = ({ isOpen, onClose, url }) => {
-    if (!isOpen) return null;
-
     return (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-base-100 rounded-2xl p-8 max-w-2xl w-full mx-4 relative">
-                <button
-                    onClick={onClose}
-                    className="btn btn-sm btn-circle absolute right-4 top-4"
+        <AnimatePresence>
+            {isOpen && (
+                <motion.div
+                    className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
                 >
-                    ✕
-                </button>
-                <h3 className="text-2xl font-bold mb-6 text-center">QR Code</h3>
-                <div className="flex flex-col items-center gap-6">
-                    <div className="p-6 bg-white rounded-xl shadow-lg">
-                        <QRCodeSVG value={url} size={400} className="rounded-lg"/>
-                    </div>
-                    <div className="text-center">
-                        <p className="text-sm text-base-content/70 mb-2">Scan with your mobile device</p>
-                        <p className="text-xs font-mono bg-base-200 p-3 rounded-lg break-all">
-                            {url}
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
+                    <motion.div
+                        className="bg-base-100 rounded-2xl shadow-2xl max-w-lg w-full p-6 text-center relative border-4 border-primary/20"
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0.9, opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                    >
+                        <button
+                            onClick={onClose}
+                            className="absolute right-4 top-4 text-base-content/60 hover:text-error"
+                        >
+                            <XMarkIcon className="h-5 w-5" />
+                        </button>
+
+                        <h3 className="text-2xl font-bold mb-4 text-primary">Scan the QR Code</h3>
+
+                        <div className="flex flex-col items-center gap-6">
+                            <div className="p-4 bg-white rounded-xl shadow-lg">
+                                <QRCodeSVG value={url} size={300} className="rounded-md" />
+                            </div>
+
+                            <div className="text-center">
+                                <p className="text-sm text-base-content/70 mb-2">
+                                    Scan with your mobile device or copy the link below
+                                </p>
+                                <p className="text-xs font-mono bg-base-200 p-3 rounded-lg break-all">
+                                    {url}
+                                </p>
+                            </div>
+                        </div>
+                    </motion.div>
+                </motion.div>
+            )}
+        </AnimatePresence>
     );
 };
 
