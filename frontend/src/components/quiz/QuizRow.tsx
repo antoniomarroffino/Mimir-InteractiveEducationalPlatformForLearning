@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { QuizDTO } from '@dti-isin/backend-api-client';
 import { QuizActionsMenu } from './QuizActionsMenu.tsx';
 import { DeleteQuizPopup } from './DeleteQuizPopup.tsx';
-import { BsPatchQuestion } from 'react-icons/bs';
 import { PublishQuizPopup } from './PublishQuizPopup.tsx';
+import { BsPatchQuestion } from 'react-icons/bs';
 import { useQuizPublicationCRUD } from '../../hooks/quizPublication/useQuizPublicationCRUD.ts';
 import { useNavigate } from 'react-router-dom';
 
