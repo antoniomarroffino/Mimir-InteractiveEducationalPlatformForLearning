@@ -12,7 +12,7 @@ import {
     Title,
     Tooltip
 } from 'chart.js';
-import {QuestionDTO, QuizAttemptDTO} from 'backend/target/backend-api-client/index.ts';
+import {QuestionDTO, QuizAttemptDTO, QuestionResponseDTO} from '@dti-isin/backend-api-client';
 import {createVerticalGradient, formatSeconds, formatTicks} from '../../../../utils/chartUtils.ts';
 import {QuestionListForResults} from "../../QuestionListForResults.tsx";
 import {AttemptsTableMini} from "../../AttemptsTableMini.tsx";
@@ -38,7 +38,7 @@ export const SingleAttemptTimeChart: React.FC<SingleAttemptTimeChartProps> = ({
         datasets: [{
             label: 'Time Spent',
             data: questions.map((question) => {
-                const response = selectedAttempt?.responses?.find(r => r.questionId === question.id);
+                const response = selectedAttempt?.responses?.find((r: QuestionResponseDTO) => r.questionId === question.id);
                 return response?.timeSpent ?? 0;
             }),
             backgroundColor: (context) => {

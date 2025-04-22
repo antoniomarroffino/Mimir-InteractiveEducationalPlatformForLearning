@@ -1,6 +1,6 @@
 import React, {useMemo, useState} from 'react';
 import {Bar} from 'react-chartjs-2';
-import {QuestionDTO} from 'backend/target/backend-api-client/index.ts';
+import {QuestionDTO} from '@dti-isin/backend-api-client';
 import {
     BarElement,
     CategoryScale,
