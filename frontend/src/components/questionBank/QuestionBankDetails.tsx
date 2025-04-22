@@ -9,8 +9,6 @@ import {
     BsListUl,
     BsQuestionDiamond,
 } from "react-icons/bs";
-import {QuestionsList} from "../question/QuestionList.tsx";
-import {DraftQuestionElement} from "../question/DraftQuestionElement.tsx";
 import {QuestionEditor} from "../question/QuestionEditor.tsx";
 import {QuestionTypeSelector} from "../question/QuestionTypeSelector.tsx";
 import {QuestionType} from "@dti-isin/backend-api-client";
@@ -18,6 +16,7 @@ import {XMarkIcon} from "@heroicons/react/16/solid";
 import {useQuestionCRUD} from "../../hooks/question/useQuestionCRUD.ts";
 import {QuestionBankDetailsHeader} from "./QuestionBankDetailsHeader.tsx";
 import {DeleteQuestionBankDialog} from "./DeleteQuestionBankPopup.tsx";
+import {SidebarQuestionList} from "../question/SidebarQuestionList.tsx";
 
 const QuestionBankDetails: React.FC = () => {
     const {questionBankId} = useParams();
@@ -111,7 +110,7 @@ const QuestionBankDetails: React.FC = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 py-12 px-4">
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 py-6 px-4">
             <div className="max-w-7xl mx-auto space-y-8">
                 <QuestionBankDetailsHeader
                     questionBankDTO={questionBank}
@@ -144,53 +143,20 @@ const QuestionBankDetails: React.FC = () => {
                         </button>
                     </div>
 
-                    <div className={`
-                        lg:col-span-4 
-                        fixed 
-                        lg:static 
-                        top-0 
-                        left-0 
-                        w-full 
-                        h-full 
-                        lg:w-auto 
-                        lg:h-auto 
-                        z-40 
-                        transform 
-                        transition-transform 
-                        duration-300 
-                        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-                        lg:translate-x-0
-                        bg-base-100/95 
-                        backdrop-blur-sm
-                        lg:bg-transparent 
-                        px-6 pb-6 pt-0 
-                        overflow-y-auto
-                    `}>
-                        <div className="bg-base-100 rounded-xl px-6 pb-6 shadow-xl space-y-6">
-                            <div className="flex justify-between items-center mb-2">
-                                <button
-                                    className="btn btn-circle btn-sm lg:hidden"
-                                    onClick={() => setIsSidebarOpen(false)}
-                                >
-                                    <XMarkIcon className="w-4 h-4"/>
-                                </button>
-                            </div>
-                            <QuestionsList
-                                questions={questionBank.questions || []}
-                                onStartEditing={startQuestionEditing}
-                                onDeleteQuestion={handleDeleteQuestion}
-                                onReorder={handleReorderQuestions}
-                                onStartCreation={startQuestionCreation}
-                                draftQuestionElement={
-                                    isCreatingQuestion ? (
-                                        <DraftQuestionElement
-                                            questionText={draftQuestion.questionText}
-                                            questionType={selectedQuestionType!}
-                                        />
-                                    ) : undefined
-                                }
-                            />
-                        </div>
+                    <div className={"lg:col-span-4 fixed lg:static top-0 left-0 w-full h-full lg:w-auto lg:h-auto z-40 transform transition-transform duration-300 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 overflow-y-auto"}>
+
+                    <SidebarQuestionList
+                            isSidebarOpen={isSidebarOpen}
+                            onClose={() => setIsSidebarOpen(false)}
+                            questions={questionBank.questions || []}
+                            onStartEditing={startQuestionEditing}
+                            onDeleteQuestion={handleDeleteQuestion}
+                            onReorder={handleReorderQuestions}
+                            onStartCreation={startQuestionCreation}
+                            draftQuestion={draftQuestion}
+                            selectedQuestionType={selectedQuestionType ?? undefined}
+                            isCreatingQuestion={isCreatingQuestion}
+                        />
                     </div>
 
                     <div className="lg:col-span-5 order-first lg:order-none">

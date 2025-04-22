@@ -39,9 +39,6 @@ export const QuestionsList: React.FC<QuestionsListProps> = ({
 
     return (
         <div className="flex flex-col gap-6">
-
-        <h2 className="text-lg font-semibold">Questions</h2>
-
             <div className="flex-1 max-h-[400px] overflow-y-auto pr-2">
                 <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                     <SortableContext

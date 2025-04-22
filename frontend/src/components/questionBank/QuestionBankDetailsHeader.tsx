@@ -25,10 +25,9 @@ export const QuestionBankDetailsHeader: React.FC<QuestionBankDetailsHeaderProps>
                                                                                         onDeleteClick
                                                                                     }) => {
     return (
-        <header className="space-y-6 mb-8">
-            <BreadcrumbQuestionBank questionBankDTO={questionBankDTO} />
-
+        <header className="space-y-2 mb-2">
             <div className="bg-gradient-to-tr from-primary/5 to-base-100 border border-primary/10 p-6 rounded-2xl shadow-md transition-all duration-300 hover:shadow-xl">
+                <BreadcrumbQuestionBank questionBankDTO={questionBankDTO} />
                 <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
                     <div className="flex-1 flex items-start gap-4">
                         <div className="p-3 rounded-full bg-primary/10 text-primary">
