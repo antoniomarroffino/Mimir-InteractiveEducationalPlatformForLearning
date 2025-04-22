@@ -20,36 +20,62 @@ export const QuizActionsMenu: React.FC<QuizActionsMenuProps> = ({
                                                                 }) => {
     const navigate = useNavigate();
 
+    const ActionButton = ({
+                              onClick,
+                              icon,
+                              label,
+                              color
+                          }: {
+        onClick: () => void;
+        icon: React.ReactNode;
+        label: string;
+        color: string;
+    }) => (
+        <button
+            onClick={onClick}
+            className={`group flex flex-col items-center text-${color} hover:text-${color} transition`}
+            aria-label={label}
+            title={label}
+        >
+            <div className={`btn btn-sm btn-circle bg-${color}/10 hover:bg-${color}/20`}>
+                {icon}
+            </div>
+            <span className="text-[10px] mt-1 opacity-70 group-hover:opacity-100">
+                {label}
+            </span>
+        </button>
+    );
+
     return (
-        <div className="flex gap-2">
-            <button
+        <div className="flex gap-3">
+            <ActionButton
                 onClick={onRequestPublish}
-                className="btn btn-sm btn-ghost"
-                title="Publish Quiz"
-            >
-                <BsRocket className="text-success" />
-            </button>
-            <button
-                onClick={() => navigate(`/courses/${courseId}/folders/${folderId}/quizzes/${quiz.id}/results`)}
-                className="btn btn-sm btn-ghost"
-                title="View Results"
-            >
-                <BsBarChart className="text-info" />
-            </button>
-            <button
-                onClick={() => navigate(`/courses/${courseId}/folders/${folderId}/quizzes/${quiz.id}/edit`)}
-                className="btn btn-sm btn-ghost"
-                title="Edit Quiz"
-            >
-                <BsPencil className="text-primary" />
-            </button>
-            <button
+                icon={<BsRocket />}
+                label="Publish"
+                color="success"
+            />
+            <ActionButton
+                onClick={() =>
+                    navigate(`/courses/${courseId}/folders/${folderId}/quizzes/${quiz.id}/results`)
+                }
+                icon={<BsBarChart />}
+                label="Results"
+                color="info"
+            />
+            <ActionButton
+                onClick={() =>
+                    navigate(`/courses/${courseId}/folders/${folderId}/quizzes/${quiz.id}/edit`)
+                }
+                icon={<BsPencil />}
+                label="Edit"
+                color="primary"
+            />
+            <ActionButton
                 onClick={onRequestDelete}
-                className="btn btn-sm btn-ghost"
-                title="Delete Quiz"
-            >
-                <BsTrash className="text-error" />
-            </button>
+                icon={<BsTrash />}
+                label="Delete"
+                color="error"
+            />
         </div>
     );
 };

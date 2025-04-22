@@ -1,6 +1,9 @@
-import {FolderRow} from './FolderRow';
 import React from "react";
-import {useGetFoldersInCourseId} from "../../hooks/folder/useGetFoldersInCourseId.ts";
+import { FolderRow } from "./FolderRow";
+import { useGetFoldersInCourseId } from "../../hooks/folder/useGetFoldersInCourseId";
+import { SkeletonLoader } from "../common/SkeletonLoader";
+import { ErrorAlert } from "../common/ErrorAlert";
+import { EmptyStateFolders } from "./EmptyStateFolders";
 
 interface FolderListProps {
     courseId: string;
@@ -8,14 +11,44 @@ interface FolderListProps {
     onToggleSelect: (folderId: string) => void;
 }
 
-export const FolderList: React.FC<FolderListProps> = ({courseId, selectedFolders, onToggleSelect}) => {
-    const {data: folders, isLoading: isLoadingFolders} = useGetFoldersInCourseId(courseId);
+export const FolderList: React.FC<FolderListProps> = ({
+                                                          courseId,
+                                                          selectedFolders,
+                                                          onToggleSelect,
+                                                      }) => {
+    const { data: folders, isLoading, error } = useGetFoldersInCourseId(courseId);
 
-    if (!courseId) return <Error message="Invalid course ID"/>;
+    if (!courseId) {
+        return (
+            <ErrorAlert
+                title="Invalid Course ID"
+                message="Please make sure you're accessing a valid course."
+            />
+        );
+    }
 
-    if (isLoadingFolders) return <Loader/>;
+    if (isLoading) {
+        return (
+            <div className="space-y-3">
+                {[...Array(3)].map((_, i) => (
+                    <SkeletonLoader key={i} className="h-14 rounded-xl w-full" />
+                ))}
+            </div>
+        );
+    }
 
-    if (!folders?.length) return <EmptyState/>;
+    if (error) {
+        return (
+            <ErrorAlert
+                title="Error loading folders"
+                message={error.message}
+            />
+        );
+    }
+
+    if (!folders?.length) {
+        return <EmptyStateFolders />;
+    }
 
     return (
         <div className="space-y-4">
@@ -31,21 +64,3 @@ export const FolderList: React.FC<FolderListProps> = ({courseId, selectedFolders
         </div>
     );
 };
-
-const Loader = () => (
-    <div className="text-center py-8">
-        <span className="loading loading-spinner text-primary"></span>
-    </div>
-);
-
-const EmptyState = () => (
-    <div className="text-center text-base-content/70 py-8">
-        No folders yet. Create your first folder!
-    </div>
-);
-
-const Error = ({message}: { message: string }) => (
-    <div className="text-center text-error py-8">
-        {message}
-    </div>
-);

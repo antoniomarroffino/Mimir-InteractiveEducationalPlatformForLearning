@@ -1,13 +1,16 @@
 import React from 'react';
-import {QuizRow} from './QuizRow';
-import {useGetQuizzesInFolderIdInCourseId} from "../../hooks/quiz/useGetQuizzesInFolderIdInCourseId.ts";
+import { QuizRow } from './QuizRow';
+import { useGetQuizzesInFolderIdInCourseId } from "../../hooks/quiz/useGetQuizzesInFolderIdInCourseId.ts";
+import { ErrorAlert } from "../common/ErrorAlert.tsx";
+import {EmptyStateQuizzes} from "./EmptyStateQuizzes.tsx";
+import {SkeletonLoaderQuizzes} from "./SkeletonLoaderQuizzes.tsx";
 
 interface QuizListProps {
     courseId: string;
     folderId: string;
 }
 
-export const QuizList: React.FC<QuizListProps> = ({courseId, folderId}) => {
+export const QuizList: React.FC<QuizListProps> = ({ courseId, folderId }) => {
     const {
         data: quizzes,
         isLoading: isLoadingQuizzes,
@@ -15,31 +18,24 @@ export const QuizList: React.FC<QuizListProps> = ({courseId, folderId}) => {
     } = useGetQuizzesInFolderIdInCourseId(courseId, folderId);
 
     if (isLoadingQuizzes) {
-        return (
-            <div className="flex justify-center py-4">
-                <span className="loading loading-spinner loading-md text-primary">Is loading quizzes</span>
-            </div>
-        );
+        return <SkeletonLoaderQuizzes />;
     }
 
     if (errorQuizzes) {
         return (
-            <p className="text-center text-error py-4">
-                Error loading quizzes
-            </p>
+            <ErrorAlert
+                title="Failed to load quizzes"
+                message={errorQuizzes.message}
+            />
         );
     }
 
     if (!quizzes?.length) {
-        return (
-            <p className="text-center text-base-content/70 py-4">
-                No quizzes in this folder
-            </p>
-        );
+        return <EmptyStateQuizzes />;
     }
 
     return (
-        <div className="space-y-2">
+        <div className="space-y-4">
             {quizzes.map(quiz => (
                 <QuizRow
                     key={quiz.id}

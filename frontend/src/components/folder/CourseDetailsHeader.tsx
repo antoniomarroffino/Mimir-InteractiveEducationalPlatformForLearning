@@ -1,9 +1,10 @@
 import React from "react";
-import {BsFolder2, BsPencil, BsTrash} from "react-icons/bs";
+import {BsPencil, BsTrash} from "react-icons/bs";
 import { CheckIcon, XMarkIcon } from "@heroicons/react/16/solid";
 import { BreadcrumbCourses } from "../course/BreadcrumbCourses";
 import { CourseDTO } from "@dti-isin/backend-api-client";
 import { LeaveCourseButton } from "../course/LeaveCourseButton";
+import {FiBookOpen} from "react-icons/fi";
 
 interface CourseDetailsHeaderProps {
     course: CourseDTO;
@@ -43,7 +44,7 @@ export const CourseDetailsHeader: React.FC<CourseDetailsHeaderProps> = ({
                 <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 lg:gap-6 mt-4">
                     <div className="flex-1 flex items-start gap-3 sm:gap-4">
                         <div className="p-2 sm:p-3 rounded-full bg-primary/10 text-primary shrink-0">
-                            <BsFolder2 className="w-5 h-5 sm:w-6 sm:h-6" />
+                            <FiBookOpen className="w-5 h-5 sm:w-6 sm:h-6" />
                         </div>
 
                         <div className="flex-1 min-w-0 space-y-2">
