@@ -1,8 +1,8 @@
 import React, { useState, useMemo } from 'react';
-import { QuestionDTO, QuizAttemptDTO } from '@dti-isin/backend-api-client';
+import { QuestionDTO, QuizAttemptDTO } from 'backend/target/backend-api-client/index.ts';
 import { FaClock } from 'react-icons/fa';
-import { GeneralTimeChart } from "../quiz-results/GeneralTimeChart.tsx";
-import { SingleAttemptTimeChart } from "../quiz-results/SingleAttemptTimeChart.tsx";
+import { GeneralTimeChart } from "./GeneralTimeChart.tsx";
+import { SingleAttemptTimeChart } from "./SingleAttemptTimeChart.tsx";
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface ResponseTimeChartProps {

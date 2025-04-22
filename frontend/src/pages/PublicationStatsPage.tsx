@@ -9,20 +9,20 @@ import {
     MultipleChoiceQuestionResponseDTO
 } from '@dti-isin/backend-api-client';
 import { useParams } from "react-router-dom";
-import { PublicationDetails } from "../components/quizPublication/PublicationDetails.tsx";
+import { PublicationDetails } from "../components/quizPublication/PublicationDetails";
 import { AnimatePresence, motion } from 'framer-motion';
-import { useGetQuizPublicationsByQuizId } from "../hooks/quizPublication/useGetQuizPublicationsByQuizId.ts";
-import NoPublicationsPlaceholder from "../components/quizPublication/NoPublicationsPlaceholder.tsx";
-import { useGetQuizAttemptsByPublication } from "../hooks/quizAttempt/useGetQuizAttemptsByPublication.ts";
-import { QuestionStatistics } from "../components/publication-stats/QuestionStatistics.tsx";
-import { AttemptsTable } from "../components/publication-stats/AttemptsTable.tsx";
-import { AttemptDetails } from "../components/attempt/AttemptDetails.tsx";
-import { PublicationSelector } from "../components/publication-stats/PublicationSelector.tsx";
-import { ResponseTimeChart } from "../components/publication-stats/ResponseTimeChart.tsx";
-import { useGetQuizById } from "../hooks/quiz/useGetQuizById.ts";
-import { useGetCourseById } from "../hooks/course/useGetCourseById.ts";
-import { useGetFolderById } from "../hooks/folder/useGetFolderById.ts";
-import { QuizResultsPageHeader } from "../components/quiz-results/QuizResultPageHeader.tsx";
+import { useGetQuizPublicationsByQuizId } from "../hooks/quizPublication/useGetQuizPublicationsByQuizId";
+import NoPublicationsPlaceholder from "../components/quizPublication/NoPublicationsPlaceholder";
+import { useGetQuizAttemptsByPublication } from "../hooks/quizAttempt/useGetQuizAttemptsByPublication";
+import { QuestionStatistics } from "../components/publication-stats/QuestionStatistics";
+import { AttemptsTable } from "../components/publication-stats/AttemptsTable";
+import { AttemptDetails } from "../components/attempt/AttemptDetails";
+import { PublicationSelector } from "../components/publication-stats/PublicationSelector";
+import { useGetQuizById } from "../hooks/quiz/useGetQuizById";
+import { useGetCourseById } from "../hooks/course/useGetCourseById";
+import { useGetFolderById } from "../hooks/folder/useGetFolderById";
+import { QuizResultsPageHeader } from "../components/quiz-results/QuizResultPageHeader";
+import {ChartSelector} from "../components/quiz-results/charts/ChartSelector.tsx";
 
 const PublicationStatsPage: React.FC = () => {
     const { quizId, courseId, folderId } = useParams();
@@ -132,7 +132,7 @@ const PublicationStatsPage: React.FC = () => {
                     <div className="flex flex-col gap-6 p-6 border-b border-base-200">
                         <h2 className="text-xl font-bold text-base-content">Select Publication Version</h2>
                         <PublicationSelector
-                            publications={publications || []}
+                            publications={publications}
                             selectedPublication={selectedPublication}
                             onPublicationChange={setSelectedPublication}
                         />
@@ -158,7 +158,7 @@ const PublicationStatsPage: React.FC = () => {
                                         <div className="space-y-6">
                                             <div className="card bg-base-200">
                                                 <div className="card-body">
-                                                    <ResponseTimeChart
+                                                    <ChartSelector
                                                         questionStats={questionStats}
                                                         attempts={attempts || []}
                                                         questions={selectedPublication.questions || []}
@@ -218,7 +218,6 @@ const PublicationStatsPage: React.FC = () => {
                                             </div>
                                         </div>
                                     )}
-
                                 </motion.div>
                             )}
                         </AnimatePresence>

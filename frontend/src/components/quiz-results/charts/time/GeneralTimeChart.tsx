@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Bar } from 'react-chartjs-2';
-import { QuestionDTO } from '@dti-isin/backend-api-client';
+import { QuestionDTO } from 'backend/target/backend-api-client/index.ts';
 import {
     BarElement,
     CategoryScale,
@@ -13,8 +13,8 @@ import {
     ChartData,
     ChartOptions,
 } from 'chart.js';
-import { formatSeconds, formatTicks, createVerticalGradient } from '../../utils/chartUtils';
-import { QuestionListForResults } from "./QuestionListForResults.tsx";
+import { formatSeconds, formatTicks, createVerticalGradient } from '../../../../utils/chartUtils.ts';
+import { QuestionListForResults } from "../../QuestionListForResults.tsx";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, Colors);
 

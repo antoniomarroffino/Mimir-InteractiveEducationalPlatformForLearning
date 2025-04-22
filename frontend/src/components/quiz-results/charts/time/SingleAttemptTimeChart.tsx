@@ -12,10 +12,10 @@ import {
     ChartData,
     Colors
 } from 'chart.js';
-import { QuizAttemptDTO, QuestionDTO } from '@dti-isin/backend-api-client';
-import { formatSeconds, formatTicks, createVerticalGradient } from '../../utils/chartUtils';
-import { QuestionListForResults } from "./QuestionListForResults.tsx";
-import { AttemptsTableMini } from "./AttemptsTableMini.tsx";
+import { QuizAttemptDTO, QuestionDTO } from 'backend/target/backend-api-client/index.ts';
+import { formatSeconds, formatTicks, createVerticalGradient } from '../../../../utils/chartUtils.ts';
+import { QuestionListForResults } from "../../QuestionListForResults.tsx";
+import { AttemptsTableMini } from "../../AttemptsTableMini.tsx";
 import { motion, AnimatePresence } from 'framer-motion';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, Colors);
