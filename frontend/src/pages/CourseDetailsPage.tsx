@@ -13,6 +13,7 @@ import {CourseDetailsHeader} from "../components/folder/CourseDetailsHeader.tsx"
 import {motion} from "framer-motion";
 import {LeaveCoursePopup} from "../components/course/LeaveCoursePopup.tsx";
 import {DeleteCoursePopup} from "../components/course/DeleteCoursePopup.tsx";
+import {ErrorAlert} from "../components/common/ErrorAlert.tsx";
 
 const CourseDetailsPage = () => {
     const {courseId} = useParams();
@@ -108,28 +109,38 @@ const CourseDetailsPage = () => {
 
     if (errorTeacherCourses || error) {
         return (
-            <div className="alert alert-error flex justify-between items-center">
-                <span>Error loading courses: {errorTeacherCourses?.message}</span>
-                <button
-                    className="btn btn-sm btn-outline"
-                    onClick={() => navigate('/')}
-                >
-                    Back to Courses
-                </button>
+            <div className="max-w-3xl mx-auto px-4">
+                <ErrorAlert
+                    title="Error loading course data"
+                    message={errorTeacherCourses?.message || error?.message}
+                />
+                <div className="text-center mt-4">
+                    <button
+                        className="btn btn-outline"
+                        onClick={() => navigate('/')}
+                    >
+                        Back to Courses
+                    </button>
+                </div>
             </div>
         );
     }
 
     if (!courseId || !selectedCourse) {
         return (
-            <div className="alert alert-warning flex justify-between items-center">
-                <span>Course not found.</span>
-                <button
-                    className="btn btn-sm btn-outline"
-                    onClick={() => navigate('/')}
-                >
-                    Back to Courses
-                </button>
+            <div className="max-w-3xl mx-auto px-4">
+                <ErrorAlert
+                    title="Course not found"
+                    message="The course you're trying to access does not exist or was deleted."
+                />
+                <div className="text-center mt-4">
+                    <button
+                        className="btn btn-outline"
+                        onClick={() => navigate('/')}
+                    >
+                        Back to Courses
+                    </button>
+                </div>
             </div>
         );
     }
