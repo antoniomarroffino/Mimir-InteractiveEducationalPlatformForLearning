@@ -158,7 +158,11 @@ const PublicationStatsPage: React.FC = () => {
                                         <div className="space-y-6">
                                             <div className="card bg-base-200">
                                                 <div className="card-body">
-                                                    <ResponseTimeChart questionStats={questionStats} />
+                                                    <ResponseTimeChart
+                                                        questionStats={questionStats}
+                                                        attempts={attempts || []}
+                                                        questions={selectedPublication.questions || []}
+                                                    />
                                                 </div>
                                             </div>
 
