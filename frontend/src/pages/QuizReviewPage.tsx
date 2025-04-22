@@ -8,6 +8,7 @@ import {QuizAttemptDTO} from "@dti-isin/backend-api-client";
 import {AttemptBadgeDisplay} from "../components/badge/AttemptBadgeDisplay.tsx";
 import {QuizReviewPageHeader} from "../components/quiz-results/QuizReviewPageHeader.tsx";
 import {QuizReviewInfoAlert} from "../components/quiz-results/QuizReviewInfoAlert.tsx";
+import {motion} from "framer-motion";
 
 const QuizReviewPage: React.FC = () => {
     const {user} = useAuth();
@@ -30,7 +31,11 @@ const QuizReviewPage: React.FC = () => {
     if (!user) return null;
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-primary/5 to-secondary/5 py-12 px-4">
+        <motion.section
+            initial={{opacity: 0}}
+            animate={{opacity: 1}}
+            className="min-h-screen bg-gradient-to-br from-primary/5 to-secondary/5 py-12 px-4"
+        >
             <div className="max-w-7xl mx-auto">
                 <QuizReviewPageHeader
                     totalAttempts={attempts.length}
@@ -38,23 +43,31 @@ const QuizReviewPage: React.FC = () => {
                     showInfoToggle
                 />
 
-                {showInfo && (
-                    <QuizReviewInfoAlert/>
-                )}
+                {showInfo && <QuizReviewInfoAlert/>}
 
-                <div className="flex flex-col lg:flex-row gap-6 min-h-[600px]">
+                <div className="flex flex-col lg:flex-row gap-6 min-h-[600px] mt-6">
                     {/* Sidebar */}
-                    <div className="lg:w-80 flex-shrink-0">
+                    <motion.div
+                        initial={{opacity: 0, y: 10}}
+                        animate={{opacity: 1, y: 0}}
+                        transition={{delay: 0.2}}
+                        className="lg:w-80 flex-shrink-0"
+                    >
                         <AttemptsList
                             attempts={attempts}
                             isLoading={isLoadingAttempts}
                             selectedAttemptId={selectedAttempt?.id}
                             onSelectAttempt={handleViewDetails}
                         />
-                    </div>
+                    </motion.div>
 
                     {/* Main content */}
-                    <div className="flex-grow flex flex-col">
+                    <motion.div
+                        initial={{opacity: 0, y: 10}}
+                        animate={{opacity: 1, y: 0}}
+                        transition={{delay: 0.3}}
+                        className="flex-grow flex flex-col"
+                    >
                         {selectedAttempt && hasBadge && badge && (
                             <div className="animate-fadeIn shrink-0 mb-4">
                                 <AttemptBadgeDisplay badge={badge}/>
@@ -91,10 +104,10 @@ const QuizReviewPage: React.FC = () => {
                                 </div>
                             )}
                         </div>
-                    </div>
+                    </motion.div>
                 </div>
             </div>
-        </div>
+        </motion.section>
     );
 };
 

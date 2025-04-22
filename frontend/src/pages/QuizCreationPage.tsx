@@ -13,6 +13,7 @@ import { QuizCreationHeader } from "../components/quiz/QuizCreationHeader.tsx";
 import { SidebarQuizCreation } from "../components/quiz/SidebarQuizCreation.tsx";
 import { QuestionEditorPreview } from "../components/quiz/QuestionEditorPreview.tsx";
 import { ThreeColumnLayout } from "../components/common/ThreeColumnLayout.tsx";
+import { motion } from "framer-motion";
 
 export const QuizCreationPage: React.FC = () => {
     const { courseId, folderId, quizId } = useParams();
@@ -149,69 +150,73 @@ export const QuizCreationPage: React.FC = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 py-6 px-4">
+        <motion.section
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 py-12 px-4"
+        >
             <div className="max-w-7xl mx-auto space-y-8">
-            <QuizCreationHeader
-                course={currentCourse}
-                folder={currentFolder}
-                quiz={currentQuiz}
-                isEditing={isEditingQuizName}
-                newName={editedQuizName}
-                onEditToggle={() => setIsEditingQuizName(!isEditingQuizName)}
-                onNameChange={setEditedQuizName}
-                onNameSave={handleQuizNameUpdate}
-                onTimeLimitChange={handleTimeLimitChange}
-                isSaving={updateQuiz.isLoading}
-            />
+                <QuizCreationHeader
+                    course={currentCourse}
+                    folder={currentFolder}
+                    quiz={currentQuiz}
+                    isEditing={isEditingQuizName}
+                    newName={editedQuizName}
+                    onEditToggle={() => setIsEditingQuizName(!isEditingQuizName)}
+                    onNameChange={setEditedQuizName}
+                    onNameSave={handleQuizNameUpdate}
+                    onTimeLimitChange={handleTimeLimitChange}
+                    isSaving={updateQuiz.isLoading}
+                />
 
-            <ThreeColumnLayout
-                isSidebarOpen={isSidebarOpen}
-                onSidebarToggle={() => setIsSidebarOpen(!isSidebarOpen)}
-                onSidebarClose={() => setIsSidebarOpen(false)}
-                lgSidebarCols={3}
-                lgMainCols={5}
-                lgRightCols={4}
-                sidebarTitle="Quiz Questions"
-                sidebarContent={
-                    <SidebarQuizCreation
-                        isSidebarOpen={isSidebarOpen}
-                        onCloseSidebar={() => setIsSidebarOpen(false)}
-                        questions={currentQuiz.questions || []}
-                        onStartEditing={startQuestionEditing}
-                        onDeleteQuestion={handleQuestionDelete}
-                    />
-                }
-                mainContent={
-                    <QuestionEditorPreview
-                        selectedQuestionType={selectedQuestionType}
-                        questionTemplate={questionTemplate || {
-                            questionText: '',
-                            type: QuestionType.TrueFalse,
-                            correctAnswer: true,
-                            points: 1
-                        }}
-                        isEditingExistingQuestion={isEditingExistingQuestion}
-                        onCancel={resetQuestionCreation}
-                        onSave={saveNewQuestion}
-                        onQuestionTextChange={(text) => setDraftQuestion(prev => ({ ...prev, questionText: text }))}
-                        isDisabled={!selectedQuestionType}
-                    />
-                }
-                rightContent={
-                    <QuestionBankList
-                        banks={stableQuestionBanks}
-                        isLoading={isLoadingQuestionBanks}
-                        error={errorQuestionBanks}
-                        importedQuestion={importedQuestionIds}
-                        selectedQuestions={stableSelectedQuestions}
-                        onQuestionSelect={handleQuestionSelect}
-                        onBankSelect={handleBankSelect}
-                        onImport={handleImportQuestions}
-                        isImporting={updateQuiz.isLoading}
-                    />
-                }
-            />
-        </div>
-        </div>
+                <ThreeColumnLayout
+                    isSidebarOpen={isSidebarOpen}
+                    onSidebarToggle={() => setIsSidebarOpen(!isSidebarOpen)}
+                    onSidebarClose={() => setIsSidebarOpen(false)}
+                    lgSidebarCols={3}
+                    lgMainCols={5}
+                    lgRightCols={4}
+                    sidebarTitle="Quiz Questions"
+                    sidebarContent={
+                        <SidebarQuizCreation
+                            isSidebarOpen={isSidebarOpen}
+                            onCloseSidebar={() => setIsSidebarOpen(false)}
+                            questions={currentQuiz.questions || []}
+                            onStartEditing={startQuestionEditing}
+                            onDeleteQuestion={handleQuestionDelete}
+                        />
+                    }
+                    mainContent={
+                        <QuestionEditorPreview
+                            selectedQuestionType={selectedQuestionType}
+                            questionTemplate={questionTemplate || {
+                                questionText: '',
+                                type: QuestionType.TrueFalse,
+                                correctAnswer: true,
+                                points: 1
+                            }}
+                            isEditingExistingQuestion={isEditingExistingQuestion}
+                            onCancel={resetQuestionCreation}
+                            onSave={saveNewQuestion}
+                            onQuestionTextChange={(text) => setDraftQuestion(prev => ({ ...prev, questionText: text }))}
+                            isDisabled={!selectedQuestionType}
+                        />
+                    }
+                    rightContent={
+                        <QuestionBankList
+                            banks={stableQuestionBanks}
+                            isLoading={isLoadingQuestionBanks}
+                            error={errorQuestionBanks}
+                            importedQuestion={importedQuestionIds}
+                            selectedQuestions={stableSelectedQuestions}
+                            onQuestionSelect={handleQuestionSelect}
+                            onBankSelect={handleBankSelect}
+                            onImport={handleImportQuestions}
+                            isImporting={updateQuiz.isLoading}
+                        />
+                    }
+                />
+            </div>
+        </motion.section>
     );
 };
