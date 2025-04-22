@@ -1,11 +1,8 @@
 import {useEffect, useState} from 'react';
 import {useNavigate, useParams} from 'react-router-dom';
-import {FolderList} from "../components/folder/FolderList.tsx";
 import {CreateFolderForm} from "../components/folder/CreateFolderForm.tsx";
 import {useCourseList} from "../hooks/course/useCourseList.ts";
 import {useCourseCRUD} from "../hooks/course/useCourseCRUD.ts";
-import {FiFolder} from "react-icons/fi";
-import {BsTrash} from "react-icons/bs";
 import {useFolderCRUD} from "../hooks/folder/useFolderCRUD.ts";
 import {useGetCourseById} from "../hooks/course/useGetCourseById.ts";
 import {LoadingSpinner} from "../components/common/LoadingSpinner.tsx";
@@ -14,6 +11,7 @@ import {motion} from "framer-motion";
 import {LeaveCoursePopup} from "../components/course/LeaveCoursePopup.tsx";
 import {DeleteCoursePopup} from "../components/course/DeleteCoursePopup.tsx";
 import {ErrorAlert} from "../components/common/ErrorAlert.tsx";
+import {CourseFoldersPanel} from "../components/folder/CourseFolderPanel.tsx";
 
 const CourseDetailsPage = () => {
     const {courseId} = useParams();
@@ -182,46 +180,15 @@ const CourseDetailsPage = () => {
                         transition={{delay: 0.3}}
                         className="lg:col-span-3 space-y-6"
                     >
-                        <div className="bg-white rounded-2xl p-6 shadow-xl border border-secondary/20">
-                            <div className="flex justify-between items-center mb-4">
-                                <h2 className="text-xl font-semibold flex items-center gap-2">
-                                    <FiFolder className="text-primary"/>
-                                    Course Folders
-                                </h2>
-
-                                <div className="flex gap-2 items-center">
-                                    {selectedFolders.length > 0 && (
-                                        <button
-                                            onClick={handleDeleteSelected}
-                                            className="btn btn-error btn-sm gap-2"
-                                            disabled={isDeletingFolder}
-                                        >
-                                            <BsTrash/>
-                                            Delete ({selectedFolders.length})
-                                        </button>
-                                    )}
-                                    <button
-                                        onClick={toggleSelectAll}
-                                        className="btn btn-ghost btn-sm"
-                                    >
-                                        {selectedCourse.folders!.length > 0 && selectedFolders.length === selectedCourse?.folders?.length ?
-                                            'Deselect All' : 'Select All'}
-                                    </button>
-                                </div>
-                            </div>
-
-                            {errorDeleteFolder && (
-                                <div className="alert alert-error">
-                                    {errorDeleteFolder.message}
-                                </div>
-                            )}
-
-                            <FolderList
-                                courseId={courseId}
-                                selectedFolders={selectedFolders}
-                                onToggleSelect={toggleSelection}
-                            />
-                        </div>
+                        <CourseFoldersPanel
+                            course={selectedCourse}
+                            selectedFolders={selectedFolders}
+                            onToggleSelect={toggleSelection}
+                            onToggleSelectAll={toggleSelectAll}
+                            onDeleteSelected={handleDeleteSelected}
+                            isDeletingFolder={isDeletingFolder}
+                            errorDeleteFolder={errorDeleteFolder}
+                        />
                     </motion.div>
                 </div>
 
