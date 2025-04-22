@@ -7,9 +7,9 @@ import { QuizDTO, CourseDTO, FolderDTO } from "@dti-isin/backend-api-client";
 import {QuizTimeLimit} from "./QuizTimeLimit.tsx";
 
 interface QuizCreationHeaderProps {
-    course: CourseDTO | undefined;
-    folder: FolderDTO | undefined;
-    quiz: QuizDTO | undefined;
+    course: CourseDTO;
+    folder: FolderDTO;
+    quiz: QuizDTO;
     isEditing: boolean;
     newName: string;
     onEditToggle: () => void;
@@ -55,7 +55,7 @@ export const QuizCreationHeader: React.FC<QuizCreationHeaderProps> = ({
                                     <button
                                         onClick={onNameSave}
                                         className="btn btn-circle btn-sm btn-success"
-                                        disabled={quiz!.name === newName || isSaving}
+                                        disabled={quiz.name === newName || isSaving}
                                     >
                                         {isSaving ? <span className="loading loading-spinner w-4 h-4" /> : <CheckIcon className="w-4 h-4" />}
                                     </button>
@@ -69,7 +69,7 @@ export const QuizCreationHeader: React.FC<QuizCreationHeaderProps> = ({
                             ) : (
                                 <div className="flex items-center gap-3 flex-wrap">
                                     <h1 className="text-3xl font-extrabold text-primary truncate">
-                                        {quiz!.name}
+                                        {quiz.name}
                                     </h1>
                                     <button
                                         className="btn btn-ghost btn-square hover:bg-primary/10 p-2"
@@ -83,11 +83,11 @@ export const QuizCreationHeader: React.FC<QuizCreationHeaderProps> = ({
                             <div className="flex items-center gap-3 text-sm text-base-content/60">
                                 <span className="flex items-center gap-1">
                                     <BsQuestionDiamond />
-                                    {quiz!.questions?.length || 0} questions
+                                    {quiz.questions?.length || 0} questions
                                 </span>
                                 <span>•</span>
                                 <span>
-                                    Last modified: {format(new Date(quiz!.updatedAt!), "dd MMM yyyy HH:mm")}
+                                    Last modified: {format(new Date(quiz.updatedAt!), "dd MMM yyyy HH:mm")}
                                 </span>
                             </div>
                         </div>
@@ -95,7 +95,7 @@ export const QuizCreationHeader: React.FC<QuizCreationHeaderProps> = ({
 
                     <div className="bg-primary/10 rounded-xl p-4 text-sm text-primary/80 max-w-xs">
                         <QuizTimeLimit
-                            timeLimit={quiz!.timeLimitMinutes}
+                            timeLimit={quiz.timeLimitMinutes}
                             onTimeChange={onTimeLimitChange}
                             disabled={isSaving}
                         />

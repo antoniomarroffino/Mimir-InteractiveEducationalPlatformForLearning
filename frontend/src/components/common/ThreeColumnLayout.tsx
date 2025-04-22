@@ -25,18 +25,14 @@ export const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
                                                                         lgSidebarCols = 4,
                                                                         lgMainCols = 5,
                                                                         lgRightCols = 3,
-                                                                        sidebarTitle = "Sidebar",
                                                                     }) => {
     return (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 relative">
-            {/* Mobile Sidebar Toggle */}
             <div className="lg:hidden absolute top-0 right-0 z-50">
                 <button className="btn btn-ghost" onClick={onSidebarToggle}>
                     {isSidebarOpen ? <BsLayoutSidebar /> : <BsListUl />}
                 </button>
             </div>
-
-            {/* Sidebar */}
             <div
                 className={`
                     lg:col-span-${lgSidebarCols} 
@@ -48,12 +44,11 @@ export const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
                     ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} 
                     lg:translate-x-0 
                     bg-base-100/95 backdrop-blur-sm lg:bg-transparent 
-                    overflow-y-auto p-6 lg:p-0
+                    overflow-y-auto px-0 py-0
                 `}
             >
-                <div className="bg-base-100 rounded-xl p-6 shadow-xl space-y-6">
+                <div className="bg-base-100 rounded-xl">
                     <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-lg font-semibold">{sidebarTitle}</h3>
                         <button
                             className="btn btn-circle btn-sm lg:hidden"
                             onClick={onSidebarClose}
@@ -64,13 +59,9 @@ export const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
                     {sidebarContent}
                 </div>
             </div>
-
-            {/* Main Editor Area */}
             <div className={`lg:col-span-${lgMainCols} order-first lg:order-none`}>
                 {mainContent}
             </div>
-
-            {/* Right Side Content */}
             <div className={`lg:col-span-${lgRightCols}`}>
                 {rightContent}
             </div>
