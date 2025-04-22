@@ -33,23 +33,23 @@ export const QuizCreationHeader: React.FC<QuizCreationHeaderProps> = ({
                                                                       }) => {
     return (
         <header className="space-y-2 mb-2">
-            <div className="bg-gradient-to-tr from-primary/5 to-base-100 border border-primary/10 p-6 rounded-2xl shadow-md transition-all duration-300 hover:shadow-xl">
+            <div className="bg-gradient-to-tr from-primary/5 to-base-100 border border-primary/10 p-4 sm:p-6 rounded-2xl shadow-md transition-all duration-300 hover:shadow-xl">
                 <BreadcrumbCourses course={course} folder={folder} quiz={quiz} />
 
-                <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 mt-4">
-                    <div className="flex-1 flex items-start gap-4">
-                        <div className="p-3 rounded-full bg-primary/10 text-primary">
-                            <BsListTask className="w-6 h-6" />
+                <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 lg:gap-6 mt-4">
+                    <div className="flex-1 flex items-start gap-3 sm:gap-4">
+                        <div className="p-2 sm:p-3 rounded-full bg-primary/10 text-primary">
+                            <BsListTask className="w-5 h-5 sm:w-6 sm:h-6" />
                         </div>
 
                         <div className="flex-1 min-w-0 space-y-2">
                             {isEditing ? (
-                                <div className="flex items-center gap-3">
+                                <div className="flex items-center gap-2 sm:gap-3">
                                     <input
                                         type="text"
                                         value={newName}
                                         onChange={(e) => onNameChange(e.target.value)}
-                                        className="text-3xl font-bold bg-transparent border-b-2 border-primary focus:outline-none flex-1"
+                                        className="text-2xl sm:text-3xl font-bold bg-transparent border-b-2 border-primary focus:outline-none flex-1"
                                         autoFocus
                                     />
                                     <button
@@ -67,8 +67,8 @@ export const QuizCreationHeader: React.FC<QuizCreationHeaderProps> = ({
                                     </button>
                                 </div>
                             ) : (
-                                <div className="flex items-center gap-3 flex-wrap">
-                                    <h1 className="text-3xl font-extrabold text-primary truncate">
+                                <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+                                    <h1 className="text-2xl sm:text-3xl font-extrabold text-primary truncate">
                                         {quiz.name}
                                     </h1>
                                     <button
@@ -80,7 +80,7 @@ export const QuizCreationHeader: React.FC<QuizCreationHeaderProps> = ({
                                 </div>
                             )}
 
-                            <div className="flex items-center gap-3 text-sm text-base-content/60">
+                            <div className="flex flex-wrap items-center gap-2 text-sm text-base-content/60">
                                 <span className="flex items-center gap-1">
                                     <BsQuestionDiamond />
                                     {quiz.questions?.length || 0} questions
@@ -93,7 +93,7 @@ export const QuizCreationHeader: React.FC<QuizCreationHeaderProps> = ({
                         </div>
                     </div>
 
-                    <div className="bg-primary/10 rounded-xl p-4 text-sm text-primary/80 max-w-xs">
+                    <div className="bg-primary/10 rounded-xl p-3 sm:p-4 text-sm text-primary/80 max-w-xs w-full sm:w-auto">
                         <QuizTimeLimit
                             timeLimit={quiz.timeLimitMinutes}
                             onTimeChange={onTimeLimitChange}
@@ -105,3 +105,4 @@ export const QuizCreationHeader: React.FC<QuizCreationHeaderProps> = ({
         </header>
     );
 };
+

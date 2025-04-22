@@ -18,7 +18,7 @@ export const QuestionBankSearch: React.FC<QuestionBankSearchProps> = ({searchTer
         <div className="relative w-full">
             <input
                 type="text"
-                placeholder="Search in the Vault..."
+                placeholder="Search Question Bank..."
                 className="input input-lg w-full pl-12 pr-12 border-2 border-purple-200 focus:border-purple-400 focus:ring-2 focus:ring-purple-300/30 rounded-xl bg-white shadow-sm transition-all duration-300"
                 value={localSearchTerm}
                 onChange={(e) => setLocalSearchTerm(e.target.value)}

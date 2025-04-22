@@ -25,16 +25,23 @@ export const QuestionEditorPreview: React.FC<QuestionEditorPreviewProps> = ({
                                                                             }) => {
     return (
         <div className="card bg-base-100 shadow-lg">
-            <div className="card-body">
-                <div className="flex justify-between items-center mb-4">
-                    <h3 className="card-title">Question Preview</h3>
+            <div className="card-body text-sm space-y-4">
+                <div className="flex justify-between items-center mb-2">
+                    <h3 className="card-title text-base font-semibold">
+                        Question Preview
+                    </h3>
                     {selectedQuestionType && (
-                        <button type="button" className="btn btn-error gap-2" onClick={onCancel}>
-                            <XMarkIcon className="h-5 w-5" />
+                        <button
+                            type="button"
+                            className="btn btn-outline btn-error btn-sm gap-2"
+                            onClick={onCancel}
+                        >
+                            <XMarkIcon className="h-4 w-4" />
                             Exit Preview
                         </button>
                     )}
                 </div>
+
                 <QuestionEditor
                     questionType={selectedQuestionType || QuestionType.TrueFalse}
                     template={questionTemplate}
