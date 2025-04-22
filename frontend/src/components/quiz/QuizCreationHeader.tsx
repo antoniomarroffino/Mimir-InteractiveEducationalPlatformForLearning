@@ -1,5 +1,5 @@
 import React from "react";
-import { BsListTask, BsPencil, BsQuestionDiamond } from "react-icons/bs";
+import { BsPatchQuestion, BsPencil, BsQuestionDiamond} from "react-icons/bs";
 import { CheckIcon, XMarkIcon } from "@heroicons/react/16/solid";
 import { format } from "date-fns";
 import { BreadcrumbCourses } from "../course/BreadcrumbCourses";
@@ -39,7 +39,7 @@ export const QuizCreationHeader: React.FC<QuizCreationHeaderProps> = ({
                 <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 lg:gap-6 mt-4">
                     <div className="flex-1 flex items-start gap-3 sm:gap-4">
                         <div className="p-2 sm:p-3 rounded-full bg-primary/10 text-primary">
-                            <BsListTask className="w-5 h-5 sm:w-6 sm:h-6" />
+                            <BsPatchQuestion className="w-5 h-5 sm:w-6 sm:h-6" />
                         </div>
 
                         <div className="flex-1 min-w-0 space-y-2">

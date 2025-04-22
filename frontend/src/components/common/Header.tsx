@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { FiBook, FiDatabase, FiHome, FiLayout, FiMenu, FiUser, FiX, FiAward } from 'react-icons/fi';
+import {FiBook, FiDatabase, FiHome, FiLayout, FiMenu, FiUser, FiX, FiAward, FiClipboard} from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
 import LogoutButton from "../../auth/LogoutButton";
 import { useState, useEffect } from "react";
@@ -7,7 +7,6 @@ import { useAuth } from "../../hooks/useAuth";
 import { Role } from "@dti-isin/backend-api-client";
 import LoginButton from "../../auth/LoginButton";
 import mimirLogo from '../../assets/mimir-logo.png';
-import {FaClipboardList} from "react-icons/fa";
 
 const Header = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -25,7 +24,7 @@ const Header = () => {
         { name: 'Admin', path: '/admin', icon: <FiLayout className="text-xl" />, roles: [Role.Admin] },
         { name: 'Courses', path: '/courses', icon: <FiBook className="text-xl" />, roles: [Role.Teacher] },
         { name: 'Question Bank', path: '/question_banks', icon: <FiDatabase className="text-xl" />, roles: [Role.Teacher] },
-        { name: 'Quiz Review', path: '/quiz-review', icon: <FaClipboardList className="text-xl" />, roles: [Role.Student, Role.Teacher] },
+        { name: 'Quiz Review', path: '/quiz-review', icon: <FiClipboard className="text-xl" />, roles: [Role.Student, Role.Teacher] },
         { name: 'Badges', path: '/badges', icon: <FiAward className="text-xl" />, roles: [Role.Student, Role.Teacher] }
     ];
 

@@ -1,6 +1,7 @@
-import { FaClipboardList } from "react-icons/fa";
+
 import { BasePageHeader } from "../common/BasePageHeader";
 import React from "react";
+import {FiClipboard} from "react-icons/fi";
 
 interface QuizReviewPageHeaderProps {
     totalAttempts: number;
@@ -16,7 +17,7 @@ export const QuizReviewPageHeader: React.FC<QuizReviewPageHeaderProps> = ({
     <BasePageHeader
         title="Review Your Quiz Attempts"
         subtitle={`You’ve completed ${totalAttempts} attempt${totalAttempts === 1 ? '' : 's'}. View your answers and progress.`}
-        icon={<FaClipboardList className="w-10 h-10 text-white" />}
+        icon={<FiClipboard className="w-10 h-10 text-white" />}
         gradientFrom="from-green-500"
         gradientTo="to-teal-500"
         showInfoToggle={showInfoToggle}

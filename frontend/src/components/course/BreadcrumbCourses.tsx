@@ -1,7 +1,7 @@
 import React from "react";
 import { CourseDTO, FolderDTO, QuizDTO } from "@dti-isin/backend-api-client";
-import { FiBookOpen, FiHome } from "react-icons/fi";
-import { BsListTask } from "react-icons/bs";
+import {FiBook, FiBookOpen, FiHome} from "react-icons/fi";
+import {BsFolder2, BsPatchQuestion} from "react-icons/bs";
 import { BaseBreadcrumb, Crumb } from "../common/BaseBreadcrumb.tsx";
 
 interface BreadcrumbCoursesProps {
@@ -19,25 +19,27 @@ export const BreadcrumbCourses: React.FC<BreadcrumbCoursesProps> = ({ course, fo
         crumbs.push({
             label: "Courses",
             to: "/courses",
-            icon: <FiBookOpen />
+            icon: <FiBook />
         });
         crumbs.push({
             label: course.name,
-            to: `/courses/${course.id}`
+            to: `/courses/${course.id}`,
+            icon: <FiBookOpen />
         });
     }
 
     if (folder) {
         crumbs.push({
             label: folder.name,
-            to: `/courses/${course?.id}`
+            to: `/courses/${course?.id}`,
+            icon: <BsFolder2 />
         });
     }
 
     if (quiz) {
         crumbs.push({
             label: quiz.name,
-            icon: <BsListTask />
+            icon: <BsPatchQuestion />
         });
     }
 
