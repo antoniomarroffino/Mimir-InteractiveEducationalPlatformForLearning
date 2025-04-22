@@ -34,7 +34,7 @@ export const PublicationSelector: React.FC<PublicationSelectorProps> = ({
 
             <div className="relative">
                 <select
-                    className="select select-bordered w-full pr-10 appearance-none bg-base-100 hover:bg-base-200 transition-colors"
+                    className="select select-bordered w-full pr-10 appearance-none bg-base-100 hover:bg-base-200 text-sm transition-colors"
                     value={selectedPublication?.id || ''}
                     onChange={(e) => {
                         const publication = publications.find(p => p.id === e.target.value);

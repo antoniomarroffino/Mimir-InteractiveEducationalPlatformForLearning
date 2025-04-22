@@ -20,7 +20,7 @@ export const PublicationDetails: React.FC<PublicationDetailsProps> = ({ publicat
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="flex items-center gap-4 bg-base-100 p-3 rounded-lg">
+            <div className="flex items-center gap-4 bg-base-100 p-4 rounded-xl shadow-sm">
                 <div className="flex-1 flex items-center gap-2">
                     <FaTag className="text-primary" />
                     <span className="font-mono text-sm">{publication.publicationCode}</span>

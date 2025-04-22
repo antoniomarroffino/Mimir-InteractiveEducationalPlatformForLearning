@@ -1,14 +1,14 @@
 import {
     QuizAttemptDTO,
-    QuizPublicationDTO,
-    QuestionType,
-    TrueFalseQuestionDTO,
-    TrueFalseQuestionResponseDTO,
-    MultipleChoiceQuestionDTO,
-    MultipleChoiceQuestionResponseDTO
+    QuizPublicationDTO
 } from "@dti-isin/backend-api-client";
-import React, {useState} from "react";
-import {FaTrophy} from "react-icons/fa";
+import React, { useState } from "react";
+import { FaTrophy } from "react-icons/fa";
+import {
+    calculateEarnedPoints,
+    calculateTotalAvailablePoints,
+    calculateScorePercentage
+} from "../../utils/scoreUtils.ts";
 
 interface AttemptsTableProps {
     attempts: QuizAttemptDTO[];
@@ -25,38 +25,6 @@ export const AttemptsTable: React.FC<AttemptsTableProps> = ({
                                                             }) => {
     const [selectedAttemptId, setSelectedAttemptId] = useState<string | null>(null);
 
-    const calculateScore = (attempt: QuizAttemptDTO) => {
-        const answeredQuestions = attempt.responses?.filter(r => r !== null).length || 0;
-        const correctAnswers = attempt.responses?.filter(r => {
-            const question = publication.questions?.find(q => q.id === r?.questionId);
-            if (!question || !r) return false;
-
-            if (question.type === QuestionType.TrueFalse) {
-                return (r as TrueFalseQuestionResponseDTO).selectedAnswer ===
-                    (question as TrueFalseQuestionDTO).correctAnswer;
-            }
-
-            if (question.type === QuestionType.MultipleChoice) {
-                const mcResponse = r as MultipleChoiceQuestionResponseDTO;
-                const mcQuestion = question as MultipleChoiceQuestionDTO;
-                return JSON.stringify(mcResponse.selectedAnswerIndexes?.sort()) ===
-                    JSON.stringify(mcQuestion.correctAnswerIndexes.sort());
-            }
-
-            return false;
-        }).length || 0;
-
-        const totalQuestions = publication.questions?.length || 0;
-        const percentage = Math.round((correctAnswers / totalQuestions) * 100);
-
-        return {
-            correctAnswers,
-            totalQuestions,
-            answeredQuestions,
-            percentage
-        };
-    };
-
     if (attempts.length === 0) {
         return (
             <div className="flex flex-col items-center justify-center h-full p-8 text-center">
@@ -68,6 +36,8 @@ export const AttemptsTable: React.FC<AttemptsTableProps> = ({
             </div>
         );
     }
+
+    const totalPoints = calculateTotalAvailablePoints(publication);
 
     return (
         <div className="flex flex-col h-full">
@@ -86,7 +56,8 @@ export const AttemptsTable: React.FC<AttemptsTableProps> = ({
 
             <div className="overflow-y-auto flex-1">
                 {attempts.map(attempt => {
-                    const score = calculateScore(attempt);
+                    const earnedPoints = calculateEarnedPoints(attempt);
+                    const percentage = Math.round(calculateScorePercentage(earnedPoints, totalPoints));
                     const isSelected = attempt.id === selectedAttemptId;
 
                     return (
@@ -124,14 +95,14 @@ export const AttemptsTable: React.FC<AttemptsTableProps> = ({
                                 <div className="flex items-center gap-4">
                                     <div className="text-right">
                                         <div className={`text-lg font-bold ${
-                                            score.percentage >= 70 ? 'text-success' :
-                                                score.percentage >= 50 ? 'text-warning' :
+                                            percentage >= 70 ? 'text-success' :
+                                                percentage >= 50 ? 'text-warning' :
                                                     'text-error'
                                         }`}>
-                                            {score.percentage}%
+                                            {percentage}%
                                         </div>
                                         <div className="text-sm text-base-content/70">
-                                            {score.correctAnswers}/{score.totalQuestions} correct
+                                            {earnedPoints}/{totalPoints} pts
                                         </div>
                                     </div>
 
