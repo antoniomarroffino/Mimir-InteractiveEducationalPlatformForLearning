@@ -1,6 +1,6 @@
 import React, {useCallback, useMemo, useState} from "react";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
-import {QuestionResponseDTO, QuizDTO, QuizPublicationDTO, QuizAttemptDTO} from "@dti-isin/backend-api-client";
+import {QuestionResponseDTO, QuizAttemptDTO, QuizDTO, QuizPublicationDTO} from "@dti-isin/backend-api-client";
 import {useQuizAttemptLocal} from "../hooks/quizAttempt/useQuizAttemptLocal";
 import {useQuizAttemptAutosave} from "../hooks/quizAttempt/useQuizAttemptAutosave";
 import {QuizExecutionHeader} from "../components/quiz/QuizExecutionHeader";
@@ -57,7 +57,6 @@ const QuizQuestionsPage: React.FC = () => {
         completeQuizAttempt,
         clearQuizAttempt
     ]);
-
 
 
     const currentQuestion = useMemo(() => {

@@ -8,7 +8,6 @@ import ch.supsi.model.dto.api.CourseDTO;
 import ch.supsi.repository.CourseRepository;
 import ch.supsi.repository.UserRepository;
 import ch.supsi.testContainersResource.MongoTestResource;
-import com.sun.jdi.ObjectCollectedException;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.security.TestSecurity;

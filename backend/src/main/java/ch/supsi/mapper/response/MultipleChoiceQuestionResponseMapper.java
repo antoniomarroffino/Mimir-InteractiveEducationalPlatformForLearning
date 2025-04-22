@@ -2,7 +2,6 @@ package ch.supsi.mapper.response;
 
 import ch.supsi.model.api.response.MultipleChoiceQuestionResponse;
 import ch.supsi.model.dto.api.response.MultipleChoiceQuestionResponseDTO;
-import org.bson.types.ObjectId;
 
 public class MultipleChoiceQuestionResponseMapper extends AbstractQuestionResponseMapper<MultipleChoiceQuestionResponse, MultipleChoiceQuestionResponseDTO> {
     @Override

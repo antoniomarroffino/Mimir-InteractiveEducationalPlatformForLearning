@@ -1,5 +1,5 @@
 import React from 'react';
-import { calculateDurationInSeconds, formatDuration } from '../../utils/timeUtils';
+import {calculateDurationInSeconds, formatDuration} from '../../utils/timeUtils';
 
 interface QuizDurationProps {
     startedAt?: string;
@@ -7,7 +7,7 @@ interface QuizDurationProps {
     className?: string;
 }
 
-export const QuizDuration: React.FC<QuizDurationProps> = ({ startedAt, completedAt, className }) => {
+export const QuizDuration: React.FC<QuizDurationProps> = ({startedAt, completedAt, className}) => {
     const durationSeconds = calculateDurationInSeconds(startedAt, completedAt);
 
     if (!durationSeconds || durationSeconds <= 0) {

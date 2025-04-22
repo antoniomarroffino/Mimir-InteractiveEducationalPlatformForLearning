@@ -23,7 +23,6 @@ const PublicHome = () => {
                 animate={{opacity: 1}}
                 transition={{duration: 0.8}}
             >
-                {/* Animated Background Pattern */}
                 <div className="absolute inset-0">
                     <div className="absolute inset-0 bg-pattern opacity-10"></div>
                     <div className="absolute inset-0 bg-gradient-to-t from-base-200/50 to-transparent"></div>
@@ -97,7 +96,6 @@ const PublicHome = () => {
                 </div>
             </motion.div>
 
-            {/* Stats Section */}
             <motion.div
                 initial={{y: 50, opacity: 0}}
                 animate={{y: 0, opacity: 1}}
@@ -121,7 +119,6 @@ const PublicHome = () => {
                 </div>
             </motion.div>
 
-            {/* Quiz Session Section */}
             <div id="quiz-section" className="container mx-auto px-4 py-24">
                 <motion.section
                     initial={{opacity: 0, y: 20}}
@@ -156,7 +153,6 @@ const PublicHome = () => {
                 )}
             </div>
 
-            {/* Features Section */}
             <motion.section
                 className="py-24 bg-base-100"
                 initial={{opacity: 0}}
@@ -211,14 +207,12 @@ const PublicHome = () => {
 
             <motion.section
                 className="py-24 bg-gradient-to-br from-primary to-secondary text-primary-content relative overflow-hidden"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 1.8 }}
+                initial={{opacity: 0}}
+                animate={{opacity: 1}}
+                transition={{delay: 1.8}}
             >
-                {/* Pattern di sfondo */}
                 <div className="absolute inset-0 bg-pattern opacity-10"></div>
 
-                {/* Decorazioni animate */}
                 <motion.div
                     className="absolute -right-20 -top-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"
                     animate={{
@@ -234,11 +228,11 @@ const PublicHome = () => {
 
                 <div className="container mx-auto px-4 text-center relative z-10">
                     <motion.div
-                        initial={{ y: 20, opacity: 0 }}
-                        whileInView={{ y: 0, opacity: 1 }}
-                        transition={{ delay: 0.2 }}
+                        initial={{y: 20, opacity: 0}}
+                        whileInView={{y: 0, opacity: 1}}
+                        transition={{delay: 0.2}}
                     >
-                        <FiAward className="text-6xl mx-auto mb-6 text-warning" />
+                        <FiAward className="text-6xl mx-auto mb-6 text-warning"/>
                         <h2 className="text-4xl md:text-5xl font-bold mb-6">
                             Unlock Your Achievement Badges
                         </h2>
@@ -251,11 +245,11 @@ const PublicHome = () => {
                     <Link to="/badges">
                         <motion.button
                             className="btn btn-lg btn-primary glass gap-2 group"
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
+                            whileHover={{scale: 1.05}}
+                            whileTap={{scale: 0.95}}
                         >
                             View All Badges
-                            <FiAward className="transform group-hover:rotate-12 transition-transform" />
+                            <FiAward className="transform group-hover:rotate-12 transition-transform"/>
                         </motion.button>
                     </Link>
                 </div>

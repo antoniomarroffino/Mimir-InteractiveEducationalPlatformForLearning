@@ -4,7 +4,7 @@ interface ReviewHeaderProps {
     totalAttempts: number;
 }
 
-export const ReviewHeader: React.FC<ReviewHeaderProps> = ({ totalAttempts }) => {
+export const ReviewHeader: React.FC<ReviewHeaderProps> = ({totalAttempts}) => {
     return (
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
             <div>

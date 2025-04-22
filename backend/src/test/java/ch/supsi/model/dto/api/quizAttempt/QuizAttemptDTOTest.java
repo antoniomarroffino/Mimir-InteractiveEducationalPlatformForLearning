@@ -1,11 +1,9 @@
 package ch.supsi.model.dto.api.quizAttempt;
 
-import ch.supsi.model.api.badge.Badge;
 import ch.supsi.model.api.user.Role;
 import ch.supsi.model.dto.api.BadgeDTO;
 import ch.supsi.model.dto.api.QuizAttemptDTO;
 import ch.supsi.model.dto.api.UserWithoutCoursesDTO;
-import ch.supsi.model.dto.api.question.TrueFalseQuestionDTO;
 import ch.supsi.model.dto.api.response.QuestionResponseDTO;
 import ch.supsi.model.dto.api.response.TrueFalseQuestionResponseDTO;
 import io.quarkus.test.junit.QuarkusTest;
@@ -16,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;

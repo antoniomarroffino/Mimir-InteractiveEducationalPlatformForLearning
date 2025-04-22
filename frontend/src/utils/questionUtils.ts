@@ -1,13 +1,13 @@
 import {
+    MultipleChoiceQuestionDTO,
+    MultipleChoiceQuestionResponseDTO,
     QuestionDTO,
     QuestionResponseDTO,
     QuestionType,
     TrueFalseQuestionDTO,
-    MultipleChoiceQuestionDTO,
-    TrueFalseQuestionResponseDTO,
-    MultipleChoiceQuestionResponseDTO
+    TrueFalseQuestionResponseDTO
 } from "@dti-isin/backend-api-client";
-import { QuestionResponseFactory } from "../components/question/QuestionResponseFactory";
+import {QuestionResponseFactory} from "../components/question/QuestionResponseFactory";
 
 export const isTrueFalseQuestion = (q: QuestionDTO): q is TrueFalseQuestionDTO =>
     q.type === QuestionType.TrueFalse;

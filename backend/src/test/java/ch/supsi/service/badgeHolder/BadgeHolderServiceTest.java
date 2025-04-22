@@ -4,7 +4,6 @@ import ch.supsi.mapper.BadgeHolderMapper;
 import ch.supsi.mapper.BadgeMapper;
 import ch.supsi.model.api.BadgeHolder;
 import ch.supsi.model.api.badge.Badge;
-import ch.supsi.model.api.badge.BadgeType;
 import ch.supsi.model.api.user.Role;
 import ch.supsi.model.dto.api.BadgeDTO;
 import ch.supsi.model.dto.api.BadgeHolderDTO;
@@ -22,7 +21,9 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;

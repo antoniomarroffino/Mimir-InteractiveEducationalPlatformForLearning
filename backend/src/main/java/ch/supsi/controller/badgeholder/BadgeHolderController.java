@@ -1,6 +1,5 @@
 package ch.supsi.controller.badgeholder;
 
-import ch.supsi.model.api.badge.Badge;
 import ch.supsi.model.dto.api.BadgeDTO;
 import ch.supsi.model.dto.api.BadgeHolderDTO;
 import ch.supsi.model.dto.api.UserWithoutCoursesDTO;

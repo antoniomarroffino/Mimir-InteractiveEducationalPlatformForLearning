@@ -1,4 +1,4 @@
-import { BadgeHolderDTO } from "@dti-isin/backend-api-client";
+import {BadgeHolderDTO} from "@dti-isin/backend-api-client";
 import {useQuery} from "react-query";
 import {badgeHolderApi} from "../../../config/config.ts";
 

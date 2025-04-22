@@ -1,9 +1,6 @@
 package ch.supsi.mapper.response;
 
-import ch.supsi.mapper.question.MultipleChoiceQuestionMapper;
-import ch.supsi.model.api.question.MultipleChoiceQuestion;
 import ch.supsi.model.api.response.MultipleChoiceQuestionResponse;
-import ch.supsi.model.dto.api.question.MultipleChoiceQuestionDTO;
 import ch.supsi.model.dto.api.response.MultipleChoiceQuestionResponseDTO;
 import io.quarkus.test.junit.QuarkusTest;
 import org.bson.types.ObjectId;
@@ -15,7 +12,6 @@ import org.junit.jupiter.api.TestMethodOrder;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.MethodName.class)

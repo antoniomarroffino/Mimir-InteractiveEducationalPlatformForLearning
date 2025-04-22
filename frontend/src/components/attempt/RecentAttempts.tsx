@@ -1,6 +1,6 @@
 import React from 'react';
-import { QuizAttemptDTO } from "@dti-isin/backend-api-client";
-import { FiClock } from 'react-icons/fi';
+import {QuizAttemptDTO} from "@dti-isin/backend-api-client";
+import {FiClock} from 'react-icons/fi';
 
 interface RecentAttemptsProps {
     attempts: QuizAttemptDTO[];
@@ -18,7 +18,7 @@ export const RecentAttempts: React.FC<RecentAttemptsProps> = ({
     return (
         <div className="bg-base-100 rounded-xl p-4">
             <h3 className="font-medium text-lg mb-4 flex items-center gap-2">
-                <FiClock className="text-primary" />
+                <FiClock className="text-primary"/>
                 Recent Attempts
             </h3>
             <div className="space-y-3">

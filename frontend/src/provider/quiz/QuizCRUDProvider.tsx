@@ -1,14 +1,14 @@
-import React, { useMemo } from "react";
-import { useMutation, useQueryClient } from "react-query";
-import { QuizDTO } from "@dti-isin/backend-api-client";
-import { quizApi } from "../../../config/config.ts";
-import { QuizCRUDContext } from "../../contexts/quiz/QuizCRUDContext.tsx";
+import React, {useMemo} from "react";
+import {useMutation, useQueryClient} from "react-query";
+import {QuizDTO} from "@dti-isin/backend-api-client";
+import {quizApi} from "../../../config/config.ts";
+import {QuizCRUDContext} from "../../contexts/quiz/QuizCRUDContext.tsx";
 
-export const QuizCRUDProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const QuizCRUDProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const queryClient = useQueryClient();
 
     const createQuizMutation = useMutation(
-        async ({ courseId, folderId, quizDTO }: { courseId: string, folderId: string; quizDTO: QuizDTO }) => {
+        async ({courseId, folderId, quizDTO}: { courseId: string, folderId: string; quizDTO: QuizDTO }) => {
             if (!courseId) throw new Error("No course selected");
             if (!folderId) throw new Error("No folder selected");
 
@@ -33,7 +33,7 @@ export const QuizCRUDProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     );
 
     const updateQuizMutation = useMutation(
-        async ({ courseId, folderId, quizId, quizDTO }: {
+        async ({courseId, folderId, quizId, quizDTO}: {
             courseId: string,
             folderId: string,
             quizId: string,
@@ -52,11 +52,9 @@ export const QuizCRUDProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         },
         {
             onSuccess: (updatedQuizDTO, params) => {
-                // ✅ Evita il refetch e aggiorna direttamente la cache locale
                 queryClient.setQueryData<QuizDTO>(
                     ["quiz", params.courseId, params.folderId, params.quizId],
                     (oldQuiz) => {
-                        // Se il contenuto non è cambiato, mantieni il riferimento originale
                         if (JSON.stringify(oldQuiz) === JSON.stringify(updatedQuizDTO)) {
                             return oldQuiz;
                         }
@@ -64,7 +62,6 @@ export const QuizCRUDProvider: React.FC<{ children: React.ReactNode }> = ({ chil
                     }
                 );
 
-                // ✅ Se necessario aggiorni anche la lista dei quiz (es. per nome nella lista)
                 queryClient.setQueryData<QuizDTO[]>(
                     ["quizzes", params.courseId, params.folderId],
                     (oldList) =>
@@ -79,7 +76,7 @@ export const QuizCRUDProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
 
     const deleteQuizMutation = useMutation(
-        async ({ courseId, folderId, quizId }: { courseId: string, folderId: string, quizId: string }) => {
+        async ({courseId, folderId, quizId}: { courseId: string, folderId: string, quizId: string }) => {
             if (!courseId) throw new Error("No course selected");
             if (!folderId) throw new Error("No folder selected");
 

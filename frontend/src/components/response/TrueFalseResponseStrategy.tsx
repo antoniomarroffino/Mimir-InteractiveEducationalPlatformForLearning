@@ -1,10 +1,10 @@
-import  {JSX} from 'react';
-import { ResponseStrategy, ResponseProps } from './ResponseStrategy';
-import { TrueFalseQuestionDTO, TrueFalseQuestionResponseDTO } from '@dti-isin/backend-api-client';
-import { TrueFalseResponseView } from './TrueFalseResponseView';
+import {JSX} from 'react';
+import {ResponseProps, ResponseStrategy} from './ResponseStrategy';
+import {TrueFalseQuestionDTO, TrueFalseQuestionResponseDTO} from '@dti-isin/backend-api-client';
+import {TrueFalseResponseView} from './TrueFalseResponseView';
 
 export class TrueFalseResponseStrategy implements ResponseStrategy {
-    renderResponse({ question, response, isAnswered }: ResponseProps): JSX.Element {
+    renderResponse({question, response, isAnswered}: ResponseProps): JSX.Element {
         const trueFalseQuestion = question as TrueFalseQuestionDTO;
         const trueFalseResponse = response as TrueFalseQuestionResponseDTO;
         const isCorrect = isAnswered &&

@@ -1,26 +1,26 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, {useCallback, useMemo, useState} from 'react';
 import {
+    AttemptStatus,
     MultipleChoiceQuestionResponseDTO,
     QuestionResponseDTO,
     QuestionType,
     QuizAttemptDTO,
     QuizPublicationDTO,
-    TrueFalseQuestionResponseDTO,
-    AttemptStatus
+    TrueFalseQuestionResponseDTO
 } from "@dti-isin/backend-api-client";
-import { useQuizAttemptCRUD } from '../../hooks/quizAttempt/useQuizAttemptCRUD';
-import { useAuth } from '../../hooks/useAuth';
-import { QuizAttemptLocalContext } from '../../contexts/quizAttempt/QuizAttemptLocalContext';
-import { useNavigate } from "react-router-dom";
-import { useQueryClient } from "react-query";
+import {useQuizAttemptCRUD} from '../../hooks/quizAttempt/useQuizAttemptCRUD';
+import {useAuth} from '../../hooks/useAuth';
+import {QuizAttemptLocalContext} from '../../contexts/quizAttempt/QuizAttemptLocalContext';
+import {useNavigate} from "react-router-dom";
+import {useQueryClient} from "react-query";
 
-export const QuizAttemptLocalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const QuizAttemptLocalProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const [currentAttempt, setCurrentAttempt] = useState<Partial<QuizAttemptDTO> & {
         quizPublication?: QuizPublicationDTO
     } | null>(null);
 
-    const { createInitialAttempt, submitAttemptFinal } = useQuizAttemptCRUD();
-    const { user } = useAuth();
+    const {createInitialAttempt, submitAttemptFinal} = useQuizAttemptCRUD();
+    const {user} = useAuth();
     const navigate = useNavigate();
     const queryClient = useQueryClient();
 

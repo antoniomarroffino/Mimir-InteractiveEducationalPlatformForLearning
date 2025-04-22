@@ -36,7 +36,7 @@ public class QuizAttemptMapper {
         }
 
         quizAttempt.quizPublicationId = new ObjectId(dto.getQuizPublicationId());
-        quizAttempt.userAzureOID = dto.getUser() == null? null : dto.getUser().getAzureOid();
+        quizAttempt.userAzureOID = dto.getUser() == null ? null : dto.getUser().getAzureOid();
         quizAttempt.startedAt = dto.getStartedAt();
         quizAttempt.completedAt = dto.getCompletedAt();
         quizAttempt.responses = questionResponseList;

@@ -2,7 +2,6 @@ package ch.supsi.mapper.response;
 
 import ch.supsi.model.api.response.TrueFalseQuestionResponse;
 import ch.supsi.model.dto.api.response.TrueFalseQuestionResponseDTO;
-import org.bson.types.ObjectId;
 
 public class TrueFalseQuestionResponseMapper extends AbstractQuestionResponseMapper<TrueFalseQuestionResponse, TrueFalseQuestionResponseDTO> {
     @Override

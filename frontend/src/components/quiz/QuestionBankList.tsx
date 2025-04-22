@@ -1,7 +1,7 @@
-import { QuestionBankDTO } from '@dti-isin/backend-api-client';
-import { QuestionBankItem } from "./QuestionBankItem.tsx";
-import React, { useMemo, useState } from "react";
-import { QuestionBankSearch } from "../questionBank/QuestionBankSearch.tsx";
+import {QuestionBankDTO} from '@dti-isin/backend-api-client';
+import {QuestionBankItem} from "./QuestionBankItem.tsx";
+import React, {useMemo, useState} from "react";
+import {QuestionBankSearch} from "../questionBank/QuestionBankSearch.tsx";
 
 interface QuestionBankListProps {
     banks: QuestionBankDTO[];
@@ -47,9 +47,9 @@ export const QuestionBankList: React.FC<QuestionBankListProps> = React.memo(({
     }
 
     return (
-        <div className="bg-base-100 rounded-xl p-6 shadow-xl space-y-6">
-            <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold">Question Banks</h3>
+        <div className="bg-base-100 rounded-xl p-4 sm:p-6 shadow-xl space-y-4 sm:space-y-6">
+            <div className="flex justify-between items-center mb-2 sm:mb-4">
+                <h3 className="text-base font-semibold">Question Banks</h3>
                 <button
                     className="btn btn-primary btn-sm"
                     onClick={onImport}
@@ -64,9 +64,9 @@ export const QuestionBankList: React.FC<QuestionBankListProps> = React.memo(({
                 onSearchChange={setSearchTerm}
             />
 
-            <div className="overflow-y-auto max-h-[calc(100vh-300px)]">
+            <div className="overflow-y-auto max-h-[50vh] md:max-h-[60vh] lg:max-h-[calc(100vh-300px)]">
                 {filteredBanks.length === 0 ? (
-                    <div className="text-center p-4 text-gray-500">
+                    <div className="text-center p-4 text-sm text-gray-500">
                         No question banks found matching "{searchTerm}"
                     </div>
                 ) : (

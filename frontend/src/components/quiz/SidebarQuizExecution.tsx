@@ -1,15 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import {
-    QuestionDTO,
-    QuestionResponseDTO,
-    QuizPublicationDTO,
-    QuizAttemptDTO
-} from '@dti-isin/backend-api-client';
-import { RemainingTimeIndicator } from './RemainingTimeIndicator';
-import { QuizNavigation } from './QuizNavigation';
-import { NavigationToggleButton } from '../common/NavigationToggleButton';
-import { TimeWarningPopup } from './TimeWarningPopup';
-import { NavigateFunction } from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
+import {QuestionDTO, QuestionResponseDTO, QuizAttemptDTO, QuizPublicationDTO} from '@dti-isin/backend-api-client';
+import {RemainingTimeIndicator} from './RemainingTimeIndicator';
+import {QuizNavigation} from './QuizNavigation';
+import {NavigationToggleButton} from '../common/NavigationToggleButton';
+import {TimeWarningPopup} from './TimeWarningPopup';
+import {NavigateFunction} from 'react-router-dom';
 import {useCountdownTimer} from "../../hooks/quizAttempt/useCountdownTimer.ts";
 
 interface SidebarQuizExecutionProps {
@@ -71,7 +66,7 @@ export const SidebarQuizExecution: React.FC<SidebarQuizExecutionProps> = ({
         >
             {!isDesktop && (
                 <div className="flex justify-between items-center min-h-[56px]">
-                    <RemainingTimeIndicator timeRemaining={timeRemaining!} />
+                    <RemainingTimeIndicator timeRemaining={timeRemaining!}/>
                     <NavigationToggleButton
                         isOpen={showNavigation}
                         onClick={() => setShowNavigation(prev => !prev)}
@@ -81,7 +76,7 @@ export const SidebarQuizExecution: React.FC<SidebarQuizExecutionProps> = ({
 
             {isDesktop && (
                 <div className="flex justify-end mb-4 px-2 pt-2">
-                    <RemainingTimeIndicator timeRemaining={timeRemaining!} />
+                    <RemainingTimeIndicator timeRemaining={timeRemaining!}/>
                 </div>
             )}
 
@@ -97,7 +92,7 @@ export const SidebarQuizExecution: React.FC<SidebarQuizExecutionProps> = ({
                 </div>
             )}
 
-            {showPopup && <TimeWarningPopup onClose={() => setShowPopup(false)} />}
+            {showPopup && <TimeWarningPopup onClose={() => setShowPopup(false)}/>}
         </div>
     );
 };

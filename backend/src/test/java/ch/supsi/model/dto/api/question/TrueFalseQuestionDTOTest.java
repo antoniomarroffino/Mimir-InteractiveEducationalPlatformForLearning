@@ -27,7 +27,7 @@ public class TrueFalseQuestionDTOTest {
     }
 
     @Test
-     @DisplayName("Should all setters work correctly")
+    @DisplayName("Should all setters work correctly")
     void test02SettersWorkCorrectly() {
         String id = new ObjectId().toString();
         String questionText = "question text";

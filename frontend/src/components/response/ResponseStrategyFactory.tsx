@@ -1,7 +1,7 @@
-import { QuestionType } from '@dti-isin/backend-api-client';
-import { ResponseStrategy } from './ResponseStrategy';
-import { TrueFalseResponseStrategy } from './TrueFalseResponseStrategy';
-import { MultipleChoiceResponseStrategy } from './MultipleChoiceResponseStrategy';
+import {QuestionType} from '@dti-isin/backend-api-client';
+import {ResponseStrategy} from './ResponseStrategy';
+import {TrueFalseResponseStrategy} from './TrueFalseResponseStrategy';
+import {MultipleChoiceResponseStrategy} from './MultipleChoiceResponseStrategy';
 
 export class ResponseStrategyFactory {
     static createStrategy(questionType: QuestionType): ResponseStrategy {

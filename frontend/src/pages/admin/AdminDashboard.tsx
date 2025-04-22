@@ -44,7 +44,6 @@ const AdminDashboard = () => {
 
     const handleTeacherClick = (teacher: UserWithoutCoursesDTO) => {
         if (selectedTeacher?.azureOid === teacher.azureOid) {
-            // Toggle deselection
             setEmail("");
             setSelectedTeacher(null);
         } else {
@@ -65,7 +64,6 @@ const AdminDashboard = () => {
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    {/* Promotion section */}
                     <div className="card bg-base-100 shadow-xl">
                         <div className="card-body">
                             <h2 className="card-title text-2xl mb-6 border-b pb-4 border-base-200">
@@ -143,7 +141,6 @@ const AdminDashboard = () => {
                         </div>
                     </div>
 
-                    {/* Registered teachers section */}
                     <div className="card bg-base-100 shadow-xl">
                         <div className="card-body h-full">
                             <h2 className="card-title text-2xl mb-6 border-b pb-4 border-base-200">

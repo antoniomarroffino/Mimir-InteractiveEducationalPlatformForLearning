@@ -1,5 +1,5 @@
-import { FaCode, FaHeart, FaInstagram, FaGithub, FaLinkedin } from 'react-icons/fa';
-import { motion } from 'framer-motion';
+import {FaCode, FaGithub, FaHeart, FaInstagram, FaLinkedin} from 'react-icons/fa';
+import {motion} from 'framer-motion';
 import supsiLogo from '../../assets/supsi-logo.png';
 import mimirLogo from '../../assets/mimir-logo.png';
 
@@ -23,7 +23,8 @@ const Footer = () => {
 
     return (
         <footer className="bg-neutral relative">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-secondary to-accent"></div>
+            <div
+                className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-secondary to-accent"></div>
 
             <div className="absolute inset-0 opacity-5">
                 <div className="absolute inset-0 bg-pattern"></div>
@@ -33,9 +34,9 @@ const Footer = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-16 items-start">
                     <motion.div
                         className="flex flex-col items-center gap-6"
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
+                        initial={{opacity: 0, y: 20}}
+                        whileInView={{opacity: 1, y: 0}}
+                        viewport={{once: true}}
                     >
                         <div className="p-4 bg-neutral-focus/10 rounded-2xl">
                             <img
@@ -45,21 +46,21 @@ const Footer = () => {
                             />
                         </div>
                         <div className="text-neutral-content/70 text-sm text-center leading-relaxed">
-                            Scuola universitaria professionale<br />della Svizzera italiana
+                            Scuola universitaria professionale<br/>della Svizzera italiana
                         </div>
                     </motion.div>
 
                     <motion.div
                         className="flex flex-col items-center gap-8"
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: 0.2 }}
+                        initial={{opacity: 0, y: 20}}
+                        whileInView={{opacity: 1, y: 0}}
+                        viewport={{once: true}}
+                        transition={{delay: 0.2}}
                     >
                         <motion.div
                             className="relative p-4 rounded-xl bg-neutral-focus/5 hover:bg-neutral-focus/10
                transition-all duration-300"
-                            whileHover={{ scale: 1.05 }}
+                            whileHover={{scale: 1.05}}
                         >
                             <img
                                 src={mimirLogo}
@@ -81,10 +82,10 @@ const Footer = () => {
                                     duration: 2
                                 }}
                             >
-                                <FaHeart className="text-red-500" />
+                                <FaHeart className="text-red-500"/>
                             </motion.div>
                             <span>and</span>
-                            <FaCode className="text-primary" />
+                            <FaCode className="text-primary"/>
                         </div>
                         <div className="text-neutral-content/60 text-sm">
                             &copy; {new Date().getFullYear()} Mimir. All rights reserved.
@@ -93,10 +94,10 @@ const Footer = () => {
 
                     <motion.div
                         className="flex flex-col items-center gap-8"
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: 0.4 }}
+                        initial={{opacity: 0, y: 20}}
+                        whileInView={{opacity: 1, y: 0}}
+                        viewport={{once: true}}
+                        transition={{delay: 0.4}}
                     >
                         <h3 className="text-neutral-content font-semibold text-xl">Meet the Team</h3>
                         <div className="flex flex-col gap-8">
@@ -104,7 +105,7 @@ const Footer = () => {
                                 <motion.div
                                     key={index}
                                     className="group"
-                                    whileHover={{ scale: 1.02 }}
+                                    whileHover={{scale: 1.02}}
                                 >
                                     <div className="bg-neutral-focus/10 rounded-xl p-4 text-center">
                                         <div className="text-neutral-content font-medium mb-2">{dev.name}</div>
@@ -116,7 +117,7 @@ const Footer = () => {
                                                 rel="noopener noreferrer"
                                                 className="text-neutral-content/60 hover:text-pink-400 transition-colors"
                                             >
-                                                <FaInstagram size={20} />
+                                                <FaInstagram size={20}/>
                                             </a>
                                             <a
                                                 href={dev.github}
@@ -124,7 +125,7 @@ const Footer = () => {
                                                 rel="noopener noreferrer"
                                                 className="text-neutral-content/60 hover:text-white transition-colors"
                                             >
-                                                <FaGithub size={20} />
+                                                <FaGithub size={20}/>
                                             </a>
                                             <a
                                                 href={dev.linkedin}
@@ -132,7 +133,7 @@ const Footer = () => {
                                                 rel="noopener noreferrer"
                                                 className="text-neutral-content/60 hover:text-blue-400 transition-colors"
                                             >
-                                                <FaLinkedin size={20} />
+                                                <FaLinkedin size={20}/>
                                             </a>
                                         </div>
                                     </div>

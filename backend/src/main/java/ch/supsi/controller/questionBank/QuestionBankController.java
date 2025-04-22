@@ -138,4 +138,28 @@ public class QuestionBankController {
         this.questionBankService.deleteQuestionBank(new ObjectId(id));
         return Response.status(Response.Status.NO_CONTENT).build();
     }
+
+    @PATCH
+    @Path("/{id}/reorder")
+    @Operation(summary = "Update question order in a question bank")
+    @APIResponse(
+            responseCode = "200",
+            description = "Question order updated successfully"
+    )
+    @APIResponse(
+            responseCode = "404",
+            description = "Question bank not found"
+    )
+    @APIResponse(
+            responseCode = "400",
+            description = "Invalid payload"
+    )
+    public Response reorderQuestions(
+            @PathParam("id") String id,
+            List<String> orderedQuestionIds
+    ) {
+        questionBankService.updateQuestionOrder(new ObjectId(id), orderedQuestionIds);
+        return Response.ok().build();
+    }
+
 }

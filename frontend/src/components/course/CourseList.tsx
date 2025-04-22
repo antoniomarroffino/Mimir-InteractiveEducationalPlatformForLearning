@@ -2,6 +2,7 @@ import {CourseCard} from './CourseCard';
 import {SkeletonLoader} from '../common/SkeletonLoader';
 import {useCourseList} from "../../hooks/course/useCourseList.ts";
 import {BookOpenIcon} from "@heroicons/react/24/outline";
+import {motion} from "framer-motion";
 
 export const CourseList = () => {
     const {teacherCourses, isLoadingTeacherCourses, errorTeacherCourses} = useCourseList();
@@ -23,38 +24,64 @@ export const CourseList = () => {
     }
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-6">
+            <div className="text-center mb-6">
+                <div className="flex justify-center items-center gap-2 mb-1">
+                    <BookOpenIcon className="w-6 h-6 text-secondary"/>
+                    <h2 className="text-xl font-semibold text-secondary">
+                        Your Courses
+                    </h2>
+                </div>
+                <p className="text-sm text-base-content/70 max-w-md mx-auto">
+                    Every course is an opportunity to spark curiosity and growth.
+                </p>
+            </div>
+
+
             {isLoadingTeacherCourses ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {[...Array(3)].map((_, i) => (
                         <SkeletonLoader key={i} className="h-48 rounded-xl"/>
                     ))}
                 </div>
+            ) : teacherCourses.length === 0 ? (
+                <motion.div
+                    initial={{opacity: 0, y: 10}}
+                    animate={{opacity: 1, y: 0}}
+                    className="text-center p-8 rounded-2xl bg-gradient-to-br from-primary/10 to-secondary/10"
+                >
+                    <BookOpenIcon className="w-16 h-16 mx-auto text-primary/70 mb-4"/>
+                    <h3 className="text-2xl font-bold mb-2 text-base-content">
+                        Your Course Canvas is Empty
+                    </h3>
+                    <p className="text-base-content/70 max-w-md mx-auto">
+                        Start your teaching journey by creating your first course.
+                        Every great learning experience begins with a single step.
+                    </p>
+                </motion.div>
             ) : (
-                <>
-                    {teacherCourses.length === 0 ? (
-                        <div className="text-center p-8 rounded-2xl bg-gradient-to-br from-primary/10 to-secondary/10">
-                            <BookOpenIcon className="w-16 h-16 mx-auto text-primary/70 mb-4"/>
-                            <h3 className="text-2xl font-bold mb-2 text-base-content">
-                                Your Course Canvas is Empty
-                            </h3>
-                            <p className="text-base-content/70 max-w-md mx-auto">
-                                Start your teaching journey by creating your first course.
-                                Every great learning experience begins with a single step.
-                            </p>
-                        </div>
-                    ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
-                            {teacherCourses.map(course => (
-                                <CourseCard
-                                    key={course.id}
-                                    course={course}
-                                    className="hover:scale-105 transition-transform duration-300"
-                                />
-                            ))}
-                        </div>
-                    )}
-                </>
+                <motion.div
+                    initial="hidden"
+                    animate="visible"
+                    variants={{
+                        hidden: {opacity: 0},
+                        visible: {
+                            opacity: 1,
+                            transition: {staggerChildren: 0.1}
+                        }
+                    }}
+                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                >
+                    {teacherCourses.map(course => (
+                        <motion.div
+                            key={course.id}
+                            variants={{hidden: {opacity: 0, y: 10}, visible: {opacity: 1, y: 0}}}
+                            className="hover:scale-105 transition-transform duration-300"
+                        >
+                            <CourseCard course={course}/>
+                        </motion.div>
+                    ))}
+                </motion.div>
             )}
         </div>
     );

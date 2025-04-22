@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
+    MultipleChoiceQuestionResponseDTO,
     QuestionDTO,
-    QuestionType,
     QuestionResponseDTO,
-    TrueFalseQuestionResponseDTO,
-    MultipleChoiceQuestionResponseDTO
+    QuestionType,
+    TrueFalseQuestionResponseDTO
 } from '@dti-isin/backend-api-client';
 import ConfirmModal from './ConfirmModal';
-import { motion } from 'framer-motion';
+import {motion} from 'framer-motion';
 
 interface QuizNavigationProps {
     questions: QuestionDTO[];
@@ -58,8 +58,8 @@ export const QuizNavigation: React.FC<QuizNavigationProps> = ({
     return (
         <>
             <motion.div
-                initial={{ opacity: 0, y: 5 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={{opacity: 0, y: 5}}
+                animate={{opacity: 1, y: 0}}
                 className="bg-base-100 rounded-xl shadow-xl p-4 space-y-4"
             >
                 <h3 className="text-lg font-bold text-primary mb-2">Quiz Overview</h3>

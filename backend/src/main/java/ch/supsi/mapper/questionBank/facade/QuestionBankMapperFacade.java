@@ -14,8 +14,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class QuestionBankMapperFacade implements IQuestionBankMapperFacade {
@@ -46,15 +44,15 @@ public class QuestionBankMapperFacade implements IQuestionBankMapperFacade {
     public QuestionBank toEntity(QuestionBankDTO dto) {
         if (dto == null) return null;
 
-        Set<String> questionIdList = dto.getQuestions()
+        List<String> questionIdList = dto.getQuestions()
                 .stream()
                 .map(QuestionDTO::getId)
-                .collect(Collectors.toSet());
+                .toList();
 
         return this.questionBankMapper.toEntity(dto, questionIdList);
     }
 
-    private List<Question> getQuestionsByIds(@NotNull Set<String> idList) {
+    private List<Question> getQuestionsByIds(@NotNull List<String> idList) {
         return idList.stream()
                 .map(ObjectId::new)
                 .map(this.questionRepository::findByIdOptional)

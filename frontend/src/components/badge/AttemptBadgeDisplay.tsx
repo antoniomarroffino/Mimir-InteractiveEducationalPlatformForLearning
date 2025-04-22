@@ -1,21 +1,21 @@
 import React from 'react';
-import { FaTrophy } from 'react-icons/fa';
-import { BadgeDTO } from '@dti-isin/backend-api-client';
+import {FaTrophy} from 'react-icons/fa';
+import {BadgeDTO} from '@dti-isin/backend-api-client';
 
 interface AttemptBadgeDisplayProps {
     badge: BadgeDTO;
 }
 
-export const AttemptBadgeDisplay: React.FC<AttemptBadgeDisplayProps> = ({ badge }) => {
+export const AttemptBadgeDisplay: React.FC<AttemptBadgeDisplayProps> = ({badge}) => {
     return (
         <div className="bg-gradient-to-r from-warning/10 to-warning/5 rounded-xl p-4 border border-warning/20">
             <div className="flex items-center gap-4">
                 <div className="relative">
                     <FaTrophy className="text-5xl text-warning"
-                              style={{ filter: 'drop-shadow(0 0 8px rgb(234 179 8))' }} />
+                              style={{filter: 'drop-shadow(0 0 8px rgb(234 179 8))'}}/>
                     <div className="absolute -top-2 -right-2">
-                        <div className="w-4 h-4 bg-success rounded-full animate-ping opacity-50" />
-                        <div className="w-4 h-4 bg-success rounded-full absolute top-0" />
+                        <div className="w-4 h-4 bg-success rounded-full animate-ping opacity-50"/>
+                        <div className="w-4 h-4 bg-success rounded-full absolute top-0"/>
                     </div>
                 </div>
 

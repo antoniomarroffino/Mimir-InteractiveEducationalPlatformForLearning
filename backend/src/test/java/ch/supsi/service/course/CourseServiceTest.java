@@ -43,6 +43,22 @@ public class CourseServiceTest {
     @InjectMock
     CourseMapper courseMapperMocked;
 
+    public static Course createTestCourse(String courseName, String description) {
+        Course course = new Course();
+        course.id = new ObjectId();
+        course.name = courseName;
+        course.description = description;
+        return course;
+    }
+
+    public static CourseDTO convertToDTO(Course course) {
+        CourseDTO courseDTO = new CourseDTO();
+        courseDTO.setId(course.id.toString());
+        courseDTO.setName(course.name);
+        courseDTO.setDescription(course.description);
+        return courseDTO;
+    }
+
     @Test
     @DisplayName("Should throw InternalServerError 500 because user logged is null")
     void test01GetTeacherCourses_ThrowInternalServerErrorUserIsNull() {
@@ -633,21 +649,5 @@ public class CourseServiceTest {
         verify(this.courseRepositoryMocked, times(1)).findByIdOptional(course.id);
         verify(this.courseRepositoryMocked, times(1)).delete(any(Course.class));
         verify(this.userRepositoryMocked, times(1)).removeCourseFromUser(course.id.toString(), user.azureOid);
-    }
-
-    public static Course createTestCourse(String courseName, String description) {
-        Course course = new Course();
-        course.id = new ObjectId();
-        course.name = courseName;
-        course.description = description;
-        return course;
-    }
-
-    public static CourseDTO convertToDTO(Course course) {
-        CourseDTO courseDTO = new CourseDTO();
-        courseDTO.setId(course.id.toString());
-        courseDTO.setName(course.name);
-        courseDTO.setDescription(course.description);
-        return courseDTO;
     }
 }

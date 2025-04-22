@@ -57,7 +57,7 @@ public class QuizPublicationController {
     }
 
     @GET
-    @RolesAllowed({"STUDENT","TEACHER"})
+    @RolesAllowed({"STUDENT", "TEACHER"})
     @Path("/{publicationID}")
     @Operation(summary = "Get publication by id")
     @APIResponse(responseCode = "200", description = "Publication found", content = @Content(

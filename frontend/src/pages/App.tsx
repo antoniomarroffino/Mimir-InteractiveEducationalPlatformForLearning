@@ -9,7 +9,7 @@ import {AuthProvider} from "../provider/AuthProvider.tsx";
 import AdminDashboard from "./admin/AdminDashboard.tsx";
 import ProtectedRoute from "../routes/ProtectedRoute.tsx";
 import {Role} from "@dti-isin/backend-api-client";
-import {TeacherDashboard} from "./teacher/TeacherDashboard.tsx";
+import {CoursesDashboard} from "./teacher/CoursesDashboard.tsx";
 import PublicHome from "./no-logged/PublicHome.tsx";
 import {AdminProvider} from "../provider/AdminProvider.tsx";
 import UserProfile from "../components/user/UserProfile.tsx";
@@ -54,10 +54,8 @@ const App = () => {
                         <QuizAttemptProviders>
                             <Header/>
                             <Routes>
-                                {/* Public Route */}
                                 <Route path="/" element={<PublicHome/>}/>
 
-                                {/* Admin Routes */}
                                 <Route
                                     path="/admin"
                                     element={
@@ -69,7 +67,6 @@ const App = () => {
                                     }
                                 />
 
-                                {/* Teacher Routes */}
                                 <Route
                                     path="/courses"
                                     element={
@@ -84,7 +81,7 @@ const App = () => {
                                         </ProtectedRoute>
                                     }
                                 >
-                                    <Route index element={<TeacherDashboard/>}/>
+                                    <Route index element={<CoursesDashboard/>}/>
                                     <Route path=":courseId" element={<CourseDetailsPage/>}/>
                                     <Route
                                         path=":courseId/folders/:folderId/quizzes/:quizId/edit"
@@ -123,16 +120,6 @@ const App = () => {
 
                                 </Route>
 
-                                {/* Student Routes */}
-                                {/*<Route
-                                    path="/student"
-                                    element={
-                                        <ProtectedRoute allowedRoles={[Role.Student]}>
-                                            <StudentDashboard/>
-                                        </ProtectedRoute>
-                                    }
-                                />*/}
-
                                 <Route
                                     path="/profile"
                                     element={
@@ -164,7 +151,7 @@ const App = () => {
                                     element={<QuizScreenPage/>}
                                 />
 
-                                <Route path="/quiz/:accessCode/questions" element={<QuizQuestionsPage />} />
+                                <Route path="/quiz/:accessCode/questions" element={<QuizQuestionsPage/>}/>
 
                                 <Route
                                     path="/results/:quizAttemptId"

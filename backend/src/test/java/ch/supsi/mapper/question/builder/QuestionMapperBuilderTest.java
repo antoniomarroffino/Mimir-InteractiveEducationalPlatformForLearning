@@ -19,7 +19,7 @@ public class QuestionMapperBuilderTest {
     @Test
     @DisplayName("Should all QuestionType have a mapper")
     void test01BuildQuestionMapperAllQuestionType() {
-        for(QuestionType questionType : QuestionType.values()) {
+        for (QuestionType questionType : QuestionType.values()) {
             assertNotNull(this.questionMapperBuilder.getQuestionDTOMapper(questionType));
         }
     }

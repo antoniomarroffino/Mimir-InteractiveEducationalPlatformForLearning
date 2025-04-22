@@ -1,11 +1,12 @@
 import React, {useState} from "react";
 import {FolderDTO} from "@dti-isin/backend-api-client";
 import {BsChevronDown, BsChevronUp, BsFolder2} from "react-icons/bs";
-import {QuizList} from "../quiz/QuizList";
-import {useQuizCRUD} from "../../hooks/quiz/useQuizCRUD.ts";
 import {FiEdit2, FiPlus} from "react-icons/fi";
-import {useFolderCRUD} from "../../hooks/folder/useFolderCRUD.ts";
 import {useNavigate} from "react-router-dom";
+import {useQuizCRUD} from "../../hooks/quiz/useQuizCRUD.ts";
+import {useFolderCRUD} from "../../hooks/folder/useFolderCRUD.ts";
+import {QuizList} from "../quiz/QuizList";
+import {ErrorAlert} from "../common/ErrorAlert";
 
 interface FolderRowProps {
     folder: FolderDTO;
@@ -19,22 +20,18 @@ export const FolderRow = ({folder, courseId, isSelected, onToggleSelect}: Folder
     const [isExpanded, setIsExpanded] = useState(false);
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [quizName, setQuizName] = useState("");
-    const {createQuiz} = useQuizCRUD();
     const [isEditing, setIsEditing] = useState(false);
     const [editedName, setEditedName] = useState(folder.name);
     const {updateFolder, isUpdatingFolder, errorUpdateFolder} = useFolderCRUD();
+    const {createQuiz} = useQuizCRUD();
 
     const handleNameUpdate = async () => {
+        if (folder.name === editedName.trim()) {
+            setIsEditing(false);
+            return;
+        }
         try {
-            if (folder.name === editedName) {
-                setIsEditing(false);
-                return;
-            }
-            const folderDTO = {
-                ...folder,
-                name: editedName,
-            } as FolderDTO;
-            await updateFolder(courseId, folder.id!, folderDTO);
+            await updateFolder(courseId, folder.id!, {...folder, name: editedName.trim()});
             setIsEditing(false);
         } catch (error) {
             console.error("Failed to update folder:", error);
@@ -49,7 +46,7 @@ export const FolderRow = ({folder, courseId, isSelected, onToggleSelect}: Folder
             const createdQuizDTO = await createQuiz.mutateAsync({
                 courseId: courseId!,
                 folderId: folder.id!,
-                quizDTO: { name: quizName.trim() }
+                quizDTO: {name: quizName.trim()},
             });
             setQuizName("");
             setShowCreateForm(false);
@@ -81,10 +78,9 @@ export const FolderRow = ({folder, courseId, isSelected, onToggleSelect}: Folder
                         onClick={(e) => e.stopPropagation()}
                     />
 
-                    <div className="flex items-center gap-4 flex-1"
-                         onDoubleClick={() => setIsEditing(true)}>
-                        <div className="p-3 rounded-lg bg-primary/10 text-primary">
-                            <BsFolder2 className="text-2xl"/>
+                    <div className="flex items-center gap-4 flex-1" onDoubleClick={() => setIsEditing(true)}>
+                        <div className="p-3 rounded-full bg-primary/10 text-primary">
+                            <BsFolder2 className="w-5 h-5 sm:w-6 sm:h-6"/>
                         </div>
 
                         {isEditing ? (
@@ -93,20 +89,20 @@ export const FolderRow = ({folder, courseId, isSelected, onToggleSelect}: Folder
                                 value={editedName}
                                 onChange={(e) => setEditedName(e.target.value)}
                                 onBlur={handleNameUpdate}
-                                onKeyDown={(e) => e.key === 'Enter' && handleNameUpdate()}
-                                className="input input-ghost input-sm w-full max-w-xs"
+                                onKeyDown={(e) => e.key === "Enter" && handleNameUpdate()}
+                                className="input input-bordered input-sm w-full max-w-xs"
                                 autoFocus
                             />
                         ) : (
-                            <h3 className="font-semibold text-lg">{folder.name}</h3>
+                            <h3 className="font-semibold text-lg truncate text-base-content">
+                                {folder.name}
+                            </h3>
                         )}
                     </div>
                 </div>
 
                 <div className="flex items-center gap-4">
-                    {isUpdatingFolder && (
-                        <span className="loading loading-spinner text-primary"></span>
-                    )}
+                    {isUpdatingFolder && <span className="loading loading-spinner text-primary"></span>}
                     <div className="text-base-content/40 group-hover:text-primary transition-colors">
                         {isExpanded ? <BsChevronUp/> : <BsChevronDown/>}
                     </div>
@@ -114,12 +110,11 @@ export const FolderRow = ({folder, courseId, isSelected, onToggleSelect}: Folder
             </div>
 
             {errorUpdateFolder && (
-                <div className="alert alert-error mx-4 mb-4">
-                    {errorUpdateFolder.message}
+                <div className="px-4 pb-2">
+                    <ErrorAlert title="Update failed" message={errorUpdateFolder.message}/>
                 </div>
             )}
 
-            {/* Expanded Content */}
             {isExpanded && (
                 <div className="border-t border-base-200 p-4 space-y-4">
                     <QuizList courseId={courseId} folderId={folder.id!}/>
@@ -142,7 +137,7 @@ export const FolderRow = ({folder, courseId, isSelected, onToggleSelect}: Folder
                                             value={quizName}
                                             onChange={(e) => setQuizName(e.target.value)}
                                             placeholder="Quiz name"
-                                            className="input input-bordered w-full pl-11 focus:ring-2 focus:ring-primary/50"
+                                            className="input input-bordered w-full pl-11 text-sm"
                                             disabled={createQuiz.isLoading}
                                             maxLength={50}
                                             autoFocus

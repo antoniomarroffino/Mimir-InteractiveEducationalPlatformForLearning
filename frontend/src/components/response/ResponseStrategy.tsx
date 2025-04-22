@@ -1,4 +1,4 @@
-import { QuestionDTO, QuestionResponseDTO } from "@dti-isin/backend-api-client";
+import {QuestionDTO, QuestionResponseDTO} from "@dti-isin/backend-api-client";
 import {JSX} from "react";
 
 export interface ResponseStrategy {

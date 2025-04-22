@@ -32,7 +32,8 @@ export const QuestionResult: React.FC<QuestionResultProps> = ({
                     : 'border-l-error'
                 : 'border-l-warning'
         } hover:shadow-md transition-all duration-300`}>
-            <div className="flex flex-wrap justify-between items-center gap-4 p-4 border-b border-base-200 bg-base-100 rounded-t-lg">
+            <div
+                className="flex flex-wrap justify-between items-center gap-4 p-4 border-b border-base-200 bg-base-100 rounded-t-lg">
                 <div className="flex flex-wrap gap-4 text-sm text-base-content/70 items-center">
                     <div className="flex items-center gap-2">
                         <ClockIcon className="w-4 h-4"/>

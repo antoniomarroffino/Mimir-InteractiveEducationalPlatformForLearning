@@ -1,6 +1,6 @@
 import {CourseDTO} from '@dti-isin/backend-api-client';
 import {Link} from 'react-router-dom';
-import {FiBookOpen, FiChevronRight, FiEdit3, FiFolder, FiUserCheck, FiUserPlus} from 'react-icons/fi';
+import {FiBookOpen, FiChevronRight, FiFolder, FiUserCheck, FiUserPlus} from 'react-icons/fi';
 import {useState} from 'react';
 import {useGetFoldersInCourseId} from "../../hooks/folder/useGetFoldersInCourseId.ts";
 import {LoadingSpinner} from "../common/LoadingSpinner.tsx";
@@ -30,7 +30,7 @@ export const CourseCard = ({
     const [localError, setLocalError] = useState<string | null>(null);
 
     if (isLoadingFolders) {
-        return <LoadingSpinner fullScreen />;
+        return <LoadingSpinner fullScreen/>;
     }
 
     const handleAssign = async () => {
@@ -46,147 +46,67 @@ export const CourseCard = ({
 
     return (
         <div
-            className={`
-                group relative 
-                bg-white 
-                rounded-xl 
-                p-6 
-                shadow-sm 
-                hover:shadow-md 
-                transition-all 
-                duration-300 
-                border 
-                border-base-200 
-                hover:border-primary/20 
-                ${className}
-            `}
+            className={`group relative bg-gradient-to-br from-white to-indigo-50
+                rounded-2xl p-6 shadow-md border border-base-200 hover:shadow-xl
+                transition-all duration-300 hover:border-primary/30 ${className}`}
         >
-            <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center gap-3">
-                    <div className="p-3 rounded-lg bg-primary/10 text-primary">
-                        <FiBookOpen className="text-2xl"/>
-                    </div>
-                    <div>
-                        <h3 className="font-semibold text-lg text-base-content">
-                            {course.name}
-                        </h3>
-                    </div>
+            <div className="flex items-center gap-4 mb-4">
+                <div className="bg-primary/10 p-3 rounded-full text-primary">
+                    <FiBookOpen className="text-2xl"/>
+                </div>
+                <div>
+                    <h3 className="text-lg font-bold text-base-content">{course.name}</h3>
+                    {course.description && (
+                        <p className="text-sm text-base-content/60 line-clamp-2 mt-1">{course.description}</p>
+                    )}
                 </div>
             </div>
 
-            {/* Description Section */}
-            <div className="mb-4 text-sm">
-                {course.description ? (
-                    <div className="text-base-content/70 line-clamp-2">
-                        <FiEdit3 className="inline-block mr-2 text-base-content/50"/>
-                        {course.description}
-                    </div>
-                ) : (
-                    <p className="italic text-base-content/40">
-                        No description
-                    </p>
-                )}
-            </div>
-
-            {/* Sezione di assegnazione */}
-            {showAssignButton && (
-                <div className="mb-4">
-                    <div className="flex flex-col gap-2">
-                        {(assignError || localError) && (
-                            <div className="px-3 py-2 text-sm font-medium text-red-700 bg-red-50 rounded-lg">
-                                {assignError?.message || localError}
-                            </div>
-                        )}
-
-                        {isAssigned ? (
-                            <button
-                                className="
-                                    w-full
-                                    py-2
-                                    px-4
-                                    rounded-lg
-                                    bg-emerald-50
-                                    text-emerald-700
-                                    border
-                                    border-emerald-100
-                                    flex
-                                    items-center
-                                    justify-center
-                                    gap-2
-                                    cursor-default
-                                "
-                            >
-                                <FiUserCheck className="text-lg"/>
-                                <span className="font-medium">Assigned to you</span>
-                            </button>
-                        ) : (
-                            <button
-                                className={`
-                                    w-full 
-                                    py-2 
-                                    px-4 
-                                    rounded-lg 
-                                    bg-gradient-to-r 
-                                    from-primary/90 
-                                    to-secondary/90 
-                                    text-white 
-                                    hover:shadow-lg 
-                                    transition-all 
-                                    duration-200 
-                                    flex 
-                                    items-center 
-                                    justify-center 
-                                    gap-2
-                                    ${isAssigning ? 'opacity-75 cursor-wait' : 'hover:-translate-y-0.5'}
-                                `}
-                                onClick={handleAssign}
-                                disabled={isAssigning}
-                            >
-                                {isAssigning ? (
-                                    <>
-                                        <div
-                                            className="h-5 w-5 border-2 border-white/50 border-t-transparent rounded-full animate-spin"/>
-                                        <span>Assigning...</span>
-                                    </>
-                                ) : (
-                                    <>
-                                        <FiUserPlus className="text-lg"/>
-                                        <span>Assign Course</span>
-                                    </>
-                                )}
-                            </button>
-                        )}
-                    </div>
-                </div>
-            )}
-
-            {!showAssignButton && (
-                <div className="space-y-4">
-                    <div className="flex items-center justify-between text-sm">
-                        <div className="flex items-center gap-2 text-base-content/60">
-                            <FiFolder/>
-                            <span>{folders!.length || 0} Folders</span>
+            {showAssignButton ? (
+                <div className="mt-4 space-y-2">
+                    {(assignError || localError) && (
+                        <div className="text-sm text-error bg-red-50 px-3 py-2 rounded-lg">
+                            {assignError?.message || localError}
                         </div>
-                        <Link
-                            to={`/courses/${course.id}`}
-                            className="
-                                flex
-                                items-center
-                                gap-1
-                                text-primary
-                                hover:text-primary/80
-                                transition-colors
-                                group-hover:translate-x-1
-                                transition-transform
-                            "
+                    )}
+                    {isAssigned ? (
+                        <div
+                            className="bg-emerald-50 text-emerald-700 py-2 px-4 rounded-lg text-center flex items-center justify-center gap-2 border border-emerald-200">
+                            <FiUserCheck/>
+                            Assigned to you
+                        </div>
+                    ) : (
+                        <button
+                            className="btn btn-primary w-full flex items-center justify-center gap-2"
+                            onClick={handleAssign}
+                            disabled={isAssigning}
                         >
-                            <span className="font-medium">View Details</span>
-                            <FiChevronRight
-                                className="mt-0.5 transform group-hover:translate-x-0.5 transition-transform"/>
-                        </Link>
+                            {isAssigning ? (
+                                <span className="loading loading-spinner loading-sm"></span>
+                            ) : (
+                                <>
+                                    <FiUserPlus/>
+                                    Assign Course
+                                </>
+                            )}
+                        </button>
+                    )}
+                </div>
+            ) : (
+                <div className="flex justify-between items-center mt-6 text-sm text-base-content/70">
+                    <div className="flex items-center gap-2">
+                        <FiFolder/>
+                        <span>{folders?.length || 0} Folders</span>
                     </div>
+                    <Link
+                        to={`/courses/${course.id}`}
+                        className="text-primary font-medium hover:underline hover:text-primary/80 flex items-center gap-1"
+                    >
+                        View Details <FiChevronRight className="mt-0.5"/>
+                    </Link>
                 </div>
             )}
         </div>
+
     );
 };

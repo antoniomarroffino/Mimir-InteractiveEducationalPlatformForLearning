@@ -127,8 +127,6 @@ public class QuizAttemptService implements IQuizAttemptService {
     }
 
 
-
-
     private void verifyBadgeIsUnique(QuizAttempt quizAttempt, BadgeType badgeType) {
         boolean badgeExists = quizAttempt.badges.stream()
                 .anyMatch(badge -> badge.type.equals(badgeType));

@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {MagnifyingGlassIcon, XMarkIcon} from "@heroicons/react/16/solid";
 
 interface QuestionBankSearchProps {
@@ -12,24 +12,25 @@ export const QuestionBankSearch: React.FC<QuestionBankSearchProps> = ({searchTer
     useEffect(() => {
         const handler = setTimeout(() => onSearchChange(localSearchTerm), 300);
         return () => clearTimeout(handler);
-    }, [localSearchTerm]);
+    }, [localSearchTerm, onSearchChange]);
 
     return (
-        <div className="relative">
+        <div className="relative w-full">
             <input
                 type="text"
-                placeholder="Search knowledge vaults..."
-                className="input input-lg w-full pl-12 pr-12 border-2 border-gray-200 focus:border-purple-300 focus:ring-0 rounded-xl bg-white"
+                placeholder="Search Question Bank..."
+                className="input input-lg w-full pl-12 pr-12 border-2 border-purple-200 focus:border-purple-400 focus:ring-2 focus:ring-purple-300/30 rounded-xl bg-white shadow-sm transition-all duration-300"
                 value={localSearchTerm}
                 onChange={(e) => setLocalSearchTerm(e.target.value)}
             />
-            <MagnifyingGlassIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"/>
+            <MagnifyingGlassIcon
+                className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-purple-400 pointer-events-none"/>
             {localSearchTerm && (
                 <button
-                    className="absolute right-4 top-1/2 -translate-y-1/2 p-1 hover:bg-gray-100 rounded-full"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 p-1 hover:bg-purple-100 rounded-full transition-all"
                     onClick={() => setLocalSearchTerm('')}
                 >
-                    <XMarkIcon className="w-5 h-5 text-gray-400 hover:text-gray-600"/>
+                    <XMarkIcon className="w-5 h-5 text-purple-400 hover:text-purple-600"/>
                 </button>
             )}
         </div>

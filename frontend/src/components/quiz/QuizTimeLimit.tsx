@@ -1,5 +1,5 @@
-import React, { useCallback } from 'react';
-import { ClockIcon } from '@heroicons/react/24/outline';
+import React, {useCallback} from 'react';
+import {ClockIcon} from '@heroicons/react/24/outline';
 
 interface QuizTimeLimitProps {
     timeLimit: number | undefined | null;

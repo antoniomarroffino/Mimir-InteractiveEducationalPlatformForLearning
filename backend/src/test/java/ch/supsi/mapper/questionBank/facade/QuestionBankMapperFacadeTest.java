@@ -5,11 +5,9 @@ import ch.supsi.mapper.question.TrueFalseQuestionMapper;
 import ch.supsi.mapper.question.builder.IQuestionMapperBuilder;
 import ch.supsi.mapper.questionBank.QuestionBankMapper;
 import ch.supsi.model.api.QuestionBank;
-import ch.supsi.model.api.question.Question;
 import ch.supsi.model.api.question.QuestionType;
 import ch.supsi.model.api.question.TrueFalseQuestion;
 import ch.supsi.model.dto.api.QuestionBankDTO;
-import ch.supsi.model.dto.api.QuizPublicationDTO;
 import ch.supsi.model.dto.api.question.TrueFalseQuestionDTO;
 import ch.supsi.repository.QuestionRepository;
 import ch.supsi.service.questionBank.QuestionBankServiceTest;
@@ -25,13 +23,10 @@ import org.junit.jupiter.api.TestMethodOrder;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.when;
 
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.MethodName.class)
@@ -87,7 +82,8 @@ public class QuestionBankMapperFacadeTest {
     @DisplayName("Should handle empty questions list")
     void test03ToDTO_EmptyQuestionsList() {
         QuestionBank entity = new QuestionBank();
-        entity.questions = Collections.emptySet();
+        entity.questions = Collections.emptyList();
+
 
         when(this.questionBankMapper.toDTO(entity, Collections.emptyList())).thenReturn(new QuestionBankDTO());
 
@@ -116,12 +112,13 @@ public class QuestionBankMapperFacadeTest {
         q2.setId(new ObjectId().toString());
         dto.setQuestions(List.of(q1, q2));
 
-        when(this.questionBankMapper.toEntity(dto, Set.of(q1.getId(), q2.getId()))).thenReturn(new QuestionBank());
+        when(this.questionBankMapper.toEntity(dto, List.of(q1.getId(), q2.getId()))).thenReturn(new QuestionBank());
+
 
         QuestionBank result = this.questionBankMapperFacade.toEntity(dto);
 
         assertNotNull(result);
-        verify(this.questionBankMapper, times(1)).toEntity(dto, Set.of(q1.getId(), q2.getId()));
+        verify(this.questionBankMapper, times(1)).toEntity(dto, List.of(q1.getId(), q2.getId()));
     }
 
     @Test
@@ -130,11 +127,12 @@ public class QuestionBankMapperFacadeTest {
         QuestionBankDTO dto = new QuestionBankDTO();
         dto.setQuestions(Collections.emptyList());
 
-        when(this.questionBankMapper.toEntity(dto, Collections.emptySet())).thenReturn(new QuestionBank());
+        when(this.questionBankMapper.toEntity(dto, Collections.emptyList())).thenReturn(new QuestionBank());
+
 
         QuestionBank result = this.questionBankMapperFacade.toEntity(dto);
 
         assertNotNull(result);
-        verify(this.questionBankMapper, times(1)).toEntity(dto, Collections.emptySet());
+        verify(this.questionBankMapper, times(1)).toEntity(dto, Collections.emptyList());
     }
 }

@@ -1,11 +1,11 @@
-import { ResponseStrategy, ResponseProps } from './ResponseStrategy';
-import { MultipleChoiceQuestionDTO, MultipleChoiceQuestionResponseDTO } from '@dti-isin/backend-api-client';
+import {ResponseProps, ResponseStrategy} from './ResponseStrategy';
+import {MultipleChoiceQuestionDTO, MultipleChoiceQuestionResponseDTO} from '@dti-isin/backend-api-client';
 import {JSX} from "react";
 import {MultipleChoiceResponseView} from "./MulitpleChoiceResponseView.tsx";
 
 
 export class MultipleChoiceResponseStrategy implements ResponseStrategy {
-    renderResponse({ question, response, isAnswered }: ResponseProps): JSX.Element {
+    renderResponse({question, response, isAnswered}: ResponseProps): JSX.Element {
         const mcQuestion = question as MultipleChoiceQuestionDTO;
         const mcResponse = response as MultipleChoiceQuestionResponseDTO;
 

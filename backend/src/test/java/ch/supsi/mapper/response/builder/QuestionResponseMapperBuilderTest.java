@@ -1,6 +1,5 @@
 package ch.supsi.mapper.response.builder;
 
-import ch.supsi.mapper.question.builder.QuestionMapperBuilder;
 import ch.supsi.model.api.question.QuestionType;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
@@ -20,7 +19,7 @@ public class QuestionResponseMapperBuilderTest {
     @Test
     @DisplayName("Should all QuestionType have a mapper")
     void test01BuildQuestionResponseMapperAllQuestionType() {
-        for(QuestionType questionType : QuestionType.values()) {
+        for (QuestionType questionType : QuestionType.values()) {
             assertNotNull(this.questionResponseMapperBuilder.getQuestionResponseDTOMapper(questionType));
         }
     }

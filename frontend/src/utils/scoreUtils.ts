@@ -1,4 +1,4 @@
-import { QuizAttemptDTO, QuizPublicationDTO, QuestionDTO, QuestionResponseDTO } from '@dti-isin/backend-api-client';
+import {QuestionDTO, QuestionResponseDTO, QuizAttemptDTO, QuizPublicationDTO} from '@dti-isin/backend-api-client';
 
 export const calculateEarnedPoints = (attempt: QuizAttemptDTO): number => {
     return attempt.responses?.reduce((totalPoints, response) => {

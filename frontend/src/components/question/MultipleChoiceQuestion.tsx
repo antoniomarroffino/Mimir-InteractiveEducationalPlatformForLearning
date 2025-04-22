@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { MultipleChoiceQuestionDTO } from '@dti-isin/backend-api-client';
-import { motion } from 'framer-motion';
+import React, {useEffect, useState} from 'react';
+import {MultipleChoiceQuestionDTO} from '@dti-isin/backend-api-client';
+import {motion} from 'framer-motion';
 
 interface MultipleChoiceQuestionProps {
     question: MultipleChoiceQuestionDTO;
@@ -30,9 +30,9 @@ export const MultipleChoiceQuestion: React.FC<MultipleChoiceQuestionProps> = ({
 
     return (
         <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
+            initial={{opacity: 0, y: 10}}
+            animate={{opacity: 1, y: 0}}
+            transition={{duration: 0.3}}
             className="card bg-base-100 shadow-xl"
         >
             <div className="card-body">
@@ -45,8 +45,8 @@ export const MultipleChoiceQuestion: React.FC<MultipleChoiceQuestionProps> = ({
                         return (
                             <motion.label
                                 key={index}
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
+                                whileHover={{scale: 1.02}}
+                                whileTap={{scale: 0.98}}
                                 className={`
                   flex items-center p-3 border rounded-lg cursor-pointer
                   transition-all duration-300

@@ -1,6 +1,6 @@
-import { FiBook, FiKey, FiMail, FiUser } from "react-icons/fi";
-import { Role } from "@dti-isin/backend-api-client";
-import { useAuth } from "../../hooks/useAuth.ts";
+import {FiBook, FiKey, FiMail, FiUser} from "react-icons/fi";
+import {Role} from "@dti-isin/backend-api-client";
+import {useAuth} from "../../hooks/useAuth.ts";
 
 const roleLabels = {
     [Role.Admin]: "Administrator",
@@ -9,7 +9,7 @@ const roleLabels = {
 };
 
 const UserProfile = () => {
-    const { user } = useAuth();
+    const {user} = useAuth();
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-base-200 to-base-300">
@@ -18,8 +18,9 @@ const UserProfile = () => {
                     <div className="card bg-base-100 shadow-xl overflow-hidden">
                         <div className="bg-gradient-to-r from-primary/10 to-secondary/10 p-6">
                             <div className="flex items-center gap-4">
-                                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-primary-content">
-                                    <FiUser className="w-8 h-8" />
+                                <div
+                                    className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-primary-content">
+                                    <FiUser className="w-8 h-8"/>
                                 </div>
                                 <div>
                                     <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
@@ -36,7 +37,7 @@ const UserProfile = () => {
                             <div className="space-y-6">
                                 <div className="profile-field">
                                     <div className="profile-label">
-                                        <FiUser className="text-primary" />
+                                        <FiUser className="text-primary"/>
                                         <span>Name</span>
                                     </div>
                                     <div className="profile-value">
@@ -46,7 +47,7 @@ const UserProfile = () => {
 
                                 <div className="profile-field">
                                     <div className="profile-label">
-                                        <FiMail className="text-primary" />
+                                        <FiMail className="text-primary"/>
                                         <span>Email</span>
                                     </div>
                                     <div className="profile-value">
@@ -56,7 +57,7 @@ const UserProfile = () => {
 
                                 <div className="profile-field">
                                     <div className="profile-label">
-                                        <FiKey className="text-primary" />
+                                        <FiKey className="text-primary"/>
                                         <span>Role</span>
                                     </div>
                                     <div className="profile-value">
@@ -68,7 +69,7 @@ const UserProfile = () => {
 
                                 <div className="profile-field">
                                     <div className="profile-label">
-                                        <FiBook className="text-primary" />
+                                        <FiBook className="text-primary"/>
                                         <span>User ID</span>
                                     </div>
                                     <div className="profile-value font-mono text-sm">

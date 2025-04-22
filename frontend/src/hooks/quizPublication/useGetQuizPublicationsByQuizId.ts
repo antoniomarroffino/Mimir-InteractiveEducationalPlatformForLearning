@@ -1,6 +1,6 @@
 import {useQuery} from "react-query";
 import {quizPublicationApi} from "../../../config/config.ts";
-import { QuizPublicationDTO } from "@dti-isin/backend-api-client";
+import {QuizPublicationDTO} from "@dti-isin/backend-api-client";
 
 export const useGetQuizPublicationsByQuizId = (quizId: string) => {
     return useQuery<QuizPublicationDTO[], Error>({

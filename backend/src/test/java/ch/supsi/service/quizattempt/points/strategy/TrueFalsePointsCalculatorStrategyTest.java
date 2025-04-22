@@ -1,16 +1,12 @@
 package ch.supsi.service.quizattempt.points.strategy;
 
-import ch.supsi.model.api.question.MultipleChoiceQuestion;
 import ch.supsi.model.api.question.TrueFalseQuestion;
-import ch.supsi.model.api.response.MultipleChoiceQuestionResponse;
 import ch.supsi.model.api.response.TrueFalseQuestionResponse;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

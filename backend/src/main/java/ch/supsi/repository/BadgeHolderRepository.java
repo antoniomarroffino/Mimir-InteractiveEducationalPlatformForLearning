@@ -4,8 +4,6 @@ import ch.supsi.model.api.BadgeHolder;
 import io.quarkus.mongodb.panache.PanacheMongoRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @ApplicationScoped

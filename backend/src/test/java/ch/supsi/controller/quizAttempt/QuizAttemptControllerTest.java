@@ -32,25 +32,20 @@ import static org.mockito.Mockito.*;
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class QuizAttemptControllerTest {
-    @Inject
-    QuizAttemptController quizAttemptController;
-
-    @InjectMock
-    IQuizAttemptService quizAttemptService;
-
-    @InjectMock
-    IUserService userService;
-
-    @InjectMock
-    IMicrosoftGraphService microsoftGraphService;
-
     private static final String VALID_ATTEMPT_ID = new ObjectId().toString();
     private static final String NON_EXISTENT_ATTEMPT_ID = new ObjectId().toString();
     private static final String VALID_PUBLICATION_ID = new ObjectId().toString();
     private static final String VALID_QUESTION_ID = new ObjectId().toString();
     private static final String VALID_USER_AZURE_OID = "user-azure-oid";
     private static final String BADGE_ASSIGNER_OID = "assigner-oid";
-
+    @Inject
+    QuizAttemptController quizAttemptController;
+    @InjectMock
+    IQuizAttemptService quizAttemptService;
+    @InjectMock
+    IUserService userService;
+    @InjectMock
+    IMicrosoftGraphService microsoftGraphService;
 
     @Test
     @DisplayName("Should get quiz attempts by user")

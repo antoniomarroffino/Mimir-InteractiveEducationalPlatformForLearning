@@ -3,7 +3,7 @@ import {quizApi} from "../../config/config";
 import {QuizDTO, QuizPublicationDTO} from "@dti-isin/backend-api-client";
 import {QuizRetrieveContext, QuizRetrieveContextType} from '../contexts/QuizRetrieveContext';
 
-export const QuizRetrieveProvider: React.FC<{children: React.ReactNode}> = ({children}) => {
+export const QuizRetrieveProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const [quiz, setQuiz] = useState<QuizDTO | null>(null);
     const [quizPublication, setQuizPublication] = useState<QuizPublicationDTO | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);

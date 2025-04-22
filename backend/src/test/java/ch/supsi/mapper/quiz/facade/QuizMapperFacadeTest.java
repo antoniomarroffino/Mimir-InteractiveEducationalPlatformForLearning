@@ -5,8 +5,6 @@ import ch.supsi.mapper.question.TrueFalseQuestionMapper;
 import ch.supsi.mapper.question.builder.IQuestionMapperBuilder;
 import ch.supsi.mapper.quiz.QuizMapper;
 import ch.supsi.model.api.Quiz;
-import ch.supsi.model.api.question.Question;
-import ch.supsi.model.api.question.QuestionType;
 import ch.supsi.model.api.question.TrueFalseQuestion;
 import ch.supsi.model.dto.api.QuizDTO;
 import ch.supsi.model.dto.api.question.TrueFalseQuestionDTO;
@@ -23,9 +21,9 @@ import org.junit.jupiter.api.TestMethodOrder;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -86,7 +84,7 @@ public class QuizMapperFacadeTest {
     void test03ToDTO_EmptyQuestionsWhenNoIdsFound() {
         Quiz quiz = new Quiz();
         ObjectId invalidId = new ObjectId();
-        quiz.questionsId = Set.of(invalidId);
+        quiz.questionsId = List.of(invalidId);
 
         when(this.questionRepository.findByIdOptional(invalidId)).thenReturn(Optional.empty());
         when(this.quizMapper.toDTO(quiz, List.of())).thenReturn(new QuizDTO());
@@ -102,7 +100,8 @@ public class QuizMapperFacadeTest {
     @DisplayName("Should handle empty question IDs in Quiz entity")
     void test04ToDTO_HandleEmptyQuestionIds() {
         Quiz quiz = new Quiz();
-        quiz.questionsId = Set.of();
+        quiz.questionsId = List.of();
+
 
         when(this.quizMapper.toDTO(quiz, List.of())).thenReturn(new QuizDTO());
 
@@ -129,11 +128,11 @@ public class QuizMapperFacadeTest {
         q2.setId(new ObjectId().toString());
         quizDTO.setQuestions(List.of(q1, q2));
 
-        when(this.quizMapper.toEntity(quizDTO, Set.of(q1.getId(), q2.getId()))).thenReturn(new Quiz());
+        when(this.quizMapper.toEntity(quizDTO, List.of(q1.getId(), q2.getId()))).thenReturn(new Quiz());
 
         Quiz result = this.quizMapperFacade.toEntity(quizDTO);
         assertNotNull(result);
-        verify(this.quizMapper, times(1)).toEntity(quizDTO, Set.of(q1.getId(), q2.getId()));
+        verify(this.quizMapper, times(1)).toEntity(quizDTO, List.of(q1.getId(), q2.getId()));
     }
 
     @Test
@@ -142,11 +141,11 @@ public class QuizMapperFacadeTest {
         QuizDTO quizDTO = new QuizDTO();
         quizDTO.setQuestions(List.of());
 
-        when(this.quizMapper.toEntity(quizDTO, Set.of())).thenReturn(new Quiz());
+        when(this.quizMapper.toEntity(quizDTO, List.of())).thenReturn(new Quiz());
 
         Quiz result = this.quizMapperFacade.toEntity(quizDTO);
         assertNotNull(result);
-        verify(this.quizMapper).toEntity(quizDTO, Set.of());
+        verify(this.quizMapper).toEntity(quizDTO, List.of());
     }
 
 }

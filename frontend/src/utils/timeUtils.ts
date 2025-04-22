@@ -19,8 +19,10 @@ export const calculateDurationInSeconds = (
 
 export const formatDuration = (seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes}m ${remainingSeconds}s`;
+    const remainingSeconds = Math.round(seconds % 60);
+    return minutes > 0
+        ? `${minutes}m ${remainingSeconds}s`
+        : `${remainingSeconds}s`;
 };
 
 export const formatMinutesDuration = (minutes?: number | null): string | null => {
@@ -29,4 +31,15 @@ export const formatMinutesDuration = (minutes?: number | null): string | null =>
     const hours = Math.floor(minutes / 60);
     const remaining = minutes % 60;
     return `${hours}h${remaining ? ` ${remaining}m` : ''}`;
+};
+
+export const formatDateTime = (date?: string | Date): string => {
+    if (!date) return 'N/A';
+    return new Date(date).toLocaleString('it-CH', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+    });
 };

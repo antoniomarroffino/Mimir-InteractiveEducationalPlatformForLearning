@@ -1,12 +1,12 @@
-import React, { useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useQuizAttemptLocal } from "../hooks/quizAttempt/useQuizAttemptLocal";
+import React, {useEffect} from 'react';
+import {useLocation, useNavigate} from 'react-router-dom';
+import {useQuizAttemptLocal} from "../hooks/quizAttempt/useQuizAttemptLocal";
 import {QuizReview} from "../components/quiz-results/QuizReview.tsx";
 
 const QuizResultsPage: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { resetQuizAttempt } = useQuizAttemptLocal();
+    const {resetQuizAttempt} = useQuizAttemptLocal();
 
     const attempt = location.state?.attempt;
     const publication = location.state?.quizPublication;
