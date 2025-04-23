@@ -25,7 +25,7 @@ export const HeroSection = ({user, login, scrollToQuizSection, mimirLogo}: HeroS
             </div>
 
             <div className="relative container mx-auto px-4 h-full flex items-center">
-                <div className="grid md:grid-cols-2 gap-6 md:gap-12 items-center py-8 md:py-16">
+                <div className="grid md:grid-cols-2 gap-6 md:gap-12 items-center py-8 md:py-16 mb-8">
                     <motion.div
                         initial={{x: -50, opacity: 0}}
                         animate={{x: 0, opacity: 1}}
@@ -39,10 +39,10 @@ export const HeroSection = ({user, login, scrollToQuizSection, mimirLogo}: HeroS
                             Dive into an interactive learning experience with real-time feedback and personalized
                             insights.
                         </p>
-                        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 p-4">
+                        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 px-4">
                             <motion.button
                                 onClick={scrollToQuizSection}
-                                className="btn btn-primary btn-lg gap-2 group"
+                                className="btn btn-primary btn-lg gap-2 group w-full sm:w-auto whitespace-nowrap"
                                 whileHover={{scale: 1.05}}
                                 whileTap={{scale: 0.95}}
                             >
@@ -52,24 +52,25 @@ export const HeroSection = ({user, login, scrollToQuizSection, mimirLogo}: HeroS
                             {user ? (
                                 <Link to="/quiz-review" className="w-full sm:w-auto">
                                     <motion.button
-                                        className="btn btn-ghost btn-lg text-primary-content group w-full"
+                                        className="btn btn-ghost btn-lg gap-2 group w-full whitespace-nowrap"
                                         whileHover={{scale: 1.05}}
                                         whileTap={{scale: 0.95}}
                                     >
                                         Review Quizzes
                                         <FiCheckSquare
-                                            className="ml-2 transform group-hover:translate-x-1 transition-transform"/>
+                                            className="transform group-hover:translate-x-1 transition-transform"
+                                        />
                                     </motion.button>
                                 </Link>
                             ) : (
                                 <motion.button
                                     onClick={login}
-                                    className="btn btn-ghost btn-lg text-primary-content group w-full sm:w-auto"
+                                    className="btn btn-ghost btn-lg gap-2 group w-full sm:w-auto whitespace-nowrap"
                                     whileHover={{scale: 1.05}}
                                     whileTap={{scale: 0.95}}
                                 >
                                     Login
-                                    <FiLogIn className="ml-2 transform group-hover:translate-x-1 transition-transform"/>
+                                    <FiLogIn className="transform group-hover:translate-x-1 transition-transform"/>
                                 </motion.button>
                             )}
                         </div>

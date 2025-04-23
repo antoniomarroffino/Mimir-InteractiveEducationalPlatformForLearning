@@ -169,7 +169,7 @@ const Header = () => {
                             exit={{opacity: 0, height: 0}}
                             transition={{type: "spring", stiffness: 400, damping: 30}}
                         >
-                            <ul className="menu bg-base-100 w-full p-4 rounded-b-box shadow-lg">
+                            <ul className="menu bg-base-100 w-full p-4 shadow-lg">
                                 {filteredLinks.map((link) => (
                                     <motion.li
                                         key={link.name}
