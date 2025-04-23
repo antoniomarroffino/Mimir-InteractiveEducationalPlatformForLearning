@@ -3,8 +3,7 @@ stages:
   - build_backend
   - publish_npm_package
   - build_frontend
-  - deploy_backend
-  - deploy_frontend
+  - deploy
 
 structure:
   stage: structure
@@ -87,11 +86,18 @@ build_frontend:
     - dev
     - main
 
-deploy_backend:
-  stage: deploy_backend
+deploy_atomic:
+  stage: deploy
   image:
     name: google/cloud-sdk:slim
-    entrypoint: [""]
+    entrypoint: [ "" ]
+  before_script:
+    - set -o errexit -o pipefail -o nounset
+    - cleanup() {
+        [ -n "$REV_BACKEND" ] && gcloud run revisions delete -q "$REV_BACKEND" --platform managed || true
+        [ -n "$REV_FRONTEND" ] && gcloud run revisions delete -q "$REV_FRONTEND" --platform managed || true
+      }
+    - trap cleanup ERR
   script:
     - echo "$GCP_SERVICE_KEY" > gcp_key.json
     - gcloud auth activate-service-account --key-file=gcp_key.json
@@ -105,38 +111,36 @@ deploy_backend:
     - docker build -t ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/backend:$CI_COMMIT_SHORT_SHA .
     - docker push ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/backend:$CI_COMMIT_SHORT_SHA
 
-    - gcloud run deploy backend-service --image ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/backend:$CI_COMMIT_SHORT_SHA --platform managed --allow-unauthenticated --set-env-vars QUARKUS_PROFILE=prod --timeout 15m
-  only:
-    - dev
-    - main
+    - REV_BACKEND=$(gcloud run deploy backend-service --image ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/backend:$CI_COMMIT_SHORT_SHA --no-traffic --platform managed --allow-unauthenticated --format 'value(status.latestCreatedRevisionName)')
+    - echo "Nuova revisione backend"
 
-deploy_frontend:
-  stage: deploy_frontend
-  image:
-    name: google/cloud-sdk:slim
-    entrypoint: [""]
-  variables:
-    VITE_AZURE_CLIENT_ID: "${AZURE_CLIENT_ID}"
-    VITE_AZURE_TENANT_ID: "${AZURE_TENANT_ID}"
-    VITE_REDIRECT_URI: "/"
-    VITE_LOGOUT_REDIRECT_URI: "/"
-    VITE_BACKEND_CLIENT_ID: "527ea26f-be1b-428f-8d09-2849729fe4fe"
-    VITE_BACKEND_URL: ""
-  script:
-    - echo "$GCP_SERVICE_KEY" > gcp_key.json
-    - gcloud auth activate-service-account --key-file=gcp_key.json
-    - gcloud config set project $GCP_PROJECT_ID
-    - gcloud config set run/region $GCP_REGION
+    - |
+      max_retries=10; retries=0
+      until curl -f -s "https://backend-service-1031980811194.europe-west12.run.app/api/q/health/ready"; do
+        if [ $retries -eq $max_retries ]; then 
+          echo "Health check backend fallito"; exit 1; 
+        fi;
+        echo "Riprovo... ($((++retries))"; sleep 5;
+      done
 
-
-    - gcloud auth configure-docker ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev --quiet
-    - cat gcp_key.json | docker login -u _json_key --password-stdin ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev
-
-    - cd frontend
+    - cd ../frontend
     - docker build --build-arg CI_JOB_TOKEN=${CI_JOB_TOKEN} -t ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/frontend:$CI_COMMIT_SHORT_SHA .
     - docker push ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/frontend:$CI_COMMIT_SHORT_SHA
+    - REV_FRONTEND=$(gcloud run deploy frontend-service --image ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/frontend:$CI_COMMIT_SHORT_SHA --no-traffic --platform managed --allow-unauthenticated --format 'value(status.latestCreatedRevisionName)')
+    - echo "Nuova revisione frontend"
 
-    - gcloud run deploy frontend-service --image ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/frontend:$CI_COMMIT_SHORT_SHA --platform managed --allow-unauthenticated --timeout 15m
+    - |
+      max_retries=10; retries=0
+      until curl -f -s "https://frontend-service-1031980811194.europe-west12.run.app"; do
+        if [ $retries -eq $max_retries ]; then 
+          echo "Health check frontend fallito"; exit 1; 
+        fi;
+        echo "Riprovo... ($((++retries))"; sleep 5;
+      done
+
+    - gcloud run services update-traffic backend-service --to-revisions $REV_BACKEND=100 --platform managed
+    - gcloud run services update-traffic frontend-service --to-revisions $REV_FRONTEND=100 --platform managed
   only:
     - dev
     - main
+    - bug/109-reload-quiz-time
