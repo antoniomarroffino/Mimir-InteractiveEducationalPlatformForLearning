@@ -93,11 +93,15 @@ deploy_atomic:
     entrypoint: [ "" ]
   before_script:
     - set -o errexit -o pipefail -o nounset
-    - cleanup() {
+    - |
+      cleanup() {
         [ -n "$REV_BACKEND" ] && gcloud run revisions delete -q "$REV_BACKEND" --platform managed || true
         [ -n "$REV_FRONTEND" ] && gcloud run revisions delete -q "$REV_FRONTEND" --platform managed || true
       }
     - trap cleanup ERR
+  variables:
+    BACKEND_URL: "https://backend-service-1031980811194.europe-west12.run.app"
+    FRONTEND_URL: "https://frontend-service-1031980811194.europe-west12.run.app"
   script:
     - echo "$GCP_SERVICE_KEY" > gcp_key.json
     - gcloud auth activate-service-account --key-file=gcp_key.json
@@ -116,7 +120,7 @@ deploy_atomic:
 
     - |
       max_retries=10; retries=0
-      until curl -f -s "https://backend-service-1031980811194.europe-west12.run.app/api/q/health/ready"; do
+      until curl -f -s "$BACKEND_URL/api/q/health/ready"; do
         if [ $retries -eq $max_retries ]; then 
           echo "Health check backend fallito"; exit 1; 
         fi;
@@ -131,7 +135,7 @@ deploy_atomic:
 
     - |
       max_retries=10; retries=0
-      until curl -f -s "https://frontend-service-1031980811194.europe-west12.run.app"; do
+      until curl -f -s "$FRONTEND_URL"; do
         if [ $retries -eq $max_retries ]; then 
           echo "Health check frontend fallito"; exit 1; 
         fi;
@@ -140,6 +144,8 @@ deploy_atomic:
 
     - gcloud run services update-traffic backend-service --to-revisions $REV_BACKEND=100 --platform managed
     - gcloud run services update-traffic frontend-service --to-revisions $REV_FRONTEND=100 --platform managed
+
+    - rm -f gcp_key.json
   only:
     - dev
     - main
