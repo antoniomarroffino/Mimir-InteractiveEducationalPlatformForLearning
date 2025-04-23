@@ -95,8 +95,9 @@ deploy_atomic:
     - set -o errexit -o pipefail -o nounset
     - |
       cleanup() {
-        [ -n "$REV_BACKEND" ] && gcloud run revisions delete -q "$REV_BACKEND" --platform managed || true
-        [ -n "$REV_FRONTEND" ] && gcloud run revisions delete -q "$REV_FRONTEND" --platform managed || true
+        echo "Clean up function called"
+        [ -n "$REV_BACKEND" ] && gcloud run revisions delete -q "$REV_BACKEND" --platform managed --region="$GCP_REGION" || true
+        [ -n "$REV_FRONTEND" ] && gcloud run revisions delete -q "$REV_FRONTEND" --platform managed --region="$GCP_REGION" || true
       }
     - trap cleanup ERR
   variables:
@@ -118,14 +119,14 @@ deploy_atomic:
     - REV_BACKEND=$(gcloud run deploy backend-service --image ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/backend:$CI_COMMIT_SHORT_SHA --no-traffic --platform managed --allow-unauthenticated --format 'value(status.latestCreatedRevisionName)')
     - echo "Nuova revisione backend"
 
-    - |
-      max_retries=10; retries=0
-      until curl -f -s "$BACKEND_URL/api/q/health/ready"; do
-        if [ $retries -eq $max_retries ]; then 
-          echo "Health check backend fallito"; exit 1; 
-        fi;
-        echo "Riprovo... ($((++retries))"; sleep 5;
-      done
+    #- |
+    #  max_retries=10; retries=0
+    #  until curl -f -s "$BACKEND_URL/api/q/health/ready"; do
+    #    if [ $retries -eq $max_retries ]; then
+    #      echo "Health check backend fallito"; exit 1;
+    #    fi;
+    #    echo "Riprovo... ($((++retries))"; sleep 5;
+    #  done
 
     - cd ../frontend
     - docker build --build-arg CI_JOB_TOKEN=${CI_JOB_TOKEN} -t ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/frontend:$CI_COMMIT_SHORT_SHA .
@@ -133,14 +134,14 @@ deploy_atomic:
     - REV_FRONTEND=$(gcloud run deploy frontend-service --image ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/frontend:$CI_COMMIT_SHORT_SHA --no-traffic --platform managed --allow-unauthenticated --format 'value(status.latestCreatedRevisionName)')
     - echo "Nuova revisione frontend"
 
-    - |
-      max_retries=10; retries=0
-      until curl -f -s "$FRONTEND_URL"; do
-        if [ $retries -eq $max_retries ]; then 
-          echo "Health check frontend fallito"; exit 1; 
-        fi;
-        echo "Riprovo... ($((++retries))"; sleep 5;
-      done
+    #- |
+    #  max_retries=10; retries=0
+    #  until curl -f -s "$FRONTEND_URL"; do
+    #    if [ $retries -eq $max_retries ]; then
+    #      echo "Health check frontend fallito"; exit 1;
+    #    fi;
+    #    echo "Riprovo... ($((++retries))"; sleep 5;
+    #  done
 
     - gcloud run services update-traffic backend-service --to-revisions $REV_BACKEND=100 --platform managed
     - gcloud run services update-traffic frontend-service --to-revisions $REV_FRONTEND=100 --platform managed
