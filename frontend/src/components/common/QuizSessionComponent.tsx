@@ -56,7 +56,6 @@ export const QuizSessionComponent = () => {
                 />
             )}
 
-            {/* Loading Overlay */}
             {isAnalyzing && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 flex items-center justify-center">
                     <div className="bg-base-100 p-6 sm:p-8 rounded-lg flex flex-col items-center gap-4 w-full max-w-xs mx-4">
@@ -68,7 +67,6 @@ export const QuizSessionComponent = () => {
 
             <div className="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow mx-4 sm:mx-0">
                 <div className="card-body items-center text-center p-4 sm:p-6">
-                    {/* Icon Container */}
                     <div className="p-3 bg-primary/10 rounded-full mb-3">
                         <FiHash className="text-2xl sm:text-3xl text-primary"/>
                     </div>
@@ -77,7 +75,6 @@ export const QuizSessionComponent = () => {
                     <p className="text-xs sm:text-sm text-base-content/70 mb-4">Enter the code:</p>
 
                     <div className="w-full space-y-3">
-                        {/* Input Container */}
                         <div className="flex flex-col sm:flex-row gap-2 sm:gap-0">
                             <input
                                 type="text"
@@ -103,14 +100,12 @@ export const QuizSessionComponent = () => {
                             </button>
                         </div>
 
-                        {/* Error Message */}
                         {errorMessage && (
                             <div className="text-xs sm:text-sm text-error bg-error/10 p-2 rounded">
                                 {errorMessage}
                             </div>
                         )}
 
-                        {/* Login Message */}
                         {!user && (
                             <p className="text-xs text-base-content/70">
                                 Login to access all features

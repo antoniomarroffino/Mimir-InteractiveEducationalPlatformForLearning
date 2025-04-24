@@ -1,5 +1,8 @@
 import React from 'react';
 import {ClockIcon} from '@heroicons/react/24/outline';
+import {motion} from 'framer-motion';
+import {BsRocket} from 'react-icons/bs';
+import {BrainIcon} from "lucide-react";
 
 interface AnonymousAccessCardProps {
     onStart: () => void;
@@ -13,26 +16,79 @@ export const AnonymousAccessCard: React.FC<AnonymousAccessCardProps> = ({
                                                                             timeLimit,
                                                                         }) => {
     return (
-        <div className="card w-full sm:w-[28rem] h-[28rem] bg-primary/20 shadow-xl backdrop-blur-sm">
-            <div className="card-body items-center text-center justify-center">
-                <div className="text-5xl mb-2">🧠</div>
-                <h3 className="text-2xl font-bold text-primary">Ready to challenge yourself?</h3>
+        <motion.div
+            initial={{opacity: 0, y: 20}}
+            animate={{opacity: 1, y: 0}}
+            transition={{duration: 0.5}}
+            className="relative overflow-visible w-full max-w-md mx-auto"
+        >
+            <motion.div
+                className="absolute -right-20 -top-20 w-64 h-64 bg-primary/10 rounded-full blur-3xl"
+                animate={{
+                    scale: [1, 1.2, 1],
+                    opacity: [0.1, 0.2, 0.1]
+                }}
+                transition={{
+                    duration: 5,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                }}
+            />
 
-                <div className="flex items-center justify-center gap-2 mt-6 text-base-content/70">
-                    <ClockIcon className="w-5 h-5"/>
-                    <span>{timeLimit}</span>
-                </div>
+            <div className="card w-full max-w-md bg-gradient-to-br from-primary/5 to-secondary/5 shadow-xl backdrop-blur-sm border border-white/10">
+                <div className="card-body items-center text-center p-8 relative z-10">
+                    <motion.div
+                        className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-6"
+                        animate={{
+                            scale: [1, 1.1, 1],
+                        }}
+                        transition={{
+                            duration: 2,
+                            repeat: Infinity,
+                            ease: "easeInOut"
+                        }}
+                    >
+                        <BrainIcon className="w-10 h-10 text-primary"/>
+                    </motion.div>
 
-                <div className="card-actions justify-center mt-6">
-                    <button
+                    <h3 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-4">
+                        Ready to Challenge Yourself?
+                    </h3>
+
+                    <p className="text-base-content/70 mb-6">
+                        Get ready to test your knowledge and learn something new!
+                    </p>
+
+                    <div className="flex items-center justify-center gap-3 p-4 rounded-xl bg-primary/10 mb-8">
+                        <ClockIcon className="w-5 h-5 text-primary"/>
+                        <span className="text-primary font-medium">{timeLimit}</span>
+                    </div>
+
+                    <motion.button
                         onClick={onStart}
                         disabled={loading}
-                        className="btn btn-primary btn-wide text-white hover:scale-105 transition-transform"
+                        className="btn btn-primary btn-wide gap-2 text-white"
+                        whileHover={{scale: 1.05}}
+                        whileTap={{scale: 0.95}}
                     >
-                        {loading ? 'Loading...' : 'Start the Quiz'}
-                    </button>
+                        {loading ? (
+                            <>
+                                <span className="loading loading-spinner loading-sm"/>
+                                Preparing Quiz...
+                            </>
+                        ) : (
+                            <>
+                                Start the Quiz
+                                <BsRocket className="w-4 h-4"/>
+                            </>
+                        )}
+                    </motion.button>
+
+                    <p className="text-xs text-base-content/50 mt-4">
+                        No login required • Anonymous participation
+                    </p>
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 };

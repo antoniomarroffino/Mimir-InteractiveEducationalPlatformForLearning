@@ -25,7 +25,7 @@ import {QuestionBankDashboard} from "./teacher/QuestionBankDashboard.tsx";
 import QuestionBankDetails from "../components/questionBank/QuestionBankDetails.tsx";
 import {QuizAttemptProviders} from "../provider/quizAttempt/QuizAttemptProviders.tsx";
 import QuizResultsPage from "./QuizResultsPage.tsx";
-import QuizScreenPage from "./QuizScreenPage.tsx";
+import QuizScreenPage from "./quiz-execution/QuizScreenPage.tsx";
 import PublicationStatsPage from "./PublicationStatsPage.tsx";
 import QuizReviewPage from "./QuizReviewPage.tsx";
 import BadgesPage from "./BadgesPage.tsx";
