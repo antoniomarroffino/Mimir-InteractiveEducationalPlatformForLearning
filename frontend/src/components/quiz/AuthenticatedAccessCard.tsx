@@ -20,7 +20,7 @@ export const AuthenticatedAccessCard: React.FC<AuthenticatedAccessCardProps> = (
 
                 <div className="flex items-center justify-center gap-2 mt-6 text-base-content/70">
                     <ClockIcon className="w-5 h-5"/>
-                    <span>{timeLimit}</span>
+                    <span>{timeLimit ? (timeLimit) : ("No time limit provided")}</span>
                 </div>
 
                 <div className="card-actions justify-center mt-6">

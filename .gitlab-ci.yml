@@ -132,4 +132,3 @@ deploy_atomic:
   only:
     - dev
     - main
-    - bug/109-reload-quiz-time

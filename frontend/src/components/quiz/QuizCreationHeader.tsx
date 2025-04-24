@@ -100,7 +100,6 @@ export const QuizCreationHeader: React.FC<QuizCreationHeaderProps> = ({
                         <QuizTimeLimit
                             timeLimit={quiz.timeLimitMinutes}
                             onTimeChange={onTimeLimitChange}
-                            disabled={isSaving}
                         />
                     </div>
                 </div>

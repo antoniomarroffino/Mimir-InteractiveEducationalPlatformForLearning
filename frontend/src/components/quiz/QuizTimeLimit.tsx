@@ -4,13 +4,11 @@ import {ClockIcon} from '@heroicons/react/24/outline';
 interface QuizTimeLimitProps {
     timeLimit: number | undefined | null;
     onTimeChange: (minutes: number | undefined) => void;
-    disabled?: boolean;
 }
 
 export const QuizTimeLimit: React.FC<QuizTimeLimitProps> = React.memo(({
                                                                            timeLimit,
                                                                            onTimeChange,
-                                                                           disabled = false
                                                                        }) => {
     const handleToggleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         onTimeChange(e.target.checked ? 30 : undefined);
@@ -22,12 +20,6 @@ export const QuizTimeLimit: React.FC<QuizTimeLimitProps> = React.memo(({
             onTimeChange(value);
         }
     }, [onTimeChange]);
-
-    console.log("Render QuizTimeLimit", {
-        timeLimit,
-        onTimeChange,
-        disabled
-    });
 
     return (
         <div className="flex items-center gap-3">
@@ -41,7 +33,6 @@ export const QuizTimeLimit: React.FC<QuizTimeLimitProps> = React.memo(({
                         className="toggle toggle-primary toggle-sm"
                         checked={timeLimit != null}
                         onChange={handleToggleChange}
-                        disabled={disabled}
                     />
                     <span className="text-sm font-medium">
                         Time limit
@@ -55,7 +46,6 @@ export const QuizTimeLimit: React.FC<QuizTimeLimitProps> = React.memo(({
                             value={timeLimit || ''}
                             onChange={handleMinutesChange}
                             min="1"
-                            disabled={disabled}
                         />
                         <span className="text-sm">min</span>
                     </div>

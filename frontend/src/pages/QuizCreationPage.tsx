@@ -40,22 +40,27 @@ export const QuizCreationPage: React.FC = () => {
     const stableSelectedQuestions = useMemo(() => selectedQuestions, [selectedQuestions]);
     const stableQuestionBanks = useMemo(() => questionBanks, [questionBanks]);
     const importedQuestionIds = useMemo(() => currentQuiz?.questions?.map(q => q.id!) || [], [currentQuiz?.questions]);
+    const [isImporting, setIsImporting] = useState(false);
 
     useEffect(() => {
         setEditedQuizName(currentQuiz?.name || '');
     }, [currentQuiz?.name]);
 
-    const handleTimeLimitChange = useCallback((minutes: number | undefined) => {
+    const handleTimeLimitChange = useCallback(async (minutes: number | undefined) => {
         if (!currentQuiz) return;
-        updateQuiz.mutateAsync({
-            courseId: courseId!,
-            folderId: folderId!,
-            quizId: quizId!,
-            quizDTO: {
-                ...currentQuiz,
-                timeLimitMinutes: minutes
-            }
-        }).catch(console.error);
+        try {
+            await updateQuiz.mutateAsync({
+                courseId: courseId!,
+                folderId: folderId!,
+                quizId: quizId!,
+                quizDTO: {
+                    ...currentQuiz,
+                    timeLimitMinutes: minutes
+                }
+            });
+        } catch (error) {
+            console.error('Failed to update time limit:', error);
+        }
     }, [courseId, folderId, quizId, currentQuiz, updateQuiz]);
 
     const saveNewQuestion = async (questionDTO: SpecificQuestionDTO) => {
@@ -111,6 +116,7 @@ export const QuizCreationPage: React.FC = () => {
         const updatedQuestions = [...(currentQuiz.questions || []), ...questionsToAdd];
 
         try {
+            setIsImporting(true);
             await updateQuiz.mutateAsync({
                 courseId: courseId!,
                 folderId: folderId!,
@@ -123,6 +129,8 @@ export const QuizCreationPage: React.FC = () => {
             setSelectedQuestions([]);
         } catch (error) {
             console.error('Failed to import questions:', error);
+        } finally {
+            setIsImporting(false);
         }
     }, [courseId, folderId, quizId, currentQuiz, questionBanks, selectedQuestions, updateQuiz]);
 
@@ -212,7 +220,7 @@ export const QuizCreationPage: React.FC = () => {
                             onQuestionSelect={handleQuestionSelect}
                             onBankSelect={handleBankSelect}
                             onImport={handleImportQuestions}
-                            isImporting={updateQuiz.isLoading}
+                            isImporting={updateQuiz.isLoading && isImporting}
                         />
                     }
                 />

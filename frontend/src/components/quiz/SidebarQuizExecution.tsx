@@ -66,7 +66,7 @@ export const SidebarQuizExecution: React.FC<SidebarQuizExecutionProps> = ({
         >
             {!isDesktop && (
                 <div className="flex justify-between items-center min-h-[56px]">
-                    <RemainingTimeIndicator timeRemaining={timeRemaining!}/>
+                    {timeRemaining && (<RemainingTimeIndicator timeRemaining={timeRemaining!}/>)}
                     <NavigationToggleButton
                         isOpen={showNavigation}
                         onClick={() => setShowNavigation(prev => !prev)}
@@ -74,7 +74,7 @@ export const SidebarQuizExecution: React.FC<SidebarQuizExecutionProps> = ({
                 </div>
             )}
 
-            {isDesktop && (
+            {timeRemaining && isDesktop && (
                 <div className="flex justify-end mb-4 px-2 pt-2">
                     <RemainingTimeIndicator timeRemaining={timeRemaining!}/>
                 </div>
@@ -92,7 +92,7 @@ export const SidebarQuizExecution: React.FC<SidebarQuizExecutionProps> = ({
                 </div>
             )}
 
-            {showPopup && <TimeWarningPopup onClose={() => setShowPopup(false)}/>}
+            {timeRemaining && showPopup && <TimeWarningPopup onClose={() => setShowPopup(false)}/>}
         </div>
     );
 };
