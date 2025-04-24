@@ -15,6 +15,7 @@ interface QuizNavigationProps {
     onQuestionChange: (index: number) => void;
     onCompleteQuiz: () => void;
     userResponses: QuestionResponseDTO[];
+    showSubmitButton: boolean;
 }
 
 export const QuizNavigation: React.FC<QuizNavigationProps> = ({
@@ -22,7 +23,8 @@ export const QuizNavigation: React.FC<QuizNavigationProps> = ({
                                                                   currentQuestionIndex,
                                                                   onQuestionChange,
                                                                   onCompleteQuiz,
-                                                                  userResponses
+                                                                  userResponses,
+                                                                  showSubmitButton
                                                               }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -54,10 +56,6 @@ export const QuizNavigation: React.FC<QuizNavigationProps> = ({
         onCompleteQuiz();
         setIsModalOpen(false);
     };
-
-    const unansweredQuestions = questions
-        .map((_, index) => !isQuestionAnswered(index) ? index + 1 : null)
-        .filter((index): index is number => index !== null);
 
     return (
         <>
@@ -97,19 +95,23 @@ export const QuizNavigation: React.FC<QuizNavigationProps> = ({
                     </p>
                 </div>
 
-                <button
-                    onClick={() => setIsModalOpen(true)}
-                    className="btn btn-primary w-full mt-4"
-                >
-                    Submit Quiz
-                </button>
+                {showSubmitButton && (
+                    <button
+                        onClick={() => setIsModalOpen(true)}
+                        className="btn btn-primary w-full mt-4"
+                    >
+                        Submit Quiz
+                    </button>
+                )}
             </motion.div>
 
             <ConfirmQuizPopup
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 onConfirm={handleConfirmComplete}
-                unansweredQuestions={unansweredQuestions}
+                unansweredQuestions={questions
+                    .map((_, i) => (!isQuestionAnswered(i) ? i + 1 : null))
+                    .filter((v): v is number => v !== null)}
             />
         </>
     );

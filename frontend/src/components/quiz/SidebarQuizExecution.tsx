@@ -1,5 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import {QuestionDTO, QuestionResponseDTO, QuizAttemptDTO, QuizPublicationDTO} from '@dti-isin/backend-api-client';
+import {
+    QuestionDTO,
+    QuestionResponseDTO,
+    QuizAttemptDTO,
+    QuizPublicationDTO
+} from '@dti-isin/backend-api-client';
 import {RemainingTimeIndicator} from './RemainingTimeIndicator';
 import {QuizNavigation} from './QuizNavigation';
 import {NavigationToggleButton} from '../common/NavigationToggleButton';
@@ -38,8 +43,6 @@ export const SidebarQuizExecution: React.FC<SidebarQuizExecutionProps> = ({
         typeof window !== 'undefined' && window.innerWidth >= 768
     );
 
-    const hasTimeLimit = quizTimeLimit !== undefined && quizTimeLimit !== null;
-
     useEffect(() => {
         const handleResize = () => setIsDesktop(window.innerWidth >= 768);
         window.addEventListener('resize', handleResize);
@@ -47,17 +50,13 @@ export const SidebarQuizExecution: React.FC<SidebarQuizExecutionProps> = ({
     }, []);
 
     const timeRemaining = useCountdownTimer({
-        durationSeconds: hasTimeLimit ? quizTimeLimit * 60 : undefined,
+        durationSeconds: quizTimeLimit ? quizTimeLimit * 60 : undefined,
         onMinuteLeft: () => {
-            if (hasTimeLimit) {
-                setShowPopup(true);
-                onMinuteLeft();
-            }
+            setShowPopup(true);
+            onMinuteLeft();
         },
         onExpire: () => {
-            if (hasTimeLimit) {
-                onExpire();
-            }
+            onExpire();
         }
     });
 
@@ -69,28 +68,9 @@ export const SidebarQuizExecution: React.FC<SidebarQuizExecutionProps> = ({
                     : 'w-full border-b border-base-300 mb-4'
             }`}
         >
-            {hasTimeLimit && (
-                <>
-                    {!isDesktop && (
-                        <div className="flex justify-between items-center min-h-[56px]">
-                            <RemainingTimeIndicator timeRemaining={timeRemaining!}/>
-                            <NavigationToggleButton
-                                isOpen={showNavigation}
-                                onClick={() => setShowNavigation(prev => !prev)}
-                            />
-                        </div>
-                    )}
-
-                    {isDesktop && (
-                        <div className="flex justify-end mb-4 px-2 pt-2">
-                            <RemainingTimeIndicator timeRemaining={timeRemaining!}/>
-                        </div>
-                    )}
-                </>
-            )}
-
-            {(!hasTimeLimit && !isDesktop) && (
-                <div className="flex justify-end items-center min-h-[56px]">
+            {!isDesktop && (
+                <div className="flex justify-between items-center min-h-[56px]">
+                    <RemainingTimeIndicator timeRemaining={timeRemaining!}/>
                     <NavigationToggleButton
                         isOpen={showNavigation}
                         onClick={() => setShowNavigation(prev => !prev)}
@@ -98,21 +78,26 @@ export const SidebarQuizExecution: React.FC<SidebarQuizExecutionProps> = ({
                 </div>
             )}
 
+            {isDesktop && (
+                <div className="flex justify-end mb-4 px-2 pt-2">
+                    <RemainingTimeIndicator timeRemaining={timeRemaining!}/>
+                </div>
+            )}
+
             {(showNavigation || isDesktop) && (
-                <div className={`${hasTimeLimit ? 'mt-4 md:mt-0' : ''} w-full`}>
+                <div className="mt-4 md:mt-0 w-full">
                     <QuizNavigation
                         questions={questions}
                         currentQuestionIndex={currentQuestionIndex}
                         onQuestionChange={onQuestionChange}
                         onCompleteQuiz={onCompleteQuiz}
                         userResponses={userResponses}
+                        showSubmitButton={isDesktop}
                     />
                 </div>
             )}
 
-            {showPopup && hasTimeLimit && (
-                <TimeWarningPopup onClose={() => setShowPopup(false)}/>
-            )}
+            {showPopup && <TimeWarningPopup onClose={() => setShowPopup(false)}/>}
         </div>
     );
 };
