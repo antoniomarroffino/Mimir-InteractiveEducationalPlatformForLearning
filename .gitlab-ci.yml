@@ -121,8 +121,10 @@ deploy_atomic:
     - REV_BACKEND=$(gcloud run deploy backend-service --image ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/backend:$CI_COMMIT_SHORT_SHA --no-traffic --platform managed --tag canary --set-env-vars MONGO_URI=$MONGO_URI,AZURE_TENANT_ID=$AZURE_TENANT_ID,AZURE_CLIENT_ID=$AZURE_CLIENT_ID,AZURE_SECRET=$AZURE_SECRET,AZURE_DOMAIN_NAME=$AZURE_DOMAIN_NAME,CORS_ORIGINS=$FRONTEND_URL --format 'value(status.latestCreatedRevisionName)')
     - echo "Nuova revisione backend $REV_BACKEND"
 
-    - PREVIEW_URL=$(gcloud run revisions describe $REV_BACKEND --region $GCP_REGION --format 'value(status.url)')
-    - echo "Preview URL revision backend $PREVIEW_URL"
+    - SVC_URL=$(gcloud run services describe backend-service --region $GCP_REGION --format 'value(status.url)')
+    - HOST=${SVC_URL#https://}
+    - PREVIEW_URL="https://canary---${HOST}"
+    - echo "Backend revision URL $PREVIEW_URL"
 
     - |
       max_retries=20; retries=0
@@ -139,8 +141,10 @@ deploy_atomic:
     - REV_FRONTEND=$(gcloud run deploy frontend-service --image ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/frontend:$CI_COMMIT_SHORT_SHA --no-traffic --platform managed --tag canary --allow-unauthenticated --format 'value(status.latestCreatedRevisionName)')
     - echo "Nuova revisione frontend $REV_FRONTEND"
 
-    - PREVIEW_URL=$(gcloud run revisions describe $REV_FRONTEND --region $GCP_REGION --format 'value(status.url)')
-    - echo "Preview URL revision frontend $PREVIEW_URL"
+    - SVC_URL=$(gcloud run services describe frontend-service --region $GCP_REGION --format 'value(status.url)')
+    - HOST=${SVC_URL#https://}
+    - PREVIEW_URL="https://canary---${HOST}"
+    - echo "Frontend revision URL $PREVIEW_URL"
 
     - |
       max_retries=20; retries=0
@@ -148,7 +152,7 @@ deploy_atomic:
         if [ $retries -eq $max_retries ]; then
           echo "Health check frontend fallito"; exit 1;
         fi;
-        echo "Riprovo... ($((++retries))";
+        echo "Riprovo... ($((++retries))"; 
         sleep 10;
       done
 
