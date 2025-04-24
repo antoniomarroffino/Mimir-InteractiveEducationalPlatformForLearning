@@ -26,3 +26,13 @@ export const getQuestionEarnedPoints = (
 export const getQuestionTotalPoints = (question: QuestionDTO): number => {
     return question.points || 1;
 };
+
+export const getScoreEmoji = (earned: number, total: number): string => {
+    if (total === 0) return '❓';
+    const percentage = (earned / total) * 100;
+    if (percentage === 100) return '🏆';
+    if (percentage >= 90) return '🌟';
+    if (percentage >= 70) return '👍';
+    if (percentage >= 50) return '🤔';
+    return '😕';
+};

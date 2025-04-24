@@ -2,10 +2,10 @@ import { motion } from 'framer-motion';
 
 export const StatsSection = () => {
     const stats = [
-        {value: "10K+", label: "Students"},
-        {value: "500+", label: "Quizzes"},
-        {value: "95%", label: "Success Rate"},
-        {value: "24/7", label: "Support"}
+        {value: "∞", label: "Work hours"},
+        {value: "50+", label: "Students approved"},
+        {value: "100%", label: "Backend Tests coverage"},
+        {value: "50k+", label: "Lines of code"}
     ];
 
     return (

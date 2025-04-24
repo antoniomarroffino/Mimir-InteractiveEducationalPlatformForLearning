@@ -31,9 +31,8 @@ export const QuestionResult: React.FC<QuestionResultProps> = ({
                     ? 'border-l-success'
                     : 'border-l-error'
                 : 'border-l-warning'
-        } hover:shadow-md transition-all duration-300`}>
-            <div
-                className="flex flex-wrap justify-between items-center gap-4 p-4 border-b border-base-200 bg-base-100 rounded-t-lg">
+        } hover:shadow-md focus:shadow-md transition-all duration-300`}>
+            <div className="flex flex-wrap justify-between items-center gap-4 p-4 border-b border-base-200 bg-base-100 rounded-t-lg">
                 <div className="flex flex-wrap gap-4 text-sm text-base-content/70 items-center">
                     <div className="flex items-center gap-2">
                         <ClockIcon className="w-4 h-4"/>
@@ -45,13 +44,15 @@ export const QuestionResult: React.FC<QuestionResultProps> = ({
                 </div>
 
                 <div className="flex gap-2 items-center">
-                    <div className={`badge px-3 py-1 text-sm font-semibold uppercase tracking-wide ${
-                        isAnswered
-                            ? isCorrect
-                                ? 'badge-success'
-                                : 'badge-error'
-                            : 'badge-warning'
-                    }`}>
+                    <div
+                        className={`badge px-3 py-1 text-sm font-semibold uppercase tracking-wide ${
+                            isAnswered
+                                ? isCorrect
+                                    ? 'badge-success'
+                                    : 'badge-error'
+                                : 'badge-warning'
+                        }`}
+                    >
                         {isAnswered
                             ? isCorrect
                                 ? 'Correct'
@@ -60,21 +61,24 @@ export const QuestionResult: React.FC<QuestionResultProps> = ({
                     </div>
                     {isCorrect && totalPoints > 1 && (
                         <span className="text-sm font-bold text-success bg-success/10 px-3 py-1 rounded-full">
-                +{earnedPoints} pts
-            </span>
+                            +{earnedPoints} pts
+                        </span>
                     )}
                 </div>
             </div>
 
             <div className="p-4">
                 <div className="flex items-start gap-3">
-                    <div className={`text-lg ${
-                        isAnswered
-                            ? isCorrect
-                                ? 'text-success'
-                                : 'text-error'
-                            : 'text-warning'
-                    }`}>
+                    <div
+                        className={`text-lg ${
+                            isAnswered
+                                ? isCorrect
+                                    ? 'text-success'
+                                    : 'text-error'
+                                : 'text-warning'
+                        }`}
+                        title={isAnswered ? (isCorrect ? 'Correct' : 'Incorrect') : 'Not answered'}
+                    >
                         {isAnswered
                             ? isCorrect
                                 ? <BsCheckCircle/>
@@ -86,11 +90,9 @@ export const QuestionResult: React.FC<QuestionResultProps> = ({
                             <h3 className="text-sm font-medium flex-1">
                                 {question.questionText}
                             </h3>
-                            {totalPoints > 1 && (
-                                <span className="text-xs text-base-content/70 ml-2">
-                                    Worth {totalPoints} points
-                                </span>
-                            )}
+                            <span className="text-xs text-base-content/70 ml-2 whitespace-nowrap">
+                                Worth {totalPoints} point{totalPoints !== 1 && 's'}
+                            </span>
                         </div>
                         <div className="text-sm">
                             {strategy.renderResponse({question, response, isAnswered})}

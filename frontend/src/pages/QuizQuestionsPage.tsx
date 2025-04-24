@@ -4,7 +4,7 @@ import {QuestionResponseDTO, QuizAttemptDTO, QuizDTO, QuizPublicationDTO} from "
 import {useQuizAttemptLocal} from "../hooks/quizAttempt/useQuizAttemptLocal";
 import {useQuizAttemptAutosave} from "../hooks/quizAttempt/useQuizAttemptAutosave";
 import {QuizExecutionHeader} from "../components/quiz/QuizExecutionHeader";
-import {AnimatePresence} from "framer-motion";
+import {AnimatePresence, motion} from "framer-motion";
 import {QuestionNavigationArrows} from "../components/quiz/QuestionNavigationArrows";
 import {CurrentQuestionCard} from "../components/quiz/CurrentQuestionCard";
 import {SidebarQuizExecution} from "../components/quiz/SidebarQuizExecution";
@@ -89,9 +89,9 @@ const QuizQuestionsPage: React.FC = () => {
     const handleCompleteQuiz = useCallback(async () => {
         const completedAttempt = await completeQuizAttempt(userResponses);
         navigate(`/results/${completedAttempt.id!}`, {
-            state: {attempt: completedAttempt, quizPublication: publication}
+            state: {attempt: completedAttempt, quizPublication: publication, quiz:quiz}
         });
-    }, [userResponses, completeQuizAttempt, navigate, publication]);
+    }, [completeQuizAttempt, userResponses, navigate, publication, quiz]);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 768);
@@ -108,7 +108,10 @@ const QuizQuestionsPage: React.FC = () => {
     }
 
     return (
-        <section className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100">
+        <motion.section
+            initial={{opacity: 0}}
+            animate={{opacity: 1}}
+            className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100">
             <div className="max-w-7xl mx-auto px-4 py-8 sm:py-12">
                 <QuizExecutionHeader quiz={quiz} publication={publication} quizTimeLimit={quiz.timeLimitMinutes} />
 
@@ -181,7 +184,7 @@ const QuizQuestionsPage: React.FC = () => {
                 onConfirm={handleCompleteQuiz}
                 unansweredQuestions={getUnansweredQuestions(publication.questions!, userResponses)}
             />
-        </section>
+        </motion.section>
     );
 };
 
