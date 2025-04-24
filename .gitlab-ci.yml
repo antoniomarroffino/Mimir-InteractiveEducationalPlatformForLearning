@@ -92,12 +92,14 @@ deploy_atomic:
     name: google/cloud-sdk:slim
     entrypoint: [ "" ]
   before_script:
-    - set -o errexit -o pipefail -o nounset
+    - set -o errexit -o pipefail -o nounset -o errtrace
     - |
       cleanup() {
-        echo "Clean up function called"
-        [ -n "$REV_BACKEND" ] && gcloud run revisions delete -q "$REV_BACKEND" --platform managed --region="$GCP_REGION" || true
-        [ -n "$REV_FRONTEND" ] && gcloud run revisions delete -q "$REV_FRONTEND" --platform managed --region="$GCP_REGION" || true
+        echo "Cleanup called";
+        gcloud run services update backend-service --platform managed --region "$GCP_REGION" --remove-tags canary || true;
+        [ -n "$REV_BACKEND" ] && gcloud run revisions delete -q "$REV_BACKEND" --platform managed --region "$GCP_REGION" || true;
+        gcloud run services update frontend-service --platform managed --region "$GCP_REGION" --remove-tags canary || true;
+        [ -n "$REV_FRONTEND" ] && gcloud run revisions delete -q "$REV_FRONTEND" --platform managed --region "$GCP_REGION" || true;
       }
     - trap cleanup ERR
   variables:
@@ -116,41 +118,48 @@ deploy_atomic:
     - docker build -t ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/backend:$CI_COMMIT_SHORT_SHA .
     - docker push ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/backend:$CI_COMMIT_SHORT_SHA
 
-    - REV_BACKEND=$(gcloud run deploy backend-service --image ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/backend:$CI_COMMIT_SHORT_SHA --no-traffic --platform managed --set-env-vars MONGO_URI=$MONGO_URI,AZURE_TENANT_ID=$AZURE_TENANT_ID,AZURE_CLIENT_ID=$AZURE_CLIENT_ID,AZURE_SECRET=$AZURE_SECRET,AZURE_DOMAIN_NAME=$AZURE_DOMAIN_NAME,CORS_ORIGINS=$FRONTEND_URL --format 'value(status.latestCreatedRevisionName)')
-    - echo "Nuova revisione backend $REV_BACKEND"
+    - REV_BACKEND=$(gcloud run deploy backend-service --image ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/backend:$CI_COMMIT_SHORT_SHA --no-traffic --platform managed --tag canary --async --set-env-vars MONGO_URI=$MONGO_URI,AZURE_TENANT_ID=$AZURE_TENANT_ID,AZURE_CLIENT_ID=$AZURE_CLIENT_ID,AZURE_SECRET=$AZURE_SECRET,AZURE_DOMAIN_NAME=$AZURE_DOMAIN_NAME,CORS_ORIGINS=$FRONTEND_URL --format 'value(status.latestCreatedRevisionName)')
+    - echo "Nuova revisione backend: $REV_BACKEND"
 
-    - REV_BACKEND_URL=$(gcloud run revisions describe $REV_BACKEND --region $GCP_REGION --format 'value(status.url)')
-    - echo "URL nuova revisione backend $REV_BACKEND_URL"
+    - SVC_URL=$(gcloud run services describe backend-service --region $GCP_REGION --format 'value(status.url)')
+    - HOST=${SVC_URL#https://}
+    - PREVIEW_URL="https://canary---${HOST}"
+    - echo "Backend revision URL: $PREVIEW_URL"
 
     - |
-      max_retries=10; retries=0
-      until curl -f -s "$REV_BACKEND_URL/api/q/health/ready"; do
+      max_retries=20; retries=0
+      until curl -f -s "$PREVIEW_URL/api/q/health/ready"; do
         if [ $retries -eq $max_retries ]; then
           echo "Health check backend fallito"; exit 1;
         fi;
-        echo "Riprovo... ($((++retries))"; sleep 5;
+        echo "Riprovo... ($((++retries))"; sleep 10;
       done
 
     - cd ../frontend
     - docker build --build-arg CI_JOB_TOKEN=${CI_JOB_TOKEN} --build-arg VITE_AZURE_CLIENT_ID=${AZURE_FRONTEND_CLIENT_ID} --build-arg VITE_AZURE_TENANT_ID=${AZURE_TENANT_ID} --build-arg VITE_REDIRECT_URI=${FRONTEND_URL} --build-arg VITE_LOGOUT_REDIRECT_URI=${FRONTEND_URL} --build-arg VITE_BACKEND_CLIENT_ID=${AZURE_CLIENT_ID} --build-arg VITE_BACKEND_URL=${BACKEND_URL} -t ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/frontend:$CI_COMMIT_SHORT_SHA .
     - docker push ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/frontend:$CI_COMMIT_SHORT_SHA
-    - REV_FRONTEND=$(gcloud run deploy frontend-service --image ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/frontend:$CI_COMMIT_SHORT_SHA --no-traffic --platform managed --allow-unauthenticated --format 'value(status.latestCreatedRevisionName)')
-    - echo "Nuova revisione frontend $REV_FRONTEND"
+    - REV_FRONTEND=$(gcloud run deploy frontend-service --image ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/frontend:$CI_COMMIT_SHORT_SHA --no-traffic --platform managed --tag canary --async --allow-unauthenticated --format 'value(status.latestCreatedRevisionName)')
+    - echo "Nuova revisione frontend: $REV_FRONTEND"
 
-    - REV_FRONTEND_URL=$(gcloud run revisions describe $REV_FRONTEND --region $GCP_REGION --format 'value(status.url)')
-    - echo "URL nuova revisione frontend $REV_FRONTEND_URL"
+    - SVC_URL=$(gcloud run services describe frontend-service --region $GCP_REGION --format 'value(status.url)')
+    - HOST=${SVC_URL#https://}
+    - PREVIEW_URL="https://canary---${HOST}"
+    - echo "Frontend revision URL: $PREVIEW_URL"
 
     - |
-      max_retries=10; retries=0
-      until curl -f -s "$REV_FRONTEND_URL"; do
+      max_retries=20; retries=0
+      until curl -f -s "$PREVIEW_URL"; do
         if [ $retries -eq $max_retries ]; then
           echo "Health check frontend fallito"; exit 1;
         fi;
-        echo "Riprovo... ($((++retries))"; sleep 5;
+        echo "Riprovo... ($((++retries))"; sleep 10;
       done
 
     - gcloud run services update-traffic backend-service --to-revisions $REV_BACKEND=100 --platform managed
     - gcloud run services update-traffic frontend-service --to-revisions $REV_FRONTEND=100 --platform managed
+
+    - gcloud run services update backend-service --remove-tags canary --platform managed --region $GCP_REGION
+    - gcloud run services update frontend-service --remove-tags canary --platform managed --region $GCP_REGION
 
     - rm -f gcp_key.json
   only:
