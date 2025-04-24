@@ -38,7 +38,7 @@ export const QuizReview: React.FC<QuizReviewProps> = ({
     const totalQuestions = publication.questions?.length || 0;
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 px-2 sm:px-4">
             {CustomHeader ? (
                 <CustomHeader
                     attempt={attempt}
@@ -89,7 +89,7 @@ export const QuizReview: React.FC<QuizReviewProps> = ({
             </div>
 
             {onClose && (
-                <div className="flex justify-center pt-4">
+                <div className="flex justify-center pt-6">
                     <button
                         onClick={onClose}
                         className="btn btn-primary btn-wide"

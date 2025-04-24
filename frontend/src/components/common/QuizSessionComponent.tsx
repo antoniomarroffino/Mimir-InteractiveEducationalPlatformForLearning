@@ -13,13 +13,15 @@ export const QuizSessionComponent = () => {
     const [errorMessage, setErrorMessage] = useState('');
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setCode(e.target.value);
+        setCode(e.target.value.toUpperCase());
         setErrorMessage('');
     };
 
     const handleStartAnalyze = () => {
         if (code.trim()) {
             setIsAnalyzing(true);
+        } else {
+            setErrorMessage('Please enter a code');
         }
     };
 
@@ -45,8 +47,7 @@ export const QuizSessionComponent = () => {
     };
 
     return (
-        <section className="w-full max-w-md mx-auto relative">
-
+        <div className="w-full max-w-md mx-auto relative">
             {isAnalyzing && (
                 <QuizCodeAnalyzer
                     publicationCode={code}
@@ -56,54 +57,63 @@ export const QuizSessionComponent = () => {
             )}
 
             {isAnalyzing && (
-                <div
-                    className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 flex items-center justify-center">
-                    <div className="bg-base-100 p-8 rounded-lg flex flex-col items-center gap-4">
+                <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 flex items-center justify-center">
+                    <div className="bg-base-100 p-6 sm:p-8 rounded-lg flex flex-col items-center gap-4 w-full max-w-xs mx-4">
                         <span className="loading loading-spinner loading-lg text-primary"></span>
-                        <p className="text-lg">Verifica del codice in corso...</p>
+                        <p className="text-base sm:text-lg text-center">Verifying code...</p>
                     </div>
                 </div>
             )}
 
-            <div className="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow">
-                <div className="card-body items-center text-center">
-                    <div className="p-4 bg-primary/10 rounded-full mb-4">
-                        <FiHash className="text-4xl text-primary"/>
+            <div className="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow mx-4 sm:mx-0">
+                <div className="card-body items-center text-center p-4 sm:p-6">
+                    <div className="p-3 bg-primary/10 rounded-full mb-3">
+                        <FiHash className="text-2xl sm:text-3xl text-primary"/>
                     </div>
 
-                    <h2 className="card-title text-2xl text-center">Join a Quiz</h2>
-                    <p className="text-base-content/70 mb-6">Enter the code:</p>
+                    <h2 className="card-title text-lg sm:text-xl text-center mb-1">Join a Quiz</h2>
+                    <p className="text-xs sm:text-sm text-base-content/70 mb-4">Enter the code:</p>
 
-                    <div className="w-full">
-                        <div className="join w-full">
+                    <div className="w-full space-y-3">
+                        <div className="flex flex-col sm:flex-row gap-2 sm:gap-0">
                             <input
                                 type="text"
                                 placeholder="Session Code"
-                                className="input input-bordered join-item flex-1"
+                                className="input input-bordered w-full sm:rounded-r-none text-base sm:text-lg uppercase"
                                 value={code}
                                 onChange={handleInputChange}
                                 onKeyDown={handleKeyDown}
+                                autoComplete="off"
+                                autoCapitalize="characters"
+                                maxLength={6}
                             />
                             <button
-                                className="btn btn-primary join-item"
+                                className="btn btn-primary w-full sm:w-auto sm:rounded-l-none"
                                 onClick={handleStartAnalyze}
+                                disabled={isAnalyzing}
                             >
-                                {user ? "Join" : "Login"}
+                                {isAnalyzing ? (
+                                    <span className="loading loading-spinner loading-sm"></span>
+                                ) : (
+                                    user ? "Join" : "Login"
+                                )}
                             </button>
                         </div>
+
+                        {errorMessage && (
+                            <div className="text-xs sm:text-sm text-error bg-error/10 p-2 rounded">
+                                {errorMessage}
+                            </div>
+                        )}
+
+                        {!user && (
+                            <p className="text-xs text-base-content/70">
+                                Login to access all features
+                            </p>
+                        )}
                     </div>
-
-                    {errorMessage && (
-                        <p className="text-sm text-error mt-4">{errorMessage}</p>
-                    )}
-
-                    {!user && (
-                        <p className="text-sm text-base-content/70 mt-4">
-                            Login to access all features
-                        </p>
-                    )}
                 </div>
             </div>
-        </section>
+        </div>
     );
 };

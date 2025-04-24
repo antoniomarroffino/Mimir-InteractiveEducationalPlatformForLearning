@@ -1,16 +1,18 @@
-import React, {useCallback, useMemo, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {QuestionResponseDTO, QuizAttemptDTO, QuizDTO, QuizPublicationDTO} from "@dti-isin/backend-api-client";
 import {useQuizAttemptLocal} from "../hooks/quizAttempt/useQuizAttemptLocal";
 import {useQuizAttemptAutosave} from "../hooks/quizAttempt/useQuizAttemptAutosave";
 import {QuizExecutionHeader} from "../components/quiz/QuizExecutionHeader";
-import {AnimatePresence} from "framer-motion";
+import {AnimatePresence, motion} from "framer-motion";
 import {QuestionNavigationArrows} from "../components/quiz/QuestionNavigationArrows";
 import {CurrentQuestionCard} from "../components/quiz/CurrentQuestionCard";
 import {SidebarQuizExecution} from "../components/quiz/SidebarQuizExecution";
 import {createUpdatedResponse, getCurrentQuestionResponse} from "../utils/questionUtils";
 import {useTrackTimeSpent} from "../hooks/quizAttempt/useTrackTimeSpent";
 import {TimeExpiredPopup} from "../components/quiz/TimeExpiredPopup.tsx";
+import {ConfirmQuizPopup} from "./quiz-execution/ConfirmQuizPopup.tsx";
+import {getUnansweredQuestions} from "../utils/isQuestionAnswered.ts";
 
 const QuizQuestionsPage: React.FC = () => {
     const location = useLocation();
@@ -18,7 +20,6 @@ const QuizQuestionsPage: React.FC = () => {
     const {accessCode} = useParams();
 
     const [completedAttempt, setCompletedAttempt] = useState<QuizAttemptDTO | null>(null);
-
 
     const state = location.state as {
         publication?: QuizPublicationDTO;
@@ -43,8 +44,7 @@ const QuizQuestionsPage: React.FC = () => {
     useQuizAttemptAutosave(15000);
     useTrackTimeSpent(currentQuestionIndex, setUserResponses);
 
-    const onMinuteLeft = useCallback(() => {
-    }, []);
+    const onMinuteLeft = useCallback(() => {}, []);
 
     const onExpire = useCallback(async () => {
         updateQuizAttemptResponses(userResponses);
@@ -57,7 +57,6 @@ const QuizQuestionsPage: React.FC = () => {
         completeQuizAttempt,
         clearQuizAttempt
     ]);
-
 
     const currentQuestion = useMemo(() => {
         return publication?.questions?.[currentQuestionIndex];
@@ -90,9 +89,18 @@ const QuizQuestionsPage: React.FC = () => {
     const handleCompleteQuiz = useCallback(async () => {
         const completedAttempt = await completeQuizAttempt(userResponses);
         navigate(`/results/${completedAttempt.id!}`, {
-            state: {attempt: completedAttempt, quizPublication: publication}
+            state: {attempt: completedAttempt, quizPublication: publication, quiz:quiz}
         });
-    }, [userResponses, completeQuizAttempt, navigate, publication]);
+    }, [completeQuizAttempt, userResponses, navigate, publication, quiz]);
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 768);
+
+    useEffect(() => {
+        const handleResize = () => setIsDesktop(window.innerWidth >= 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     if (!publication || !quiz) {
         navigate(`/quiz/${accessCode}`);
@@ -100,43 +108,61 @@ const QuizQuestionsPage: React.FC = () => {
     }
 
     return (
-        <div className="min-h-[calc(100vh-4rem)] flex flex-col bg-gradient-to-br from-primary/10 to-secondary/10">
-            <QuizExecutionHeader title={quiz.name} description={quiz.description}/>
+        <motion.section
+            initial={{opacity: 0}}
+            animate={{opacity: 1}}
+            className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100">
+            <div className="max-w-7xl mx-auto px-4 py-8 sm:py-12">
+                <QuizExecutionHeader quiz={quiz} publication={publication} quizTimeLimit={quiz.timeLimitMinutes} />
 
-            <div className="flex-1 flex flex-col-reverse md:flex-row overflow-hidden py-6 container mx-auto px-4 gap-6">
-                <div className="flex-1 flex flex-col justify-start">
-                    <QuestionNavigationArrows
-                        currentIndex={currentQuestionIndex}
-                        totalQuestions={publication.questions!.length}
-                        onPrevious={() => setCurrentQuestionIndex(i => Math.max(0, i - 1))}
-                        onNext={() => setCurrentQuestionIndex(i => Math.min(publication.questions!.length - 1, i + 1))}
-                    />
+                <div className="mt-8 flex flex-col-reverse md:flex-row gap-6">
+                    <div className="flex-1 flex flex-col justify-start">
+                        <QuestionNavigationArrows
+                            currentIndex={currentQuestionIndex}
+                            totalQuestions={publication.questions!.length}
+                            onPrevious={() => setCurrentQuestionIndex(i => Math.max(0, i - 1))}
+                            onNext={() => setCurrentQuestionIndex(i => Math.min(publication.questions!.length - 1, i + 1))}
+                        />
 
-                    <div className="mt-6 flex justify-center">
-                        <AnimatePresence mode="wait">
-                            <CurrentQuestionCard
-                                question={currentQuestion}
-                                answer={currentResponse}
-                                onAnswer={handleAnswer}
-                            />
-                        </AnimatePresence>
+                        <div className="mt-6 flex justify-center">
+                            <AnimatePresence mode="wait">
+                                <CurrentQuestionCard
+                                    question={currentQuestion}
+                                    answer={currentResponse}
+                                    onAnswer={handleAnswer}
+                                />
+                            </AnimatePresence>
+                        </div>
+
+                        {!isDesktop && (
+                            <div className="mt-8">
+                                <button
+                                    onClick={() => setIsModalOpen(true)}
+                                    className="btn btn-primary w-full"
+                                >
+                                    Submit Quiz
+                                </button>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="w-full md:w-80 lg:w-96">
+                        <SidebarQuizExecution
+                            quizTimeLimit={quiz.timeLimitMinutes}
+                            questions={publication.questions!}
+                            currentQuestionIndex={currentQuestionIndex}
+                            onQuestionChange={setCurrentQuestionIndex}
+                            onCompleteQuiz={handleCompleteQuiz}
+                            userResponses={userResponses}
+                            updateQuizAttemptResponses={updateQuizAttemptResponses}
+                            completeQuizAttempt={completeQuizAttempt}
+                            publication={publication}
+                            navigate={navigate}
+                            onExpire={onExpire}
+                            onMinuteLeft={onMinuteLeft}
+                        />
                     </div>
                 </div>
-
-                <SidebarQuizExecution
-                    quizTimeLimit={quiz.timeLimitMinutes}
-                    questions={publication.questions!}
-                    currentQuestionIndex={currentQuestionIndex}
-                    onQuestionChange={setCurrentQuestionIndex}
-                    onCompleteQuiz={handleCompleteQuiz}
-                    userResponses={userResponses}
-                    updateQuizAttemptResponses={updateQuizAttemptResponses}
-                    completeQuizAttempt={completeQuizAttempt}
-                    publication={publication}
-                    navigate={navigate}
-                    onExpire={onExpire}
-                    onMinuteLeft={onMinuteLeft}
-                />
             </div>
 
             {completedAttempt && (
@@ -151,8 +177,14 @@ const QuizQuestionsPage: React.FC = () => {
                     }}
                 />
             )}
-        </div>
 
+            <ConfirmQuizPopup
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onConfirm={handleCompleteQuiz}
+                unansweredQuestions={getUnansweredQuestions(publication.questions!, userResponses)}
+            />
+        </motion.section>
     );
 };
 

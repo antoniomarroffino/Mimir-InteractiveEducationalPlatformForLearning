@@ -1,39 +1,43 @@
 import React, {useState} from 'react';
 import {AnimatePresence, motion} from 'framer-motion';
-import {BsChevronDown, BsChevronUp, BsClockHistory, BsPatchQuestion} from 'react-icons/bs';
+import {BsChevronDown, BsChevronUp, BsClockHistory, BsAward} from 'react-icons/bs';
 import {QuizDTO, QuizPublicationDTO} from "@dti-isin/backend-api-client";
 import {formatMinutesDuration} from "../../utils/timeUtils";
 
-interface QuizExecutionHeaderProps {
+interface QuizResultPageHeaderProps {
     quiz: QuizDTO;
     publication: QuizPublicationDTO;
     quizTimeLimit?: number | null;
 }
 
-export const QuizExecutionHeader: React.FC<QuizExecutionHeaderProps> = ({quiz, publication, quizTimeLimit}) => {
+export const QuizResultPageHeader: React.FC<QuizResultPageHeaderProps> = ({
+                                                                              quiz,
+                                                                              publication,
+                                                                              quizTimeLimit
+                                                                          }) => {
     const [showDescription, setShowDescription] = useState(false);
     const hasDescription = quiz.description && quiz.description.trim().length > 0;
     const hasTimeLimit = quizTimeLimit !== undefined && quizTimeLimit !== null;
 
     return (
         <header className="space-y-2 mb-2">
-            <div className="bg-gradient-to-tr from-primary/5 to-base-100 border border-primary/10 p-4 sm:p-6 rounded-2xl shadow-md transition-all duration-300 hover:shadow-xl">
+            <div className="bg-gradient-to-tr from-green-50 to-base-100 border border-green-200 p-4 sm:p-6 rounded-2xl shadow-md transition-all duration-300 hover:shadow-xl">
                 <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 lg:gap-6">
                     <div className="flex-1 flex items-start gap-3 sm:gap-4">
-                        <div className="p-2 sm:p-3 rounded-full bg-primary/10 text-primary">
-                            <BsPatchQuestion className="w-5 h-5 sm:w-6 sm:h-6"/>
+                        <div className="p-2 sm:p-3 rounded-full bg-green-100 text-green-700">
+                            <BsAward className="w-5 h-5 sm:w-6 sm:h-6"/>
                         </div>
 
                         <div className="flex-1 min-w-0 space-y-2">
                             <div className="flex items-center justify-between gap-4">
-                                <h1 className="text-2xl sm:text-3xl font-extrabold text-primary">
-                                    {quiz.name}
+                                <h1 className="text-2xl sm:text-3xl font-extrabold text-green-700">
+                                    Quiz Results – {quiz.name}
                                 </h1>
 
                                 {hasDescription && (
                                     <motion.button
                                         onClick={() => setShowDescription(prev => !prev)}
-                                        className="btn btn-sm btn-ghost gap-2 text-primary"
+                                        className="btn btn-sm btn-ghost gap-2 text-green-700"
                                         whileTap={{scale: 0.95}}
                                     >
                                         {showDescription ? (

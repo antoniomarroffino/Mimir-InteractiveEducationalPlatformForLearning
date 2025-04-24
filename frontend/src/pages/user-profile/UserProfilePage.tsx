@@ -1,6 +1,7 @@
 import {FiBook, FiKey, FiMail, FiUser} from "react-icons/fi";
 import {Role} from "@dti-isin/backend-api-client";
 import {useAuth} from "../../hooks/useAuth.ts";
+import {UserProfilePageHeader} from "./UserProfilePageHeader.tsx";
 
 const roleLabels = {
     [Role.Admin]: "Administrator",
@@ -8,31 +9,16 @@ const roleLabels = {
     [Role.Student]: "Student"
 };
 
-const UserProfile = () => {
+const UserProfilePage = () => {
     const {user} = useAuth();
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-base-200 to-base-300">
-            <div className="container mx-auto p-4 sm:p-6 lg:p-8">
+        <section className="min-h-screen bg-gradient-to-br from-primary/5 to-secondary/5 py-12 px-4">
+            <div className="max-w-7xl mx-auto space-y-10">
+                <UserProfilePageHeader/>
+
                 <div className="max-w-4xl mx-auto">
                     <div className="card bg-base-100 shadow-xl overflow-hidden">
-                        <div className="bg-gradient-to-r from-primary/10 to-secondary/10 p-6">
-                            <div className="flex items-center gap-4">
-                                <div
-                                    className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-primary-content">
-                                    <FiUser className="w-8 h-8"/>
-                                </div>
-                                <div>
-                                    <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                                        User Profile
-                                    </h1>
-                                    <p className="text-base-content/70">
-                                        Manage your account information
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
                         <div className="card-body p-6">
                             <div className="space-y-6">
                                 <div className="profile-field">
@@ -81,8 +67,8 @@ const UserProfile = () => {
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
     );
 };
 
-export default UserProfile;
+export default UserProfilePage;

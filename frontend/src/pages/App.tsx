@@ -12,7 +12,7 @@ import {Role} from "@dti-isin/backend-api-client";
 import {CoursesDashboard} from "./teacher/CoursesDashboard.tsx";
 import PublicHome from "./no-logged/PublicHome.tsx";
 import {AdminProvider} from "../provider/AdminProvider.tsx";
-import UserProfile from "../components/user/UserProfile.tsx";
+import UserProfilePage from "./user-profile/UserProfilePage.tsx";
 import {QuizPublicationPage} from "./QuizPublicationPage.tsx";
 import {QuizRetrieveProvider} from '../provider/QuizRetrieveProvider.tsx';
 import {QuizPublicationProviders} from "../provider/quizPublication/QuizPublicationProviders.tsx";
@@ -24,8 +24,8 @@ import {QuestionBankProviders} from "../provider/questionBank/QuestionBankProvid
 import {QuestionBankDashboard} from "./teacher/QuestionBankDashboard.tsx";
 import QuestionBankDetails from "../components/questionBank/QuestionBankDetails.tsx";
 import {QuizAttemptProviders} from "../provider/quizAttempt/QuizAttemptProviders.tsx";
-import QuizResultsPage from "./QuizResultsPage.tsx";
-import QuizScreenPage from "./QuizScreenPage.tsx";
+import QuizResultsPage from "./quiz-results/QuizResultsPage.tsx";
+import QuizScreenPage from "./quiz-execution/QuizScreenPage.tsx";
 import PublicationStatsPage from "./PublicationStatsPage.tsx";
 import QuizReviewPage from "./QuizReviewPage.tsx";
 import BadgesPage from "./BadgesPage.tsx";
@@ -124,7 +124,7 @@ const App = () => {
                                     path="/profile"
                                     element={
                                         <ProtectedRoute allowedRoles={[Role.Admin, Role.Student, Role.Teacher]}>
-                                            <UserProfile/>
+                                            <UserProfilePage/>
                                         </ProtectedRoute>
                                     }
                                 />

@@ -6,8 +6,8 @@ import {
     QuestionType,
     TrueFalseQuestionResponseDTO
 } from '@dti-isin/backend-api-client';
-import ConfirmModal from './ConfirmModal';
 import {motion} from 'framer-motion';
+import {ConfirmQuizPopup} from "../../pages/quiz-execution/ConfirmQuizPopup.tsx";
 
 interface QuizNavigationProps {
     questions: QuestionDTO[];
@@ -15,6 +15,7 @@ interface QuizNavigationProps {
     onQuestionChange: (index: number) => void;
     onCompleteQuiz: () => void;
     userResponses: QuestionResponseDTO[];
+    showSubmitButton: boolean;
 }
 
 export const QuizNavigation: React.FC<QuizNavigationProps> = ({
@@ -22,7 +23,8 @@ export const QuizNavigation: React.FC<QuizNavigationProps> = ({
                                                                   currentQuestionIndex,
                                                                   onQuestionChange,
                                                                   onCompleteQuiz,
-                                                                  userResponses
+                                                                  userResponses,
+                                                                  showSubmitButton
                                                               }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -93,36 +95,24 @@ export const QuizNavigation: React.FC<QuizNavigationProps> = ({
                     </p>
                 </div>
 
-                <button
-                    onClick={() => setIsModalOpen(true)}
-                    className="btn btn-primary w-full mt-4"
-                >
-                    Submit Quiz
-                </button>
+                {showSubmitButton && (
+                    <button
+                        onClick={() => setIsModalOpen(true)}
+                        className="btn btn-primary w-full mt-4"
+                    >
+                        Submit Quiz
+                    </button>
+                )}
             </motion.div>
 
-            <ConfirmModal
+            <ConfirmQuizPopup
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 onConfirm={handleConfirmComplete}
-                title="Submit Quiz Confirmation"
-            >
-                {questions.filter((_, i) => !isQuestionAnswered(i)).length > 0 ? (
-                    <div>
-                        <p className="text-error font-bold mb-2">
-                            There are still unanswered questions!
-                        </p>
-                        <ul className="list-disc list-inside text-error mb-2">
-                            {questions.map((q, i) => !isQuestionAnswered(i) && (
-                                <li key={q.id}>Question {i + 1}</li>
-                            ))}
-                        </ul>
-                        <p>Are you sure you want to submit your answers?</p>
-                    </div>
-                ) : (
-                    <p>Are you sure you want to submit your answers?</p>
-                )}
-            </ConfirmModal>
+                unansweredQuestions={questions
+                    .map((_, i) => (!isQuestionAnswered(i) ? i + 1 : null))
+                    .filter((v): v is number => v !== null)}
+            />
         </>
     );
 };

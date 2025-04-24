@@ -12,23 +12,27 @@ export const QuizScoreStats: React.FC<QuizScoreStatsProps> = ({
                                                                   totalQuestions
                                                               }) => {
     const percentage = (earnedPoints / (totalPoints || 1)) * 100;
+    const avgPerQuestion = totalQuestions > 0 ? (totalPoints / totalQuestions).toFixed(1) : '-';
 
     return (
-        <div className="stats shadow-lg w-full flex justify-center">
-            <div className="stat w-1/2 text-center">
-                <div className="stat-title">Score</div>
-                <div className="stat-value text-primary">
-                    {earnedPoints} / {totalPoints} points
+        <div className="flex flex-col md:flex-row gap-4 items-stretch justify-center w-full">
+            <div className="flex-1 bg-base-100 shadow-md rounded-xl p-4 text-center">
+                <div className="text-sm sm:text-base font-medium text-base-content/70">Score</div>
+                <div className="text-2xl sm:text-3xl font-bold text-primary mt-1">
+                    {earnedPoints} / {totalPoints}
                 </div>
-                <div className="stat-desc">
+                <div className="text-xs sm:text-sm text-base-content/60 mt-1">
                     {Math.round(percentage)}% success rate
                 </div>
             </div>
-            <div className="stat w-1/2 text-center">
-                <div className="stat-title">Questions</div>
-                <div className="stat-value">{totalQuestions}</div>
-                <div className="stat-desc">
-                    Average {(totalPoints / totalQuestions).toFixed(1)} points per question
+
+            <div className="flex-1 bg-base-100 shadow-md rounded-xl p-4 text-center">
+                <div className="text-sm sm:text-base font-medium text-base-content/70">Questions</div>
+                <div className="text-2xl sm:text-3xl font-bold text-primary mt-1">
+                    {totalQuestions}
+                </div>
+                <div className="text-xs sm:text-sm text-base-content/60 mt-1">
+                    Avg {avgPerQuestion} pts per question
                 </div>
             </div>
         </div>
