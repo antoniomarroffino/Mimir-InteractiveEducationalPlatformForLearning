@@ -6,7 +6,7 @@ import {BsRocket, BsTrophy} from 'react-icons/bs';
 interface AuthenticatedAccessCardProps {
     onStart: () => void;
     loading: boolean;
-    timeLimit: string;
+    timeLimit?: string;
 }
 
 export const AuthenticatedAccessCard: React.FC<AuthenticatedAccessCardProps> = ({
@@ -60,7 +60,9 @@ export const AuthenticatedAccessCard: React.FC<AuthenticatedAccessCardProps> = (
 
                     <div className="flex items-center justify-center gap-3 p-4 rounded-xl bg-primary/10 mb-8">
                         <ClockIcon className="w-5 h-5 text-primary"/>
-                        <span className="text-primary font-medium">{timeLimit}</span>
+                        <span className="text-primary font-medium">
+                            {timeLimit || "No time limit"}
+                        </span>
                     </div>
 
                     <motion.button

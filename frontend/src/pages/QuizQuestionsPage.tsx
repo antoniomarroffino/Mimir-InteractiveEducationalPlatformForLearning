@@ -4,7 +4,7 @@ import {QuestionResponseDTO, QuizAttemptDTO, QuizDTO, QuizPublicationDTO} from "
 import {useQuizAttemptLocal} from "../hooks/quizAttempt/useQuizAttemptLocal";
 import {useQuizAttemptAutosave} from "../hooks/quizAttempt/useQuizAttemptAutosave";
 import {QuizExecutionHeader} from "../components/quiz/QuizExecutionHeader";
-import {AnimatePresence} from "framer-motion";
+import {AnimatePresence, motion} from "framer-motion";
 import {QuestionNavigationArrows} from "../components/quiz/QuestionNavigationArrows";
 import {CurrentQuestionCard} from "../components/quiz/CurrentQuestionCard";
 import {SidebarQuizExecution} from "../components/quiz/SidebarQuizExecution";
@@ -100,43 +100,58 @@ const QuizQuestionsPage: React.FC = () => {
     }
 
     return (
-        <div className="min-h-[calc(100vh-4rem)] flex flex-col bg-gradient-to-br from-primary/10 to-secondary/10">
-            <QuizExecutionHeader title={quiz.name} description={quiz.description}/>
+        <motion.section
+            initial={{opacity: 0}}
+            animate={{opacity: 1}}
+            className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100"
+        >
+            <div className="max-w-7xl mx-auto px-4 py-8 sm:py-12">
+                <QuizExecutionHeader
+                    quiz={quiz}
+                    publication={publication}
+                />
 
-            <div className="flex-1 flex flex-col-reverse md:flex-row overflow-hidden py-6 container mx-auto px-4 gap-6">
-                <div className="flex-1 flex flex-col justify-start">
-                    <QuestionNavigationArrows
-                        currentIndex={currentQuestionIndex}
-                        totalQuestions={publication.questions!.length}
-                        onPrevious={() => setCurrentQuestionIndex(i => Math.max(0, i - 1))}
-                        onNext={() => setCurrentQuestionIndex(i => Math.min(publication.questions!.length - 1, i + 1))}
-                    />
+                <div className="mt-8">
+                    <div className="flex flex-col-reverse md:flex-row gap-6">
+                        <div className="flex-1">
+                            <div className="space-y-6">
+                                <QuestionNavigationArrows
+                                    currentIndex={currentQuestionIndex}
+                                    totalQuestions={publication.questions!.length}
+                                    onPrevious={() => setCurrentQuestionIndex(i => Math.max(0, i - 1))}
+                                    onNext={() => setCurrentQuestionIndex(i => Math.min(publication.questions!.length - 1, i + 1))}
+                                />
 
-                    <div className="mt-6 flex justify-center">
-                        <AnimatePresence mode="wait">
-                            <CurrentQuestionCard
-                                question={currentQuestion}
-                                answer={currentResponse}
-                                onAnswer={handleAnswer}
+                                <div className="flex justify-center">
+                                    <AnimatePresence mode="wait">
+                                        <CurrentQuestionCard
+                                            question={currentQuestion}
+                                            answer={currentResponse}
+                                            onAnswer={handleAnswer}
+                                        />
+                                    </AnimatePresence>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="w-full md:w-80 lg:w-96">
+                            <SidebarQuizExecution
+                                quizTimeLimit={quiz.timeLimitMinutes}
+                                questions={publication.questions!}
+                                currentQuestionIndex={currentQuestionIndex}
+                                onQuestionChange={setCurrentQuestionIndex}
+                                onCompleteQuiz={handleCompleteQuiz}
+                                userResponses={userResponses}
+                                updateQuizAttemptResponses={updateQuizAttemptResponses}
+                                completeQuizAttempt={completeQuizAttempt}
+                                publication={publication}
+                                navigate={navigate}
+                                onExpire={onExpire}
+                                onMinuteLeft={onMinuteLeft}
                             />
-                        </AnimatePresence>
+                        </div>
                     </div>
                 </div>
-
-                <SidebarQuizExecution
-                    quizTimeLimit={quiz.timeLimitMinutes}
-                    questions={publication.questions!}
-                    currentQuestionIndex={currentQuestionIndex}
-                    onQuestionChange={setCurrentQuestionIndex}
-                    onCompleteQuiz={handleCompleteQuiz}
-                    userResponses={userResponses}
-                    updateQuizAttemptResponses={updateQuizAttemptResponses}
-                    completeQuizAttempt={completeQuizAttempt}
-                    publication={publication}
-                    navigate={navigate}
-                    onExpire={onExpire}
-                    onMinuteLeft={onMinuteLeft}
-                />
             </div>
 
             {completedAttempt && (
@@ -151,8 +166,7 @@ const QuizQuestionsPage: React.FC = () => {
                     }}
                 />
             )}
-        </div>
-
+        </motion.section>
     );
 };
 
