@@ -2,7 +2,8 @@ import React, {useEffect, useState} from "react";
 import {Role, UserWithoutCoursesDTO} from "@dti-isin/backend-api-client";
 import {useAdmin} from "../../hooks/useAdmin.ts";
 import {FiAlertTriangle, FiArrowUp, FiMail, FiUserPlus, FiUsers} from "react-icons/fi";
-import {BsShieldCheck} from "react-icons/bs";
+import {motion} from "framer-motion";
+import {AdminDashboardHeader} from "./AdminDashboardHeader.tsx";
 
 const AdminDashboard = () => {
     const {promoteUser, teachers, isLoadingTeachers, errorTeachers, isLoading, error: errorPromoteUser} = useAdmin();
@@ -30,7 +31,7 @@ const AdminDashboard = () => {
         }
 
         try {
-            await promoteUser(email, role);
+            promoteUser(email, role);
             setEmail("");
             setSelectedTeacher(null);
         } catch (err) {
@@ -53,18 +54,20 @@ const AdminDashboard = () => {
     };
 
     return (
-        <div className="min-h-screen bg-base-100 p-8">
-            <div className="max-w-7xl mx-auto space-y-8">
-                <div className="text-center space-y-2">
-                    <h1 className="text-4xl font-bold text-primary flex items-center justify-center gap-2">
-                        <BsShieldCheck className="inline-block"/>
-                        Admin Dashboard
-                    </h1>
-                    <p className="text-base-content/70">User role management and registered teachers</p>
-                </div>
+        <motion.section
+            initial={{opacity: 0}}
+            animate={{opacity: 1}}
+            className="min-h-screen bg-gradient-to-br from-primary/5 to-secondary/5 py-12 px-4"
+        >
+            <div className="max-w-7xl mx-auto space-y-10">
+                <AdminDashboardHeader onToggleInfo={() => {}} />
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <div className="card bg-base-100 shadow-xl">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <motion.div
+                        initial={{opacity: 0, y: 10}}
+                        animate={{opacity: 1, y: 0}}
+                        className="card bg-base-100 shadow-xl"
+                    >
                         <div className="card-body">
                             <h2 className="card-title text-2xl mb-6 border-b pb-4 border-base-200">
                                 <FiArrowUp className="text-primary"/>
@@ -139,9 +142,13 @@ const AdminDashboard = () => {
                                 </div>
                             </form>
                         </div>
-                    </div>
+                    </motion.div>
 
-                    <div className="card bg-base-100 shadow-xl">
+                    <motion.div
+                        initial={{opacity: 0, y: 10}}
+                        animate={{opacity: 1, y: 0}}
+                        className="card bg-base-100 shadow-xl"
+                    >
                         <div className="card-body h-full">
                             <h2 className="card-title text-2xl mb-6 border-b pb-4 border-base-200">
                                 <FiUsers className="text-primary"/>
@@ -176,7 +183,7 @@ const AdminDashboard = () => {
                                                     <div className="avatar placeholder">
                                                         <div
                                                             className="bg-neutral text-neutral-content rounded-full w-12">
-                                                            <span>{teacher.name?.[0]?.toUpperCase() || teacher.email?.toUpperCase()}</span>
+                                                            <span>{teacher.name?.[0]?.toUpperCase() || teacher.email?.[0]?.toUpperCase()}</span>
                                                         </div>
                                                     </div>
                                                     <div>
@@ -194,10 +201,10 @@ const AdminDashboard = () => {
                                 </div>
                             )}
                         </div>
-                    </div>
+                    </motion.div>
                 </div>
             </div>
-        </div>
+        </motion.section>
     );
 };
 

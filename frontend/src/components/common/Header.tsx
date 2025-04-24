@@ -1,5 +1,15 @@
 import {Link, useLocation} from 'react-router-dom';
-import {FiAward, FiBook, FiClipboard, FiDatabase, FiHome, FiLayout, FiMenu, FiUser, FiX} from 'react-icons/fi';
+import {
+    FiAward,
+    FiBook,
+    FiClipboard,
+    FiDatabase,
+    FiHome,
+    FiMenu,
+    FiShield,
+    FiUser,
+    FiX
+} from 'react-icons/fi';
 import {AnimatePresence, motion} from 'framer-motion';
 import LogoutButton from "../../auth/LogoutButton";
 import {useEffect, useState} from "react";
@@ -21,7 +31,7 @@ const Header = () => {
 
     const navigationLinks = [
         {name: 'Home', path: '/', icon: <FiHome className="text-xl"/>, roles: [Role.Admin, Role.Teacher, Role.Student]},
-        {name: 'Admin', path: '/admin', icon: <FiLayout className="text-xl"/>, roles: [Role.Admin]},
+        {name: 'Admin', path: '/admin', icon: <FiShield className="text-xl"/>, roles: [Role.Admin]},
         {name: 'Courses', path: '/courses', icon: <FiBook className="text-xl"/>, roles: [Role.Teacher]},
         {
             name: 'Question Bank',
