@@ -9,6 +9,7 @@ import {useCountdownTimer} from "../../hooks/quizAttempt/useCountdownTimer.ts";
 
 interface SidebarQuizExecutionProps {
     quizTimeLimit?: number | null;
+    timeUsed: number;
     questions: QuestionDTO[];
     currentQuestionIndex: number;
     onQuestionChange: (index: number) => void;
@@ -24,6 +25,7 @@ interface SidebarQuizExecutionProps {
 
 export const SidebarQuizExecution: React.FC<SidebarQuizExecutionProps> = ({
                                                                               quizTimeLimit,
+                                                                              timeUsed,
                                                                               questions,
                                                                               currentQuestionIndex,
                                                                               onQuestionChange,
@@ -45,7 +47,7 @@ export const SidebarQuizExecution: React.FC<SidebarQuizExecutionProps> = ({
     }, []);
 
     const timeRemaining = useCountdownTimer({
-        durationSeconds: quizTimeLimit ? quizTimeLimit * 60 : undefined,
+        durationSeconds: quizTimeLimit ? (quizTimeLimit * 60) - timeUsed : undefined,
 
         onMinuteLeft: () => {
             setShowPopup(true);

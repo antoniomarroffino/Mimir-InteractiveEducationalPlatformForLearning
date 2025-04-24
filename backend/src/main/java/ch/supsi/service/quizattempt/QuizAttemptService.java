@@ -18,7 +18,9 @@ import jakarta.ws.rs.InternalServerErrorException;
 import jakarta.ws.rs.NotFoundException;
 import org.bson.types.ObjectId;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -108,9 +110,8 @@ public class QuizAttemptService implements IQuizAttemptService {
 
         attempt.responses = this.quizAttemptMapperFacade.toEntity(dto).responses;
         attempt.status = AttemptStatus.IN_PROGRESS;
-        attempt.completedAt = LocalDateTime.now();
-
-        System.out.println("Save quiz attempt\n\n");
+        long deltaSec = ChronoUnit.SECONDS.between(attempt.startedAt, LocalDateTime.now()) - attempt.timeUsed;
+        attempt.timeUsed += deltaSec;
 
         this.quizAttemptRepository.update(attempt);
         return this.quizAttemptMapperFacade.toDTO(attempt);

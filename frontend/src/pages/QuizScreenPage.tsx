@@ -131,6 +131,7 @@ const QuizScreenPage: React.FC = () => {
                     <ResumedAttemptCard
                         timeLimit={finalQuiz.timeLimitMinutes}
                         startTime={recoveredAttempt.startedAt!}
+                        timeUsed={recoveredAttempt.timeUsed}
                         onResume={handleResumeQuiz}
                     />
                 ) : (

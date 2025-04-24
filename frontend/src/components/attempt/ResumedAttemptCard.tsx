@@ -2,30 +2,21 @@ import React from 'react';
 import {motion} from 'framer-motion';
 import {ClockIcon} from '@heroicons/react/24/outline';
 import {format} from 'date-fns';
+import {formatMinutesDuration, formatQuestionTime} from "../../utils/timeUtils.ts";
 
 interface ResumedAttemptCardProps {
     timeLimit?: number;
     startTime: string;
+    timeUsed?: number;
     onResume: () => void;
 }
 
 export const ResumedAttemptCard: React.FC<ResumedAttemptCardProps> = ({
                                                                           timeLimit,
                                                                           startTime,
+                                                                          timeUsed,
                                                                           onResume
                                                                       }) => {
-    const calculateRemainingTime = () => {
-        const startDate = new Date(startTime);
-        const elapsed = Date.now() - startDate.getTime();
-        const totalTime = timeLimit! * 60 * 1000;
-        const remaining = totalTime - elapsed;
-
-        const minutes = Math.floor(remaining / 60000);
-        const seconds = Math.floor((remaining % 60000) / 1000);
-
-        return `${minutes}m ${seconds}s`;
-    };
-
     return (
         <motion.div
             initial={{opacity: 0, y: 20}}
@@ -41,13 +32,13 @@ export const ResumedAttemptCard: React.FC<ResumedAttemptCardProps> = ({
                 <div className="space-y-2 mb-6">
                     <p className="text-base-content/80">
                         You have an ongoing attempt started at{' '}
-                        <span className="font-semibold">
-                            {format(new Date(startTime), "dd MMM yyyy HH:mm")}
-                        </span>
                     </p>
+                    <span className="font-semibold">
+                        {format(new Date(startTime), "dd MMM yyyy HH:mm")}
+                    </span>
                     {timeLimit && (
                         <p className="text-primary font-semibold">
-                            Remaining time: {calculateRemainingTime()}
+                            Time used {formatQuestionTime(timeUsed? timeUsed : 0)} of total {formatMinutesDuration(timeLimit)}
                         </p>
                     )}
                 </div>
