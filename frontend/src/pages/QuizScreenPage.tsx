@@ -11,6 +11,8 @@ import {AnonymousAccessCard} from '../components/quiz/AnonymousAccessCard.tsx';
 import {LoginRequiredAccessCard} from '../components/quiz/LoginRequiredAccessCard.tsx';
 import {AuthenticatedAccessCard} from '../components/quiz/AuthenticatedAccessCard.tsx';
 import {LoadingAccessCard} from '../components/quiz/LoadingAccessCard.tsx';
+import {useRecoverQuizAttempt} from "../hooks/quizAttempt/useRecoverQuizAttempt.ts";
+import {ResumedAttemptCard} from "../components/attempt/ResumedAttemptCard.tsx";
 
 const QuizScreenPage: React.FC = () => {
     const location = useLocation();
@@ -51,6 +53,11 @@ const QuizScreenPage: React.FC = () => {
     const [isStarting, setIsStarting] = useState(false);
     const [initialLoading, setInitialLoading] = useState(true);
 
+    const { data: recoveredAttempt, isLoading: isLoadingRecovery} = useRecoverQuizAttempt(
+        user?.azureOid || '',
+        finalPublication?.id || ''
+    );
+
     useEffect(() => {
         const timeout = setTimeout(() => {
             setInitialLoading(false);
@@ -73,6 +80,18 @@ const QuizScreenPage: React.FC = () => {
         }
     }, [finalPublication, finalQuiz, startQuizAttempt, navigate, accessCode]);
 
+    const handleResumeQuiz = useCallback(async () => {
+        if (!recoveredAttempt || !finalPublication || !finalQuiz) return;
+
+        navigate(`/quiz/${accessCode}/questions`, {
+            state: {
+                publication: finalPublication,
+                quiz: finalQuiz,
+                attempt: recoveredAttempt
+            }
+        });
+    }, [recoveredAttempt, finalPublication, finalQuiz, accessCode, navigate]);
+
     if (errorPublication || errorQuiz) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-base-200">
@@ -86,7 +105,7 @@ const QuizScreenPage: React.FC = () => {
         );
     }
 
-    if (!finalPublication || !finalQuiz || isLoadingPublication || isLoadingQuiz || initialLoading) {
+    if (!finalPublication || !finalQuiz || isLoadingPublication || isLoadingQuiz || initialLoading || isLoadingRecovery) {
         return (
             <div className="min-h-screen bg-base-200 flex justify-center items-center">
                 <LoadingAccessCard/>
@@ -108,6 +127,12 @@ const QuizScreenPage: React.FC = () => {
                     />
                 ) : !user ? (
                     <LoginRequiredAccessCard onLogin={login}/>
+                ) : user && !finalPublication?.anonymous && recoveredAttempt ? (
+                    <ResumedAttemptCard
+                        timeLimit={finalQuiz.timeLimitMinutes}
+                        startTime={recoveredAttempt.startedAt!}
+                        onResume={handleResumeQuiz}
+                    />
                 ) : (
                     <AuthenticatedAccessCard
                         timeLimit={timeLimit!}

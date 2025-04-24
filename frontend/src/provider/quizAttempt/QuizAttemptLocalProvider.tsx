@@ -151,6 +151,18 @@ export const QuizAttemptLocalProvider: React.FC<{ children: React.ReactNode }> =
         setCurrentAttempt(null);
     }, []);
 
+    const resumeAttempt = useCallback((attempt: QuizAttemptDTO, publication: QuizPublicationDTO) => {
+        const normalizedAttempt = {
+            ...attempt,
+            startedAt: new Date(attempt.startedAt!).toISOString(),
+            completedAt: attempt.completedAt ? new Date(attempt.completedAt).toISOString() : undefined,
+            quizPublication: publication
+        };
+
+        setCurrentAttempt(normalizedAttempt);
+        updateQuizAttemptResponses(normalizedAttempt.responses || []);
+    }, [updateQuizAttemptResponses])
+
     const value = useMemo(() => ({
         currentAttempt,
         startQuizAttempt,
@@ -158,7 +170,8 @@ export const QuizAttemptLocalProvider: React.FC<{ children: React.ReactNode }> =
         completeQuizAttempt,
         resetQuizAttempt,
         prepareQuizResponses,
-        clearQuizAttempt
+        clearQuizAttempt,
+        resumeAttempt
     }), [
         currentAttempt,
         startQuizAttempt,
@@ -166,7 +179,8 @@ export const QuizAttemptLocalProvider: React.FC<{ children: React.ReactNode }> =
         completeQuizAttempt,
         resetQuizAttempt,
         prepareQuizResponses,
-        clearQuizAttempt
+        clearQuizAttempt,
+        resumeAttempt
     ]);
 
     return (

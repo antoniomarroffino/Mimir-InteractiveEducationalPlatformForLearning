@@ -36,8 +36,9 @@ export const QuizAttemptCRUDProvider: React.FC<{ children: React.ReactNode }> = 
                 quizAttemptDTO
             }).then(res => res.data),
         {
-            onSuccess: () => {
+            onSuccess: (attempt) => {
                 queryClient.invalidateQueries(['quizAttempts']);
+                queryClient.invalidateQueries(['quizAttemptRecovered', attempt.user?.azureOid, attempt.quizPublicationId])
             }
         }
     );

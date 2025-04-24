@@ -9,7 +9,7 @@ export type QuizAttemptLocalContextType = {
     resetQuizAttempt: () => void;
     prepareQuizResponses: (publication: QuizPublicationDTO) => QuestionResponseDTO[];
     clearQuizAttempt: () => void;
-
+    resumeAttempt: (attempt: QuizAttemptDTO, publication: QuizPublicationDTO) => void;
 };
 
 export const QuizAttemptLocalContext = createContext<QuizAttemptLocalContextType | undefined>(undefined);

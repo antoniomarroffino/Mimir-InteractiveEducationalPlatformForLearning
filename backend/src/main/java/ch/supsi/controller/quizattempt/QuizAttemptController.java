@@ -190,6 +190,26 @@ public class QuizAttemptController {
         return Response.ok(updatedDTO).build();
     }
 
+    @GET
+    @Path("/recover")
+    @Operation(summary = "Try to recover an existing quiz attempt (in progress)")
+    @APIResponse(responseCode = "200", description = "Recover Quiz attempt successfully", content = @Content(
+            mediaType = MediaType.APPLICATION_JSON,
+            schema = @Schema(implementation = QuizAttemptDTO.class)
+    ))
+    @APIResponse(responseCode = "404", description = "There is not any Quiz Attempt in progress")
+    public Response recoverQuizAttempt(
+            @QueryParam("userAzureOID") String userAzureOID,
+            @QueryParam("quizPublicationId") String quizPublicationId
+    ) {
+        QuizAttemptDTO quizAttemptDTO = this.quizAttemptService.recoverQuizAttemptByPublicationIdAndUserAzureOID(
+                userAzureOID,
+                new ObjectId(quizPublicationId)
+        );
+        quizAttemptDTO.setUser(this.buildUserWithoutCoursesDTOFromQuizAttemptDTO(quizAttemptDTO));
+        return Response.ok(quizAttemptDTO).build();
+    }
+
     @POST
     @Path("/{attemptId}/submit")
     @Operation(summary = "Submit and complete a quiz attempt")

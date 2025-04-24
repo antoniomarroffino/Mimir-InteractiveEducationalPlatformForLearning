@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {QuestionResponseDTO, QuizAttemptDTO, QuizDTO, QuizPublicationDTO} from "@dti-isin/backend-api-client";
 import {useQuizAttemptLocal} from "../hooks/quizAttempt/useQuizAttemptLocal";
@@ -23,6 +23,7 @@ const QuizQuestionsPage: React.FC = () => {
     const state = location.state as {
         publication?: QuizPublicationDTO;
         quiz?: QuizDTO;
+        attempt?: QuizAttemptDTO;
     };
 
     const publication = state?.publication;
@@ -32,7 +33,8 @@ const QuizQuestionsPage: React.FC = () => {
         currentAttempt,
         updateQuizAttemptResponses,
         completeQuizAttempt,
-        clearQuizAttempt
+        clearQuizAttempt,
+        resumeAttempt
     } = useQuizAttemptLocal();
 
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -40,7 +42,15 @@ const QuizQuestionsPage: React.FC = () => {
         currentAttempt?.responses || new Array(publication?.questions?.length || 0).fill(null)
     );
 
-    useQuizAttemptAutosave(15000);
+    useEffect(() => {
+        if (state.attempt && state.publication) {
+            resumeAttempt(state.attempt, state.publication);
+            setUserResponses(state.attempt.responses || []);
+            updateQuizAttemptResponses(state.attempt.responses || []);
+        }
+    }, [resumeAttempt, state.attempt, state.publication, updateQuizAttemptResponses]);
+
+    useQuizAttemptAutosave(10000);
     useTrackTimeSpent(currentQuestionIndex, setUserResponses);
 
     const onMinuteLeft = useCallback(() => {
@@ -81,10 +91,10 @@ const QuizQuestionsPage: React.FC = () => {
                 answer,
                 userResponses[currentQuestionIndex]?.timeSpent || 0
             );
-
             setUserResponses(updated);
+            updateQuizAttemptResponses(updated);
         },
-        [currentQuestion, currentQuestionIndex, userResponses]
+        [currentQuestion, currentQuestionIndex, updateQuizAttemptResponses, userResponses]
     );
 
     const handleCompleteQuiz = useCallback(async () => {
