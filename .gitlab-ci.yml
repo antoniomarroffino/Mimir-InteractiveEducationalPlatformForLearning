@@ -116,32 +116,32 @@ deploy_atomic:
     - docker build -t ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/backend:$CI_COMMIT_SHORT_SHA .
     - docker push ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/backend:$CI_COMMIT_SHORT_SHA
 
-    - REV_BACKEND=$(gcloud run deploy backend-service --image ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/backend:$CI_COMMIT_SHORT_SHA --no-traffic --platform managed --allow-unauthenticated --format 'value(status.latestCreatedRevisionName)')
+    - REV_BACKEND=$(gcloud run deploy backend-service --image ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/backend:$CI_COMMIT_SHORT_SHA --no-traffic --platform managed --set-env-vars MONGO_URI=$MONGO_URI,AZURE_TENANT_ID=$AZURE_TENANT_ID,AZURE_CLIENT_ID=$AZURE_CLIENT_ID,AZURE_SECRET=$AZURE_SECRET,AZURE_DOMAIN_NAME=$AZURE_DOMAIN_NAME,CORS_ORIGINS=$FRONTEND_URL --format 'value(status.latestCreatedRevisionName)')
     - echo "Nuova revisione backend"
 
-    #- |
-    #  max_retries=10; retries=0
-    #  until curl -f -s "$BACKEND_URL/api/q/health/ready"; do
-    #    if [ $retries -eq $max_retries ]; then
-    #      echo "Health check backend fallito"; exit 1;
-    #    fi;
-    #    echo "Riprovo... ($((++retries))"; sleep 5;
-    #  done
+    - |
+      max_retries=10; retries=0
+      until curl -f -s "$BACKEND_URL/api/q/health/ready"; do
+        if [ $retries -eq $max_retries ]; then
+          echo "Health check backend fallito"; exit 1;
+        fi;
+        echo "Riprovo... ($((++retries))"; sleep 5;
+      done
 
     - cd ../frontend
-    - docker build --build-arg CI_JOB_TOKEN=${CI_JOB_TOKEN} -t ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/frontend:$CI_COMMIT_SHORT_SHA .
+    - docker build --build-arg CI_JOB_TOKEN=${CI_JOB_TOKEN} --build-arg VITE_AZURE_CLIENT_ID=${AZURE_CLIENT_ID} --build-arg VITE_AZURE_TENANT_ID=${AZURE_TENANT_ID} --build-arg VITE_REDIRECT_URI=${FRONTEND_URL} --build-arg VITE_LOGOUT_REDIRECT_URI=${FRONTEND_URL} --build-arg VITE_BACKEND_CLIENT_ID=${AZURE_BACKEND_CLIENT_ID} --build-arg VITE_BACKEND_URL=${BACKEND_URL} -t ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/frontend:$CI_COMMIT_SHORT_SHA .
     - docker push ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/frontend:$CI_COMMIT_SHORT_SHA
     - REV_FRONTEND=$(gcloud run deploy frontend-service --image ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/frontend:$CI_COMMIT_SHORT_SHA --no-traffic --platform managed --allow-unauthenticated --format 'value(status.latestCreatedRevisionName)')
     - echo "Nuova revisione frontend"
 
-    #- |
-    #  max_retries=10; retries=0
-    #  until curl -f -s "$FRONTEND_URL"; do
-    #    if [ $retries -eq $max_retries ]; then
-    #      echo "Health check frontend fallito"; exit 1;
-    #    fi;
-    #    echo "Riprovo... ($((++retries))"; sleep 5;
-    #  done
+    - |
+      max_retries=10; retries=0
+      until curl -f -s "$FRONTEND_URL"; do
+        if [ $retries -eq $max_retries ]; then
+          echo "Health check frontend fallito"; exit 1;
+        fi;
+        echo "Riprovo... ($((++retries))"; sleep 5;
+      done
 
     - gcloud run services update-traffic backend-service --to-revisions $REV_BACKEND=100 --platform managed
     - gcloud run services update-traffic frontend-service --to-revisions $REV_FRONTEND=100 --platform managed

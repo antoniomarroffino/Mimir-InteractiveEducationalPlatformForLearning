@@ -50,7 +50,7 @@ export const QuizPublicationPage: React.FC = () => {
         );
     }
 
-    const baseUrl = (import.meta.env.VITE_REDIRECT_URI || "https://frontend-service-1031980811194.europe-west12.run.app").replace(/\/+$/, '');
+    const baseUrl = (import.meta.env.VITE_REDIRECT_URI).replace(/\/+$/, '');
     const fullUrl = `${baseUrl}/quiz/${publication.publicationCode}`;
 
     return (
