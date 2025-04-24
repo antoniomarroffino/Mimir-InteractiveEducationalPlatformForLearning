@@ -12,7 +12,7 @@ import {Role} from "@dti-isin/backend-api-client";
 import {CoursesDashboard} from "./teacher/CoursesDashboard.tsx";
 import PublicHome from "./no-logged/PublicHome.tsx";
 import {AdminProvider} from "../provider/AdminProvider.tsx";
-import UserProfile from "../components/user/UserProfile.tsx";
+import UserProfilePage from "./user-profile/UserProfilePage.tsx";
 import {QuizPublicationPage} from "./QuizPublicationPage.tsx";
 import {QuizRetrieveProvider} from '../provider/QuizRetrieveProvider.tsx';
 import {QuizPublicationProviders} from "../provider/quizPublication/QuizPublicationProviders.tsx";
@@ -124,7 +124,7 @@ const App = () => {
                                     path="/profile"
                                     element={
                                         <ProtectedRoute allowedRoles={[Role.Admin, Role.Student, Role.Teacher]}>
-                                            <UserProfile/>
+                                            <UserProfilePage/>
                                         </ProtectedRoute>
                                     }
                                 />
