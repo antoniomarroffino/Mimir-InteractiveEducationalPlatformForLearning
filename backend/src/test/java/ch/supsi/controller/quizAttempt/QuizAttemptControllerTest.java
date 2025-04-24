@@ -361,18 +361,18 @@ public class QuizAttemptControllerTest {
         updatedDTO.setUser(inputDTO.getUser());
         updatedDTO.setBadges(Collections.emptyList());
 
-        when(quizAttemptService.updateQuizAttempt(any(ObjectId.class), eq(inputDTO))).thenReturn(updatedDTO);
-        when(microsoftGraphService.getUserByOid(anyString())).thenReturn(new User());
-        when(userService.buildUserWithoutCoursesDTO(any(User.class))).thenReturn(new UserWithoutCoursesDTO());
+        when(this.quizAttemptService.updateQuizAttempt(any(ObjectId.class), eq(inputDTO))).thenReturn(updatedDTO);
+        when(this.microsoftGraphService.getUserByOid(anyString())).thenReturn(new User());
+        when(this.userService.buildUserWithoutCoursesDTO(any(User.class))).thenReturn(new UserWithoutCoursesDTO());
 
-        Response response = quizAttemptController.updateQuizAttempt(VALID_ATTEMPT_ID, inputDTO);
+        Response response = this.quizAttemptController.updateQuizAttempt(VALID_ATTEMPT_ID, inputDTO);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         assertEquals(updatedDTO, response.getEntity());
 
-        verify(quizAttemptService, times(1)).updateQuizAttempt(any(ObjectId.class), eq(inputDTO));
-        verify(microsoftGraphService, times(1)).getUserByOid(anyString());
-        verify(userService, times(1)).buildUserWithoutCoursesDTO(any(User.class));
+        verify(this.quizAttemptService, times(1)).updateQuizAttempt(any(ObjectId.class), eq(inputDTO));
+        verify(this.microsoftGraphService, times(1)).getUserByOid(anyString());
+        verify(this.userService, times(1)).buildUserWithoutCoursesDTO(any(User.class));
     }
 
     @Test
@@ -389,19 +389,64 @@ public class QuizAttemptControllerTest {
         submittedDTO.setUser(inputDTO.getUser());
         submittedDTO.setBadges(Collections.emptyList());
 
-        when(quizAttemptService.submitQuizAttempt(any(ObjectId.class), eq(inputDTO))).thenReturn(submittedDTO);
-        when(microsoftGraphService.getUserByOid(anyString())).thenReturn(new User());
-        when(userService.buildUserWithoutCoursesDTO(any(User.class))).thenReturn(new UserWithoutCoursesDTO());
+        when(this.quizAttemptService.submitQuizAttempt(any(ObjectId.class), eq(inputDTO))).thenReturn(submittedDTO);
+        when(this.microsoftGraphService.getUserByOid(anyString())).thenReturn(new User());
+        when(this.userService.buildUserWithoutCoursesDTO(any(User.class))).thenReturn(new UserWithoutCoursesDTO());
 
-        Response response = quizAttemptController.submitQuizAttempt(VALID_ATTEMPT_ID, inputDTO);
+        Response response = this.quizAttemptController.submitQuizAttempt(VALID_ATTEMPT_ID, inputDTO);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         assertEquals(submittedDTO, response.getEntity());
 
-        verify(quizAttemptService, times(1)).submitQuizAttempt(any(ObjectId.class), eq(inputDTO));
-        verify(microsoftGraphService, times(1)).getUserByOid(anyString());
-        verify(userService, times(1)).buildUserWithoutCoursesDTO(any(User.class));
+        verify(this.quizAttemptService, times(1)).submitQuizAttempt(any(ObjectId.class), eq(inputDTO));
+        verify(this.microsoftGraphService, times(1)).getUserByOid(anyString());
+        verify(this.userService, times(1)).buildUserWithoutCoursesDTO(any(User.class));
     }
 
+    @Test
+    @DisplayName("Should recover quiz attempt successfully")
+    void test17RecoverQuizAttempt_Success() {
+        QuizAttemptDTO dto = new QuizAttemptDTO();
+        dto.setQuizPublicationId(VALID_PUBLICATION_ID);
+        UserWithoutCoursesDTO userDto = new UserWithoutCoursesDTO();
+        userDto.setAzureOid(VALID_USER_AZURE_OID);
+        dto.setUser(userDto);
+        when(this.quizAttemptService.recoverQuizAttemptByPublicationIdAndUserAzureOID(
+                VALID_USER_AZURE_OID, new ObjectId(VALID_PUBLICATION_ID)
+        )).thenReturn(dto);
+        when(this.microsoftGraphService.getUserByOid(VALID_USER_AZURE_OID)).thenReturn(new User());
+        when(this.userService.buildUserWithoutCoursesDTO(any(User.class))).thenReturn(userDto);
 
+        Response response = this.quizAttemptController.recoverQuizAttempt(
+                VALID_USER_AZURE_OID, VALID_PUBLICATION_ID
+        );
+
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        assertEquals(dto, response.getEntity());
+
+        verify(this.quizAttemptService, times(1))
+                .recoverQuizAttemptByPublicationIdAndUserAzureOID(
+                        VALID_USER_AZURE_OID, new ObjectId(VALID_PUBLICATION_ID)
+                );
+        verify(this.microsoftGraphService, times(1)).getUserByOid(VALID_USER_AZURE_OID);
+        verify(this.userService, times(1)).buildUserWithoutCoursesDTO(any(User.class));
+    }
+
+    @Test
+    @DisplayName("Should return 404 when recover attempt not found")
+    void test18RecoverQuizAttempt_NotFound() {
+        when(this.quizAttemptService.recoverQuizAttemptByPublicationIdAndUserAzureOID(
+                anyString(), any(ObjectId.class)
+        )).thenThrow(new NotFoundException());
+
+        assertThrows(NotFoundException.class, () ->
+                this.quizAttemptController.recoverQuizAttempt(VALID_USER_AZURE_OID, VALID_PUBLICATION_ID)
+        );
+
+        verify(this.quizAttemptService, times(1))
+                .recoverQuizAttemptByPublicationIdAndUserAzureOID(
+                        VALID_USER_AZURE_OID, new ObjectId(VALID_PUBLICATION_ID)
+                );
+        verifyNoInteractions(this.microsoftGraphService, this.userService);
+    }
 }

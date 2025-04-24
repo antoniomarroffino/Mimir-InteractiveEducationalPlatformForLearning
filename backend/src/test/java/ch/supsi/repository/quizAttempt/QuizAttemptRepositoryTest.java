@@ -1,5 +1,6 @@
 package ch.supsi.repository.quizAttempt;
 
+import ch.supsi.model.api.AttemptStatus;
 import ch.supsi.model.api.QuizAttempt;
 import ch.supsi.model.api.response.QuestionResponse;
 import ch.supsi.model.api.response.TrueFalseQuestionResponse;
@@ -12,7 +13,9 @@ import jakarta.inject.Inject;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -91,21 +94,18 @@ public class QuizAttemptRepositoryTest {
         QuestionResponse questionResponseWithAnotherQuestion = new TrueFalseQuestionResponse();
         questionResponseWithAnotherQuestion.questionId = new ObjectId();
 
-        //Correct response
         QuizAttempt qa1 = QuizAttemptServiceTest.createTestQuizAttempt(
                 "user-1",
                 publicationId,
                 List.of(questionResponse)
         );
 
-        //Same QuizPublicationId but different Question
         QuizAttempt qa2 = QuizAttemptServiceTest.createTestQuizAttempt(
                 "user-2",
                 publicationId,
                 List.of(questionResponseWithAnotherQuestion)
         );
 
-        //Same question but quizPublicationId is different
         QuizAttempt qa3 = QuizAttemptServiceTest.createTestQuizAttempt(
                 "user-3",
                 new ObjectId(),
@@ -136,5 +136,56 @@ public class QuizAttemptRepositoryTest {
                 new ObjectId()
         );
         assertTrue(attempts.isEmpty());
+    }
+
+    @Test
+    @DisplayName("Should find latest QuizAttempt by user, publication and status")
+    public void test07FindByUserAndPublicationAndStatusOptional_Found() {
+        String userOid = "user-xyz";
+        ObjectId publicationId = new ObjectId();
+
+        QuizAttempt recentAttempt = QuizAttemptServiceTest.createTestQuizAttempt(userOid, publicationId, List.of());
+        recentAttempt.status = AttemptStatus.IN_PROGRESS;
+        recentAttempt.startedAt = LocalDateTime.now().minusMinutes(2);
+
+        QuizAttempt otherStatus = QuizAttemptServiceTest.createTestQuizAttempt(userOid, publicationId, List.of());
+        otherStatus.status = AttemptStatus.TERMINATED;
+        otherStatus.startedAt = LocalDateTime.now().minusMinutes(1);
+
+        this.quizAttemptRepository.persist(recentAttempt);
+        this.quizAttemptRepository.persist(otherStatus);
+
+        Optional<QuizAttempt> opt = this.quizAttemptRepository
+                .findByUserAndPublicationAndStatusOptional(
+                        userOid,
+                        publicationId,
+                        AttemptStatus.IN_PROGRESS
+                );
+
+        assertTrue(opt.isPresent());
+        QuizAttempt found = opt.get();
+        assertEquals(recentAttempt.id, found.id);
+        assertEquals(AttemptStatus.IN_PROGRESS, found.status);
+    }
+
+    @Test
+    @DisplayName("Should return empty Optional when no matching QuizAttempt by user, publication and status")
+    public void test08FindByUserAndPublicationAndStatusOptional_NotFound() {
+        String userOid = "no-user";
+        ObjectId publicationId = new ObjectId();
+
+        QuizAttempt qa = QuizAttemptServiceTest.createTestQuizAttempt("other-user", publicationId, List.of());
+        qa.status = AttemptStatus.IN_PROGRESS;
+        qa.startedAt = LocalDateTime.now();
+        this.quizAttemptRepository.persist(qa);
+
+        Optional<QuizAttempt> opt = this.quizAttemptRepository
+                .findByUserAndPublicationAndStatusOptional(
+                        userOid,
+                        publicationId,
+                        AttemptStatus.IN_PROGRESS
+                );
+
+        assertTrue(opt.isEmpty());
     }
 }

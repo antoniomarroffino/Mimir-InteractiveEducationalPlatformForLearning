@@ -43,7 +43,7 @@ public class QuizAttemptMapper {
         quizAttempt.responses = questionResponseList;
         quizAttempt.badges = badgeList;
         quizAttempt.status = dto.getStatus();
-        quizAttempt.timeUsed = dto.getTimeUsed() == null ? 0L : dto.getTimeUsed();
+        quizAttempt.timeUsed = dto.getTimeUsed();
         return quizAttempt;
     }
 }

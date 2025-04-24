@@ -108,6 +108,6 @@ public class QuizAttemptDTO {
     }
 
     public void setTimeUsed(Long timeUsed) {
-        this.timeUsed = timeUsed;
+        this.timeUsed = timeUsed == null? 0L : timeUsed;
     }
 }

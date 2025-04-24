@@ -32,6 +32,7 @@ public class QuizAttemptTest {
         assertTrue(quizAttempt.responses.isEmpty());
         assertNotNull(quizAttempt.badges);
         assertTrue(quizAttempt.badges.isEmpty());
+        assertEquals(0, (long) quizAttempt.timeUsed);
     }
 
     @Test
@@ -55,6 +56,6 @@ public class QuizAttemptTest {
         assertEquals(questionResponseList.size(), quizAttempt.responses.size());
         assertEquals(trueFalseQuestionResponse.responseType, quizAttempt.responses.getFirst().responseType);
         assertEquals(multipleChoiceQuestionResponse.responseType, quizAttempt.responses.get(1).responseType);
+        assertEquals(0, (long) quizAttempt.timeUsed);
     }
-
 }

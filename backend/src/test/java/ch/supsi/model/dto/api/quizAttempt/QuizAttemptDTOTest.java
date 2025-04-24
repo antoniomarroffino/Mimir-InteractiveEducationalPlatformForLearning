@@ -34,6 +34,7 @@ public class QuizAttemptDTOTest {
         assertTrue(quizAttemptDTO.getResponses().isEmpty());
         assertNotNull(quizAttemptDTO.getBadges());
         assertTrue(quizAttemptDTO.getBadges().isEmpty());
+        assertEquals(0, (long) quizAttemptDTO.getTimeUsed());
     }
 
     @Test
@@ -48,6 +49,7 @@ public class QuizAttemptDTOTest {
         List<QuestionResponseDTO> questionResponseDTOs = List.of(trueFalseQuestionResponseDTO);
         BadgeDTO badgeDTO = new BadgeDTO();
         List<BadgeDTO> badgeDTOList = List.of(badgeDTO);
+        Long timeUsed = 10L;
 
         QuizAttemptDTO quizAttemptDTO = new QuizAttemptDTO();
         quizAttemptDTO.setId(id);
@@ -57,6 +59,7 @@ public class QuizAttemptDTOTest {
         quizAttemptDTO.setCompletedAt(completedAt);
         quizAttemptDTO.setResponses(questionResponseDTOs);
         quizAttemptDTO.setBadges(badgeDTOList);
+        quizAttemptDTO.setTimeUsed(timeUsed);
 
         assertEquals(id, quizAttemptDTO.getId());
         assertEquals(publicationId, quizAttemptDTO.getQuizPublicationId());
@@ -65,12 +68,15 @@ public class QuizAttemptDTOTest {
         assertEquals(completedAt, quizAttemptDTO.getCompletedAt());
         assertEquals(questionResponseDTOs, quizAttemptDTO.getResponses());
         assertEquals(badgeDTOList, quizAttemptDTO.getBadges());
+        assertEquals(timeUsed, quizAttemptDTO.getTimeUsed());
 
         quizAttemptDTO.setResponses(null);
         quizAttemptDTO.setBadges(null);
+        quizAttemptDTO.setTimeUsed(null);
         assertNotNull(quizAttemptDTO.getResponses());
         assertTrue(quizAttemptDTO.getResponses().isEmpty());
         assertNotNull(quizAttemptDTO.getBadges());
         assertTrue(quizAttemptDTO.getBadges().isEmpty());
+        assertEquals(0, (long) quizAttemptDTO.getTimeUsed());
     }
 }
