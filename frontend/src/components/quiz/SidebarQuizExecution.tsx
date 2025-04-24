@@ -49,6 +49,8 @@ export const SidebarQuizExecution: React.FC<SidebarQuizExecutionProps> = ({
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
+    const hasTimeLimit = quizTimeLimit !== undefined && quizTimeLimit !== null;
+
     const timeRemaining = useCountdownTimer({
         durationSeconds: quizTimeLimit ? quizTimeLimit * 60 : undefined,
         onMinuteLeft: () => {
@@ -68,19 +70,32 @@ export const SidebarQuizExecution: React.FC<SidebarQuizExecutionProps> = ({
                     : 'w-full border-b border-base-300 mb-4'
             }`}
         >
-            {!isDesktop && (
-                <div className="flex justify-between items-center min-h-[56px]">
-                    <RemainingTimeIndicator timeRemaining={timeRemaining!}/>
+            {hasTimeLimit && (
+                <>
+                    {!isDesktop && (
+                        <div className="flex justify-between items-center min-h-[56px]">
+                            <RemainingTimeIndicator timeRemaining={timeRemaining!}/>
+                            <NavigationToggleButton
+                                isOpen={showNavigation}
+                                onClick={() => setShowNavigation(prev => !prev)}
+                            />
+                        </div>
+                    )}
+
+                    {isDesktop && (
+                        <div className="flex justify-end mb-4 px-2 pt-2">
+                            <RemainingTimeIndicator timeRemaining={timeRemaining!}/>
+                        </div>
+                    )}
+                </>
+            )}
+
+            {(!hasTimeLimit && !isDesktop) && (
+                <div className="flex justify-end items-center min-h-[56px]">
                     <NavigationToggleButton
                         isOpen={showNavigation}
                         onClick={() => setShowNavigation(prev => !prev)}
                     />
-                </div>
-            )}
-
-            {isDesktop && (
-                <div className="flex justify-end mb-4 px-2 pt-2">
-                    <RemainingTimeIndicator timeRemaining={timeRemaining!}/>
                 </div>
             )}
 

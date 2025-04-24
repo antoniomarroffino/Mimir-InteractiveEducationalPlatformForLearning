@@ -103,6 +103,7 @@ const QuizScreenPage: React.FC = () => {
                 <QuizScreenHeader
                     quiz={finalQuiz}
                     publication={finalPublication}
+                    quizTimeLimit={finalQuiz.timeLimitMinutes}
                 />
 
                 <div className="mt-8 flex flex-col items-center justify-center min-h-[calc(100vh-24rem)]">

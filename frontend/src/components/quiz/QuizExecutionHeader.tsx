@@ -7,11 +7,13 @@ import {formatMinutesDuration} from "../../utils/timeUtils";
 interface QuizExecutionHeaderProps {
     quiz: QuizDTO;
     publication: QuizPublicationDTO;
+    quizTimeLimit?: number | null;
 }
 
-export const QuizExecutionHeader: React.FC<QuizExecutionHeaderProps> = ({quiz, publication}) => {
+export const QuizExecutionHeader: React.FC<QuizExecutionHeaderProps> = ({quiz, publication, quizTimeLimit}) => {
     const [showDescription, setShowDescription] = useState(false);
     const hasDescription = quiz.description && quiz.description.trim().length > 0;
+    const hasTimeLimit = quizTimeLimit !== undefined && quizTimeLimit !== null;
 
     return (
         <header className="space-y-2 mb-2">
@@ -52,7 +54,9 @@ export const QuizExecutionHeader: React.FC<QuizExecutionHeaderProps> = ({quiz, p
                             <div className="flex flex-wrap items-center gap-2 text-sm text-base-content/60">
                                 <span className="flex items-center gap-1">
                                     <BsClockHistory/>
-                                    Time limit: {formatMinutesDuration(quiz.timeLimitMinutes)}
+                                    {hasTimeLimit
+                                        ? `Time limit: ${formatMinutesDuration(quizTimeLimit!)}`
+                                        : 'No time limits'}
                                 </span>
                                 <span>•</span>
                                 <span>

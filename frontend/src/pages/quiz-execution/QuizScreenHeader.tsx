@@ -6,9 +6,12 @@ import {formatMinutesDuration} from "../../utils/timeUtils";
 interface QuizScreenHeaderProps {
     quiz: QuizDTO;
     publication: QuizPublicationDTO;
+    quizTimeLimit?: number | null;
 }
 
-export const QuizScreenHeader: React.FC<QuizScreenHeaderProps> = ({quiz, publication}) => {
+export const QuizScreenHeader: React.FC<QuizScreenHeaderProps> = ({quiz, publication, quizTimeLimit}) => {
+    const hasTimeLimit = quizTimeLimit !== undefined && quizTimeLimit !== null;
+
     return (
         <header className="space-y-2 mb-2">
             <div className="bg-gradient-to-tr from-primary/5 to-base-100 border border-primary/10 p-4 sm:p-6 rounded-2xl shadow-md transition-all duration-300 hover:shadow-xl">
@@ -26,7 +29,9 @@ export const QuizScreenHeader: React.FC<QuizScreenHeaderProps> = ({quiz, publica
                             <div className="flex flex-wrap items-center gap-2 text-sm text-base-content/60">
                                 <span className="flex items-center gap-1">
                                     <BsClockHistory/>
-                                    Time limit: {formatMinutesDuration(quiz.timeLimitMinutes)}
+                                    {hasTimeLimit
+                                        ? `Time limit: ${formatMinutesDuration(quizTimeLimit!)}`
+                                        : 'No time limits'}
                                 </span>
                                 <span>•</span>
                                 <span>
