@@ -69,7 +69,7 @@ const QuizScreenPage: React.FC = () => {
         if (!finalPublication || !finalQuiz) return;
         try {
             setIsStarting(true);
-            await startQuizAttempt(finalPublication);
+            await startQuizAttempt(finalPublication, finalQuiz.timeLimitMinutes? finalQuiz.timeLimitMinutes * 60 : undefined);
             navigate(`/quiz/${accessCode}/questions`, {
                 state: {publication: finalPublication, quiz: finalQuiz}
             });
@@ -131,7 +131,7 @@ const QuizScreenPage: React.FC = () => {
                     <ResumedAttemptCard
                         timeLimit={finalQuiz.timeLimitMinutes}
                         startTime={recoveredAttempt.startedAt!}
-                        timeUsed={recoveredAttempt.timeUsed}
+                        quizAttemptTimeRemaining={recoveredAttempt.timeRemainingSeconds}
                         onResume={handleResumeQuiz}
                     />
                 ) : (

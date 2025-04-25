@@ -31,12 +31,12 @@ public class QuizAttemptDTO {
     @Schema(description = "Status of the attempt (IN_PROGRESS, TERMINATED)")
     private AttemptStatus status;
 
-    private Long timeUsed;
+    private Long timeRemainingSeconds;
 
     public QuizAttemptDTO() {
         this.responses = new ArrayList<>();
         this.badges = new ArrayList<>();
-        this.timeUsed = 0L;
+        this.timeRemainingSeconds = 0L;
     }
 
     public String getId() {
@@ -103,11 +103,11 @@ public class QuizAttemptDTO {
         this.status = status;
     }
 
-    public Long getTimeUsed() {
-        return this.timeUsed;
+    public Long getTimeRemainingSeconds() {
+        return this.timeRemainingSeconds;
     }
 
-    public void setTimeUsed(Long timeUsed) {
-        this.timeUsed = timeUsed == null? 0L : timeUsed;
+    public void setTimeRemainingSeconds(Long timeRemainingSeconds) {
+        this.timeRemainingSeconds = timeRemainingSeconds == null? 0L : timeRemainingSeconds;
     }
 }

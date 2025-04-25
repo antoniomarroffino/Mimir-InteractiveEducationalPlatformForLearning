@@ -52,7 +52,7 @@ export const QuizAttemptLocalProvider: React.FC<{ children: React.ReactNode }> =
         }) || [];
     }, []);
 
-    const startQuizAttempt = useCallback(async (publication: QuizPublicationDTO) => {
+    const startQuizAttempt = useCallback(async (publication: QuizPublicationDTO, quizTimeLimit: number | undefined) => {
         try {
             const responses = prepareQuizResponses(publication);
 
@@ -63,7 +63,8 @@ export const QuizAttemptLocalProvider: React.FC<{ children: React.ReactNode }> =
                 status: AttemptStatus.InProgress,
                 user: publication.anonymous ? undefined : {
                     azureOid: user?.azureOid
-                }
+                },
+                timeRemainingSeconds: quizTimeLimit
             };
 
             const createdAttempt = await createInitialAttempt(dto);

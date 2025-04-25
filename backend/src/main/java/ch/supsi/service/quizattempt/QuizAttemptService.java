@@ -108,10 +108,11 @@ public class QuizAttemptService implements IQuizAttemptService {
     public QuizAttemptDTO updateQuizAttempt(ObjectId attemptId, QuizAttemptDTO dto) {
         QuizAttempt attempt = this.findQuizAttemptById(attemptId);
 
-        attempt.responses = this.quizAttemptMapperFacade.toEntity(dto).responses;
+        QuizAttempt givenAttempt = this.quizAttemptMapperFacade.toEntity(dto);
+
+        attempt.responses = givenAttempt.responses;
         attempt.status = AttemptStatus.IN_PROGRESS;
-        long deltaSec = ChronoUnit.SECONDS.between(attempt.startedAt, LocalDateTime.now()) - attempt.timeUsed;
-        attempt.timeUsed += deltaSec;
+        attempt.timeRemainingSeconds = givenAttempt.timeRemainingSeconds;
 
         this.quizAttemptRepository.update(attempt);
         return this.quizAttemptMapperFacade.toDTO(attempt);

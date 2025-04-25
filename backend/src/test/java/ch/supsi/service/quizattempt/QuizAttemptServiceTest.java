@@ -355,7 +355,7 @@ public class QuizAttemptServiceTest {
         assertNotNull(result);
         assertEquals(AttemptStatus.IN_PROGRESS, existing.status);
         assertEquals(1, existing.responses.size());
-        assertNotNull(result.getTimeUsed());
+        assertNotNull(result.getTimeRemainingSeconds());
 
         verify(this.quizAttemptRepository, times(1)).update(existing);
     }

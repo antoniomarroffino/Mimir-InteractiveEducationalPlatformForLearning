@@ -34,7 +34,7 @@ public class QuizAttemptDTOTest {
         assertTrue(quizAttemptDTO.getResponses().isEmpty());
         assertNotNull(quizAttemptDTO.getBadges());
         assertTrue(quizAttemptDTO.getBadges().isEmpty());
-        assertEquals(0, (long) quizAttemptDTO.getTimeUsed());
+        assertEquals(0, (long) quizAttemptDTO.getTimeRemainingSeconds());
     }
 
     @Test
@@ -59,7 +59,7 @@ public class QuizAttemptDTOTest {
         quizAttemptDTO.setCompletedAt(completedAt);
         quizAttemptDTO.setResponses(questionResponseDTOs);
         quizAttemptDTO.setBadges(badgeDTOList);
-        quizAttemptDTO.setTimeUsed(timeUsed);
+        quizAttemptDTO.setTimeRemainingSeconds(timeUsed);
 
         assertEquals(id, quizAttemptDTO.getId());
         assertEquals(publicationId, quizAttemptDTO.getQuizPublicationId());
@@ -68,15 +68,15 @@ public class QuizAttemptDTOTest {
         assertEquals(completedAt, quizAttemptDTO.getCompletedAt());
         assertEquals(questionResponseDTOs, quizAttemptDTO.getResponses());
         assertEquals(badgeDTOList, quizAttemptDTO.getBadges());
-        assertEquals(timeUsed, quizAttemptDTO.getTimeUsed());
+        assertEquals(timeUsed, quizAttemptDTO.getTimeRemainingSeconds());
 
         quizAttemptDTO.setResponses(null);
         quizAttemptDTO.setBadges(null);
-        quizAttemptDTO.setTimeUsed(null);
+        quizAttemptDTO.setTimeRemainingSeconds(null);
         assertNotNull(quizAttemptDTO.getResponses());
         assertTrue(quizAttemptDTO.getResponses().isEmpty());
         assertNotNull(quizAttemptDTO.getBadges());
         assertTrue(quizAttemptDTO.getBadges().isEmpty());
-        assertEquals(0, (long) quizAttemptDTO.getTimeUsed());
+        assertEquals(0, (long) quizAttemptDTO.getTimeRemainingSeconds());
     }
 }

@@ -42,14 +42,16 @@ const QuizQuestionsPage: React.FC = () => {
     const [userResponses, setUserResponses] = useState<QuestionResponseDTO[]>(
         currentAttempt?.responses || new Array(publication?.questions?.length || 0).fill(null)
     );
+    const [finalTimeRemainingMinutes, setFinalTimeRemainingMinutes] = useState<number>();
 
     useEffect(() => {
         if (attempt && publication) {
             resumeAttempt(attempt, publication);
             setUserResponses(attempt.responses || []);
             updateQuizAttemptResponses(attempt.responses || []);
+            setFinalTimeRemainingMinutes(attempt?.timeRemainingSeconds ? attempt.timeRemainingSeconds / 60 : undefined);
         }
-    }, [attempt, publication, resumeAttempt,updateQuizAttemptResponses]);
+    }, [attempt, publication, resumeAttempt, updateQuizAttemptResponses]);
 
     useQuizAttemptAutosave(5000);
     useTrackTimeSpent(currentQuestionIndex, setUserResponses);
@@ -135,8 +137,8 @@ const QuizQuestionsPage: React.FC = () => {
                 </div>
 
                 <SidebarQuizExecution
-                    quizTimeLimit={quiz.timeLimitMinutes}
-                    timeUsed={attempt?.timeUsed || 0}
+                    key={finalTimeRemainingMinutes}
+                    quizTimeLimit={attempt ? finalTimeRemainingMinutes : quiz.timeLimitMinutes}
                     questions={publication.questions!}
                     currentQuestionIndex={currentQuestionIndex}
                     onQuestionChange={setCurrentQuestionIndex}

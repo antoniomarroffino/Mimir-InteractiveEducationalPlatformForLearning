@@ -25,7 +25,7 @@ public class QuizAttemptMapper {
         dto.setResponses(questionResponseDTOList);
         dto.setBadges(badgeDTOList);
         dto.setStatus(quizAttempt.status);
-        dto.setTimeUsed(quizAttempt.timeUsed);
+        dto.setTimeRemainingSeconds(quizAttempt.timeRemainingSeconds);
         return dto;
     }
 
@@ -43,7 +43,7 @@ public class QuizAttemptMapper {
         quizAttempt.responses = questionResponseList;
         quizAttempt.badges = badgeList;
         quizAttempt.status = dto.getStatus();
-        quizAttempt.timeUsed = dto.getTimeUsed();
+        quizAttempt.timeRemainingSeconds = dto.getTimeRemainingSeconds();
         return quizAttempt;
     }
 }

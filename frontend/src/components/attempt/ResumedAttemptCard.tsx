@@ -7,14 +7,14 @@ import {formatMinutesDuration, formatQuestionTime} from "../../utils/timeUtils.t
 interface ResumedAttemptCardProps {
     timeLimit?: number;
     startTime: string;
-    timeUsed?: number;
+    quizAttemptTimeRemaining?: number;
     onResume: () => void;
 }
 
 export const ResumedAttemptCard: React.FC<ResumedAttemptCardProps> = ({
                                                                           timeLimit,
                                                                           startTime,
-                                                                          timeUsed,
+                                                                          quizAttemptTimeRemaining,
                                                                           onResume
                                                                       }) => {
     return (
@@ -38,7 +38,7 @@ export const ResumedAttemptCard: React.FC<ResumedAttemptCardProps> = ({
                     </span>
                     {timeLimit && (
                         <p className="text-primary font-semibold">
-                            Time used {formatQuestionTime(timeUsed? timeUsed : 0)} of total {formatMinutesDuration(timeLimit)}
+                            Remaining time {formatQuestionTime(quizAttemptTimeRemaining? quizAttemptTimeRemaining : 0)} of total {formatMinutesDuration(timeLimit)}
                         </p>
                     )}
                 </div>
