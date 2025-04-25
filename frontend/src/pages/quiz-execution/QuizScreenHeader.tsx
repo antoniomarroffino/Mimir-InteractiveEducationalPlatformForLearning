@@ -22,7 +22,7 @@ export const QuizScreenHeader: React.FC<QuizScreenHeaderProps> = ({quiz, publica
                         </div>
 
                         <div className="flex-1 min-w-0 space-y-2">
-                            <h1 className="text-2xl sm:text-3xl font-extrabold text-primary">
+                            <h1 className="text-2xl sm:text-3xl font-extrabold text-primary text-start">
                                 {quiz.name}
                             </h1>
 
