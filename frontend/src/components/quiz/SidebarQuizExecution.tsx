@@ -52,7 +52,8 @@ export const SidebarQuizExecution: React.FC<SidebarQuizExecutionProps> = ({
     const hasTimeLimit = quizTimeLimit !== undefined && quizTimeLimit !== null;
 
     const timeRemaining = useCountdownTimer({
-        durationSeconds: quizTimeLimit ? quizTimeLimit * 60 : undefined,
+        durationSeconds: quizTimeLimit ? (quizTimeLimit * 60) : undefined,
+
         onMinuteLeft: () => {
             setShowPopup(true);
             onMinuteLeft();

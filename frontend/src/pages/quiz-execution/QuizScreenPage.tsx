@@ -12,6 +12,8 @@ import {AuthenticatedAccessCard} from '../../components/quiz/AuthenticatedAccess
 import {QuizScreenHeader} from "./QuizScreenHeader.tsx";
 import { motion } from 'framer-motion';
 import {LoadingSpinner} from "../../components/common/LoadingSpinner.tsx";
+import { useRecoverQuizAttempt } from '../../hooks/quizAttempt/useRecoverQuizAttempt.ts';
+import { ResumedAttemptCard } from '../../components/attempt/ResumedAttemptCard.tsx';
 
 const QuizScreenPage: React.FC = () => {
     const location = useLocation();
@@ -52,6 +54,11 @@ const QuizScreenPage: React.FC = () => {
     const [isStarting, setIsStarting] = useState(false);
     const [initialLoading, setInitialLoading] = useState(true);
 
+    const { data: recoveredAttempt, isLoading: isLoadingRecovery} = useRecoverQuizAttempt(
+        user?.azureOid || '',
+        finalPublication?.id || ''
+    );
+
     useEffect(() => {
         const timeout = setTimeout(() => {
             setInitialLoading(false);
@@ -63,7 +70,7 @@ const QuizScreenPage: React.FC = () => {
         if (!finalPublication || !finalQuiz) return;
         try {
             setIsStarting(true);
-            await startQuizAttempt(finalPublication);
+            await startQuizAttempt(finalPublication, finalQuiz.timeLimitMinutes? finalQuiz.timeLimitMinutes * 60 : undefined);
             navigate(`/quiz/${accessCode}/questions`, {
                 state: {publication: finalPublication, quiz: finalQuiz}
             });
@@ -73,6 +80,18 @@ const QuizScreenPage: React.FC = () => {
             setIsStarting(false);
         }
     }, [finalPublication, finalQuiz, startQuizAttempt, navigate, accessCode]);
+
+    const handleResumeQuiz = useCallback(async () => {
+        if (!recoveredAttempt || !finalPublication || !finalQuiz) return;
+
+        navigate(`/quiz/${accessCode}/questions`, {
+            state: {
+                publication: finalPublication,
+                quiz: finalQuiz,
+                attempt: recoveredAttempt
+            }
+        });
+    }, [recoveredAttempt, finalPublication, finalQuiz, accessCode, navigate]);
 
     const timeLimit = formatMinutesDuration(finalQuiz!.timeLimitMinutes);
 
@@ -89,7 +108,7 @@ const QuizScreenPage: React.FC = () => {
         );
     }
 
-    if (!finalPublication || !finalQuiz || isLoadingPublication || isLoadingQuiz || initialLoading) {
+    if (!finalPublication || !finalQuiz || isLoadingPublication || isLoadingQuiz || initialLoading || isLoadingRecovery) {
         return <LoadingSpinner fullScreen/>;
     }
 
@@ -116,6 +135,13 @@ const QuizScreenPage: React.FC = () => {
                             />
                         ) : !user ? (
                             <LoginRequiredAccessCard onLogin={login}/>
+                        ) : user && !finalPublication?.anonymous && recoveredAttempt ? (
+                            <ResumedAttemptCard
+                                timeLimit={finalQuiz.timeLimitMinutes}
+                                startTime={recoveredAttempt.startedAt!}
+                                quizAttemptTimeRemaining={recoveredAttempt.timeRemainingSeconds}
+                                onResume={handleResumeQuiz}
+                            />
                         ) : (
                             <AuthenticatedAccessCard
                                 timeLimit={timeLimit!}

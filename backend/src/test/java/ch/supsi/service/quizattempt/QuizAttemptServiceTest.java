@@ -338,6 +338,7 @@ public class QuizAttemptServiceTest {
         existing.id = attemptId;
         existing.responses = new ArrayList<>();
         existing.status = AttemptStatus.IN_PROGRESS;
+        existing.startedAt = LocalDateTime.now();
 
         QuizAttempt updated = new QuizAttempt();
         updated.responses = List.of(new TrueFalseQuestionResponse());
@@ -345,17 +346,18 @@ public class QuizAttemptServiceTest {
         QuizAttemptDTO updatedDTO = new QuizAttemptDTO();
         updatedDTO.setResponses(List.of(new TrueFalseQuestionResponseDTO()));
 
-        when(quizAttemptRepository.findByIdOptional(attemptId)).thenReturn(Optional.of(existing));
-        when(quizAttemptMapperFacade.toEntity(updatedDTO)).thenReturn(updated);
-        when(quizAttemptMapperFacade.toDTO(any())).thenReturn(updatedDTO);
+        when(this.quizAttemptRepository.findByIdOptional(attemptId)).thenReturn(Optional.of(existing));
+        when(this.quizAttemptMapperFacade.toEntity(updatedDTO)).thenReturn(updated);
+        when(this.quizAttemptMapperFacade.toDTO(any())).thenReturn(updatedDTO);
 
-        QuizAttemptDTO result = quizAttemptService.updateQuizAttempt(attemptId, updatedDTO);
+        QuizAttemptDTO result = this.quizAttemptService.updateQuizAttempt(attemptId, updatedDTO);
 
         assertNotNull(result);
         assertEquals(AttemptStatus.IN_PROGRESS, existing.status);
         assertEquals(1, existing.responses.size());
+        assertNotNull(result.getTimeRemainingSeconds());
 
-        verify(quizAttemptRepository).update(existing);
+        verify(this.quizAttemptRepository, times(1)).update(existing);
     }
 
     @Test
@@ -378,20 +380,20 @@ public class QuizAttemptServiceTest {
         QuizAttemptDTO updatedDTO = new QuizAttemptDTO();
         updatedDTO.setResponses(List.of(new TrueFalseQuestionResponseDTO()));
 
-        when(quizAttemptRepository.findByIdOptional(attemptId)).thenReturn(Optional.of(existing));
-        when(quizAttemptMapperFacade.toEntity(updatedDTO)).thenReturn(updated);
-        when(quizAttemptMapperFacade.toDTO(any())).thenReturn(updatedDTO);
-        when(questionRepository.findById(questionId)).thenReturn(new TrueFalseQuestion());
-        when(pointsCalculatorBuilder.getPointsCalculator(any())).thenReturn((r, q) -> 5);
+        when(this.quizAttemptRepository.findByIdOptional(attemptId)).thenReturn(Optional.of(existing));
+        when(this.quizAttemptMapperFacade.toEntity(updatedDTO)).thenReturn(updated);
+        when(this.quizAttemptMapperFacade.toDTO(any())).thenReturn(updatedDTO);
+        when(this.questionRepository.findById(questionId)).thenReturn(new TrueFalseQuestion());
+        when(this.pointsCalculatorBuilder.getPointsCalculator(any())).thenReturn((r, q) -> 5);
 
-        QuizAttemptDTO result = quizAttemptService.submitQuizAttempt(attemptId, updatedDTO);
+        QuizAttemptDTO result = this.quizAttemptService.submitQuizAttempt(attemptId, updatedDTO);
 
         assertNotNull(result);
         assertEquals(AttemptStatus.TERMINATED, existing.status);
         assertNotNull(existing.completedAt);
         assertEquals(5, existing.responses.getFirst().earnedPoints);
 
-        verify(quizAttemptRepository).update(existing);
+        verify(this.quizAttemptRepository, times(1)).update(existing);
     }
 
     @Test
@@ -407,5 +409,48 @@ public class QuizAttemptServiceTest {
         );
 
         assertEquals("Quiz responses cannot be null or empty", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Should recover existing quiz attempt")
+    void test17RecoverQuizAttempt_Found() {
+        String userOid = "user-abc";
+        ObjectId publicationId = new ObjectId();
+        QuizAttempt attempt = createTestQuizAttempt(userOid, publicationId, List.of());
+        when(this.quizAttemptRepository
+                .findByUserAndPublicationAndStatusOptional(eq(userOid), eq(publicationId), eq(AttemptStatus.IN_PROGRESS)))
+                .thenReturn(Optional.of(attempt));
+        QuizAttemptDTO dto = convertToDTO(attempt);
+        when(this.quizAttemptMapperFacade.toDTO(attempt)).thenReturn(dto);
+
+        QuizAttemptDTO result = this.quizAttemptService
+                .recoverQuizAttemptByPublicationIdAndUserAzureOID(userOid, publicationId);
+
+        assertNotNull(result);
+        assertEquals(dto, result);
+        verify(this.quizAttemptRepository, times(1))
+                .findByUserAndPublicationAndStatusOptional(userOid, publicationId, AttemptStatus.IN_PROGRESS);
+        verify(this.quizAttemptMapperFacade, times(1)).toDTO(attempt);
+    }
+
+    @Test
+    @DisplayName("Should throw NotFoundException when no attempt to recover")
+    void test18RecoverQuizAttempt_NotFound() {
+        String userOid = "user-none";
+        ObjectId publicationId = new ObjectId();
+        when(this.quizAttemptRepository
+                .findByUserAndPublicationAndStatusOptional(anyString(), any(ObjectId.class), eq(AttemptStatus.IN_PROGRESS)))
+                .thenReturn(Optional.empty());
+
+        NotFoundException exception = assertThrows(
+                NotFoundException.class,
+                () -> this.quizAttemptService
+                        .recoverQuizAttemptByPublicationIdAndUserAzureOID(userOid, publicationId)
+        );
+        assertEquals("Quiz attempt not found", exception.getMessage());
+
+        verify(this.quizAttemptRepository, times(1))
+                .findByUserAndPublicationAndStatusOptional(userOid, publicationId, AttemptStatus.IN_PROGRESS);
+        verify(this.quizAttemptMapperFacade, never()).toDTO(any(QuizAttempt.class));
     }
 }

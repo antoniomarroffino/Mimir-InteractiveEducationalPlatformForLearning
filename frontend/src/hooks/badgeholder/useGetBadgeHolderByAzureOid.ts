@@ -8,5 +8,6 @@ export const useGetBadgeHolderByAzureOid = (azureOID: string) => {
         queryFn: async () => badgeHolderApi.apiBadgeHoldersAzureOIDGet({azureOID})
             .then(result => result.data),
         staleTime: 1000 * 60 * 5,
+        retry: false
     })
 }

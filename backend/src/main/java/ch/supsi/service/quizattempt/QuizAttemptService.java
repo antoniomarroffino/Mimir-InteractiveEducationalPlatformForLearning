@@ -18,8 +18,11 @@ import jakarta.ws.rs.InternalServerErrorException;
 import jakarta.ws.rs.NotFoundException;
 import org.bson.types.ObjectId;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -105,11 +108,22 @@ public class QuizAttemptService implements IQuizAttemptService {
     public QuizAttemptDTO updateQuizAttempt(ObjectId attemptId, QuizAttemptDTO dto) {
         QuizAttempt attempt = this.findQuizAttemptById(attemptId);
 
-        attempt.responses = this.quizAttemptMapperFacade.toEntity(dto).responses;
+        QuizAttempt givenAttempt = this.quizAttemptMapperFacade.toEntity(dto);
+
+        attempt.responses = givenAttempt.responses;
         attempt.status = AttemptStatus.IN_PROGRESS;
+        attempt.timeRemainingSeconds = givenAttempt.timeRemainingSeconds;
 
         this.quizAttemptRepository.update(attempt);
         return this.quizAttemptMapperFacade.toDTO(attempt);
+    }
+
+    @Override
+    public QuizAttemptDTO recoverQuizAttemptByPublicationIdAndUserAzureOID(String userAzureOID, ObjectId quizPublicationId) {
+        Optional<QuizAttempt> quizAttemptOpt = this.quizAttemptRepository.findByUserAndPublicationAndStatusOptional(userAzureOID, quizPublicationId, AttemptStatus.IN_PROGRESS);
+        if (quizAttemptOpt.isEmpty())
+            throw new NotFoundException("Quiz attempt not found");
+        return this.quizAttemptMapperFacade.toDTO(quizAttemptOpt.get());
     }
 
     @Override

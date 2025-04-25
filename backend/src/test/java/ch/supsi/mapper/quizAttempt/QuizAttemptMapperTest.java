@@ -38,6 +38,7 @@ public class QuizAttemptMapperTest {
     void test01ToDTO_ReturnQuizDTO() {
         QuizAttempt quizAttempt = QuizAttemptServiceTest.createTestQuizAttempt("TEST-OID", new ObjectId(), new ArrayList<>());
         quizAttempt.completedAt = LocalDateTime.now();
+        quizAttempt.timeRemainingSeconds = 10L;
 
         TrueFalseQuestionResponseDTO trueFalseQuestionResponseDTO = new TrueFalseQuestionResponseDTO();
         MultipleChoiceQuestionResponseDTO multipleChoiceQuestionResponseDTO = new MultipleChoiceQuestionResponseDTO();
@@ -56,6 +57,7 @@ public class QuizAttemptMapperTest {
         assertEquals(quizAttempt.completedAt, quizAttemptDTO.getCompletedAt());
         assertEquals(questionResponseDTOList.size(), quizAttemptDTO.getResponses().size());
         assertEquals(badgeDTOList.size(), quizAttemptDTO.getBadges().size());
+        assertEquals(quizAttempt.timeRemainingSeconds, quizAttemptDTO.getTimeRemainingSeconds());
     }
 
     @Test
@@ -67,6 +69,7 @@ public class QuizAttemptMapperTest {
         quizAttemptDTO.setQuizPublicationId(new ObjectId().toString());
         quizAttemptDTO.setStartedAt(LocalDateTime.now());
         quizAttemptDTO.setCompletedAt(LocalDateTime.now());
+        quizAttemptDTO.setTimeRemainingSeconds(null);
 
         TrueFalseQuestionResponse trueFalseQuestionResponse = new TrueFalseQuestionResponse();
         MultipleChoiceQuestionResponse multipleChoiceQuestionResponse = new MultipleChoiceQuestionResponse();
@@ -84,6 +87,7 @@ public class QuizAttemptMapperTest {
         assertEquals(quizAttemptDTO.getCompletedAt(), quizAttempt.completedAt);
         assertEquals(questionResponseList.size(), quizAttempt.responses.size());
         assertEquals(badgeList.size(), quizAttempt.badges.size());
+        assertEquals(0, (long) quizAttempt.timeRemainingSeconds);
     }
 
     @Test
@@ -95,6 +99,7 @@ public class QuizAttemptMapperTest {
         quizAttemptDTO.setQuizPublicationId(new ObjectId().toString());
         quizAttemptDTO.setStartedAt(LocalDateTime.now());
         quizAttemptDTO.setCompletedAt(LocalDateTime.now());
+        quizAttemptDTO.setTimeRemainingSeconds(10L);
 
         TrueFalseQuestionResponse trueFalseQuestionResponse = new TrueFalseQuestionResponse();
         MultipleChoiceQuestionResponse multipleChoiceQuestionResponse = new MultipleChoiceQuestionResponse();
@@ -112,5 +117,6 @@ public class QuizAttemptMapperTest {
         assertEquals(quizAttemptDTO.getCompletedAt(), quizAttempt.completedAt);
         assertEquals(questionResponseList.size(), quizAttempt.responses.size());
         assertEquals(badgeList.size(), quizAttempt.badges.size());
+        assertEquals(quizAttemptDTO.getTimeRemainingSeconds(), quizAttempt.timeRemainingSeconds);
     }
 }

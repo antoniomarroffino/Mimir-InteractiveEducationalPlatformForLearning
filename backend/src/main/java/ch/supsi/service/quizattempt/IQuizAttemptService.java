@@ -19,6 +19,8 @@ public interface IQuizAttemptService {
 
     QuizAttemptDTO updateQuizAttempt(ObjectId attemptId, QuizAttemptDTO dto);
 
+    QuizAttemptDTO recoverQuizAttemptByPublicationIdAndUserAzureOID(String userAzureOID, ObjectId quizPublicationId);
+
     QuizAttemptDTO submitQuizAttempt(ObjectId attemptId, QuizAttemptDTO dto);
 
     void assignBadge(ObjectId attemptId, BadgeType badgeType, String teacherAzureOid);

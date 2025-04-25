@@ -24,24 +24,37 @@ const QuizQuestionsPage: React.FC = () => {
     const state = location.state as {
         publication?: QuizPublicationDTO;
         quiz?: QuizDTO;
+        attempt?: QuizAttemptDTO;
     };
 
     const publication = state?.publication;
     const quiz = state?.quiz;
+    const attempt = state?.attempt;
 
     const {
         currentAttempt,
         updateQuizAttemptResponses,
         completeQuizAttempt,
-        clearQuizAttempt
+        clearQuizAttempt,
+        resumeAttempt
     } = useQuizAttemptLocal();
 
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [userResponses, setUserResponses] = useState<QuestionResponseDTO[]>(
         currentAttempt?.responses || new Array(publication?.questions?.length || 0).fill(null)
     );
+    const [finalTimeRemainingMinutes, setFinalTimeRemainingMinutes] = useState<number>();
 
-    useQuizAttemptAutosave(15000);
+    useEffect(() => {
+        if (attempt && publication) {
+            resumeAttempt(attempt, publication);
+            setUserResponses(attempt.responses || []);
+            updateQuizAttemptResponses(attempt.responses || []);
+            setFinalTimeRemainingMinutes(attempt?.timeRemainingSeconds ? attempt.timeRemainingSeconds / 60 : undefined);
+        }
+    }, [attempt, publication, resumeAttempt, updateQuizAttemptResponses]);
+
+    useQuizAttemptAutosave(5000);
     useTrackTimeSpent(currentQuestionIndex, setUserResponses);
 
     const onMinuteLeft = useCallback(() => {}, []);
@@ -80,10 +93,10 @@ const QuizQuestionsPage: React.FC = () => {
                 answer,
                 userResponses[currentQuestionIndex]?.timeSpent || 0
             );
-
             setUserResponses(updated);
+            updateQuizAttemptResponses(updated);
         },
-        [currentQuestion, currentQuestionIndex, userResponses]
+        [currentQuestion, currentQuestionIndex, updateQuizAttemptResponses, userResponses]
     );
 
     const handleCompleteQuiz = useCallback(async () => {
@@ -148,7 +161,8 @@ const QuizQuestionsPage: React.FC = () => {
 
                     <div className="w-full md:w-80 lg:w-96">
                         <SidebarQuizExecution
-                            quizTimeLimit={quiz.timeLimitMinutes}
+                            key={finalTimeRemainingMinutes}
+                            quizTimeLimit={attempt ? finalTimeRemainingMinutes : quiz.timeLimitMinutes}
                             questions={publication.questions!}
                             currentQuestionIndex={currentQuestionIndex}
                             onQuestionChange={setCurrentQuestionIndex}
