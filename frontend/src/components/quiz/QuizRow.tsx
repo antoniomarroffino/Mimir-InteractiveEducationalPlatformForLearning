@@ -1,13 +1,13 @@
-import React, {useState} from 'react';
-import {QuizDTO} from '@dti-isin/backend-api-client';
-import {QuizActionsMenu} from './QuizActionsMenu.tsx';
-import {DeleteQuizPopup} from './DeleteQuizPopup.tsx';
-import {PublishQuizPopup} from './PublishQuizPopup.tsx';
-import {BsPatchQuestion} from 'react-icons/bs';
-import {useQuizPublicationCRUD} from '../../hooks/quizPublication/useQuizPublicationCRUD.ts';
-import {useGetQuizPublicationsByQuizId} from '../../hooks/quizPublication/useGetQuizPublicationsByQuizId.ts';
-import {useQuizCRUD} from '../../hooks/quiz/useQuizCRUD.ts';
-import {useNavigate} from 'react-router-dom';
+import React, { useState } from 'react';
+import { QuizDTO } from '@dti-isin/backend-api-client';
+import { QuizActionsMenu } from './QuizActionsMenu';
+import { DeleteQuizPopup } from './DeleteQuizPopup';
+import { PublishQuizPopup } from './PublishQuizPopup';
+import { BsPatchQuestion } from 'react-icons/bs';
+import { useQuizPublicationCRUD } from '../../hooks/quizPublication/useQuizPublicationCRUD';
+import { useGetQuizPublicationsByQuizId } from '../../hooks/quizPublication/useGetQuizPublicationsByQuizId';
+import { useQuizCRUD } from '../../hooks/quiz/useQuizCRUD';
+import { useNavigate } from 'react-router-dom';
 
 interface QuizRowProps {
     quiz: QuizDTO;
@@ -15,16 +15,16 @@ interface QuizRowProps {
     folderId: string;
 }
 
-export const QuizRow: React.FC<QuizRowProps> = ({quiz, courseId, folderId}) => {
+export const QuizRow: React.FC<QuizRowProps> = ({ quiz, courseId, folderId }) => {
     const [showDeletePopup, setShowDeletePopup] = useState(false);
     const [showPublishPopup, setShowPublishPopup] = useState(false);
     const [isAnonymous, setIsAnonymous] = useState(false);
     const [publishError, setPublishError] = useState<string | null>(null);
 
     const navigate = useNavigate();
-    const {createPublication, isCreatingPublication} = useQuizPublicationCRUD();
-    const {deleteQuiz} = useQuizCRUD();
-    const {data: publications} = useGetQuizPublicationsByQuizId(quiz.id!);
+    const { createPublication, isCreatingPublication } = useQuizPublicationCRUD();
+    const { deleteQuiz } = useQuizCRUD();
+    const { data: publications } = useGetQuizPublicationsByQuizId(quiz.id!);
 
     const currentPublication = publications?.find(pub => pub.published);
 
@@ -60,11 +60,7 @@ export const QuizRow: React.FC<QuizRowProps> = ({quiz, courseId, folderId}) => {
 
     const handleConfirmDelete = async () => {
         try {
-            await deleteQuiz.mutateAsync({
-                courseId,
-                folderId,
-                quizId: quiz.id!,
-            });
+            await deleteQuiz(courseId, folderId, quiz.id!);
             setShowDeletePopup(false);
         } catch (err) {
             console.error('Failed to delete quiz', err);
@@ -74,10 +70,11 @@ export const QuizRow: React.FC<QuizRowProps> = ({quiz, courseId, folderId}) => {
     return (
         <>
             <div
-                className="group p-4 bg-white rounded-xl border border-base-200 hover:border-primary/30 shadow-sm hover:shadow-md transition-all duration-300 ease-out flex items-center justify-between gap-4">
+                className="group p-4 bg-white rounded-xl border border-base-200 hover:border-primary/30 shadow-sm hover:shadow-md transition-all duration-300 ease-out flex items-center justify-between gap-4"
+            >
                 <div className="flex items-center gap-4 overflow-hidden">
                     <div className="p-2 rounded-lg bg-primary/10 text-primary">
-                        <BsPatchQuestion className="text-xl sm:text-2xl"/>
+                        <BsPatchQuestion className="text-xl sm:text-2xl" />
                     </div>
                     <div className="flex flex-col">
                         <span className="font-medium truncate">{quiz.name}</span>

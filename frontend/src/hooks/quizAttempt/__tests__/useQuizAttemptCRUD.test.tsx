@@ -1,8 +1,8 @@
-import { describe, expect, it, Mock, vi } from "vitest";
+import { describe, expect, it, Mock, vi, afterEach } from "vitest";
 import { renderHook } from "@testing-library/react";
 import { useContext } from "react";
 import { useQuizAttemptCRUD } from "../useQuizAttemptCRUD";
-import { QuizAttemptCRUDContext } from "../../../contexts/quizAttempt/QuizAttemptCRUDContext";
+import { QuizAttemptCRUDContext, QuizAttemptCRUDContextType } from "../../../contexts/quizAttempt/QuizAttemptCRUDContext";
 import { BadgeType, QuizAttemptDTO, Role } from "@dti-isin/backend-api-client";
 
 vi.mock("react", () => ({
@@ -27,24 +27,28 @@ describe("useQuizAttemptCRUD", () => {
     badges: [],
   };
 
-  const mockContextValue = {
-    createQuizAttempt: vi.fn(),
-    assignBadge: vi.fn(),
+  const mockContextValue: QuizAttemptCRUDContextType = {
+    createInitialAttempt: vi.fn().mockResolvedValue(mockQuizAttempt),
+    submitAttemptFinal: vi.fn().mockResolvedValue(mockQuizAttempt),
+    updateAttemptPartial: vi.fn().mockResolvedValue(mockQuizAttempt),
+    assignBadge: vi.fn().mockResolvedValue(undefined),
     isAssigningBadge: false,
     errorAssignBadge: null,
     isCreatingQuizAttempt: false,
     errorCreateQuizAttempt: null,
   };
 
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
   it("should throw error when context is undefined", () => {
     (useContext as Mock).mockReturnValue(undefined);
 
-    const consoleError = vi
-      .spyOn(console, "error")
-      .mockImplementation(() => {});
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
 
     expect(() => renderHook(() => useQuizAttemptCRUD())).toThrowError(
-      "useQuizAttemptCRUD must be used within a QuizAttemptCRUDProvider"
+        "useQuizAttemptCRUD must be used within a QuizAttemptCRUDProvider"
     );
 
     consoleError.mockRestore();
@@ -70,31 +74,45 @@ describe("useQuizAttemptCRUD", () => {
     expect(result.current).toBe(firstResult);
   });
 
-  it("should call createQuizAttempt with correct parameters", async () => {
+  it("should call createInitialAttempt with correct parameters", async () => {
     (useContext as Mock).mockReturnValue(mockContextValue);
-    mockContextValue.createQuizAttempt.mockResolvedValueOnce(mockQuizAttempt);
 
     const { result } = renderHook(() => useQuizAttemptCRUD());
 
-    await result.current.createQuizAttempt(mockQuizAttempt);
+    await result.current.createInitialAttempt(mockQuizAttempt);
 
-    expect(mockContextValue.createQuizAttempt).toHaveBeenCalledWith(
-      mockQuizAttempt
-    );
+    expect(mockContextValue.createInitialAttempt).toHaveBeenCalledWith(mockQuizAttempt);
+  });
+
+  it("should call submitAttemptFinal with correct parameters", async () => {
+    (useContext as Mock).mockReturnValue(mockContextValue);
+
+    const { result } = renderHook(() => useQuizAttemptCRUD());
+
+    await result.current.submitAttemptFinal("1", mockQuizAttempt);
+
+    expect(mockContextValue.submitAttemptFinal).toHaveBeenCalledWith("1", mockQuizAttempt);
+  });
+
+  it("should call updateAttemptPartial with correct parameters", async () => {
+    (useContext as Mock).mockReturnValue(mockContextValue);
+
+    const { result } = renderHook(() => useQuizAttemptCRUD());
+
+    await result.current.updateAttemptPartial("1", mockQuizAttempt);
+
+    expect(mockContextValue.updateAttemptPartial).toHaveBeenCalledWith("1", mockQuizAttempt);
   });
 
   it("should call assignBadge with correct parameters", async () => {
     (useContext as Mock).mockReturnValue(mockContextValue);
-    const attemptId = "1";
+
     const badgeType = BadgeType.BestAttempt;
 
     const { result } = renderHook(() => useQuizAttemptCRUD());
 
-    await result.current.assignBadge(attemptId, badgeType);
+    await result.current.assignBadge("1", badgeType);
 
-    expect(mockContextValue.assignBadge).toHaveBeenCalledWith(
-      attemptId,
-      badgeType
-    );
+    expect(mockContextValue.assignBadge).toHaveBeenCalledWith("1", badgeType);
   });
 });

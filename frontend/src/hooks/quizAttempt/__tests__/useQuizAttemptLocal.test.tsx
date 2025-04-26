@@ -6,8 +6,9 @@ import {
   QuizAttemptLocalContext,
   QuizAttemptLocalContextType,
 } from "../../../contexts/quizAttempt/QuizAttemptLocalContext";
-import { QuizAttemptDTO } from "@dti-isin/backend-api-client";
+import { QuizAttemptDTO, QuestionResponseDTO } from "@dti-isin/backend-api-client";
 
+// 🔵 Mocks
 const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
 vi.mock("react", () => ({
@@ -29,7 +30,7 @@ describe("useQuizAttemptLocal", () => {
     (React.useContext as Mock).mockReturnValue(undefined);
 
     expect(() => renderHook(() => useQuizAttemptLocal())).toThrow(
-      "useQuizAttemptLocal must be used within a QuizAttemptLocalProvider"
+        "useQuizAttemptLocal must be used within a QuizAttemptLocalProvider"
     );
   });
 
@@ -40,7 +41,9 @@ describe("useQuizAttemptLocal", () => {
       updateQuizAttemptResponses: vi.fn(),
       completeQuizAttempt: vi.fn().mockResolvedValue({} as QuizAttemptDTO),
       resetQuizAttempt: vi.fn(),
-      prepareQuizResponses: vi.fn().mockReturnValue([]),
+      prepareQuizResponses: vi.fn().mockReturnValue([] as QuestionResponseDTO[]),
+      clearQuizAttempt: vi.fn(),
+      resumeAttempt: vi.fn(),
     };
 
     (React.useContext as Mock).mockImplementation((context) => {
@@ -56,6 +59,8 @@ describe("useQuizAttemptLocal", () => {
       completeQuizAttempt: expect.any(Function),
       resetQuizAttempt: expect.any(Function),
       prepareQuizResponses: expect.any(Function),
+      clearQuizAttempt: expect.any(Function),
+      resumeAttempt: expect.any(Function),
     });
   });
 });

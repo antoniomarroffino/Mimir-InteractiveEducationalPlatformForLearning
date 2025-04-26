@@ -6,6 +6,8 @@ import { CourseListContext } from "../../../contexts/course/CourseListContext";
 import { courseApi } from "../../../../config/config";
 import { CourseDTO } from "@dti-isin/backend-api-client";
 import {describe, it, expect, beforeEach, vi, Mock} from "vitest";
+import "@testing-library/jest-dom";
+
 
 // Mock the courseApi
 vi.mock("../../../../config/config", () => ({
@@ -57,10 +59,10 @@ describe("CourseListProvider", () => {
   };
 
   it("should provide teacher courses data", async () => {
-    (courseApi.apiCoursesTeacherGet as any).mockResolvedValueOnce({
+    (courseApi.apiCoursesTeacherGet as Mock).mockResolvedValueOnce({
       data: mockCourses,
     });
-    (courseApi.apiCoursesGet as any).mockResolvedValueOnce({ data: [] });
+    (courseApi.apiCoursesGet as Mock).mockResolvedValueOnce({ data: [] });
 
     render(
       <QueryClientProvider client={queryClient}>

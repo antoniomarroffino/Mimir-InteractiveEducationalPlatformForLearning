@@ -1,14 +1,14 @@
-import { describe, expect, it, vi, afterAll, Mock } from "vitest";
+import { describe, expect, it, vi, afterEach, afterAll, Mock } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
 import { useGetQuestionBankById } from "../useSelectedQuestionBank";
 import { questionBankApi } from "../../../../config/config";
 import { QuestionBankDTO } from "@dti-isin/backend-api-client";
 import { QueryClient, QueryClientProvider } from "react-query";
 
-// Mock console.error to prevent error messages from appearing in the console
+// Mock console.error
 const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-// Mock the questionBankApi
+// Mock dell'API
 vi.mock("../../../../config/config", () => ({
   questionBankApi: {
     apiQuestionBanksIdGet: vi.fn(),
@@ -30,11 +30,14 @@ describe("useGetQuestionBankById", () => {
       },
     });
     return ({ children }: { children: React.ReactNode }) => (
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     );
   };
 
-  // Clean up console.error mock after all tests
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
   afterAll(() => {
     consoleErrorSpy.mockRestore();
   });
@@ -53,6 +56,7 @@ describe("useGetQuestionBankById", () => {
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
     expect(result.current.data).toEqual(mockQuestionBank);
+    expect(questionBankApi.apiQuestionBanksIdGet).toHaveBeenCalledTimes(1);
     expect(questionBankApi.apiQuestionBanksIdGet).toHaveBeenCalledWith({
       id: "1",
     });
@@ -60,9 +64,7 @@ describe("useGetQuestionBankById", () => {
 
   it("should handle error when fetching question bank data", async () => {
     const error = new Error("Failed to fetch question bank");
-    (questionBankApi.apiQuestionBanksIdGet as Mock).mockRejectedValueOnce(
-      error
-    );
+    (questionBankApi.apiQuestionBanksIdGet as Mock).mockRejectedValueOnce(error);
 
     const { result } = renderHook(() => useGetQuestionBankById("1"), {
       wrapper: createWrapper(),
@@ -73,5 +75,6 @@ describe("useGetQuestionBankById", () => {
     await waitFor(() => expect(result.current.isError).toBe(true));
 
     expect(result.current.error).toEqual(error);
+    expect(questionBankApi.apiQuestionBanksIdGet).toHaveBeenCalledTimes(1);
   });
 });

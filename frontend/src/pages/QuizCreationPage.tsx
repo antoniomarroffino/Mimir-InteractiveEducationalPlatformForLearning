@@ -1,31 +1,31 @@
-import {useParams} from 'react-router-dom';
-import {QuestionDTO, QuestionType} from '@dti-isin/backend-api-client';
-import React, {useCallback, useEffect, useMemo, useState} from "react";
-import {useQuizCRUD} from "../hooks/quiz/useQuizCRUD.ts";
-import {useQuestionBankList} from "../hooks/questionBank/useQuestionBankList.ts";
-import {QuestionBankList} from "../components/quiz/QuestionBankList.tsx";
-import {SpecificQuestionDTO, useQuestionCreation} from "../hooks/question/useQuestionCreation.ts";
-import {useGetQuizById} from "../hooks/quiz/useGetQuizById.ts";
-import {useGetCourseById} from "../hooks/course/useGetCourseById.ts";
-import {useGetFolderById} from "../hooks/folder/useGetFolderById.ts";
-import {LoadingSpinner} from "../components/common/LoadingSpinner.tsx";
-import {QuizCreationHeader} from "../components/quiz/QuizCreationHeader.tsx";
-import {SidebarQuizCreation} from "../components/quiz/SidebarQuizCreation.tsx";
-import {QuestionEditorPreview} from "../components/quiz/QuestionEditorPreview.tsx";
-import {ThreeColumnLayout} from "../components/common/ThreeColumnLayout.tsx";
-import {motion} from "framer-motion";
+import { useParams } from 'react-router-dom';
+import { QuestionDTO, QuestionType } from '@dti-isin/backend-api-client';
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useQuizCRUD } from "../hooks/quiz/useQuizCRUD";
+import { useQuestionBankList } from "../hooks/questionBank/useQuestionBankList";
+import { QuestionBankList } from "../components/quiz/QuestionBankList";
+import { SpecificQuestionDTO, useQuestionCreation } from "../hooks/question/useQuestionCreation";
+import { useGetQuizById } from "../hooks/quiz/useGetQuizById";
+import { useGetCourseById } from "../hooks/course/useGetCourseById";
+import { useGetFolderById } from "../hooks/folder/useGetFolderById";
+import { LoadingSpinner } from "../components/common/LoadingSpinner";
+import { QuizCreationHeader } from "../components/quiz/QuizCreationHeader";
+import { SidebarQuizCreation } from "../components/quiz/SidebarQuizCreation";
+import { QuestionEditorPreview } from "../components/quiz/QuestionEditorPreview";
+import { ThreeColumnLayout } from "../components/common/ThreeColumnLayout";
+import { motion } from "framer-motion";
 
 export const QuizCreationPage: React.FC = () => {
-    const {courseId, folderId, quizId} = useParams();
+    const { courseId, folderId, quizId } = useParams();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const {data: currentQuiz, isLoading: isLoadingQuiz} = useGetQuizById(courseId!, folderId!, quizId!);
-    const {data: currentFolder, isLoading: isLoadingFolder} = useGetFolderById(courseId!, folderId!);
-    const {data: currentCourse, isLoading: isLoadingCourse} = useGetCourseById(courseId!);
+    const { data: currentQuiz, isLoading: isLoadingQuiz } = useGetQuizById(courseId!, folderId!, quizId!);
+    const { data: currentFolder, isLoading: isLoadingFolder } = useGetFolderById(courseId!, folderId!);
+    const { data: currentCourse, isLoading: isLoadingCourse } = useGetCourseById(courseId!);
     const [isEditingQuizName, setIsEditingQuizName] = useState(false);
     const [editedQuizName, setEditedQuizName] = useState(currentQuiz?.name || '');
-    const {updateQuiz} = useQuizCRUD();
+    const { updateQuiz, isUpdatingQuiz } = useQuizCRUD();
     const [selectedQuestions, setSelectedQuestions] = useState<string[]>([]);
-    const {questionBanks, isLoadingQuestionBanks, errorQuestionBanks} = useQuestionBankList();
+    const { questionBanks, isLoadingQuestionBanks, errorQuestionBanks } = useQuestionBankList();
 
     const {
         selectedQuestionType,
@@ -49,14 +49,9 @@ export const QuizCreationPage: React.FC = () => {
     const handleTimeLimitChange = useCallback(async (minutes: number | undefined) => {
         if (!currentQuiz) return;
         try {
-            await updateQuiz.mutateAsync({
-                courseId: courseId!,
-                folderId: folderId!,
-                quizId: quizId!,
-                quizDTO: {
-                    ...currentQuiz,
-                    timeLimitMinutes: minutes
-                }
+            await updateQuiz(courseId!, folderId!, quizId!, {
+                ...currentQuiz,
+                timeLimitMinutes: minutes
             });
         } catch (error) {
             console.error('Failed to update time limit:', error);
@@ -73,14 +68,9 @@ export const QuizCreationPage: React.FC = () => {
             return;
         }
         try {
-            await updateQuiz.mutateAsync({
-                courseId: courseId!,
-                folderId: folderId!,
-                quizId: quizId!,
-                quizDTO: {
-                    ...currentQuiz,
-                    name: editedQuizName.trim()
-                }
+            await updateQuiz(courseId!, folderId!, quizId!, {
+                ...currentQuiz,
+                name: editedQuizName.trim()
             });
         } catch (error) {
             console.error('Failed to update quiz name:', error);
@@ -117,14 +107,9 @@ export const QuizCreationPage: React.FC = () => {
 
         try {
             setIsImporting(true);
-            await updateQuiz.mutateAsync({
-                courseId: courseId!,
-                folderId: folderId!,
-                quizId: quizId!,
-                quizDTO: {
-                    ...currentQuiz,
-                    questions: updatedQuestions
-                }
+            await updateQuiz(courseId!, folderId!, quizId!, {
+                ...currentQuiz,
+                questions: updatedQuestions
             });
             setSelectedQuestions([]);
         } catch (error) {
@@ -138,14 +123,9 @@ export const QuizCreationPage: React.FC = () => {
         if (!currentQuiz || !folderId || !quizId) return;
         const updatedQuestions = currentQuiz.questions?.filter(q => q.id !== questionId) || [];
         try {
-            await updateQuiz.mutateAsync({
-                courseId: courseId!,
-                folderId: folderId!,
-                quizId: quizId!,
-                quizDTO: {
-                    ...currentQuiz,
-                    questions: updatedQuestions
-                }
+            await updateQuiz(courseId!, folderId!, quizId!, {
+                ...currentQuiz,
+                questions: updatedQuestions
             });
             if (questionTemplate?.id === questionId) resetQuestionCreation();
         } catch (error) {
@@ -154,13 +134,13 @@ export const QuizCreationPage: React.FC = () => {
     };
 
     if (isLoadingQuiz || isLoadingFolder || isLoadingCourse || isLoadingQuestionBanks || !currentQuiz || !currentCourse || !currentFolder) {
-        return <LoadingSpinner fullScreen/>;
+        return <LoadingSpinner fullScreen />;
     }
 
     return (
         <motion.section
-            initial={{opacity: 0}}
-            animate={{opacity: 1}}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 py-12 px-4"
         >
             <div className="max-w-7xl mx-auto space-y-8">
@@ -174,7 +154,7 @@ export const QuizCreationPage: React.FC = () => {
                     onNameChange={setEditedQuizName}
                     onNameSave={handleQuizNameUpdate}
                     onTimeLimitChange={handleTimeLimitChange}
-                    isSaving={updateQuiz.isLoading}
+                    isSaving={isUpdatingQuiz}
                 />
 
                 <ThreeColumnLayout
@@ -206,7 +186,7 @@ export const QuizCreationPage: React.FC = () => {
                             isEditingExistingQuestion={isEditingExistingQuestion}
                             onCancel={resetQuestionCreation}
                             onSave={saveNewQuestion}
-                            onQuestionTextChange={(text) => setDraftQuestion(prev => ({...prev, questionText: text}))}
+                            onQuestionTextChange={(text) => setDraftQuestion(prev => ({ ...prev, questionText: text }))}
                             isDisabled={!selectedQuestionType}
                         />
                     }
@@ -220,7 +200,7 @@ export const QuizCreationPage: React.FC = () => {
                             onQuestionSelect={handleQuestionSelect}
                             onBankSelect={handleBankSelect}
                             onImport={handleImportQuestions}
-                            isImporting={updateQuiz.isLoading && isImporting}
+                            isImporting={isUpdatingQuiz && isImporting}
                         />
                     }
                 />
