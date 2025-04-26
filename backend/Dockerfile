@@ -16,6 +16,11 @@ RUN ./mvnw clean package \
 # Stage 2: Create minimal runtime image
 FROM quay.io/quarkus/quarkus-micro-image:2.0
 WORKDIR /app
+
+RUN curl -o /etc/ssl/certs/rds-combined-ca-bundle.pem https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem && \
+    update-ca-trust extract || true
+
+
 COPY --from=builder /app/target/*-runner serviceQuarkus
 ENV QUARKUS_PROFILE=prod
 

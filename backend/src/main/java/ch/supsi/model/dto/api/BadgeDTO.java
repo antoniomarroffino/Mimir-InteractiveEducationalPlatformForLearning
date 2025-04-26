@@ -1,7 +1,6 @@
 package ch.supsi.model.dto.api;
 
 import ch.supsi.model.api.badge.BadgeType;
-import ch.supsi.model.api.user.User;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.validation.constraints.NotNull;
 

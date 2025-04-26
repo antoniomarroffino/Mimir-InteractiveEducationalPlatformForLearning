@@ -84,9 +84,10 @@ export const QuestionCRUDProvider: React.FC<{ children: React.ReactNode }> = ({c
                 throw new Error("Missing required parameters");
             }
 
-            return questionApi.apiQuestionsQuestionIdDelete({
+            const response = await questionApi.apiQuestionsQuestionIdDelete({
                 questionId: params.questionId,
             });
+            return response.data;
         },
         {
             onSuccess: (_, params) => {
@@ -110,6 +111,7 @@ export const QuestionCRUDProvider: React.FC<{ children: React.ReactNode }> = ({c
             }
         }
     );
+
 
     const createQuestionTemplateMutation = useMutation(
         async (questionType: QuestionType) => {

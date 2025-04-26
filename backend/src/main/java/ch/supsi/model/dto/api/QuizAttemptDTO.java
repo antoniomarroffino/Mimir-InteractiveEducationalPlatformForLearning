@@ -1,6 +1,6 @@
 package ch.supsi.model.dto.api;
 
-import ch.supsi.model.api.user.User;
+import ch.supsi.model.api.AttemptStatus;
 import ch.supsi.model.dto.api.response.QuestionResponseDTO;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.validation.constraints.NotNull;
@@ -28,9 +28,15 @@ public class QuizAttemptDTO {
 
     private List<BadgeDTO> badges;
 
+    @Schema(description = "Status of the attempt (IN_PROGRESS, TERMINATED)")
+    private AttemptStatus status;
+
+    private Long timeRemainingSeconds;
+
     public QuizAttemptDTO() {
         this.responses = new ArrayList<>();
         this.badges = new ArrayList<>();
+        this.timeRemainingSeconds = 0L;
     }
 
     public String getId() {
@@ -78,7 +84,7 @@ public class QuizAttemptDTO {
     }
 
     public void setResponses(List<QuestionResponseDTO> responses) {
-        this.responses = responses != null? responses : new ArrayList<>();
+        this.responses = responses != null ? responses : new ArrayList<>();
     }
 
     public List<BadgeDTO> getBadges() {
@@ -87,5 +93,21 @@ public class QuizAttemptDTO {
 
     public void setBadges(List<BadgeDTO> badges) {
         this.badges = badges != null ? badges : new ArrayList<>();
+    }
+
+    public AttemptStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(AttemptStatus status) {
+        this.status = status;
+    }
+
+    public Long getTimeRemainingSeconds() {
+        return this.timeRemainingSeconds;
+    }
+
+    public void setTimeRemainingSeconds(Long timeRemainingSeconds) {
+        this.timeRemainingSeconds = timeRemainingSeconds == null? 0L : timeRemainingSeconds;
     }
 }

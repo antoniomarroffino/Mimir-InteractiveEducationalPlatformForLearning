@@ -4,7 +4,6 @@ import ch.supsi.model.api.question.QuestionType;
 import ch.supsi.model.dto.api.question.QuestionDTO;
 import ch.supsi.model.dto.api.question.TrueFalseQuestionDTO;
 import ch.supsi.service.question.IQuestionService;
-import io.quarkus.hibernate.validator.runtime.jaxrs.ResteasyReactiveViolationException;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.security.TestSecurity;
@@ -38,7 +37,7 @@ public class QuestionControllerTest {
     @DisplayName("Should create question template")
     @TestSecurity(user = "teacher", roles = "TEACHER")
     void test01CreateTemplate_Success() {
-        TrueFalseQuestionDTO trueFalseQuestionDTO  = new TrueFalseQuestionDTO();
+        TrueFalseQuestionDTO trueFalseQuestionDTO = new TrueFalseQuestionDTO();
 
         when(this.questionService.createQuestionTemplate(any(QuestionType.class))).thenReturn(trueFalseQuestionDTO);
 

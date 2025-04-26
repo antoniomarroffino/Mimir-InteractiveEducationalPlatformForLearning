@@ -2,18 +2,18 @@ import React from "react";
 import {motion} from "framer-motion";
 
 const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
+    hidden: {y: 20, opacity: 0},
     visible: {
         y: 0,
         opacity: 1,
-        transition: { duration: 0.5 }
+        transition: {duration: 0.5}
     }
 };
 
 const cardHoverVariants = {
     hover: {
         scale: 1.05,
-        transition: { duration: 0.3 }
+        transition: {duration: 0.3}
     }
 };
 
@@ -22,7 +22,7 @@ export const StatsCard: React.FC<{
     value: string | number;
     icon: React.ReactNode;
     description: string;
-}> = ({ title, value, icon, description }) => (
+}> = ({title, value, icon, description}) => (
     <motion.div
         variants={itemVariants}
         whileHover={cardHoverVariants.hover}
@@ -33,16 +33,16 @@ export const StatsCard: React.FC<{
                       group-hover:opacity-100 transition-opacity duration-300"></div>
         <div className="flex items-start justify-between relative z-10">
             <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.2 }}
+                initial={{opacity: 0, x: -20}}
+                animate={{opacity: 1, x: 0}}
+                transition={{delay: 0.2}}
             >
                 <p className="text-sm font-medium text-base-content/70">{title}</p>
                 <motion.p
                     className="text-3xl font-bold mt-2"
-                    initial={{ scale: 0.8 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: 0.3 }}
+                    initial={{scale: 0.8}}
+                    animate={{scale: 1}}
+                    transition={{delay: 0.3}}
                 >
                     {value}
                 </motion.p>
@@ -52,7 +52,7 @@ export const StatsCard: React.FC<{
                 whileHover={{
                     rotate: 5,
                     scale: 1.1,
-                    transition: { duration: 0.2 }
+                    transition: {duration: 0.2}
                 }}
                 className="text-primary transition-colors duration-300
                          hover:text-secondary cursor-pointer"

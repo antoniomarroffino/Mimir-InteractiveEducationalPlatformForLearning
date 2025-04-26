@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { TrueFalseQuestionDTO } from '@dti-isin/backend-api-client';
+import React, {useEffect, useState} from 'react';
+import {TrueFalseQuestionDTO} from '@dti-isin/backend-api-client';
+import {motion} from 'framer-motion';
 
 interface TrueFalseQuestionProps {
     question: TrueFalseQuestionDTO;
@@ -25,7 +26,12 @@ export const TrueFalseQuestion: React.FC<TrueFalseQuestionProps> = ({
     };
 
     return (
-        <div className="card bg-base-100">
+        <motion.div
+            initial={{opacity: 0, y: 10}}
+            animate={{opacity: 1, y: 0}}
+            transition={{duration: 0.3}}
+            className="card bg-base-100 shadow-xl"
+        >
             <div className="card-body">
                 <h2 className="card-title text-2xl text-center text-primary mb-6">
                     {question.questionText}
@@ -34,33 +40,29 @@ export const TrueFalseQuestion: React.FC<TrueFalseQuestionProps> = ({
                     <button
                         onClick={() => handleAnswer(true)}
                         className={`
-                            btn btn-lg 
-                            flex flex-col gap-2 
-                            ${selectedAnswer === true
-                            ? 'btn-success text-white'
+              btn btn-lg flex flex-col gap-2 
+              ${selectedAnswer === true
+                            ? 'btn-success text-white scale-105'
                             : 'btn-outline btn-success'}
-                            transition-all duration-300
-                            hover:scale-105
-                        `}
+              transition-transform duration-300 hover:scale-105
+            `}
                     >
-                        <span>True</span>
+                        True
                     </button>
                     <button
                         onClick={() => handleAnswer(false)}
                         className={`
-                            btn btn-lg 
-                            flex flex-col gap-2 
-                            ${selectedAnswer === false
-                            ? 'btn-error text-white'
+              btn btn-lg flex flex-col gap-2 
+              ${selectedAnswer === false
+                            ? 'btn-error text-white scale-105'
                             : 'btn-outline btn-error'}
-                            transition-all duration-300
-                            hover:scale-105
-                        `}
+              transition-transform duration-300 hover:scale-105
+            `}
                     >
-                        <span>False</span>
+                        False
                     </button>
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 };

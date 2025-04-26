@@ -2,7 +2,6 @@ package ch.supsi.controller.quizattempt;
 
 import ch.supsi.model.api.badge.BadgeType;
 import ch.supsi.model.dto.api.BadgeDTO;
-import ch.supsi.model.dto.api.BadgeHolderDTO;
 import ch.supsi.model.dto.api.QuizAttemptDTO;
 import ch.supsi.model.dto.api.UserWithoutCoursesDTO;
 import ch.supsi.service.quizattempt.IQuizAttemptService;
@@ -38,7 +37,7 @@ public class QuizAttemptController {
     IMicrosoftGraphService microsoftGraphService;
 
     @GET
-    @RolesAllowed({"STUDENT","TEACHER"})
+    @RolesAllowed({"STUDENT", "TEACHER"})
     @Path("/user/{userAzureOID}")
     @Operation(summary = "Get all quiz attempts for a specific user")
     @APIResponse(
@@ -63,9 +62,9 @@ public class QuizAttemptController {
                 this.buildUserWithoutCoursesDTOFromQuizAttemptDTO(attempt)
         ));
         attempts.forEach(attempt ->
-                        attempt.getBadges()
-                                .forEach(badgeDTO ->
-                                        badgeDTO.setAssignedBy(this.buildUserWithoutCoursesDTOFromBadgeDTO(badgeDTO))));
+                attempt.getBadges()
+                        .forEach(badgeDTO ->
+                                badgeDTO.setAssignedBy(this.buildUserWithoutCoursesDTOFromBadgeDTO(badgeDTO))));
         return Response.ok(attempts).build();
     }
 
@@ -114,9 +113,9 @@ public class QuizAttemptController {
                 this.buildUserWithoutCoursesDTOFromQuizAttemptDTO(attempt)
         ));
         attempts.forEach(attempt ->
-                        attempt.getBadges()
-                                .forEach(badgeDTO ->
-                                        badgeDTO.setAssignedBy(this.buildUserWithoutCoursesDTOFromBadgeDTO(badgeDTO))));
+                attempt.getBadges()
+                        .forEach(badgeDTO ->
+                                badgeDTO.setAssignedBy(this.buildUserWithoutCoursesDTOFromBadgeDTO(badgeDTO))));
         return Response.ok(attempts).build();
     }
 
@@ -176,8 +175,63 @@ public class QuizAttemptController {
         return Response.ok().build();
     }
 
+    @PATCH
+    @Path("/{attemptId}")
+    @Operation(summary = "Update an existing quiz attempt (in progress)")
+    @APIResponse(responseCode = "200", description = "Quiz attempt updated successfully", content = @Content(
+            mediaType = MediaType.APPLICATION_JSON,
+            schema = @Schema(implementation = QuizAttemptDTO.class)
+    ))
+    @APIResponse(responseCode = "404", description = "Quiz attempt not found")
+    public Response updateQuizAttempt(@PathParam("attemptId") String attemptId, @Valid QuizAttemptDTO quizAttemptDTO) {
+        QuizAttemptDTO updatedDTO = this.quizAttemptService.updateQuizAttempt(new ObjectId(attemptId), quizAttemptDTO);
+        updatedDTO.setUser(this.buildUserWithoutCoursesDTOFromQuizAttemptDTO(updatedDTO));
+        updatedDTO.getBadges().forEach(b -> b.setAssignedBy(this.buildUserWithoutCoursesDTOFromBadgeDTO(b)));
+        return Response.ok(updatedDTO).build();
+    }
+
+    @GET
+    @Path("/recover")
+    @Operation(summary = "Try to recover an existing quiz attempt (in progress)")
+    @APIResponse(responseCode = "200", description = "Recover Quiz attempt successfully", content = @Content(
+            mediaType = MediaType.APPLICATION_JSON,
+            schema = @Schema(implementation = QuizAttemptDTO.class)
+    ))
+    @APIResponse(responseCode = "404", description = "There is not any Quiz Attempt in progress")
+    public Response recoverQuizAttempt(
+            @QueryParam("userAzureOID") String userAzureOID,
+            @QueryParam("quizPublicationId") String quizPublicationId
+    ) {
+        QuizAttemptDTO quizAttemptDTO = this.quizAttemptService.recoverQuizAttemptByPublicationIdAndUserAzureOID(
+                userAzureOID,
+                new ObjectId(quizPublicationId)
+        );
+        quizAttemptDTO.setUser(this.buildUserWithoutCoursesDTOFromQuizAttemptDTO(quizAttemptDTO));
+        return Response.ok(quizAttemptDTO).build();
+    }
+
+    @POST
+    @Path("/{attemptId}/submit")
+    @Operation(summary = "Submit and complete a quiz attempt")
+    @APIResponse(
+            responseCode = "200",
+            description = "Quiz attempt submitted and completed",
+            content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = QuizAttemptDTO.class)
+            )
+    )
+    @APIResponse(responseCode = "404", description = "Quiz attempt not found")
+    public Response submitQuizAttempt(@PathParam("attemptId") String attemptId, @Valid QuizAttemptDTO quizAttemptDTO) {
+        QuizAttemptDTO submittedDTO = this.quizAttemptService.submitQuizAttempt(new ObjectId(attemptId), quizAttemptDTO);
+        submittedDTO.setUser(this.buildUserWithoutCoursesDTOFromQuizAttemptDTO(submittedDTO));
+        submittedDTO.getBadges().forEach(b -> b.setAssignedBy(this.buildUserWithoutCoursesDTOFromBadgeDTO(b)));
+        return Response.ok(submittedDTO).build();
+    }
+
+
     private UserWithoutCoursesDTO buildUserWithoutCoursesDTOFromQuizAttemptDTO(QuizAttemptDTO quizAttemptDTO) {
-        if(quizAttemptDTO.getUser().getAzureOid() == null)
+        if (quizAttemptDTO.getUser().getAzureOid() == null)
             return null;
 
         return this.buildUserWithoutCoursesDTOFromAzureOid(quizAttemptDTO.getUser().getAzureOid());

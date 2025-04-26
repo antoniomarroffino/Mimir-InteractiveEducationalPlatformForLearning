@@ -1,14 +1,14 @@
 import {
+    BadgeHolderControllerApi,
     Configuration,
     CourseControllerApi,
     FolderControllerApi,
     QuestionBankControllerApi,
     QuestionControllerApi,
+    QuizAttemptControllerApi,
     QuizControllerApi,
     QuizPublicationControllerApi,
-    UserControllerApi,
-    QuizAttemptControllerApi,
-    BadgeHolderControllerApi
+    UserControllerApi
 } from '@dti-isin/backend-api-client';
 import axios from 'axios';
 

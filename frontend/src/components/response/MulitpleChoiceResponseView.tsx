@@ -57,7 +57,7 @@ export const MultipleChoiceResponseView: React.FC<MultipleChoiceResponseViewProp
                             {showCorrect ? (
                                 isCorrect && (
                                     <div className="text-success">
-                                        <BsCheckCircle className="text-lg" />
+                                        <BsCheckCircle className="text-lg"/>
                                     </div>
                                 )
                             ) : (

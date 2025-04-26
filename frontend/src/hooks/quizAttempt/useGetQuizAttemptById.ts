@@ -1,4 +1,4 @@
-import { QuizAttemptDTO } from "@dti-isin/backend-api-client";
+import {QuizAttemptDTO} from "@dti-isin/backend-api-client";
 import {useQuery} from "react-query";
 import {quizAttemptApi} from "../../../config/config.ts";
 

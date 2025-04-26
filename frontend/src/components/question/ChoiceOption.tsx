@@ -10,23 +10,23 @@ interface ChoiceOptionProps {
 }
 
 export const ChoiceOption: React.FC<ChoiceOptionProps> = ({
-                                                       choice,
-                                                       isSelected,
-                                                       isCorrect,
-                                                       showCorrect,
-                                                       showResponse
-                                                   }) => {
+                                                              choice,
+                                                              isSelected,
+                                                              isCorrect,
+                                                              showCorrect,
+                                                              showResponse
+                                                          }) => {
     const getStatusIcon = () => {
         if (!showResponse) return null;
 
         if (isSelected) {
             return isCorrect ? (
                 <div className="text-success">
-                    <BsCheckCircle className="text-lg" />
+                    <BsCheckCircle className="text-lg"/>
                 </div>
             ) : (
                 <div className="text-error">
-                    <BsXCircle className="text-lg" />
+                    <BsXCircle className="text-lg"/>
                 </div>
             );
         }
@@ -34,7 +34,7 @@ export const ChoiceOption: React.FC<ChoiceOptionProps> = ({
         if (showCorrect && isCorrect) {
             return (
                 <div className="text-success/70">
-                    <BsCheckCircle className="text-lg" />
+                    <BsCheckCircle className="text-lg"/>
                 </div>
             );
         }

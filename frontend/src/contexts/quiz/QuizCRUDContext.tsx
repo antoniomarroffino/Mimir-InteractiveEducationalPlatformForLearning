@@ -1,18 +1,23 @@
-import {QuizDTO} from "@dti-isin/backend-api-client/dist/models/quiz-dto";
 import {createContext} from "react";
+import {UseMutationResult} from "react-query";
+import {QuizDTO} from "@dti-isin/backend-api-client";
 
 export type QuizCRUDContextType = {
-    createQuiz: (courseId: string, folderId: string, quizDTO: QuizDTO) => Promise<QuizDTO>;
-    updateQuiz: (courseId: string, folderId: string, quizId: string, quizDTO: QuizDTO) => Promise<QuizDTO>;
-    deleteQuiz: (courseId: string, folderId: string, quizId: string) => Promise<void>;
-
-    isCreatingQuiz: boolean;
-    isUpdatingQuiz: boolean;
-    isDeletingQuiz: boolean;
-
-    errorCreateQuiz: Error | null;
-    errorUpdateQuiz: Error | null;
-    errorDeleteQuiz: Error | null;
-}
+    createQuiz: UseMutationResult<
+        QuizDTO,
+        Error,
+        { courseId: string; folderId: string; quizDTO: QuizDTO }
+    >;
+    updateQuiz: UseMutationResult<
+        QuizDTO,
+        Error,
+        { courseId: string; folderId: string; quizId: string; quizDTO: QuizDTO }
+    >;
+    deleteQuiz: UseMutationResult<
+        void,
+        Error,
+        { courseId: string; folderId: string; quizId: string }
+    >;
+};
 
 export const QuizCRUDContext = createContext<QuizCRUDContextType | undefined>(undefined);

@@ -67,21 +67,4 @@ public class AdminInitializerTest {
 
         assertThrows(RuntimeException.class, () -> this.adminInitializer.onStart(null));
     }
-
-    @Test
-    @DisplayName("Should delete all admins")
-    void test04OnStop_ShouldDeleteAllAdmins() {
-        this.adminInitializer.onStop(null);
-
-        verify(this.adminService, times(1)).deleteAdmins();
-        verifyNoMoreInteractions(this.adminService);
-    }
-
-    @Test
-    @DisplayName("Should handle deletion errors")
-    void test05OnStop_ShouldHandleDeletionErrors() {
-        doThrow(new RuntimeException("Deletion error")).when(this.adminService).deleteAdmins();
-
-        assertThrows(RuntimeException.class, () -> this.adminInitializer.onStop(null));
-    }
 }

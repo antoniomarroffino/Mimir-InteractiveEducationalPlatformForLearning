@@ -19,12 +19,10 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 })
 @RegisterForReflection
 public abstract class QuestionResponseDTO {
-    private String id;
-
     @Schema(required = true)
     @NotNull(message = "Response type cannot be null")
     private final QuestionType responseType;
-
+    private String id;
     @Schema(required = true, description = "ID of the question this response is for")
     @NotNull(message = "Question ID cannot be null")
     private String questionId;

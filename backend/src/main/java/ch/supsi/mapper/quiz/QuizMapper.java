@@ -9,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -20,12 +19,13 @@ public class QuizMapper {
         dto.setName(quiz.name);
         dto.setDescription(quiz.description);
         dto.setQuestions(questionDTOList);
+        dto.setCreatedAt(quiz.createdAt);
         dto.setUpdatedAt(quiz.updatedAt);
         dto.setTimeLimitMinutes(quiz.timeLimitMinutes);
         return dto;
     }
 
-    public Quiz toEntity(@NotNull QuizDTO dto, Set<String> questionIdList) {
+    public Quiz toEntity(@NotNull QuizDTO dto, List<String> questionIdList) {
         Quiz quiz = new Quiz(dto.getName());
 
         if (dto.getId() != null) {
@@ -37,7 +37,7 @@ public class QuizMapper {
 
         quiz.questionsId = questionIdList.stream()
                 .map(ObjectId::new)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
 
         quiz.createdAt = dto.getCreatedAt() != null ? dto.getCreatedAt() : LocalDateTime.now();
         quiz.updatedAt = dto.getUpdatedAt() != null ? dto.getUpdatedAt() : LocalDateTime.now();

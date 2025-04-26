@@ -26,7 +26,7 @@ public class QuestionMapperBuilder implements IQuestionMapperBuilder {
     @SuppressWarnings("unchecked")
     public IBaseMapper<? extends Question, ? extends QuestionDTO> getQuestionDTOMapper(QuestionType questionType) {
         QuestionMapperHolder<? extends Question, ? extends QuestionDTO> questionMapperHolder = this.mapperMap.get(questionType);
-        if(questionMapperHolder == null) {
+        if (questionMapperHolder == null) {
             throw new UnsupportedOperationException("Question type not supported: " + questionType);
         }
         return questionMapperHolder.mapper();

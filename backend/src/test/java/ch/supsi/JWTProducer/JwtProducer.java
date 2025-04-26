@@ -1,9 +1,6 @@
 package ch.supsi.JWTProducer;
 
-import io.smallrye.jwt.build.Jwt;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.inject.Produces;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 @ApplicationScoped
 public class JwtProducer {

@@ -1,6 +1,5 @@
 package ch.supsi.model.dto.api.quiz;
 
-import ch.supsi.model.dto.api.QuizAttemptDTO;
 import ch.supsi.model.dto.api.QuizDTO;
 import ch.supsi.model.dto.api.question.QuestionDTO;
 import ch.supsi.model.dto.api.question.TrueFalseQuestionDTO;

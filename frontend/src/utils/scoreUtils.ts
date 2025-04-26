@@ -1,4 +1,4 @@
-import { QuizAttemptDTO, QuizPublicationDTO, QuestionDTO, QuestionResponseDTO } from '@dti-isin/backend-api-client';
+import {QuestionDTO, QuestionResponseDTO, QuizAttemptDTO, QuizPublicationDTO} from '@dti-isin/backend-api-client';
 
 export const calculateEarnedPoints = (attempt: QuizAttemptDTO): number => {
     return attempt.responses?.reduce((totalPoints, response) => {
@@ -25,4 +25,14 @@ export const getQuestionEarnedPoints = (
 
 export const getQuestionTotalPoints = (question: QuestionDTO): number => {
     return question.points || 1;
+};
+
+export const getScoreEmoji = (earned: number, total: number): string => {
+    if (total === 0) return '❓';
+    const percentage = (earned / total) * 100;
+    if (percentage === 100) return '🏆';
+    if (percentage >= 90) return '🌟';
+    if (percentage >= 70) return '👍';
+    if (percentage >= 50) return '🤔';
+    return '😕';
 };

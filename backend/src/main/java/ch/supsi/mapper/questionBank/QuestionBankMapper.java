@@ -9,7 +9,6 @@ import org.bson.types.ObjectId;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Set;
 
 @ApplicationScoped
 public class QuestionBankMapper {
@@ -22,7 +21,7 @@ public class QuestionBankMapper {
         return dto;
     }
 
-    public QuestionBank toEntity(@NotNull QuestionBankDTO dto, Set<String> questionIdList) {
+    public QuestionBank toEntity(@NotNull QuestionBankDTO dto, List<String> questionIdList) {
         QuestionBank questionBank = new QuestionBank();
 
         if (dto.getId() != null) {

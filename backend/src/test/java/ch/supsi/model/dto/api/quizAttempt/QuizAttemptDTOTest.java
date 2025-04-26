@@ -1,11 +1,9 @@
 package ch.supsi.model.dto.api.quizAttempt;
 
-import ch.supsi.model.api.badge.Badge;
 import ch.supsi.model.api.user.Role;
 import ch.supsi.model.dto.api.BadgeDTO;
 import ch.supsi.model.dto.api.QuizAttemptDTO;
 import ch.supsi.model.dto.api.UserWithoutCoursesDTO;
-import ch.supsi.model.dto.api.question.TrueFalseQuestionDTO;
 import ch.supsi.model.dto.api.response.QuestionResponseDTO;
 import ch.supsi.model.dto.api.response.TrueFalseQuestionResponseDTO;
 import io.quarkus.test.junit.QuarkusTest;
@@ -16,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -37,6 +34,7 @@ public class QuizAttemptDTOTest {
         assertTrue(quizAttemptDTO.getResponses().isEmpty());
         assertNotNull(quizAttemptDTO.getBadges());
         assertTrue(quizAttemptDTO.getBadges().isEmpty());
+        assertEquals(0, (long) quizAttemptDTO.getTimeRemainingSeconds());
     }
 
     @Test
@@ -51,6 +49,7 @@ public class QuizAttemptDTOTest {
         List<QuestionResponseDTO> questionResponseDTOs = List.of(trueFalseQuestionResponseDTO);
         BadgeDTO badgeDTO = new BadgeDTO();
         List<BadgeDTO> badgeDTOList = List.of(badgeDTO);
+        Long timeUsed = 10L;
 
         QuizAttemptDTO quizAttemptDTO = new QuizAttemptDTO();
         quizAttemptDTO.setId(id);
@@ -60,6 +59,7 @@ public class QuizAttemptDTOTest {
         quizAttemptDTO.setCompletedAt(completedAt);
         quizAttemptDTO.setResponses(questionResponseDTOs);
         quizAttemptDTO.setBadges(badgeDTOList);
+        quizAttemptDTO.setTimeRemainingSeconds(timeUsed);
 
         assertEquals(id, quizAttemptDTO.getId());
         assertEquals(publicationId, quizAttemptDTO.getQuizPublicationId());
@@ -68,12 +68,15 @@ public class QuizAttemptDTOTest {
         assertEquals(completedAt, quizAttemptDTO.getCompletedAt());
         assertEquals(questionResponseDTOs, quizAttemptDTO.getResponses());
         assertEquals(badgeDTOList, quizAttemptDTO.getBadges());
+        assertEquals(timeUsed, quizAttemptDTO.getTimeRemainingSeconds());
 
         quizAttemptDTO.setResponses(null);
         quizAttemptDTO.setBadges(null);
+        quizAttemptDTO.setTimeRemainingSeconds(null);
         assertNotNull(quizAttemptDTO.getResponses());
         assertTrue(quizAttemptDTO.getResponses().isEmpty());
         assertNotNull(quizAttemptDTO.getBadges());
         assertTrue(quizAttemptDTO.getBadges().isEmpty());
+        assertEquals(0, (long) quizAttemptDTO.getTimeRemainingSeconds());
     }
 }

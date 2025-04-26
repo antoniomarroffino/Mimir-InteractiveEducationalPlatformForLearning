@@ -8,7 +8,6 @@ import ch.supsi.model.api.QuizPublication;
 import ch.supsi.model.api.question.QuestionType;
 import ch.supsi.model.api.question.TrueFalseQuestion;
 import ch.supsi.model.dto.api.QuizPublicationDTO;
-import ch.supsi.model.dto.api.question.QuestionDTO;
 import ch.supsi.model.dto.api.question.TrueFalseQuestionDTO;
 import ch.supsi.service.quizpublication.QuizPublicationServiceTest;
 import io.quarkus.test.InjectMock;

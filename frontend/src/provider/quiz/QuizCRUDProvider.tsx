@@ -9,12 +9,9 @@ export const QuizCRUDProvider: React.FC<{ children: React.ReactNode }> = ({child
 
     const createQuizMutation = useMutation(
         async ({courseId, folderId, quizDTO}: { courseId: string, folderId: string; quizDTO: QuizDTO }) => {
-            if (!courseId) {
-                throw new Error("No course selected");
-            }
-            if (!folderId) {
-                throw new Error("No folder selected");
-            }
+            if (!courseId) throw new Error("No course selected");
+            if (!folderId) throw new Error("No folder selected");
+
             const response = await quizApi.apiCoursesCourseIdFoldersFolderIdQuizzesPost({
                 courseId,
                 folderId,
@@ -35,19 +32,16 @@ export const QuizCRUDProvider: React.FC<{ children: React.ReactNode }> = ({child
         }
     );
 
-    const updateQuizMutation = useMutation<QuizDTO, Error, {
-        courseId: string,
-        folderId: string,
-        quizId: string,
-        quizDTO: QuizDTO
-    }>(
-        async ({courseId, folderId, quizId, quizDTO}) => {
-            if (!courseId) {
-                throw new Error("No course selected");
-            }
-            if (!folderId) {
-                throw new Error("No folder selected");
-            }
+    const updateQuizMutation = useMutation(
+        async ({courseId, folderId, quizId, quizDTO}: {
+            courseId: string,
+            folderId: string,
+            quizId: string,
+            quizDTO: QuizDTO
+        }) => {
+            if (!courseId) throw new Error("No course selected");
+            if (!folderId) throw new Error("No folder selected");
+
             const response = await quizApi.apiCoursesCourseIdFoldersFolderIdQuizzesQuizIdPut({
                 courseId,
                 folderId,
@@ -58,12 +52,21 @@ export const QuizCRUDProvider: React.FC<{ children: React.ReactNode }> = ({child
         },
         {
             onSuccess: (updatedQuizDTO, params) => {
-                queryClient.invalidateQueries({
-                    queryKey: ["quizzes", params.courseId, params.folderId],
-                });
-                queryClient.invalidateQueries({
-                    queryKey: ["quiz", params.courseId, params.folderId, updatedQuizDTO.id],
-                });
+                queryClient.setQueryData<QuizDTO>(
+                    ["quiz", params.courseId, params.folderId, params.quizId],
+                    (oldQuiz) => {
+                        if (JSON.stringify(oldQuiz) === JSON.stringify(updatedQuizDTO)) {
+                            return oldQuiz;
+                        }
+                        return updatedQuizDTO;
+                    }
+                );
+
+                queryClient.setQueryData<QuizDTO[]>(
+                    ["quizzes", params.courseId, params.folderId],
+                    (oldList) =>
+                        oldList?.map(q => q.id === updatedQuizDTO.id ? updatedQuizDTO : q) ?? []
+                );
             },
             onError: (error: Error) => {
                 console.error("Quiz update error:", error);
@@ -71,14 +74,12 @@ export const QuizCRUDProvider: React.FC<{ children: React.ReactNode }> = ({child
         }
     );
 
-    const deleteQuizMutation = useMutation<void, Error, { courseId: string, folderId: string, quizId: string }>(
-        async ({courseId, folderId, quizId}) => {
-            if (!courseId) {
-                throw new Error("No course selected");
-            }
-            if (!folderId) {
-                throw new Error("No folder selected");
-            }
+
+    const deleteQuizMutation = useMutation(
+        async ({courseId, folderId, quizId}: { courseId: string, folderId: string, quizId: string }) => {
+            if (!courseId) throw new Error("No course selected");
+            if (!folderId) throw new Error("No folder selected");
+
             await quizApi.apiCoursesCourseIdFoldersFolderIdQuizzesQuizIdDelete({
                 courseId,
                 folderId,
@@ -88,7 +89,7 @@ export const QuizCRUDProvider: React.FC<{ children: React.ReactNode }> = ({child
         {
             onSuccess: (_, params) => {
                 queryClient.invalidateQueries({
-                    queryKey: ["quizzes", params.courseId, params.folderId],
+                    queryKey: ["quizzes", params.courseId, params.folderId]
                 });
             },
             onError: (error: Error) => {
@@ -98,40 +99,9 @@ export const QuizCRUDProvider: React.FC<{ children: React.ReactNode }> = ({child
     );
 
     const value = useMemo(() => ({
-        createQuiz: async (courseId: string, folderId: string, quizDTO: QuizDTO) => {
-            try {
-                return await createQuizMutation.mutateAsync({courseId, folderId, quizDTO});
-            } catch (err) {
-                console.error("Quiz creation failed:", err);
-                throw err;
-            }
-        },
-
-        updateQuiz: async (courseId: string, folderId: string, quizId: string, quizDTO: QuizDTO) => {
-            try {
-                return await updateQuizMutation.mutateAsync({courseId, folderId, quizId, quizDTO});
-            } catch (err) {
-                console.error("Quiz update failed:", err);
-                throw err;
-            }
-        },
-
-        deleteQuiz: async (courseId: string, folderId: string, quizId: string) => {
-            try {
-                await deleteQuizMutation.mutateAsync({courseId, folderId, quizId});
-            } catch (err) {
-                console.error("Quiz deletion failed:", err);
-                throw err;
-            }
-        },
-
-        isCreatingQuiz: createQuizMutation.isLoading,
-        isUpdatingQuiz: updateQuizMutation.isLoading,
-        isDeletingQuiz: deleteQuizMutation.isLoading,
-
-        errorCreateQuiz: createQuizMutation.error,
-        errorUpdateQuiz: updateQuizMutation.error,
-        errorDeleteQuiz: deleteQuizMutation.error,
+        createQuiz: createQuizMutation,
+        updateQuiz: updateQuizMutation,
+        deleteQuiz: deleteQuizMutation
     }), [createQuizMutation, updateQuizMutation, deleteQuizMutation]);
 
     return (

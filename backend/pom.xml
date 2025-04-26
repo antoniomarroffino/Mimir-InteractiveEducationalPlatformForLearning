@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>ch.supsi</groupId>
     <artifactId>backend</artifactId>
-    <version>0.3.7</version>
+    <version>0.5.6</version>
 
     <properties>
         <compiler-plugin.version>3.13.0</compiler-plugin.version>
@@ -134,6 +134,10 @@
             <artifactId>quarkus-test-security-jwt</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-smallrye-health</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -161,7 +165,6 @@
                     <parameters>true</parameters>
                     <source>21</source>
                     <target>21</target>
-                    <compilerArgs>--enable-preview</compilerArgs>
                 </configuration>
             </plugin>
             <plugin>

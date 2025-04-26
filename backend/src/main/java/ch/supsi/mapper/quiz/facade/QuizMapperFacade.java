@@ -13,8 +13,6 @@ import org.bson.types.ObjectId;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class QuizMapperFacade implements IQuizMapperFacade {
@@ -45,15 +43,15 @@ public class QuizMapperFacade implements IQuizMapperFacade {
     public Quiz toEntity(QuizDTO dto) {
         if (dto == null) return null;
 
-        Set<String> questionIdList = dto.getQuestions()
+        List<String> questionIdList = dto.getQuestions()
                 .stream()
                 .map(QuestionDTO::getId)
-                .collect(Collectors.toSet());
+                .toList();
 
         return this.quizMapper.toEntity(dto, questionIdList);
     }
 
-    private List<Question> getQuestionsByIds(Set<ObjectId> idList) {
+    private List<Question> getQuestionsByIds(List<ObjectId> idList) {
         return idList.stream()
                 .map(this.questionRepository::findByIdOptional)
                 .filter(Optional::isPresent)

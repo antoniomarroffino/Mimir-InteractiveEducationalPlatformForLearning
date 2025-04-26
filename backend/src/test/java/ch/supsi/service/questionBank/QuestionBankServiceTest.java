@@ -15,9 +15,8 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,9 +39,10 @@ public class QuestionBankServiceTest {
     public static QuestionBank createTestQuestionBank(String name) {
         QuestionBank qb = new QuestionBank();
         qb.name = name;
-        qb.questions = new HashSet<>();
+        qb.questions = new ArrayList<>();
         return qb;
     }
+
 
     @Test
     @DisplayName("Should return empty list of Question Banks")
@@ -284,4 +284,24 @@ public class QuestionBankServiceTest {
         verify(this.questionBankRepository, times(1)).findByIdOptional(questionBank.id);
         verify(this.questionBankRepository, times(1)).delete(questionBank);
     }
+
+    @Test
+    @DisplayName("Should update question order in question bank")
+    void test16UpdateQuestionOrder() {
+        ObjectId bankId = new ObjectId();
+        QuestionBank questionBank = createTestQuestionBank("Ordered Bank");
+        questionBank.id = bankId;
+
+        List<String> newOrder = List.of("q1", "q2", "q3");
+
+        when(this.questionBankRepository.findByIdOptional(bankId)).thenReturn(Optional.of(questionBank));
+
+        this.questionBankService.updateQuestionOrder(bankId, newOrder);
+
+        assertEquals(newOrder, questionBank.questions);
+        assertNotNull(questionBank.lastModified);
+
+        verify(this.questionBankRepository, times(1)).update(questionBank);
+    }
+
 }

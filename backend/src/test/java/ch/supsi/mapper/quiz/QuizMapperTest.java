@@ -17,7 +17,6 @@ import org.junit.jupiter.api.TestMethodOrder;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -62,7 +61,8 @@ public class QuizMapperTest {
 
         String questionId1 = new ObjectId().toString();
         String questionId2 = new ObjectId().toString();
-        Set<String> questionIdList = Set.of(questionId1, questionId2);
+        List<String> questionIdList = List.of(questionId1, questionId2);
+
 
         Quiz quiz = this.quizMapper.toEntity(quizDTO, questionIdList);
         assertNotNull(quiz);
@@ -87,7 +87,8 @@ public class QuizMapperTest {
 
         String questionId1 = new ObjectId().toString();
         String questionId2 = new ObjectId().toString();
-        Set<String> questionIdList = Set.of(questionId1, questionId2);
+        List<String> questionIdList = List.of(questionId1, questionId2);
+
 
         Quiz quiz = this.quizMapper.toEntity(quizDTO, questionIdList);
         assertNotNull(quiz);

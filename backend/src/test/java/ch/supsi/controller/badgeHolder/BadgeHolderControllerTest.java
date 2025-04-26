@@ -1,7 +1,6 @@
 package ch.supsi.controller.badgeHolder;
 
 import ch.supsi.controller.badgeholder.BadgeHolderController;
-import ch.supsi.model.api.badge.Badge;
 import ch.supsi.model.api.user.Role;
 import ch.supsi.model.dto.api.BadgeDTO;
 import ch.supsi.model.dto.api.BadgeHolderDTO;
@@ -15,7 +14,6 @@ import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.security.TestSecurity;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.DisplayName;

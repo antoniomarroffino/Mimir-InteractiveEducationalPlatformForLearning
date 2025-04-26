@@ -38,7 +38,7 @@ export const QuizReview: React.FC<QuizReviewProps> = ({
     const totalQuestions = publication.questions?.length || 0;
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-6 px-2 sm:px-4">
             {CustomHeader ? (
                 <CustomHeader
                     attempt={attempt}
@@ -55,11 +55,13 @@ export const QuizReview: React.FC<QuizReviewProps> = ({
             )}
 
             {showStats && (
-                <QuizScoreStats
-                    earnedPoints={earnedPoints}
-                    totalPoints={totalPoints}
-                    totalQuestions={totalQuestions}
-                />
+                <div className="border-y border-base-200 py-6">
+                    <QuizScoreStats
+                        earnedPoints={earnedPoints}
+                        totalPoints={totalPoints}
+                        totalQuestions={totalQuestions}
+                    />
+                </div>
             )}
 
             <div className="space-y-6">
@@ -69,23 +71,30 @@ export const QuizReview: React.FC<QuizReviewProps> = ({
                     const correct = isAnswered && response ? isResponseCorrect(question, response) : false;
 
                     return (
-                        <QuestionResult
+                        <div
                             key={question.id}
-                            question={question}
-                            response={response}
-                            isAnswered={isAnswered}
-                            isCorrect={correct}
-                            earnedPoints={getQuestionEarnedPoints(response)}
-                            totalPoints={getQuestionTotalPoints(question)}
-                        />
+                            className="border border-base-200 rounded-xl overflow-hidden"
+                        >
+                            <QuestionResult
+                                question={question}
+                                response={response}
+                                isAnswered={isAnswered}
+                                isCorrect={correct}
+                                earnedPoints={getQuestionEarnedPoints(response)}
+                                totalPoints={getQuestionTotalPoints(question)}
+                            />
+                        </div>
                     );
                 })}
             </div>
 
             {onClose && (
-                <div className="text-center">
-                    <button onClick={onClose} className="btn btn-primary">
-                        Close revision
+                <div className="flex justify-center pt-6">
+                    <button
+                        onClick={onClose}
+                        className="btn btn-primary btn-wide"
+                    >
+                        Close Review
                     </button>
                 </div>
             )}

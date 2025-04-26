@@ -24,6 +24,8 @@ public class QuizAttemptMapper {
         dto.setCompletedAt(quizAttempt.completedAt);
         dto.setResponses(questionResponseDTOList);
         dto.setBadges(badgeDTOList);
+        dto.setStatus(quizAttempt.status);
+        dto.setTimeRemainingSeconds(quizAttempt.timeRemainingSeconds);
         return dto;
     }
 
@@ -35,11 +37,13 @@ public class QuizAttemptMapper {
         }
 
         quizAttempt.quizPublicationId = new ObjectId(dto.getQuizPublicationId());
-        quizAttempt.userAzureOID = dto.getUser() == null? null : dto.getUser().getAzureOid();
+        quizAttempt.userAzureOID = dto.getUser() == null ? null : dto.getUser().getAzureOid();
         quizAttempt.startedAt = dto.getStartedAt();
         quizAttempt.completedAt = dto.getCompletedAt();
         quizAttempt.responses = questionResponseList;
         quizAttempt.badges = badgeList;
+        quizAttempt.status = dto.getStatus();
+        quizAttempt.timeRemainingSeconds = dto.getTimeRemainingSeconds();
         return quizAttempt;
     }
 }

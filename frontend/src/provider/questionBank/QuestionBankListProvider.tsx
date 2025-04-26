@@ -10,21 +10,31 @@ export const QuestionBankListProvider: React.FC<{ children: React.ReactNode }> =
         queryFn: async () => (await questionBankApi.apiQuestionBanksGet()).data,
     });
 
-    const value = useMemo(() => ({
-        questionBanks: questionBanksQuery.data || [],
+    const value = useMemo(() => {
+        const questionBanks = questionBanksQuery.data || [];
+        const isLoadingQuestionBanks = questionBanksQuery.isLoading;
+        const errorQuestionBanks = questionBanksQuery.error;
 
-        isLoadingQuestionBanks: questionBanksQuery.isLoading,
-
-        errorQuestionBanks: questionBanksQuery.error,
-
-        fetchQuestionBanks: async () => {
+        const fetchQuestionBanks = async () => {
             await questionBanksQuery.refetch();
-        }
-    }), [questionBanksQuery]);
+        };
+
+        return {
+            questionBanks,
+            isLoadingQuestionBanks,
+            errorQuestionBanks,
+            fetchQuestionBanks
+        };
+    }, [
+        questionBanksQuery.data,
+        questionBanksQuery.isLoading,
+        questionBanksQuery.error,
+        questionBanksQuery.refetch
+    ]);
 
     return (
         <QuestionBankListContext.Provider value={value}>
             {children}
         </QuestionBankListContext.Provider>
     );
-}
+};

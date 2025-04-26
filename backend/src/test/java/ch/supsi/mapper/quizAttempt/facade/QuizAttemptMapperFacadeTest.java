@@ -2,18 +2,15 @@ package ch.supsi.mapper.quizAttempt.facade;
 
 import ch.supsi.mapper.BadgeMapper;
 import ch.supsi.mapper.IBaseMapper;
-import ch.supsi.mapper.question.TrueFalseQuestionMapper;
 import ch.supsi.mapper.quizAttempt.QuizAttemptMapper;
 import ch.supsi.mapper.response.TrueFalseQuestionResponseMapper;
 import ch.supsi.mapper.response.builder.IQuestionResponseMapperBuilder;
 import ch.supsi.model.api.QuizAttempt;
 import ch.supsi.model.api.badge.Badge;
 import ch.supsi.model.api.question.QuestionType;
-import ch.supsi.model.api.response.QuestionResponse;
 import ch.supsi.model.api.response.TrueFalseQuestionResponse;
 import ch.supsi.model.dto.api.BadgeDTO;
 import ch.supsi.model.dto.api.QuizAttemptDTO;
-import ch.supsi.model.dto.api.response.QuestionResponseDTO;
 import ch.supsi.model.dto.api.response.TrueFalseQuestionResponseDTO;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
@@ -28,7 +25,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @QuarkusTest

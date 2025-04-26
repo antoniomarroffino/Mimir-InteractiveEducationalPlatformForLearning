@@ -7,8 +7,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.bson.types.ObjectId;
 
-import java.util.stream.Collectors;
-
 @ApplicationScoped
 public class BadgeHolderMapper implements IBaseMapper<BadgeHolder, BadgeHolderDTO> {
     @Inject

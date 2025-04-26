@@ -1,44 +1,46 @@
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useGetQuizPublicationByCode } from "../../hooks/quizPublication/useGetQuizPublicationByCode.ts";
+import React, {useEffect} from 'react';
+import {useGetQuizPublicationByCode} from "../../hooks/quizPublication/useGetQuizPublicationByCode.ts";
+import {useGetQuizById} from "../../hooks/quiz/useGetQuizById.ts";
+import {QuizDTO, QuizPublicationDTO} from "@dti-isin/backend-api-client";
 
 interface QuizCodeAnalyzerProps {
     publicationCode: string;
-    onClose: () => void;
+    onSuccess: (publication: QuizPublicationDTO, quiz: QuizDTO) => void;
     onError: (message: string) => void;
 }
 
 export const QuizCodeAnalyzer: React.FC<QuizCodeAnalyzerProps> = ({
                                                                       publicationCode,
-                                                                      onClose,
+                                                                      onSuccess,
                                                                       onError
                                                                   }) => {
-    const { data: quizPublication, isLoading, error } = useGetQuizPublicationByCode(publicationCode.trim());
-    const navigate = useNavigate();
+    const {
+        data: publication,
+        error: pubError,
+        isLoading: isLoadingPublication
+    } = useGetQuizPublicationByCode(publicationCode.trim());
+
+    const {
+        data: quiz,
+        error: quizError,
+        isLoading: isLoadingQuiz
+    } = useGetQuizById(
+        publication?.courseId ?? '',
+        publication?.folderId ?? '',
+        publication?.quizId ?? '',
+        {enabled: !!publication}
+    );
 
     useEffect(() => {
-        if (error) {
-            onError(error.message);
-            onClose();
-        }
-    }, [error, onClose, onError]);
+        if (pubError) onError(pubError.message);
+        if (quizError) onError(quizError.message);
+    }, [pubError, quizError, onError]);
 
     useEffect(() => {
-        if (quizPublication) {
-            navigate(`/quiz/${publicationCode}`);
+        if (!isLoadingPublication && !isLoadingQuiz && publication && quiz) {
+            onSuccess(publication, quiz);
         }
-    }, [quizPublication, navigate, publicationCode]);
-
-    if (isLoading) {
-        return (
-            <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50">
-                <div className="bg-base-100 p-8 rounded-lg flex flex-col items-center gap-4">
-                    <span className="loading loading-spinner loading-lg text-primary"></span>
-                    <p className="text-lg">Analyzing code...</p>
-                </div>
-            </div>
-        );
-    }
+    }, [isLoadingPublication, isLoadingQuiz, publication, quiz, onSuccess]);
 
     return null;
 };

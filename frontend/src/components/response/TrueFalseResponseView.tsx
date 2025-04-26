@@ -1,5 +1,5 @@
 import React from 'react';
-import { BsCheckCircle } from 'react-icons/bs';
+import {BsCheckCircle} from 'react-icons/bs';
 
 interface TrueFalseResponseViewProps {
     isCorrect: boolean;
@@ -41,7 +41,7 @@ export const TrueFalseResponseView: React.FC<TrueFalseResponseViewProps> = ({
                 </span>
                 {isCorrect && highlight && (
                     <div className="ml-auto">
-                        <BsCheckCircle className="text-success" />
+                        <BsCheckCircle className="text-success"/>
                     </div>
                 )}
             </div>
