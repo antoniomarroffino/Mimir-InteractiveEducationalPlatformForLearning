@@ -26,8 +26,7 @@ export const calculateQuestionStats = (
         ).length;
 
         const averageTimeSpent = responses.reduce((acc, response) =>
-            acc + (response.timeSpent || 0), 0
-        ) / (totalResponses || 1);
+            acc + (response.timeSpent || 0), 0) / (totalResponses || 1);
 
         return {
             question,

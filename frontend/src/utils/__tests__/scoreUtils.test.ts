@@ -4,7 +4,8 @@ import {
     calculateTotalAvailablePoints,
     calculateScorePercentage,
     getQuestionEarnedPoints,
-    getQuestionTotalPoints
+    getQuestionTotalPoints,
+    getScoreEmoji
 } from '../scoreUtils.ts';
 import {
     QuizAttemptDTO,
@@ -161,6 +162,32 @@ describe('Quiz Calculation Utilities', () => {
                 points: 0
             };
             expect(getQuestionTotalPoints(question)).toBe(1);
+        });
+    });
+
+    describe('getScoreEmoji', () => {
+        it('should return 🏆 when score is 100%', () => {
+            expect(getScoreEmoji(10, 10)).toBe('🏆');
+        });
+
+        it('should return 🌟 when score is between 90% and 99%', () => {
+            expect(getScoreEmoji(9, 10)).toBe('🌟');
+        });
+
+        it('should return 👍 when score is between 70% and 89%', () => {
+            expect(getScoreEmoji(7, 10)).toBe('👍');
+        });
+
+        it('should return 🤔 when score is between 50% and 69%', () => {
+            expect(getScoreEmoji(5, 10)).toBe('🤔');
+        });
+
+        it('should return 😕 when score is below 50%', () => {
+            expect(getScoreEmoji(2, 10)).toBe('😕');
+        });
+
+        it('should return ❓ when total points are zero', () => {
+            expect(getScoreEmoji(10, 0)).toBe('❓');
         });
     });
 });

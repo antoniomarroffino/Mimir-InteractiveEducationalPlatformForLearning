@@ -6,7 +6,7 @@ import {
     TrueFalseQuestionResponseDTO
 } from "@dti-isin/backend-api-client";
 
-export function getUnansweredQuestions(questions: QuestionDTO[], responses: QuestionResponseDTO[]): number[] {
+export const getUnansweredQuestions = (questions: QuestionDTO[], responses: QuestionResponseDTO[]): number[] => {
     return questions
         .map((q, i) => {
             const response = responses[i];
@@ -21,4 +21,4 @@ export function getUnansweredQuestions(questions: QuestionDTO[], responses: Ques
             }
         })
         .filter((v): v is number => v !== null);
-}
+};

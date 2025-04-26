@@ -61,5 +61,5 @@ export const createUpdatedResponse = (
         };
     }
 
-    throw new Error("Tipo di domanda non supportato.");
+    throw new Error("Question type not supported.");
 };
