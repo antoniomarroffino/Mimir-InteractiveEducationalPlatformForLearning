@@ -13,10 +13,10 @@ import {
 import {AnimatePresence, motion} from 'framer-motion';
 import LogoutButton from "../../auth/LogoutButton";
 import {useEffect, useState} from "react";
-import {useAuth} from "../../hooks/useAuth";
 import {Role} from "@dti-isin/backend-api-client";
 import LoginButton from "../../auth/LoginButton";
 import mimirLogo from '../../assets/mimir-logo.png';
+import {useAuth} from "../../hooks/auth/useAuth.ts";
 
 const Header = () => {
     const [isOpen, setIsOpen] = useState(false);

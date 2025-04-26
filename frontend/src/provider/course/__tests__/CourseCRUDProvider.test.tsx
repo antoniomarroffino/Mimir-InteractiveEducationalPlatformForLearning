@@ -122,7 +122,7 @@ describe("CourseCRUDProvider", () => {
       const { result } = renderHook(() => useTestHook(), { wrapper });
 
       await act(async () => {
-        await result.current!.updateCourse(mockCourse.id, updatedCourse);
+        await result.current!.updateCourse(mockCourse.id!, updatedCourse);
       });
 
       // Verifica l'aggiornamento della cache

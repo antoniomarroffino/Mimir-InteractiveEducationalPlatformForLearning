@@ -1,7 +1,7 @@
 import React from "react";
 import {FiLogOut} from 'react-icons/fi';
-import {useAuth} from "../hooks/useAuth";
 import {Spinner} from "../components/common/Spinner";
+import {useAuth} from "../hooks/auth/useAuth.ts";
 
 interface LogoutButtonProps {
     className?: string;

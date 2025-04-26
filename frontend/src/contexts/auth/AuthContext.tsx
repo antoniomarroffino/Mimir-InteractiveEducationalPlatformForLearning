@@ -2,7 +2,7 @@ import { createContext } from "react";
 import {
   Role,
   UserWithoutCoursesDTO,
-} from "../backend/target/backend-api-client/index.ts";
+} from "@dti-isin/backend-api-client";
 
 export type AuthContextType = {
   user: UserWithoutCoursesDTO | null;

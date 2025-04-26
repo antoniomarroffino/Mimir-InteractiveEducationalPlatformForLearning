@@ -1,5 +1,5 @@
 import {createContext} from 'react';
-import {QuestionDTO, QuestionType} from '../backend/target/backend-api-client/index.ts';
+import {QuestionDTO, QuestionType} from '@dti-isin/backend-api-client';
 
 export type QuestionContextType = {
     questions: QuestionDTO[];

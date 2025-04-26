@@ -5,7 +5,7 @@ import { CourseListProvider } from "../CourseListProvider";
 import { CourseListContext } from "../../../contexts/course/CourseListContext";
 import { courseApi } from "../../../../config/config";
 import { CourseDTO } from "@dti-isin/backend-api-client";
-import { describe, it, expect, beforeEach, vi } from "vitest";
+import {describe, it, expect, beforeEach, vi, Mock} from "vitest";
 
 // Mock the courseApi
 vi.mock("../../../../config/config", () => ({
@@ -78,10 +78,10 @@ describe("CourseListProvider", () => {
   });
 
   it("should provide all courses data", async () => {
-    (courseApi.apiCoursesTeacherGet as any).mockResolvedValueOnce({
+    (courseApi.apiCoursesTeacherGet as Mock).mockResolvedValueOnce({
       data: [],
     });
-    (courseApi.apiCoursesGet as any).mockResolvedValueOnce({
+    (courseApi.apiCoursesGet as Mock).mockResolvedValueOnce({
       data: mockCourses,
     });
 
@@ -101,10 +101,10 @@ describe("CourseListProvider", () => {
   });
 
   it("should show loading state", () => {
-    (courseApi.apiCoursesTeacherGet as any).mockImplementation(
+    (courseApi.apiCoursesTeacherGet as Mock).mockImplementation(
       () => new Promise(() => {})
     );
-    (courseApi.apiCoursesGet as any).mockImplementation(
+    (courseApi.apiCoursesGet as Mock).mockImplementation(
       () => new Promise(() => {})
     );
 
@@ -124,8 +124,8 @@ describe("CourseListProvider", () => {
     const teacherError = new Error("Teacher error");
     const allError = new Error("All error");
 
-    (courseApi.apiCoursesTeacherGet as any).mockRejectedValue(teacherError);
-    (courseApi.apiCoursesGet as any).mockRejectedValue(allError);
+    (courseApi.apiCoursesTeacherGet as Mock).mockRejectedValue(teacherError);
+    (courseApi.apiCoursesGet as Mock).mockRejectedValue(allError);
 
     const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
@@ -146,8 +146,8 @@ describe("CourseListProvider", () => {
   });
 
   it("should handle separate loading states", async () => {
-    (courseApi.apiCoursesTeacherGet as any).mockResolvedValue({ data: [] });
-    (courseApi.apiCoursesGet as any).mockImplementation(
+    (courseApi.apiCoursesTeacherGet as Mock).mockResolvedValue({ data: [] });
+    (courseApi.apiCoursesGet as Mock).mockImplementation(
       () => new Promise(() => {})
     );
 
@@ -164,7 +164,7 @@ describe("CourseListProvider", () => {
   });
 
   it("should refetch teacher courses", async () => {
-    const mock = (courseApi.apiCoursesTeacherGet as any).mockResolvedValue({
+    const mock = (courseApi.apiCoursesTeacherGet as Mock).mockResolvedValue({
       data: mockCourses,
     });
 
@@ -186,7 +186,7 @@ describe("CourseListProvider", () => {
   });
 
   it("should refetch all courses", async () => {
-    const mock = (courseApi.apiCoursesGet as any).mockResolvedValue({
+    const mock = (courseApi.apiCoursesGet as Mock).mockResolvedValue({
       data: mockCourses,
     });
 

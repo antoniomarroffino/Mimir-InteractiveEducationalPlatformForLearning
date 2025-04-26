@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { CourseProviders } from "../CourseProviders";
 import { CourseListContext } from "../../../contexts/course/CourseListContext";
 import { CourseCRUDContext } from "../../../contexts/course/CourseCRUDContext";
-import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
+import { describe, it, expect, beforeEach, vi, afterEach, afterAll } from "vitest";
 
 const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 

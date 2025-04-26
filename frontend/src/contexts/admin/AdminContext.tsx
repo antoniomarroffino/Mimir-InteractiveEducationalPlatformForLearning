@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import { Role, UserWithoutCoursesDTO } from "../backend/target/backend-api-client/index.ts";
+import { Role, UserWithoutCoursesDTO } from "@dti-isin/backend-api-client";
 
 export type AdminContextType = {
   isLoading: boolean;

@@ -1,7 +1,6 @@
 import {useEffect, useState} from 'react';
 import {motion} from 'framer-motion';
 import confetti from 'canvas-confetti';
-import {useAuth} from '../hooks/useAuth';
 import {useGetBadgeHolderByAzureOid} from '../hooks/badgeholder/useGetBadgeHolderByAzureOid';
 import {BadgesPageHeader} from '../components/badge/BadgesPageHeader';
 import {BadgesInfoAlert} from '../components/badge/BadgesInfoAlert';
@@ -9,6 +8,7 @@ import {BadgeStatsGrid} from '../components/badge/BadgeStatsGrid';
 import {BadgeCollectionGrid} from '../components/badge/BadgeCollectionGrid';
 import {EmptyBadgeState} from '../components/badge/EmptyBadgeState';
 import {formatBadgeDate, groupBadges, GroupedBadge} from '../utils/badgeUtils';
+import {useAuth} from "../hooks/auth/useAuth.ts";
 
 const BadgesPage = () => {
     const {user} = useAuth();

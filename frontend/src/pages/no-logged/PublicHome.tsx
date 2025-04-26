@@ -1,4 +1,3 @@
-import {useAuth} from '../../hooks/useAuth';
 import {motion} from 'framer-motion';
 import mimirLogo from '../../assets/mimir-logo.png';
 import {StatsSection} from './StatsSection';
@@ -7,6 +6,7 @@ import {HeroSection} from "./HeroSection.tsx";
 import {FeaturesSection} from "./FeaturesSection.tsx";
 import {BadgeSection} from "./BadgeSection.tsx";
 import {useScrollToSection} from "../../hooks/useScrollToSection.ts";
+import {useAuth} from "../../hooks/auth/useAuth.ts";
 
 const PublicHome = () => {
     const {login, user} = useAuth();

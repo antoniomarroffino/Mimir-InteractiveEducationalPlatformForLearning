@@ -4,8 +4,8 @@ import {QuizReview} from "../quiz-results/QuizReview";
 import {BadgeAssignment} from "../badge/BadgeAssignment";
 import {FaCheckCircle, FaTimes, FaTrophy} from 'react-icons/fa';
 import {AttemptHeader} from "../publication-stats/AttemptHeader";
-import {useAuth} from "../../hooks/useAuth";
 import {formatDateTime} from "../../utils/timeUtils";
+import {useAuth} from "../../hooks/auth/useAuth.ts";
 
 interface AttemptDetailsProps {
     attempt: QuizAttemptDTO;

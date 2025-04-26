@@ -1,10 +1,10 @@
 import React from 'react';
 import {useGetQuizAttemptsByUser} from "../../hooks/quizAttempt/useGetQuizAttemptsByUser";
-import {useAuth} from "../../hooks/useAuth";
 import {Link} from 'react-router-dom';
 import {FiArrowRight, FiBook} from 'react-icons/fi';
 import {RecentAttempts} from "../attempt/RecentAttempts.tsx";
 import {motion} from 'framer-motion';
+import {useAuth} from "../../hooks/auth/useAuth.ts";
 
 export const QuizHistorySection: React.FC = () => {
     const {user} = useAuth();

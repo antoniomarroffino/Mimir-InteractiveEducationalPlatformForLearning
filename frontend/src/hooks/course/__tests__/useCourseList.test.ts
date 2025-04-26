@@ -23,9 +23,7 @@ describe('useCourseList', () => {
         isLoadingTeacherCourses: false,
         isLoadingAllCourses: false,
         errorTeacherCourses: null,
-        errorAllCourses: null,
-        fetchTeacherCourses: vi.fn().mockResolvedValue(undefined),
-        fetchAllCourses: vi.fn().mockResolvedValue(undefined)
+        errorAllCourses: null
     };
 
     it('should throw error when context is undefined', () => {

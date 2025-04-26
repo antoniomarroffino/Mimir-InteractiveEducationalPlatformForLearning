@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from "react";
 import {Role, UserWithoutCoursesDTO} from "@dti-isin/backend-api-client";
-import {useAdmin} from "../../hooks/useAdmin.ts";
 import {FiAlertTriangle, FiArrowUp, FiMail, FiUserPlus, FiUsers} from "react-icons/fi";
 import {motion} from "framer-motion";
 import {AdminDashboardHeader} from "./AdminDashboardHeader.tsx";
+import {useAdmin} from "../../hooks/admin/useAdmin.ts";
 
 const AdminDashboard = () => {
     const {promoteUser, teachers, isLoadingTeachers, errorTeachers, isLoading, error: errorPromoteUser} = useAdmin();

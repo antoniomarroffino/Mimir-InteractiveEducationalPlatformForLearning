@@ -14,7 +14,6 @@ import PublicHome from "./no-logged/PublicHome.tsx";
 import {AdminProvider} from "../provider/AdminProvider.tsx";
 import UserProfilePage from "./user-profile/UserProfilePage.tsx";
 import {QuizPublicationPage} from "./QuizPublicationPage.tsx";
-import {QuizRetrieveProvider} from '../provider/QuizRetrieveProvider.tsx';
 import {QuizPublicationProviders} from "../provider/quizPublication/QuizPublicationProviders.tsx";
 import {CourseProviders} from "../provider/course/CourseProviders.tsx";
 import {FolderProviders} from "../provider/folder/FolderProviders.tsx";
@@ -50,7 +49,6 @@ const App = () => {
             <ScrollToTop/>
             <AuthProvider>
                 <QuizPublicationProviders>
-                    <QuizRetrieveProvider>
                         <QuizAttemptProviders>
                             <Header/>
                             <Routes>
@@ -160,7 +158,6 @@ const App = () => {
                             </Routes>
                             <Footer/>
                         </QuizAttemptProviders>
-                    </QuizRetrieveProvider>
                 </QuizPublicationProviders>
             </AuthProvider>
         </QueryClientProvider>

@@ -3,7 +3,6 @@ import {useLocation, useNavigate, useParams} from 'react-router-dom';
 import {useGetQuizPublicationByCode} from '../../hooks/quizPublication/useGetQuizPublicationByCode.ts';
 import {useGetQuizById} from '../../hooks/quiz/useGetQuizById.ts';
 import {useQuizAttemptLocal} from '../../hooks/quizAttempt/useQuizAttemptLocal.ts';
-import {useAuth} from '../../hooks/useAuth.ts';
 import {QuizDTO, QuizPublicationDTO} from '@dti-isin/backend-api-client';
 import {formatMinutesDuration} from '../../utils/timeUtils.ts';
 import {AnonymousAccessCard} from '../../components/quiz/AnonymousAccessCard.tsx';
@@ -14,6 +13,7 @@ import { motion } from 'framer-motion';
 import {LoadingSpinner} from "../../components/common/LoadingSpinner.tsx";
 import { useRecoverQuizAttempt } from '../../hooks/quizAttempt/useRecoverQuizAttempt.ts';
 import { ResumedAttemptCard } from '../../components/attempt/ResumedAttemptCard.tsx';
+import {useAuth} from "../../hooks/auth/useAuth.ts";
 
 const QuizScreenPage: React.FC = () => {
     const location = useLocation();
@@ -31,9 +31,7 @@ const QuizScreenPage: React.FC = () => {
         data: publication,
         isLoading: isLoadingPublication,
         error: errorPublication
-    } = useGetQuizPublicationByCode(accessCode!, {
-        enabled: !hasStateData
-    });
+    } = useGetQuizPublicationByCode(accessCode!);
 
     const {
         data: quiz,

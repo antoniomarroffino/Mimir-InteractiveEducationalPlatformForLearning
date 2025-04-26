@@ -9,10 +9,10 @@ import {
     TrueFalseQuestionResponseDTO
 } from "@dti-isin/backend-api-client";
 import {useQuizAttemptCRUD} from '../../hooks/quizAttempt/useQuizAttemptCRUD';
-import {useAuth} from '../../hooks/useAuth';
 import {QuizAttemptLocalContext} from '../../contexts/quizAttempt/QuizAttemptLocalContext';
 import {useNavigate} from "react-router-dom";
 import {useQueryClient} from "react-query";
+import {useAuth} from "../../hooks/auth/useAuth.ts";
 
 export const QuizAttemptLocalProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const [currentAttempt, setCurrentAttempt] = useState<Partial<QuizAttemptDTO> & {

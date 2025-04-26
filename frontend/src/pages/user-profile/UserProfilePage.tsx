@@ -1,7 +1,7 @@
 import {FiBook, FiKey, FiMail, FiUser} from "react-icons/fi";
 import {Role} from "@dti-isin/backend-api-client";
-import {useAuth} from "../../hooks/useAuth.ts";
 import {UserProfilePageHeader} from "./UserProfilePageHeader.tsx";
+import {useAuth} from "../../hooks/auth/useAuth.ts";
 
 const roleLabels = {
     [Role.Admin]: "Administrator",

@@ -1,7 +1,7 @@
 import React from "react";
 import {FiLogIn} from 'react-icons/fi';
-import {useAuth} from "../hooks/useAuth";
 import {Spinner} from "../components/common/Spinner";
+import {useAuth} from "../hooks/auth/useAuth.ts";
 
 interface LoginButtonProps {
     className?: string;

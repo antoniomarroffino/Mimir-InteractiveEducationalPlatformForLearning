@@ -1,6 +1,5 @@
 import {AttemptDetails} from "../components/attempt/AttemptDetails.tsx";
 import {AttemptsList} from "../components/attempt/AttemptsList.tsx";
-import {useAuth} from "../hooks/useAuth.ts";
 import {useGetQuizAttemptsByUser} from "../hooks/quizAttempt/useGetQuizAttemptsByUser.ts";
 import {useGetQuizPublicationById} from "../hooks/quizPublication/useGetQuizPublicationById.ts";
 import React, {useState} from "react";
@@ -9,6 +8,7 @@ import {AttemptBadgeDisplay} from "../components/badge/AttemptBadgeDisplay.tsx";
 import {QuizReviewPageHeader} from "../components/quiz-results/QuizReviewPageHeader.tsx";
 import {QuizReviewInfoAlert} from "../components/quiz-results/QuizReviewInfoAlert.tsx";
 import {motion} from "framer-motion";
+import {useAuth} from "../hooks/auth/useAuth.ts";
 
 const QuizReviewPage: React.FC = () => {
     const {user} = useAuth();
