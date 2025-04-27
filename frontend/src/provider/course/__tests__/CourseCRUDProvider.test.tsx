@@ -2,7 +2,7 @@ import { renderHook, act } from "@testing-library/react";
 import { vi, describe, expect, it, Mock, afterAll } from "vitest";
 import { QueryClient, QueryClientProvider } from "react-query";
 import type { CourseDTO } from "@dti-isin/backend-api-client";
-import { useContext } from "react";
+import React, { useContext } from "react";
 import { CourseCRUDProvider } from "../CourseCRUDProvider";
 import { CourseCRUDContext } from "../../../contexts/course/CourseCRUDContext";
 import { courseApi } from "../../../../config/config";
@@ -326,4 +326,47 @@ describe("CourseCRUDProvider", () => {
       expect(result.current!.errorDeleteCourse).toEqual(error);
     });
   });
+
+  it("should set cache correctly when creating course without existing courses", async () => {
+    (courseApi.apiCoursesPost as Mock).mockResolvedValue({ data: mockCourse });
+
+    const queryClient = new QueryClient();
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+        <QueryClientProvider client={queryClient}>
+          <CourseCRUDProvider>{children}</CourseCRUDProvider>
+        </QueryClientProvider>
+    );
+
+    const { result } = renderHook(() => useTestHook(), { wrapper });
+
+    await act(async () => {
+      await result.current!.createCourse(mockCourse);
+    });
+
+    const coursesCache = queryClient.getQueryData<CourseDTO[]>(["courses"]);
+    expect(coursesCache).toEqual([mockCourse]);
+  });
+
+  it("should set cache correctly when updating course without existing courses", async () => {
+    const updatedCourse = { ...mockCourse, name: "Updated Name" };
+    (courseApi.apiCoursesIdPut as Mock).mockResolvedValue({ data: updatedCourse });
+
+    const queryClient = new QueryClient();
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+        <QueryClientProvider client={queryClient}>
+          <CourseCRUDProvider>{children}</CourseCRUDProvider>
+        </QueryClientProvider>
+    );
+
+    const { result } = renderHook(() => useTestHook(), { wrapper });
+
+    await act(async () => {
+      await result.current!.updateCourse(mockCourse.id!, updatedCourse);
+    });
+
+    const coursesCache = queryClient.getQueryData<CourseDTO[]>(["courses"]);
+    expect(coursesCache).toEqual([updatedCourse]);
+  });
+
+
 });
