@@ -1,4 +1,4 @@
-import {useEffect, useRef} from "react";
+import React, {useEffect, useRef} from "react";
 import {QuestionResponseDTO} from "@dti-isin/backend-api-client";
 
 export function useTrackTimeSpent(
