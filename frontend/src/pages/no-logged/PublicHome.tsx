@@ -5,7 +5,7 @@ import {QuizSection} from "./QuizSection.tsx";
 import {HeroSection} from "./HeroSection.tsx";
 import {FeaturesSection} from "./FeaturesSection.tsx";
 import {BadgeSection} from "./BadgeSection.tsx";
-import {useScrollToSection} from "../../hooks/useScrollToSection.ts";
+import {useScrollToSection} from "../../hooks/utilities/useScrollToSection.ts";
 import {useAuth} from "../../hooks/auth/useAuth.ts";
 
 const PublicHome = () => {
