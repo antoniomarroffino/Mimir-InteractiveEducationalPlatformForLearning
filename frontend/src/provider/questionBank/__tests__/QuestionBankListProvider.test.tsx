@@ -90,9 +90,14 @@ describe("QuestionBankListProvider", () => {
         const { result } = renderHook(() => useTestHook(), { wrapper: createWrapper() });
 
         await act(async () => {
+            await new Promise((resolve) => setTimeout(resolve, 0));
+        });
+
+        await act(async () => {
             await result.current!.fetchQuestionBanks();
         });
 
-        expect(questionBankApi.apiQuestionBanksGet).toHaveBeenCalledTimes(2); // first fetch + refetch
+        expect(questionBankApi.apiQuestionBanksGet).toHaveBeenCalledTimes(2);
     });
+
 });
