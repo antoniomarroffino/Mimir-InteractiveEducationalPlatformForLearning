@@ -46,7 +46,7 @@ export const AttemptCardDetails = ({attempt, quizPublication} : AttemptCardDetai
                         <div
                             key={badge.type}
                             className="tooltip"
-                            data-tip={`Awarded ${new Date(badge.assignedAt!).toLocaleDateString()}`}
+                            data-tip={`Awarded ${new Date(badge.assignedAt!).toLocaleDateString("it-CH")}`}
                         >
                             <FaTrophy className="text-warning text-sm"/>
                         </div>
@@ -58,7 +58,7 @@ export const AttemptCardDetails = ({attempt, quizPublication} : AttemptCardDetai
             </div>
 
             <div className="text-sm text-base-content/70">
-                {new Date(attempt.completedAt!).toLocaleDateString('it-IT', {
+                {new Date(attempt.completedAt!).toLocaleDateString('it-CH', {
                     day: '2-digit',
                     month: '2-digit',
                     year: 'numeric',

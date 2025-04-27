@@ -13,7 +13,7 @@ export const AttemptRowDetails = ({attempt, quizPublication} : AttemptRowDetails
             <div>
                 <p className="font-medium text-start">Quiz: {isLoadingQuiz ? "" : quiz!.name}</p>
                 <p className="text-sm text-base-content/70">
-                    {new Date(attempt.completedAt!).toLocaleDateString('it-IT', {
+                    {new Date(attempt.completedAt!).toLocaleDateString('it-CH', {
                         day: '2-digit',
                         month: '2-digit',
                         year: 'numeric',

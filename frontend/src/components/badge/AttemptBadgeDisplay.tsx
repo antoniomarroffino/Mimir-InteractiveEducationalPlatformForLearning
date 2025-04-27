@@ -27,7 +27,7 @@ export const AttemptBadgeDisplay: React.FC<AttemptBadgeDisplayProps> = ({badge})
                         Congratulations! This attempt has been recognized for outstanding performance.
                     </p>
                     <div className="mt-2 flex items-center gap-2 text-xs text-base-content/60">
-                        <span>Awarded on {new Date(badge.assignedAt!).toLocaleDateString()}</span>
+                        <span>Awarded on {new Date(badge.assignedAt!).toLocaleDateString("it-CH")}</span>
                         <span>•</span>
                         <span>by {badge.assignedBy.name}</span>
                     </div>

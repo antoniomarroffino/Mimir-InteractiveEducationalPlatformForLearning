@@ -36,5 +36,5 @@ export function groupBadges(badges: BadgeDTO[]): GroupedBadge[] {
 }
 
 export function formatBadgeDate(date?: string): string {
-    return date ? new Date(date).toLocaleDateString() : 'N/A';
+    return date ? new Date(date).toLocaleDateString("it-CH") : 'N/A';
 }
