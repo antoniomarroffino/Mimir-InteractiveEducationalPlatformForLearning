@@ -11,18 +11,19 @@ import {
     FiX
 } from 'react-icons/fi';
 import {AnimatePresence, motion} from 'framer-motion';
-import LogoutButton from "../../auth/LogoutButton";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from 'react';
 import {Role} from "@dti-isin/backend-api-client";
-import LoginButton from "../../auth/LoginButton";
 import mimirLogo from '../../assets/mimir-logo.png';
 import {useAuth} from "../../hooks/auth/useAuth.ts";
+import LogoutButton from "../../auth/LogoutButton";
+import LoginButton from "../../auth/LoginButton";
 
 const Header = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const {user} = useAuth();
     const location = useLocation();
+    const mobileMenuButtonRef = useRef<HTMLButtonElement>(null);
 
     useEffect(() => {
         setIsOpen(false);
@@ -33,18 +34,8 @@ const Header = () => {
         {name: 'Home', path: '/', icon: <FiHome className="text-xl"/>, roles: [Role.Admin, Role.Teacher, Role.Student]},
         {name: 'Admin', path: '/admin', icon: <FiShield className="text-xl"/>, roles: [Role.Admin]},
         {name: 'Courses', path: '/courses', icon: <FiBook className="text-xl"/>, roles: [Role.Teacher]},
-        {
-            name: 'Question Bank',
-            path: '/question_banks',
-            icon: <FiDatabase className="text-xl"/>,
-            roles: [Role.Teacher]
-        },
-        {
-            name: 'Quiz Review',
-            path: '/quiz-review',
-            icon: <FiClipboard className="text-xl"/>,
-            roles: [Role.Student, Role.Teacher]
-        },
+        {name: 'Question Bank', path: '/question_banks', icon: <FiDatabase className="text-xl"/>, roles: [Role.Teacher]},
+        {name: 'Quiz Review', path: '/quiz-review', icon: <FiClipboard className="text-xl"/>, roles: [Role.Student, Role.Teacher]},
         {name: 'Badges', path: '/badges', icon: <FiAward className="text-xl"/>, roles: [Role.Student, Role.Teacher]}
     ];
 
@@ -86,8 +77,12 @@ const Header = () => {
 
                     <div className="navbar-center lg:hidden">
                         <motion.button
+                            ref={mobileMenuButtonRef}
                             className="btn btn-ghost btn-circle"
-                            onClick={() => setIsOpen(!isOpen)}
+                            onClick={() => {
+                                setIsOpen(!isOpen);
+                                mobileMenuButtonRef.current?.blur();
+                            }}
                             whileTap={{scale: 0.95}}
                         >
                             {isOpen ? <FiX className="text-2xl"/> : <FiMenu className="text-2xl"/>}
@@ -126,8 +121,7 @@ const Header = () => {
                                     whileHover={{scale: 1.05}}
                                     whileTap={{scale: 0.95}}
                                 >
-                                    <div
-                                        className="w-10 h-10 rounded-full bg-gradient-to-r from-primary/20 to-secondary/20 grid place-items-center">
+                                    <div className="w-10 h-10 rounded-full bg-gradient-to-r from-primary/20 to-secondary/20 grid place-items-center">
                                         <FiUser className="w-5 h-5 text-primary"/>
                                     </div>
                                 </motion.button>
@@ -152,8 +146,7 @@ const Header = () => {
                                                 </Link>
                                             </li>
                                             <li>
-                                                <LogoutButton
-                                                    className="flex items-center gap-2 px-4 py-2 text-error hover:bg-error/10 transition-colors duration-300"/>
+                                                <LogoutButton className="flex items-center gap-2 px-4 py-2 text-error hover:bg-error/10 transition-colors duration-300"/>
                                             </li>
                                         </motion.ul>
                                     )}
@@ -179,7 +172,7 @@ const Header = () => {
                             exit={{opacity: 0, height: 0}}
                             transition={{type: "spring", stiffness: 400, damping: 30}}
                         >
-                            <ul className="menu bg-base-100 w-full p-4 shadow-lg">
+                            <ul className="menu bg-base-100 w-full p-4 shadow-lg space-y-2">
                                 {filteredLinks.map((link) => (
                                     <motion.li
                                         key={link.name}

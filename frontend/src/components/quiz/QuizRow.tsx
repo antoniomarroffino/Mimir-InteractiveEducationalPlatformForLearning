@@ -47,7 +47,7 @@ export const QuizRow: React.FC<QuizRowProps> = ({ quiz, courseId, folderId }) =>
                 anonymous: isAnonymous,
             });
 
-            if (!publication?.id) throw new Error('Invalid publication');
+            if (!publication?.id) console.error('Invalid publication');
 
             navigate(`/courses/${courseId}/folders/${folderId}/quizzes/${quiz.id}/publications/${publication.id}`);
         } catch (err) {
@@ -70,13 +70,13 @@ export const QuizRow: React.FC<QuizRowProps> = ({ quiz, courseId, folderId }) =>
     return (
         <>
             <div
-                className="group p-4 bg-white rounded-xl border border-base-200 hover:border-primary/30 shadow-sm hover:shadow-md transition-all duration-300 ease-out flex items-center justify-between gap-4"
+                className="group p-4 bg-base-100 rounded-xl border border-base-200 hover:border-primary/30 shadow-sm hover:shadow-md transition-all duration-300 ease-out flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6 w-full overflow-hidden min-w-0"
             >
-                <div className="flex items-center gap-4 overflow-hidden">
-                    <div className="p-2 rounded-lg bg-primary/10 text-primary">
+                <div className="flex items-center gap-4 min-w-0 flex-1">
+                    <div className="p-2 rounded-lg bg-primary/10 text-primary flex-shrink-0">
                         <BsPatchQuestion className="text-xl sm:text-2xl" />
                     </div>
-                    <div className="flex flex-col">
+                    <div className="flex flex-col min-w-0">
                         <span className="font-medium truncate">{quiz.name}</span>
                         {currentPublication && (
                             <span className="text-xs text-success font-medium mt-0.5">Published</span>
@@ -84,13 +84,15 @@ export const QuizRow: React.FC<QuizRowProps> = ({ quiz, courseId, folderId }) =>
                     </div>
                 </div>
 
-                <QuizActionsMenu
-                    quiz={quiz}
-                    courseId={courseId}
-                    folderId={folderId}
-                    onRequestDelete={() => setShowDeletePopup(true)}
-                    onRequestPublish={handlePublishClick}
-                />
+                <div className="flex-shrink-0 max-w-full overflow-hidden">
+                    <QuizActionsMenu
+                        quiz={quiz}
+                        courseId={courseId}
+                        folderId={folderId}
+                        onRequestDelete={() => setShowDeletePopup(true)}
+                        onRequestPublish={handlePublishClick}
+                    />
+                </div>
             </div>
 
             {showPublishPopup && (

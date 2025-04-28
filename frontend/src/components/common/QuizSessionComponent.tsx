@@ -95,7 +95,7 @@ export const QuizSessionComponent = () => {
                                 {isAnalyzing ? (
                                     <span className="loading loading-spinner loading-sm"></span>
                                 ) : (
-                                    user ? "Join" : "Login"
+                                    "Join"
                                 )}
                             </button>
                         </div>

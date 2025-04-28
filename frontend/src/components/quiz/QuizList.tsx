@@ -18,7 +18,7 @@ export const QuizList: React.FC<QuizListProps> = ({courseId, folderId}) => {
     } = useGetQuizzesInFolderIdInCourseId(courseId, folderId);
 
     if (isLoadingQuizzes) {
-        return <SkeletonLoaderQuizzes/>;
+        return <SkeletonLoaderQuizzes />;
     }
 
     if (errorQuizzes) {
@@ -31,19 +31,22 @@ export const QuizList: React.FC<QuizListProps> = ({courseId, folderId}) => {
     }
 
     if (!quizzes?.length) {
-        return <EmptyStateQuizzes/>;
+        return <EmptyStateQuizzes />;
     }
 
     return (
-        <div className="space-y-4">
+        <div className="flex flex-col gap-4 w-full overflow-x-hidden">
             {quizzes.map(quiz => (
-                <QuizRow
-                    key={quiz.id}
-                    quiz={quiz}
-                    courseId={courseId}
-                    folderId={folderId}
-                />
+                <div className="min-w-0">
+                    <QuizRow
+                        key={quiz.id}
+                        quiz={quiz}
+                        courseId={courseId}
+                        folderId={folderId}
+                    />
+                </div>
             ))}
         </div>
+
     );
 };

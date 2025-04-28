@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import { FolderDTO } from "@dti-isin/backend-api-client";
-import { BsChevronDown, BsChevronUp, BsFolder2 } from "react-icons/bs";
-import { FiEdit2, FiPlus } from "react-icons/fi";
-import { useNavigate } from "react-router-dom";
-import { useQuizCRUD } from "../../hooks/quiz/useQuizCRUD";
-import { useFolderCRUD } from "../../hooks/folder/useFolderCRUD";
-import { QuizList } from "../quiz/QuizList";
-import { ErrorAlert } from "../common/ErrorAlert";
+import React, { useState } from 'react';
+import { FolderDTO } from '@dti-isin/backend-api-client';
+import { BsChevronDown, BsChevronUp, BsFolder2 } from 'react-icons/bs';
+import { FiEdit2, FiPlus } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
+import { useQuizCRUD } from '../../hooks/quiz/useQuizCRUD';
+import { useFolderCRUD } from '../../hooks/folder/useFolderCRUD';
+import { QuizList } from '../quiz/QuizList';
+import { ErrorAlert } from '../common/ErrorAlert';
 
 interface FolderRowProps {
     folder: FolderDTO;
@@ -59,7 +59,7 @@ export const FolderRow = ({ folder, courseId, isSelected, onToggleSelect }: Fold
     };
 
     return (
-        <div className="group bg-base-100 rounded-xl border border-base-200 hover:border-primary/30 shadow-sm hover:shadow-md transition-all duration-300 ease-out">
+        <div className="group bg-base-100 rounded-xl border border-base-200 hover:border-primary/30 shadow-sm hover:shadow-md transition-all duration-300 ease-out w-full overflow-hidden">
             <div
                 className="p-4 flex items-center justify-between cursor-pointer hover:bg-base-200/20 transition-colors rounded-t-xl"
                 onClick={() => setIsExpanded(!isExpanded)}
@@ -111,7 +111,7 @@ export const FolderRow = ({ folder, courseId, isSelected, onToggleSelect }: Fold
             )}
 
             {isExpanded && (
-                <div className="border-t border-base-200 p-4 space-y-4">
+                <div className="border-t border-base-200 p-4 space-y-4 w-full overflow-hidden">
                     <QuizList courseId={courseId} folderId={folder.id!} />
 
                     <div className="pt-4" onClick={(e) => e.stopPropagation()}>
@@ -167,9 +167,9 @@ export const FolderRow = ({ folder, courseId, isSelected, onToggleSelect }: Fold
                                     </div>
                                 </div>
                                 <div className="flex justify-between items-center px-1">
-                  <span className="text-sm text-base-content/40">
-                    {quizName.length}/50 characters
-                  </span>
+                                    <span className="text-sm text-base-content/40">
+                                        {quizName.length}/50 characters
+                                    </span>
                                 </div>
                             </form>
                         )}
