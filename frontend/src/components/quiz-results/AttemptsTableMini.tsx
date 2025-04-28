@@ -1,5 +1,5 @@
 import React from 'react';
-import {QuizAttemptDTO} from '@dti-isin/backend-api-client';
+import { QuizAttemptDTO } from '@dti-isin/backend-api-client';
 
 interface AttemptsTableMiniProps {
     attempts: QuizAttemptDTO[];
@@ -21,19 +21,18 @@ export const AttemptsTableMini: React.FC<AttemptsTableMiniProps> = ({
     }
 
     return (
-        <div className="flex flex-col gap-2">
-            <h4 className="text-sm font-semibold text-base-content/70 mb-2">
+        <div className="flex flex-col gap-3 p-2 bg-base-100 rounded-xl shadow-sm border border-base-200 overflow-hidden">
+            <h4 className="text-sm font-semibold text-base-content/70">
                 Select Attempt
             </h4>
-            <div className="overflow-y-auto max-h-[400px] pr-1">
+            <div className="overflow-y-auto max-h-[400px] custom-scrollbar pr-1">
                 {attempts.map((attempt) => {
                     const isSelected = selectedAttempt?.id === attempt.id;
                     return (
                         <button
                             key={attempt.id}
-                            className={`w-full text-left p-2 rounded-lg text-sm transition-colors duration-200 border border-base-200 hover:bg-base-200/50 ${
-                                isSelected ? 'bg-primary/10 border-primary' : ''
-                            }`}
+                            className={`w-full text-left p-3 rounded-lg text-sm transition-colors duration-200 border border-base-200
+                                ${isSelected ? 'bg-primary/10 border-primary' : 'hover:bg-base-200/50'}`}
                             onClick={() => onSelect(attempt)}
                         >
                             <div className="font-medium truncate">

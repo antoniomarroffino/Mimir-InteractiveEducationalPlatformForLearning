@@ -1,5 +1,5 @@
-import React, {useMemo, useState} from 'react';
-import {Bar} from 'react-chartjs-2';
+import React, { useMemo, useState } from 'react';
+import { Bar } from 'react-chartjs-2';
 import {
     BarElement,
     CategoryScale,
@@ -12,11 +12,11 @@ import {
     Title,
     Tooltip
 } from 'chart.js';
-import {QuestionDTO, QuizAttemptDTO, QuestionResponseDTO} from '@dti-isin/backend-api-client';
-import {createVerticalGradient, formatSeconds, formatTicks} from '../../../../utils/chartUtils.ts';
-import {QuestionListForResults} from "../../QuestionListForResults.tsx";
-import {AttemptsTableMini} from "../../AttemptsTableMini.tsx";
-import {AnimatePresence, motion} from 'framer-motion';
+import { QuestionDTO, QuizAttemptDTO, QuestionResponseDTO } from '@dti-isin/backend-api-client';
+import { createVerticalGradient, formatSeconds, formatTicks } from '../../../../utils/chartUtils.ts';
+import { QuestionListForResults } from "../../QuestionListForResults.tsx";
+import { AttemptsTableMini } from "../../AttemptsTableMini.tsx";
+import { AnimatePresence, motion } from 'framer-motion';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, Colors);
 
@@ -42,7 +42,7 @@ export const SingleAttemptTimeChart: React.FC<SingleAttemptTimeChartProps> = ({
                 return response?.timeSpent ?? 0;
             }),
             backgroundColor: (context) => {
-                const {ctx, chartArea} = context.chart;
+                const { ctx, chartArea } = context.chart;
                 if (!chartArea) return undefined;
                 return createVerticalGradient(ctx, chartArea);
             },
@@ -62,12 +62,12 @@ export const SingleAttemptTimeChart: React.FC<SingleAttemptTimeChartProps> = ({
             duration: 500,
         },
         plugins: {
-            legend: {display: false},
+            legend: { display: false },
             tooltip: {
                 backgroundColor: 'rgba(255, 255, 255, 0.9)',
                 titleColor: '#6366f1',
                 bodyColor: '#1f2937',
-                bodyFont: {size: 14},
+                bodyFont: { size: 14 },
                 padding: 12,
                 cornerRadius: 8,
                 displayColors: false,
@@ -82,13 +82,13 @@ export const SingleAttemptTimeChart: React.FC<SingleAttemptTimeChartProps> = ({
                 beginAtZero: true,
                 ticks: {
                     callback: (value) => formatTicks(Number(value)),
-                    font: {size: 12},
+                    font: { size: 12 },
                 },
-                grid: {color: 'rgba(0, 0, 0, 0.1)'},
+                grid: { color: 'rgba(0, 0, 0, 0.1)' },
             },
             x: {
-                grid: {display: false},
-                ticks: {font: {size: 12}},
+                grid: { display: false },
+                ticks: { font: { size: 12 } },
             },
         },
     }), []);
@@ -102,30 +102,35 @@ export const SingleAttemptTimeChart: React.FC<SingleAttemptTimeChartProps> = ({
     }
 
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-            <div className="lg:col-span-3">
-                <AttemptsTableMini
-                    attempts={attempts}
-                    selectedAttempt={selectedAttempt}
-                    onSelect={setSelectedAttempt}
-                />
-            </div>
+        <div className="overflow-x-hidden w-full">
+            <div className="flex flex-col lg:flex-row gap-6 w-full min-w-0">
 
-            <AnimatePresence mode="wait">
-                <motion.div
-                    key={selectedAttempt?.id}
-                    initial={{opacity: 0}}
-                    animate={{opacity: 1}}
-                    exit={{opacity: 0}}
-                    className="lg:col-span-6 h-[400px]"
-                >
-                    <Bar data={chartData} options={chartOptions}/>
-                </motion.div>
-            </AnimatePresence>
+                <div className="w-full lg:w-1/4 min-w-0">
+                    <AttemptsTableMini
+                        attempts={attempts}
+                        selectedAttempt={selectedAttempt}
+                        onSelect={setSelectedAttempt}
+                    />
+                </div>
 
-            <div className="lg:col-span-3 h-[400px]">
-                <QuestionListForResults questions={questions}/>
+                <AnimatePresence mode="wait">
+                    <motion.div
+                        key={selectedAttempt?.id}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="w-full lg:w-2/4 min-h-[300px] max-h-[400px] min-w-0"
+                    >
+                        <Bar data={chartData} options={chartOptions} />
+                    </motion.div>
+                </AnimatePresence>
+
+                <div className="w-full lg:w-1/4 min-w-0">
+                    <QuestionListForResults questions={questions} />
+                </div>
+
             </div>
         </div>
+
     );
 };

@@ -1,7 +1,7 @@
-import React, {useMemo} from 'react';
-import {Bar} from 'react-chartjs-2';
-import {QuestionDTO, QuizAttemptDTO} from '@dti-isin/backend-api-client';
-import {ChartData, ChartOptions} from 'chart.js';
+import React, { useMemo } from 'react';
+import { Bar } from 'react-chartjs-2';
+import { QuestionDTO, QuizAttemptDTO } from '@dti-isin/backend-api-client';
+import { ChartData, ChartOptions } from 'chart.js';
 
 interface GeneralScoreChartProps {
     attempts: QuizAttemptDTO[];
@@ -15,16 +15,13 @@ interface ChartStatistics {
     maxPossible: number;
 }
 
-export const GeneralScoreChart: React.FC<GeneralScoreChartProps> = ({
-                                                                        attempts,
-                                                                        questions
-                                                                    }) => {
-    const maxPossibleScore = useMemo(() =>
-            questions.reduce((sum, q) => sum + (q.points ?? 0), 0),
+export const GeneralScoreChart: React.FC<GeneralScoreChartProps> = ({ attempts, questions }) => {
+    const maxPossibleScore = useMemo(
+        () => questions.reduce((sum, q) => sum + (q.points ?? 0), 0),
         [questions]
     );
 
-    const {chartData, statistics} = useMemo(() => {
+    const { chartData, statistics } = useMemo(() => {
         const attemptScores = attempts.map(attempt => {
             if (!attempt.responses) return 0;
             return attempt.responses.reduce((sum, response) =>
@@ -55,7 +52,7 @@ export const GeneralScoreChart: React.FC<GeneralScoreChartProps> = ({
         };
 
         const data: ChartData<'bar'> = {
-            labels: Array.from({length: maxPossibleScore + 1}, (_, i) => i.toString()),
+            labels: Array.from({ length: maxPossibleScore + 1 }, (_, i) => i.toString()),
             datasets: [{
                 label: 'Number of Students',
                 data: scoreFrequency,
@@ -75,19 +72,19 @@ export const GeneralScoreChart: React.FC<GeneralScoreChartProps> = ({
             }]
         };
 
-        return {chartData: data, statistics};
+        return { chartData: data, statistics };
     }, [attempts, maxPossibleScore]);
 
     const chartOptions: ChartOptions<'bar'> = {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-            legend: {display: false},
+            legend: { display: false },
             tooltip: {
                 backgroundColor: 'rgba(255, 255, 255, 0.9)',
                 titleColor: '#6366f1',
                 bodyColor: '#1f2937',
-                bodyFont: {size: 14},
+                bodyFont: { size: 14 },
                 padding: 12,
                 cornerRadius: 8,
                 displayColors: false,
@@ -113,7 +110,14 @@ export const GeneralScoreChart: React.FC<GeneralScoreChartProps> = ({
                     text: `Score (max: ${maxPossibleScore})`,
                     color: '#6366f1'
                 },
-                grid: {display: false}
+                grid: { display: false },
+                ticks: {
+                    font: { size: 10 },
+                    maxRotation: 45,
+                    minRotation: 0,
+                    autoSkip: true,
+                    maxTicksLimit: 10,
+                }
             },
             y: {
                 title: {
@@ -122,7 +126,8 @@ export const GeneralScoreChart: React.FC<GeneralScoreChartProps> = ({
                     color: '#6366f1'
                 },
                 beginAtZero: true,
-                ticks: {stepSize: 1}
+                ticks: { stepSize: 1 },
+                grid: { color: 'rgba(0, 0, 0, 0.1)' }
             }
         }
     };
@@ -176,8 +181,11 @@ export const GeneralScoreChart: React.FC<GeneralScoreChartProps> = ({
                     <div className="stat-desc">score ≥ 60%</div>
                 </div>
             </div>
-            <div className="h-[400px]">
-                <Bar data={chartData} options={chartOptions}/>
+
+            <div className="w-full">
+                <div className="h-[400px]">
+                    <Bar data={chartData} options={chartOptions} className="w-full" />
+                </div>
             </div>
         </div>
     );

@@ -80,25 +80,30 @@ export const ScoreDistributionChart: React.FC<ScoreDistributionChartProps> = ({
             <AnimatePresence mode="wait">
                 <motion.div
                     key={mode}
-                    initial={{opacity: 0, y: 10}}
-                    animate={{opacity: 1, y: 0}}
-                    exit={{opacity: 0, y: -10}}
-                    transition={{duration: 0.2}}
-                    className="bg-base-200 rounded-xl p-6"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2 }}
+                    className="bg-base-200 rounded-xl p-6 w-full overflow-hidden"
                 >
-                    {mode === chartModes.GENERAL ? (
-                        <GeneralScoreChart
-                            attempts={attempts}
-                            questions={questions}
-                        />
-                    ) : (
-                        <SingleAttemptScoreChart
-                            attempts={attempts}
-                            questions={questions}
-                        />
-                    )}
+                    <div className="w-full max-w-full overflow-x-auto">
+                        <div className="min-w-[400px] sm:min-w-[600px] md:min-w-[800px]">
+                            {mode === chartModes.GENERAL ? (
+                                <GeneralScoreChart
+                                    attempts={attempts}
+                                    questions={questions}
+                                />
+                            ) : (
+                                <SingleAttemptScoreChart
+                                    attempts={attempts}
+                                    questions={questions}
+                                />
+                            )}
+                        </div>
+                    </div>
                 </motion.div>
             </AnimatePresence>
+
         </div>
     );
 };

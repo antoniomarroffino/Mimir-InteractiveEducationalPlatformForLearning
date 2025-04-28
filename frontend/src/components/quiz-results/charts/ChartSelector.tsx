@@ -84,23 +84,25 @@ export const ChartSelector: React.FC<ChartSelectorProps> = ({
                 </div>
             </div>
 
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-2 sm:gap-4">
                 {chartOptions.map((chart) => (
                     <motion.button
                         key={chart.id}
                         onClick={() => toggleChart(chart.id)}
                         className={`
-                            relative flex items-center gap-3 p-4 rounded-xl
-                            transition-all duration-300
-                            ${activeCharts.has(chart.id)
+                relative flex items-center gap-2 sm:gap-3
+                p-3 sm:p-4 rounded-xl
+                transition-all duration-300
+                w-full sm:w-auto
+                ${activeCharts.has(chart.id)
                             ? 'bg-primary text-white shadow-md'
                             : 'bg-base-200 hover:bg-base-300'
                         }
-                        `}
+            `}
                         whileHover={{scale: 1.02}}
                         whileTap={{scale: 0.98}}
                     >
-                        <div className="relative">
+                        <div className="relative flex-shrink-0">
                             {chart.icon}
                             {activeCharts.has(chart.id) && (
                                 <motion.div
@@ -108,17 +110,18 @@ export const ChartSelector: React.FC<ChartSelectorProps> = ({
                                     animate={{scale: 1}}
                                     className="absolute -top-2 -right-2 bg-success rounded-full p-1"
                                 >
-                                    <FaCheckCircle className="w-3 h-3 text-white"/>
+                                    <FaCheckCircle className="w-3 h-3 text-white" />
                                 </motion.div>
                             )}
                         </div>
-                        <div className="text-left">
+                        <div className="text-left text-sm sm:text-base">
                             <div className="font-bold">{chart.label}</div>
-                            <div className="text-sm opacity-80">{chart.description}</div>
+                            <div className="text-xs opacity-80">{chart.description}</div>
                         </div>
                     </motion.button>
                 ))}
             </div>
+
 
             <AnimatePresence mode="popLayout">
                 {Array.from(activeCharts).map((chartId) => {
@@ -128,14 +131,18 @@ export const ChartSelector: React.FC<ChartSelectorProps> = ({
                     return (
                         <motion.div
                             key={chartId}
-                            initial={{opacity: 0, y: 20}}
-                            animate={{opacity: 1, y: 0}}
-                            exit={{opacity: 0, y: -20}}
-                            transition={{duration: 0.3}}
-                            className="bg-base-200 rounded-xl p-6"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            transition={{ duration: 0.3 }}
+                            className="bg-base-200 rounded-xl p-6 w-full overflow-hidden"
                         >
-                            {chart.component}
+                            <div className="w-full max-w-full min-w-0">
+                                {chart.component}
+                            </div>
                         </motion.div>
+
+
                     );
                 })}
             </AnimatePresence>
