@@ -124,7 +124,7 @@ describe("QuizAttemptCRUDProvider", () => {
             const { result } = renderHook(() => useTestHook(), { wrapper: createWrapper() });
 
             await act(async () => {
-                await result.current!.assignBadge("attempt-1", BadgeType.BestAttempt);
+                await result.current!.assignBadge("attempt-1", BadgeType.BestAttempt, "publicationId");
             });
 
             expect(quizAttemptApi.apiAttemptsAttemptIdBadgesPost).toHaveBeenCalledWith({
@@ -141,7 +141,7 @@ describe("QuizAttemptCRUDProvider", () => {
             const { result } = renderHook(() => useTestHook(), { wrapper: createWrapper() });
 
             await act(async () => {
-                await expect(result.current!.assignBadge("attempt-1", BadgeType.BestAttempt)).rejects.toThrow(error);
+                await expect(result.current!.assignBadge("attempt-1", BadgeType.BestAttempt, "publicationId")).rejects.toThrow(error);
             });
 
             expect(consoleErrorSpy).toHaveBeenCalledWith("Failed to assign badge:", error);

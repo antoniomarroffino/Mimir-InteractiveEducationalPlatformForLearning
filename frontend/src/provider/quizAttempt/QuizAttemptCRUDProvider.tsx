@@ -7,6 +7,7 @@ import {QuizAttemptCRUDContext} from "../../contexts/quizAttempt/QuizAttemptCRUD
 interface AssignBadgeParams {
     attemptId: string;
     badgeType: BadgeType;
+    publicationId: string;
 }
 
 export const QuizAttemptCRUDProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
@@ -52,7 +53,7 @@ export const QuizAttemptCRUDProvider: React.FC<{ children: React.ReactNode }> = 
         {
             onSuccess: (_, variables) => {
                 queryClient.invalidateQueries(['quizAttempt', variables.attemptId]);
-                queryClient.invalidateQueries(['quizAttempts']);
+                queryClient.invalidateQueries(['quizAttempts', variables.publicationId]);
             }
         }
     );
@@ -89,9 +90,9 @@ export const QuizAttemptCRUDProvider: React.FC<{ children: React.ReactNode }> = 
                 throw err;
             }
         },
-        assignBadge: async (attemptId: string, badgeType: BadgeType) => {
+        assignBadge: async (attemptId: string, badgeType: BadgeType, publicationId: string) => {
             try {
-                await assignBadgeMutation.mutateAsync({attemptId, badgeType});
+                await assignBadgeMutation.mutateAsync({attemptId, badgeType, publicationId});
             } catch (err) {
                 console.error("Failed to assign badge:", err);
                 throw err;

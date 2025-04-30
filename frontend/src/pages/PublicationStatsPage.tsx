@@ -199,12 +199,15 @@ const PublicationStatsPage: React.FC = () => {
                                                         publication={selectedPublication}
                                                         onClose={() => setSelectedAttempt(null)}
                                                         showBadgeAssignment={!selectedPublication.anonymous}
+                                                        isUpdating={isFetching}
                                                     />
                                                 ) : (
                                                     <div
                                                         className="flex items-center justify-center text-center h-full">
                                                         <div>
-                                                            <div className="text-6xl mb-4">👆</div>
+                                                            <div className="text-6xl mb-4 block md:hidden">👆</div>
+                                                            <div className="text-6xl mb-4 hidden md:block">👈</div>
+
                                                             <h3 className="text-xl font-bold text-base-content/70">
                                                                 Select an Attempt
                                                             </h3>

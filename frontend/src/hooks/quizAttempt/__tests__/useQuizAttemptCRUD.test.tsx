@@ -111,8 +111,8 @@ describe("useQuizAttemptCRUD", () => {
 
     const { result } = renderHook(() => useQuizAttemptCRUD());
 
-    await result.current.assignBadge("1", badgeType);
+    await result.current.assignBadge("1", badgeType, "publicationId");
 
-    expect(mockContextValue.assignBadge).toHaveBeenCalledWith("1", badgeType);
+    expect(mockContextValue.assignBadge).toHaveBeenCalledWith("1", badgeType, "publicationId");
   });
 });

@@ -1,9 +1,8 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {useLocation, useNavigate, useParams} from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import {useGetQuizPublicationByCode} from '../../hooks/quizPublication/useGetQuizPublicationByCode.ts';
 import {useGetQuizById} from '../../hooks/quiz/useGetQuizById.ts';
 import {useQuizAttemptLocal} from '../../hooks/quizAttempt/useQuizAttemptLocal.ts';
-import {QuizDTO, QuizPublicationDTO} from '@dti-isin/backend-api-client';
 import {formatMinutesDuration} from '../../utils/timeUtils.ts';
 import {AnonymousAccessCard} from '../../components/quiz/AnonymousAccessCard.tsx';
 import {LoginRequiredAccessCard} from '../../components/quiz/LoginRequiredAccessCard.tsx';
@@ -16,16 +15,8 @@ import { ResumedAttemptCard } from '../../components/attempt/ResumedAttemptCard.
 import {useAuth} from "../../hooks/auth/useAuth.ts";
 
 const QuizScreenPage: React.FC = () => {
-    const location = useLocation();
     const navigate = useNavigate();
     const {accessCode} = useParams();
-
-    const state = location.state as {
-        publication?: QuizPublicationDTO;
-        quiz?: QuizDTO;
-    };
-
-    const hasStateData = !!(state?.publication && state?.quiz);
 
     const {
         data: publication,
@@ -41,11 +32,11 @@ const QuizScreenPage: React.FC = () => {
         publication?.courseId ?? '',
         publication?.folderId ?? '',
         publication?.quizId ?? '',
-        {enabled: !hasStateData && !!publication}
+        {enabled: !!publication}
     );
 
-    const finalPublication = state?.publication ?? publication;
-    const finalQuiz = state?.quiz ?? quiz;
+    const finalPublication = publication;
+    const finalQuiz = quiz;
 
     const {startQuizAttempt} = useQuizAttemptLocal();
     const {user, login} = useAuth();
@@ -91,7 +82,7 @@ const QuizScreenPage: React.FC = () => {
         });
     }, [recoveredAttempt, finalPublication, finalQuiz, accessCode, navigate]);
 
-    const timeLimit = formatMinutesDuration(finalQuiz!.timeLimitMinutes);
+    const timeLimit = formatMinutesDuration(finalQuiz?.timeLimitMinutes || 0);
 
     if (errorPublication || errorQuiz) {
         return (

@@ -5,7 +5,7 @@ import {QuizAttemptDTO} from '@dti-isin/backend-api-client';
 
 export const useGetQuizAttemptsByPublication = (publicationId: string) => {
     return useQuery<QuizAttemptDTO[], Error>({
-        queryKey: ['quizAttempts', publicationId],
+        queryKey: ["quizAttempts", publicationId],
         queryFn: () => quizAttemptApi.apiAttemptsByPublicationPublicationIdGet({publicationId})
             .then(response => response.data),
 

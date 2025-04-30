@@ -12,13 +12,15 @@ interface AttemptDetailsProps {
     publication: QuizPublicationDTO;
     onClose?: () => void;
     showBadgeAssignment?: boolean;
+    isUpdating?: boolean;
 }
 
 export const AttemptDetails: React.FC<AttemptDetailsProps> = ({
                                                                   attempt,
                                                                   publication,
                                                                   onClose,
-                                                                  showBadgeAssignment = true
+                                                                  showBadgeAssignment = true,
+                                                                  isUpdating
                                                               }) => {
     const {user} = useAuth();
     const hasBestAttemptBadge = (attempt.badges ?? []).length > 0;
@@ -93,6 +95,8 @@ export const AttemptDetails: React.FC<AttemptDetailsProps> = ({
                                         azureOID={attempt.user.azureOid}
                                         assignedBy={user.azureOid}
                                         hasBadge={hasBestAttemptBadge}
+                                        publicationId={publication.id!}
+                                        isUpdating={isUpdating}
                                     />
                                     {hasBestAttemptBadge && (
                                         <div className="badge badge-success gap-2 py-3">

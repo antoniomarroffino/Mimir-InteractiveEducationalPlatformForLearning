@@ -37,9 +37,8 @@ export const QuizList: React.FC<QuizListProps> = ({courseId, folderId}) => {
     return (
         <div className="flex flex-col gap-4 w-full overflow-x-hidden">
             {quizzes.map(quiz => (
-                <div className="min-w-0">
+                <div className="min-w-0" key={quiz.id}>
                     <QuizRow
-                        key={quiz.id}
                         quiz={quiz}
                         courseId={courseId}
                         folderId={folderId}

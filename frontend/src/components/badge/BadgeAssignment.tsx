@@ -3,19 +3,24 @@ import {FaTrophy} from 'react-icons/fa';
 import {BadgeType} from '@dti-isin/backend-api-client';
 import {useQuizAttemptCRUD} from "../../hooks/quizAttempt/useQuizAttemptCRUD.ts";
 import {useAssignBadgeToHolder} from "../../hooks/badgeholder/useAssignBadgeToHolder.ts";
+import {LoadingSpinner} from "../common/LoadingSpinner.tsx";
 
 interface BadgeAssignmentProps {
     attemptId: string;
     azureOID: string;
     hasBadge: boolean | undefined;
     assignedBy: string;
+    publicationId: string;
+    isUpdating?: boolean;
 }
 
 export const BadgeAssignment: React.FC<BadgeAssignmentProps> = ({
                                                                     attemptId,
                                                                     azureOID,
                                                                     hasBadge,
-                                                                    assignedBy
+                                                                    assignedBy,
+                                                                    publicationId,
+                                                                    isUpdating
                                                                 }) => {
     const {assignBadge, isAssigningBadge} = useQuizAttemptCRUD();
     const {mutateAsync: assignBadgeToHolder, isLoading: isAssigningBadgeToHolder} = useAssignBadgeToHolder();
@@ -25,14 +30,12 @@ export const BadgeAssignment: React.FC<BadgeAssignmentProps> = ({
 
     const handleAssignBadge = async () => {
         try {
-            await Promise.all([
-                assignBadge(attemptId, BadgeType.BestAttempt),
-                assignBadgeToHolder({
-                    azureOID,
-                    badgeType: BadgeType.BestAttempt,
-                    assignedBy
-                })
-            ]);
+            await assignBadge(attemptId, BadgeType.BestAttempt, publicationId);
+            await assignBadgeToHolder({
+                azureOID,
+                badgeType: BadgeType.BestAttempt,
+                assignedBy
+            });
             setShowConfirm(false);
         } catch (error) {
             console.error('Failed to assign badge:', error);
@@ -54,6 +57,10 @@ export const BadgeAssignment: React.FC<BadgeAssignmentProps> = ({
                 </div>
             </div>
         );
+    }
+
+    if(isLoading || isUpdating){
+        return <LoadingSpinner />
     }
 
     return (

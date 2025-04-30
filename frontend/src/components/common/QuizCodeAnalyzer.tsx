@@ -1,11 +1,10 @@
 import React, {useEffect} from 'react';
 import {useGetQuizPublicationByCode} from "../../hooks/quizPublication/useGetQuizPublicationByCode.ts";
 import {useGetQuizById} from "../../hooks/quiz/useGetQuizById.ts";
-import {QuizDTO, QuizPublicationDTO} from "@dti-isin/backend-api-client";
 
 interface QuizCodeAnalyzerProps {
     publicationCode: string;
-    onSuccess: (publication: QuizPublicationDTO, quiz: QuizDTO) => void;
+    onSuccess: () => void;
     onError: (message: string) => void;
 }
 
@@ -38,7 +37,7 @@ export const QuizCodeAnalyzer: React.FC<QuizCodeAnalyzerProps> = ({
 
     useEffect(() => {
         if (!isLoadingPublication && !isLoadingQuiz && publication && quiz) {
-            onSuccess(publication, quiz);
+            onSuccess();
         }
     }, [isLoadingPublication, isLoadingQuiz, publication, quiz, onSuccess]);
 

@@ -2,7 +2,6 @@ import React, {useState} from 'react';
 import {FiHash} from "react-icons/fi";
 import {QuizCodeAnalyzer} from "./QuizCodeAnalyzer.tsx";
 import {useNavigate} from 'react-router-dom';
-import {QuizDTO, QuizPublicationDTO} from "@dti-isin/backend-api-client";
 import {useAuth} from "../../hooks/auth/useAuth.ts";
 
 export const QuizSessionComponent = () => {
@@ -31,14 +30,9 @@ export const QuizSessionComponent = () => {
         }
     };
 
-    const handleAnalyzeSuccess = (publication: QuizPublicationDTO, quiz: QuizDTO) => {
+    const handleAnalyzeSuccess = () => {
         setIsAnalyzing(false);
-        navigate(`/quiz/${code}`, {
-            state: {
-                publication,
-                quiz
-            }
-        });
+        navigate(`/quiz/${code}`);
     };
 
     const handleAnalyzeError = (message: string) => {
