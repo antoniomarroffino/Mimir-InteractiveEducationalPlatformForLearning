@@ -1,0 +1,24 @@
+package ch.supsi.service.question.strategy;
+
+import ch.supsi.model.api.question.MultipleChoiceQuestion;
+import ch.supsi.model.api.question.Question;
+import ch.supsi.model.dto.api.question.MultipleChoiceQuestionDTO;
+
+public class MultipleChoiceQuestionStrategy extends AbstractQuestionStrategy<MultipleChoiceQuestion, MultipleChoiceQuestionDTO> {
+    @Override
+    public Question createQuestion() {
+        MultipleChoiceQuestion question = new MultipleChoiceQuestion();
+        question.points = 1;
+        return question;
+    }
+
+    @Override
+    public void updateQuestion(MultipleChoiceQuestion entity, MultipleChoiceQuestionDTO questionDTOUpdated) {
+        if (entity == null || questionDTOUpdated == null)
+            return;
+
+        super.updateQuestion(entity, questionDTOUpdated);
+        entity.choices = questionDTOUpdated.getChoices();
+        entity.correctAnswerIndexes = questionDTOUpdated.getCorrectAnswerIndexes();
+    }
+}

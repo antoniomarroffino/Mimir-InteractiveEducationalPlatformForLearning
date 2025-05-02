@@ -1,0 +1,37 @@
+# Backend (Quarkus + Maven)
+/target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+log/
+*.log
+*.tmp
+
+# Frontend (React)
+/node_modules/
+/build/
+/.eslintcache
+/.parcel-cache
+/yarn-error.log
+/yarn-debug.log
+
+# Editor & OS Specific
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Docker
+/docker-compose.override.yml
+*.env*
+!.env.template
+
+# NGINX
+frontend/nginx/access.log
+frontend/nginx/error.log
+
+*.npmrc
+
+frontend/coverage

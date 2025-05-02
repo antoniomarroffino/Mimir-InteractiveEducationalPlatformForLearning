@@ -1,0 +1,134 @@
+stages:
+  - structure
+  - build_backend
+  - publish_npm_package
+  - build_frontend
+  - deploy
+
+structure:
+  stage: structure
+  script:
+    - '[ -d backend ] || exit 1'
+    - '[ -d frontend ] || exit 1'
+  only:
+    - dev
+    - main
+
+services:
+  - name: docker:dind
+    alias: dockerhost
+
+variables:
+  DOCKER_HOST: tcp://dockerhost:2375/
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
+  TESTCONTAINERS_HOST_OVERRIDE: dockerhost
+  NPM_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/npm/"
+  NPM_SCOPE: "@dti-isin"
+  AZURE_DOMAIN_NAME: "@testforprojectsupsi.onmicrosoft.com"
+  GCP_PROJECT_ID: "${GCP_PROJECT_ID}"
+  GCP_REGION: "${GCP_REGION}"
+  ARTIFACT_REGISTRY_LOCATION: "${ARTIFACT_REGISTRY_LOCATION}"
+  ARTIFACT_REGISTRY_REPO: "${ARTIFACT_REGISTRY_REPO}"
+  GCP_SERVICE_KEY: "${GCP_SERVICE_KEY}"
+
+build_backend:
+  stage: build_backend
+  image:
+    name: quay.io/quarkus/ubi-quarkus-mandrel-builder-image:jdk-21
+    entrypoint: [ "" ]
+    docker:
+      user: root
+  script:
+    - cd backend
+    - chmod +x ./mvnw
+    - ./mvnw clean verify -Pnative -Dquarkus.native.additional-build-args="--initialize-at-run-time=com.microsoft.aad.msal4jextensions.persistence.linux.ISecurityLibrary"
+  artifacts:
+    paths:
+      - backend/target/*-runner
+      - backend/target/backend-api-client
+  only:
+    - dev
+    - main
+
+publish_npm_package:
+  stage: publish_npm_package
+  image: node:22.14-alpine
+  before_script:
+    - echo "//gitlab-edu.supsi.ch/api/v4/projects/1051/packages/npm/:_authToken=${CI_JOB_TOKEN}" > backend/target/backend-api-client/.npmrc
+    - echo "${NPM_SCOPE}:registry=${NPM_REGISTRY_URL}" >> .npmrc
+  script:
+    - cd backend/target/backend-api-client
+    - npm install
+    - npm publish --registry=${NPM_REGISTRY_URL}
+  dependencies:
+    - build_backend
+  only:
+    - dev
+    - main
+
+build_frontend:
+  stage: build_frontend
+  image: node:22.14-alpine
+  before_script:
+    - echo "//${CI_SERVER_HOST}/api/v4/projects/1051/packages/npm/:_authToken=${CI_JOB_TOKEN}" > frontend/.npmrc
+    - echo "${NPM_SCOPE}:registry=${NPM_REGISTRY_URL}" >> frontend/.npmrc
+  script:
+    - cd frontend
+    - npm install
+    - npm run test
+    - npm run build
+  dependencies:
+    - publish_npm_package
+  artifacts:
+    paths:
+      - frontend/dist/
+  only:
+    - dev
+    - main
+
+deploy_atomic:
+  stage: deploy
+  image:
+    name: google/cloud-sdk:slim
+    entrypoint: [ "" ]
+  before_script:
+    - set -o errexit -o pipefail -o nounset -o errtrace
+    - |
+      cleanup() {
+        echo "Cleanup called";
+        [ -n "$REV_BACKEND" ] && gcloud run revisions delete -q "$REV_BACKEND" --platform managed --region "$GCP_REGION" || true;
+        [ -n "$REV_FRONTEND" ] && gcloud run revisions delete -q "$REV_FRONTEND" --platform managed --region "$GCP_REGION" || true;
+      }
+    - trap cleanup ERR
+  variables:
+    BACKEND_URL: "https://backend-service-1031980811194.europe-west12.run.app"
+    FRONTEND_URL: "https://frontend-service-1031980811194.europe-west12.run.app"
+  script:
+    - echo "$GCP_SERVICE_KEY" > gcp_key.json
+    - gcloud auth activate-service-account --key-file=gcp_key.json
+    - gcloud config set project $GCP_PROJECT_ID
+    - gcloud config set run/region $GCP_REGION
+
+    - gcloud auth configure-docker ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev --quiet
+    - cat gcp_key.json | docker login -u _json_key --password-stdin ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev
+
+    - cd backend
+    - docker build -t ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/backend:$CI_COMMIT_SHORT_SHA .
+    - docker push ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/backend:$CI_COMMIT_SHORT_SHA
+
+    - REV_BACKEND=$(gcloud run deploy backend-service --image ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/backend:$CI_COMMIT_SHORT_SHA --no-traffic --platform managed --tag canary --set-env-vars MONGO_URI=$MONGO_URI,AZURE_TENANT_ID=$AZURE_TENANT_ID,AZURE_CLIENT_ID=$AZURE_CLIENT_ID,AZURE_SECRET=$AZURE_SECRET,AZURE_DOMAIN_NAME=$AZURE_DOMAIN_NAME,CORS_ORIGINS=$FRONTEND_URL --format 'value(status.latestCreatedRevisionName)')
+    - echo "Nuova revisione backend $REV_BACKEND"
+
+    - cd ../frontend
+    - docker build --build-arg CI_JOB_TOKEN=${CI_JOB_TOKEN} --build-arg VITE_AZURE_CLIENT_ID=${AZURE_FRONTEND_CLIENT_ID} --build-arg VITE_AZURE_TENANT_ID=${AZURE_TENANT_ID} --build-arg VITE_REDIRECT_URI=${FRONTEND_URL} --build-arg VITE_LOGOUT_REDIRECT_URI=${FRONTEND_URL} --build-arg VITE_BACKEND_CLIENT_ID=${AZURE_CLIENT_ID} --build-arg VITE_BACKEND_URL=${BACKEND_URL} -t ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/frontend:$CI_COMMIT_SHORT_SHA .
+    - docker push ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/frontend:$CI_COMMIT_SHORT_SHA
+    - REV_FRONTEND=$(gcloud run deploy frontend-service --image ${ARTIFACT_REGISTRY_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REGISTRY_REPO}/frontend:$CI_COMMIT_SHORT_SHA --no-traffic --platform managed --tag canary --format 'value(status.latestCreatedRevisionName)')
+    - echo "Nuova revisione frontend $REV_FRONTEND"
+
+    - gcloud run services update-traffic backend-service --to-revisions $REV_BACKEND=100 --platform managed
+    - gcloud run services update-traffic frontend-service --to-revisions $REV_FRONTEND=100 --platform managed
+
+    - rm -f gcp_key.json
+  only:
+    - main
