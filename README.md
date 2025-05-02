@@ -1,128 +1,100 @@
-# fanto-marroffino
+# Mirir: Interactive Educational Platform for Learning
 
-## Getting started
+## Project Description
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+Mirir is an interactive educational platform designed to enhance student engagement through the integration of gamification elements. The project emerged from a needs analysis conducted at the Scuola Universitaria Professionale della Svizzera Italiana (SUPSI), which actively involved both students and faculty. This analysis revealed that currently available solutions (such as Kahoot or Wooclap) do not fully meet the accessibility, continuity, and free-of-charge requirements demanded by the academic context.
 
-Already a pro? Just edit this README.md and make it your own. Want to make it
-easy? [Use the template at the bottom](#editing-this-readme)!
+The platform has been built using a microservices architecture: the backend is implemented in Java with the Quarkus framework, optimized via GraalVM to ensure high performance and fast startup times; data are managed by MongoDB, a document-oriented NoSQL database.
 
-## Add your files
+The frontend, developed in React and TypeScript, communicates with the backend through REST APIs defined with OpenAPI and handled via Axios. The entire system is containerized with Docker and deployed on Google Cloud Platform using Cloud Run, providing a fully cloud-native, serverless setup. Authentication is managed through Microsoft Azure Entra ID, with future plans to integrate with SUPSI's institutional systems.
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file)
-  or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line)
-  or push an existing Git repository with the following command:
+The development process followed an iterative, Agile-inspired approach combined with user-centered design, featuring continuous prototyping cycles and qualitative feedback loops.
 
-```
-cd existing_repo
-git remote add origin https://gitlab-edu.supsi.ch/dti-isin/giuliano.gremlich/progetti_bachelor/2024-2025/fanto-marroffino.git
-git branch -M main
-git push -uf origin main
-```
+The current release supports the creation of courses organized into thematic folders, the creation and publication of asynchronous quizzes, management of a shared question bank, question import, and display of both aggregated and individual statistics. Currently supported question types are true/false and multiple choice.
 
-## Integrate with your tools
+All project objectives have been successfully met, and the final version has been positively validated by a representative group of SUPSI students and faculty.
 
-- [ ] [Set up project integrations](https://gitlab-edu.supsi.ch/dti-isin/giuliano.gremlich/progetti_bachelor/2024-2025/fanto-marroffino/-/settings/integrations)
+## Main Features
 
-## Collaborate with your team
+- Creation and management of courses organized into thematic folders
+- Creation and publication of asynchronous quizzes
+- Management of a shared question bank
+- Question import functionality
+- Display of both aggregated and individual statistics
+- Support for true/false and multiple choice question types
+- Authentication through Microsoft Azure Entra ID
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+## Technologies Used
 
-## Test and Deploy
+### Backend
+- Java with Quarkus framework
+- GraalVM for optimization
+- MongoDB (NoSQL database)
+- OpenAPI for REST API definition
 
-Use the built-in continuous integration in GitLab.
+### Frontend
+- React
+- TypeScript
+- Axios for API communication
+- Vite as build tool
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to
-structure it however you want - this is just a starting point!). Thanks
-to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are
-suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long
-is better than too short. If you think your README is too long, consider utilizing another form of documentation rather
-than cutting out information.
-
-## Name
-
-Choose a self-explaining name for your project.
-
-## Description
-
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be
-unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your
-project, this is a good place to list differentiating factors.
-
-## Badges
-
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the
-project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see
-GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+### Deployment
+- Docker for containerization
+- Google Cloud Platform (Cloud Run)
+- Microsoft Azure Entra ID for authentication
 
 ## Installation
 
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew.
-However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing
-specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a
-specific context like a particular programming language version or operating system or has dependencies that have to be
-installed manually, also add a Requirements subsection.
+The project uses React with Vite, requiring npm version 11.3.0. The setup follows standard Vite application conventions.
+
+### Development Setup
+
+*Backend:*
+``` bash 
+cd backend
+mvn clean package
+cd target/backend-api-client
+npm i
+npm link
+cd ....
+mvn quarkus:dev
+```
+
+*Frontend:*
+``` bash
+npm i
+npm link @dti-isin/backend-api-client
+npm run dev
+```
+
+
+### Testing
+
+*Backend tests:*
+``` bash
+mvn quarkus:test
+```
+
+*Frontend tests:*
+``` bash
+npm run test
+# For coverage report
+npm run coverage
+```
 
 ## Usage
 
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of
-usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably
-include in the README.
+The application is accessible at: [https://frontend-service-1031980811194.europe-west12.run.app/](https://frontend-service-1031980811194.europe-west12.run.app/)
 
-## Support
+Users can perform all operations described in the project description:
+- Create and manage courses and thematic folders
+- Create and publish asynchronous quizzes
+- Manage the shared question bank
+- Import questions
+- View aggregated and individual statistics
+- Create true/false and multiple choice questions
 
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address,
-etc.
+## Project Structure
 
-## Roadmap
-
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started.
-Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps
-explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce
-the likelihood that the changes inadvertently break something. Having instructions for running tests is especially
-helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-
-Show your appreciation to those who have contributed to the project.
-
-## License
-
-For open source projects, say how it is licensed.
-
-## Project status
-
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has
-slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or
-owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+![Project Structure](./screenshots/general-architecture.png)
+![Project Structure](./screenshots/general-architecture-cloud-native.png)
