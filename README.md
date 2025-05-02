@@ -2,50 +2,64 @@
 
 ## Project Description
 
-Mirir is an interactive educational platform designed to enhance student engagement through the integration of gamification elements. The project emerged from a needs analysis conducted at the Scuola Universitaria Professionale della Svizzera Italiana (SUPSI), which actively involved both students and faculty. This analysis revealed that currently available solutions (such as Kahoot or Wooclap) do not fully meet the accessibility, continuity, and free-of-charge requirements demanded by the academic context.
+Mirir is an interactive educational platform that leverages gamification to boost student engagement. Designed after a needs analysis at SUPSI (Scuola Universitaria Professionale della Svizzera Italiana), it addresses accessibility, continuity, and cost-free requirements unmet by existing solutions (Kahoot, Wooclap).
 
-The platform has been built using a microservices architecture: the backend is implemented in Java with the Quarkus framework, optimized via GraalVM to ensure high performance and fast startup times; data are managed by MongoDB, a document-oriented NoSQL database.
+The system uses a microservices architecture:
+- **Backend**: Java + Quarkus, optimized with GraalVM; data stored in MongoDB.
+- **Frontend**: React + TypeScript, built with Vite, communicates via OpenAPI-defined REST APIs.
+- **Containerization & Hosting**: Docker + Google Cloud Run (serverless).
+- **Authentication**: Microsoft Azure Entra ID.
 
-The frontend, developed in React and TypeScript, communicates with the backend through REST APIs defined with OpenAPI and handled via Axios. The entire system is containerized with Docker and deployed on Google Cloud Platform using Cloud Run, providing a fully cloud-native, serverless setup. Authentication is managed through Microsoft Azure Entra ID, with future plans to integrate with SUPSI's institutional systems.
+The current release allows course creation, thematic folder organization, asynchronous quizzes, question bank management, imports, and detailed statistics (true/false & multiple choice).
 
-The development process followed an iterative, Agile-inspired approach combined with user-centered design, featuring continuous prototyping cycles and qualitative feedback loops.
+---
 
-The current release supports the creation of courses organized into thematic folders, the creation and publication of asynchronous quizzes, management of a shared question bank, question import, and display of both aggregated and individual statistics. Currently supported question types are true/false and multiple choice.
+## Features
+- 🎓 **Course Management**: Create, edit, and organize courses in folders.
+- ❓ **Asynchronous Quizzes**: Design, publish, and link quizzes to courses.
+- 📚 **Shared Question Bank**: Reuse questions across quizzes.
+- 🔄 **Import Questions**: Bulk import via JSON/CSV.
+- 📊 **Statistics Dashboard**: Aggregated and per-user performance data.
+- 🔒 **Secure Auth**: Azure Entra ID integration for SSO.
 
-All project objectives have been successfully met, and the final version has been positively validated by a representative group of SUPSI students and faculty.
+---
 
-## Main Features
 
-- Creation and management of courses organized into thematic folders
-- Creation and publication of asynchronous quizzes
-- Management of a shared question bank
-- Question import functionality
-- Display of both aggregated and individual statistics
-- Support for true/false and multiple choice question types
-- Authentication through Microsoft Azure Entra ID
+## Architecture
+![Architecture Diagram](./screenshots/general-architecture.png)  
+*Figure: High-level microservices architecture.*
 
-## Technologies Used
+![Cloud Native](./screenshots/general-architecture-cloud-native.png)  
+*Figure: Cloud-native deployment on GCP Cloud Run.*
 
-### Backend
-- Java with Quarkus framework
-- GraalVM for optimization
-- MongoDB (NoSQL database)
-- OpenAPI for REST API definition
+---
 
-### Frontend
-- React
-- TypeScript
-- Axios for API communication
-- Vite as build tool
+## Technologies
+**Backend**:
+- Java 21, Quarkus
+- GraalVM native image
+- MongoDB 6.x
+- MicroProfile Config & SmallRye Health/OpenAPI
 
-### Deployment
-- Docker for containerization
-- Google Cloud Platform (Cloud Run)
-- Microsoft Azure Entra ID for authentication
+**Frontend**:
+- React 18, TypeScript
+- Vite build tool
+- Axios HTTP client
+
+**Infrastructure**:
+- Docker & Docker Compose
+- Google Cloud Run (serverless)
+- Artifact Registry
+- Azure Entra ID (OIDC)
+
+---
 
 ## Installation
 
-The project uses React with Vite, requiring npm version 11.3.0. The setup follows standard Vite application conventions.
+### Prerequisites
+- Java 21 & Maven
+- Node.js v18+ & npm
+
 
 ### Development Setup
 
@@ -93,8 +107,3 @@ Users can perform all operations described in the project description:
 - Import questions
 - View aggregated and individual statistics
 - Create true/false and multiple choice questions
-
-## Project Structure
-
-![Project Structure](./screenshots/general-architecture.png)
-![Project Structure](./screenshots/general-architecture-cloud-native.png)
